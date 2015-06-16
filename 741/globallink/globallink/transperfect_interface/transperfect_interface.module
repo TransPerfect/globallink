@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function transperfect_interface_menu() {
+  $items = array();
+
+  $items [transperfect_get_root_menu('transperfect-translations/dashboard/interface')] = array(
+      'title' => ' Interfaces ',
+      'page callback' => 'transperfect_dashboard_interface_page',
+      'access callback' => 'tpt_access_callback_any',
+      'type' => MENU_LOCAL_TASK,
+      'file' => 'transperfect_interface_send.inc',
+      'weight' => 10,
+      'page arguments' => array('interface'),
+  );
+
+  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/interface')] = array(
+      'title' => ' Interfaces ',
+      'page callback' => 'transperfect_interface_active_submissions',
+      'access callback' => 'tpt_access_callback_any',
+      'file' => 'transperfect_interface_active_submissions.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 10,
+      'page arguments' => array('interface'),
+  );
+
+  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/interface')] = array(
+      'title' => ' Interfaces ',
+      'page callback' => 'transperfect_interface_receive_submissions',
+      'access callback' => 'tpt_access_callback_any',
+      'file' => 'transperfect_interface_receive.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 10,
+      'page arguments' => array('interface'),
+  );
+
+  $items[transperfect_get_root_menu('transperfect-translations/receiveTranslation/interface/preview')] = array(
+      'title' => 'Preview Translation',
+      'page callback' => 'preview_translated_interface_content',
+      'file' => 'transperfect_interface_receive.inc',
+      'access callback' => 'tpt_access_callback_admin',
+      'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}

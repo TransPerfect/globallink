@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function transperfect_fieldable_panels_menu() {
+  $items = array();
+
+  $items [transperfect_get_root_menu('transperfect-translations/dashboard/fieldable_panels')] = array(
+      'title' => ' Fieldable Panels Panes  ',
+      'page callback' => 'transperfect_dashboard_fieldable_panels',
+      'access callback' => 'tpt_access_callback_any',
+      'type' => MENU_LOCAL_TASK,
+      'file' => 'transperfect_fieldable_panels_send.inc',
+      'weight' => 10,
+      'page arguments' => array('fieldable_panels'),
+  );
+
+  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/fieldable_panels')] = array(
+      'title' => ' Fieldable Panels Panes ',
+      'page callback' => 'transperfect_fieldable_panels_active_submissions',
+      'access callback' => 'tpt_access_callback_any',
+      'file' => 'transperfect_fieldable_panels_active_submissions.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 10,
+      'page arguments' => array('fieldable_panels'),
+  );
+
+  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels')] = array(
+      'title' => ' Fieldable Panels Panes ',
+      'page callback' => 'transperfect_fieldable_panels_receive_submissions',
+      'access callback' => 'tpt_access_callback_any',
+      'file' => 'transperfect_fieldable_panels_receive.inc',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 10,
+      'page arguments' => array('fieldable_panels'),
+  );
+
+  $items[transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels/preview')] = array(
+      'title' => 'Preview Translation',
+      'page callback' => 'preview_translated_fieldable_panels_content',
+      'file' => 'transperfect_fieldable_panels_receive.inc',
+      'access callback' => 'tpt_access_callback_admin',
+      'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}

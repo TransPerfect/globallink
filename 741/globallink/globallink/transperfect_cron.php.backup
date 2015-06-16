@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Move this file in drupal root folder and rename to transperfect_cron.php.
+ * Checks and updates available translations from GlobalLink.
+ * To use this cron, change the settings for cron type in the GlobalLink Adaptor Settings page.
+ * Add a new cron job in the operating system cron and set the time interval as desired.
+ * In the cron tab, execute the URL - http://drupal_site_url/transperfect_cron.php
+ * Also, for security add the following lines to the .htaccess file in your Drupal install root folder.
+ * <Files "transperfect_cron.php">
+ *   Order deny,allow
+ *   Allow from xxx.xxx.xxx.xxx
+ *   Deny from all
+ * </Files>
+ */
+define('DRUPAL_ROOT', getcwd());
+
+include_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+$TPT_PATH = drupal_get_path('module', 'transperfect');
+include_once $TPT_PATH . '/' . ('transperfect_receive_translations.inc');
+
+receive_translated_contents_automatically('transperfect_cron.php');

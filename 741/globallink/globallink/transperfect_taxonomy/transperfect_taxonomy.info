@@ -1,0 +1,9 @@
+name = GlobalLink Taxonomy Translation
+description = Allows users to manage and translate taxonomy terms using Translations.com translation services.
+core = 7.x
+dependencies[] = i18n_string
+dependencies[] = transperfect
+dependencies[] = i18n_taxonomy
+package = GlobalLink
+version = 7.X-4.1.0
+php = 5.2.5
