@@ -1,8 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
@@ -559,7 +557,7 @@ function get_taxonomy_translations_for_row_id($row_id) {
     if (!is_array($targets)) {
       $targets = array($targets);
     }
-    
+
     foreach ($targets as $target) {
       if (str_replace('-', '_', $target->targetLanguage->locale) == $globalLink->targetLocale) {
         if (!is_null($target->ticket) && $target->ticket != '') {

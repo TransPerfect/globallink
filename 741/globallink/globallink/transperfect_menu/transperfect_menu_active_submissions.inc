@@ -1,7 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 
 function transperfect_menu_active_submissions($type) {
