@@ -1,52 +1,11 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
-
-/*
- * hook transperfect_is_node_translatable
+/**
+ * Returns GlobalLink modules root menu
  */
+function transperfect_get_root_menu($menu_item) {
 
-function tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_node_translatable', $node, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/*
- * hook transperfect_is_field_translatable
- */
-
-function tpt_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_field_translatable', $node, $field, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/*
- * hook transperfect_translate_node_for_language
- */
-
-function tpt_translate_node_for_language($node, $drupal_target_locale) {
-  $result = module_invoke_all('transperfect_translate_node_for_language', $node, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/*
- * hook transperfect_import_translation
- */
-
-function tpt_update_node($source_node, $target_node) {
-  foreach (module_implements('transperfect_import_translation') as $module) {
-    $function = $module . '_transperfect_import_translation';
-    $function($source_node->nid, $target_node);
-  }
+  return 'admin/' . $menu_item;
 }
 
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
