@@ -185,6 +185,12 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
 
 /**
  * Determines whether or not the translation is supported.
+ *
+ * @param string $type
+ *   The type of translation.
+ *
+ * @return bool
+ *   True if the translation is supported, and false if it isn't.
  */
 function translation_supported($type) {
   if (translation_supported_type($type) || (module_exists('transperfect_entity')
@@ -251,6 +257,7 @@ function transperfect_form_field_ui_field_overview_form_alter(&$form, &$form_sta
 
 /**
  * Submit handler for Manage Fields Page of Content Type and Field Collection.
+ *
  * This adds a new field being added to the fields config table for translation.
  */
 function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_state) {
@@ -457,6 +464,14 @@ function insert_fc_items($content_type, $parent_field_name, $field_name) {
 
 /**
  * Retrieves all content types for a specified field.
+ *
+ * @param string $field_name
+ *   The name of the field to search.
+ * @param string $type
+ *   The field's type.
+ *
+ * @return array
+ *   An array containing all content types for the specified field.
  */
 function get_all_content_types_for_field($field_name, $type) {
   $array = array();
@@ -596,8 +611,6 @@ function transperfect_node_type_delete($info) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
- * Enables a selector to choose whether a field is translatable.
  */
 function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   $field_type = $form['#field']['type'];
@@ -836,6 +849,14 @@ function update_change_detection($node, $lang) {
 
 /**
  * Retrieves translatable fields.
+ *
+ * @param string $type
+ *   The fields' content type.
+ * @param bool $bundle
+ *   Bundles the fields if set to true.  Defaults to false.
+ *
+ * @return array
+ *   An array containing all fields of the specified type that are translatable.
  */
 function get_translatable_fields($type, $bundle = FALSE) {
   $fields = array();
@@ -860,6 +881,18 @@ function get_translatable_fields($type, $bundle = FALSE) {
 
 /**
  * Checks if a field is configured.
+ *
+ * @param string $content_type
+ *   The field's content type.
+ * @param string $entity_type
+ *   The field's entity type.
+ * @param bool $bundle
+ *   Bundles the fields if set to true.  Defaults to false.
+ * @param string $field_name
+ *   The name of the field.
+ *
+ * @return bool
+ *   True if the field is configured, and false if it isn't.
  */
 function check_field_configured($content_type, $entity_type, $bundle, $field_name) {
   $result = db_select('transperfect_field_config', 'tfc')
