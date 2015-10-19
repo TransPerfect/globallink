@@ -1,7 +1,5 @@
 <?php
 
-
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 
 function transperfect_dashboard_active_submissions_page($type) {
@@ -42,7 +40,7 @@ function transperfect_node_active_select_form() {
   $form['select_submission']['go'] = array(
       '#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_GO,
       '#attributes' => array('style' => 'display: none;'));
-  
+
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
         '#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,

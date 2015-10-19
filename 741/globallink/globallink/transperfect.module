@@ -1,6 +1,7 @@
 <?php
 
 define('TPT_ROOT', dirname(__FILE__));
+require_once TPT_ROOT . '/' . ('transperfect.inc');
 require_once TPT_ROOT . '/' . ('transperfect_receive_translations.inc');
 require_once TPT_ROOT . '/' . ('transperfect_field_configuration.inc');
 
@@ -105,19 +106,17 @@ function transperfect_form_field_ui_field_delete_form_alter(&$form, &$form_state
   }
 }
 
-/*
- * Adding a validation handler to check for change in multilingual options
+/**
+ * Adds a validation handler to check for change in multilingual options.
  */
-
 function transperfect_form_node_type_form_alter(&$form, $form_state) {
   array_unshift($form['#validate'], 'transperfect_form_node_type_form_validate');
 }
 
-/*
- * Validation to check if any active submission exists for this content type
+/**
+ * Validation to check if any active submission exists for this content type.
  * Only if there is a change in multilingual options.
  */
-
 function transperfect_form_node_type_form_validate($form, &$form_state) {
   $language_content_type = $form_state['values']['language_content_type'];
   if ($language_content_type != 2 && pending_submissions_exists_for_content_type($form_state['values']['old_type'])) {
@@ -125,11 +124,10 @@ function transperfect_form_node_type_form_validate($form, &$form_state) {
   }
 }
 
-/*
- * Submit handler for delete link on Manage Fields Page of Content Type and Field Collection
- * This deletes a field from fields config table
+/**
+ * Submit handler for delete link on Manage Fields Page of Content Type and Field Collection.
+ * This deletes a field from fields config table.
  */
-
 function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state) {
   $entity_type = isset($form['entity_type']['#value']) ? $form['entity_type']['#value'] : FALSE;
   $bundle_name = isset($form['bundle']['#value']) ? $form['bundle']['#value'] : FALSE;
@@ -185,6 +183,9 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
   }
 }
 
+/**
+ * Determines whether or not the translation is supported.
+ */
 function translation_supported($type) {
   if (translation_supported_type($type) || (module_exists('transperfect_entity')
           && entity_translation_node_supported_type($type))) {
@@ -248,11 +249,10 @@ function transperfect_form_field_ui_field_overview_form_alter(&$form, &$form_sta
   $form['#submit'][] = 'transperfect_form_field_ui_field_overview_form_submit';
 }
 
-/*
- * Submit handler for Manage Fields Page of Content Type and Field Collection
- * This adds a new field being added to the fields config table for translation
+/**
+ * Submit handler for Manage Fields Page of Content Type and Field Collection.
+ * This adds a new field being added to the fields config table for translation.
  */
-
 function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_state) {
   $entity_type = isset($form['#entity_type']) ? $form['#entity_type'] : FALSE;
   $bundle = isset($form['#bundle']) ? $form['#bundle'] : FALSE;
@@ -455,6 +455,9 @@ function insert_fc_items($content_type, $parent_field_name, $field_name) {
   }
 }
 
+/**
+ * Retrieves all content types for a specified field.
+ */
 function get_all_content_types_for_field($field_name, $type) {
   $array = array();
   $result = db_select('transperfect_field_config', 'tf')
@@ -594,7 +597,7 @@ function transperfect_node_type_delete($info) {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * Enable a selector to choose whether a field is translatable.
+ * Enables a selector to choose whether a field is translatable.
  */
 function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   $field_type = $form['#field']['type'];
@@ -831,6 +834,9 @@ function update_change_detection($node, $lang) {
           ->execute();
 }
 
+/**
+ * Retrieves translatable fields.
+ */
 function get_translatable_fields($type, $bundle = FALSE) {
   $fields = array();
   if ($bundle) {
@@ -852,6 +858,9 @@ function get_translatable_fields($type, $bundle = FALSE) {
   return $fields;
 }
 
+/**
+ * Checks if a field is configured.
+ */
 function check_field_configured($content_type, $entity_type, $bundle, $field_name) {
   $result = db_select('transperfect_field_config', 'tfc')
           ->fields('tfc')
@@ -1000,9 +1009,8 @@ function transperfect_cron() {
 }
 
 /*
- * hook transperfect_is_node_translatable
+ * Implements hook_transperfect_is_node_translatable().
  */
-
 function tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
   $result = module_invoke_all('transperfect_is_node_translatable', $node, $drupal_target_locale);
   if (count($result) > 0) {
@@ -1011,10 +1019,9 @@ function tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
   return FALSE;
 }
 
-/*
- * hook transperfect_is_field_translatable
+/**
+ * Implements hook_transperfect_is_field_translatable().
  */
-
 function tpt_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
   $result = module_invoke_all('transperfect_is_field_translatable', $node, $field, $drupal_target_locale);
   if (count($result) > 0) {
@@ -1024,9 +1031,8 @@ function tpt_is_field_translatable($node, $field, $drupal_target_locale = NULL) 
 }
 
 /*
- * hook transperfect_translate_node_for_language
+ * Implements hook_transperfect_translate_node_for_language().
  */
-
 function tpt_translate_node_for_language($node, $drupal_target_locale) {
   $result = module_invoke_all('transperfect_translate_node_for_language', $node, $drupal_target_locale);
   if (count($result) > 0) {
@@ -1036,9 +1042,8 @@ function tpt_translate_node_for_language($node, $drupal_target_locale) {
 }
 
 /*
- * hook transperfect_import_translation
+ * Implements hook_transperfect_import_translation().
  */
-
 function tpt_update_node($source_node, $target_node) {
   foreach (module_implements('transperfect_import_translation') as $module) {
     $function = $module . '_transperfect_import_translation';
