@@ -2,7 +2,6 @@
 
 require_once DRUPAL_ROOT . ('/includes/locale.inc');
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
@@ -447,7 +446,7 @@ function get_translated_fieldable_panels($pd4, &$globalLink_arr) {
         if (key($translated_arr[$field]) !== LANGUAGE_NONE) {
           $t_field_lang = key($translated_arr[$field]);
         }
-   
+
         if (empty($entity->{$field}[$target_locale]) && $target_locale != LANGUAGE_NONE) {
             $entity->{$field}[$target_locale] = $entity->{$field}[$t_field_lang];
         }

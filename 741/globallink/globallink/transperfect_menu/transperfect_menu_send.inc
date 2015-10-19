@@ -1,8 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
 

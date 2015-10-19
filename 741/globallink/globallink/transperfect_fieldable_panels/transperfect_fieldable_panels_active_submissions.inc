@@ -1,7 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
 
 function transperfect_fieldable_panels_active_submissions($type) {

@@ -1,54 +1,15 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
-
-/*
- * hook transperfect_is_node_translatable
+/**
+ * Returns GlobalLink modules root menu.
  */
-
-function tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_node_translatable', $node, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
+function transperfect_get_root_menu($menu_item) {
+  return 'admin/' . $menu_item;
 }
 
-/*
- * hook transperfect_is_field_translatable
+/**
+ * Builds a filter query.
  */
-
-function tpt_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_field_translatable', $node, $field, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/*
- * hook transperfect_translate_node_for_language
- */
-
-function tpt_translate_node_for_language($node, $drupal_target_locale) {
-  $result = module_invoke_all('transperfect_translate_node_for_language', $node, $drupal_target_locale);
-  if (count($result) > 0) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/*
- * hook transperfect_import_translation
- */
-
-function tpt_update_node($source_node, $target_node) {
-  foreach (module_implements('transperfect_import_translation') as $module) {
-    $function = $module . '_transperfect_import_translation';
-    $function($source_node->nid, $target_node);
-  }
-}
-
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
   $revisioning_module_exists = module_exists("revisioning");
   $filters = build_filters(TRUE);
@@ -183,6 +144,9 @@ function build_filters($content_translation) {
   return $filters;
 }
 
+/**
+ * Retrieves all translatable node types and names.
+ */
 function get_all_translatable_node_types_and_names() {
   $arr = array();
   $node_types = node_type_get_types();
@@ -215,6 +179,9 @@ function get_translatable_node_types_and_names($content_translation) {
   return $arr;
 }
 
+/**
+ * Retrieves locale name.
+ */
 function get_locale_name($locale_code) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -227,6 +194,9 @@ function get_locale_name($locale_code) {
   return $locale_name;
 }
 
+/**
+ * Retrieves Drupal locale name.
+ */
 function get_drupal_locale_name($tpt_locale_code) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -276,6 +246,9 @@ function get_transperfect_row_by_nid_and_locale($nid, $source, $target) {
   return FALSE;
 }
 
+/**
+ * Retrieves node source languages.
+ */
 function get_node_source_languages($nid) {
   $d_query = db_select('node', 'n');
   $d_query->condition('nid', $nid, '=');
@@ -289,6 +262,9 @@ function get_node_source_languages($nid) {
   return '';
 }
 
+/**
+ * Retrieves Transperfect locale code.
+ */
 function get_tpt_locale_code($drupal_locale) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -301,6 +277,9 @@ function get_tpt_locale_code($drupal_locale) {
   return $locale_code;
 }
 
+/**
+ * Retrieves Drupal locale code.
+ */
 function get_drupal_locale_code($locale_code) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -317,6 +296,9 @@ function update_node_tnid($nid, $tnid) {
   db_update('node')->fields(array('tnid' => $tnid))->condition('nid', $nid, '=')->execute();
 }
 
+/**
+ * Converts date to timestamp.
+ */
 function convert_date_to_timestamp($date) {
   list($month, $day, $year) = explode('/', $date);
   $seconds = mktime(0, 0, 0, $month, $day, $year);
