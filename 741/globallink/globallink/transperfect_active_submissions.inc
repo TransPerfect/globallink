@@ -14,11 +14,11 @@ function transperfect_dashboard_active_submissions_page($type) {
 function transperfect_node_active_select_form() {
   $form = array();
 
-  get_submission_status();
+  transperfect_get_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = get_distinct_active_submission_names();
+  $options = transperfect_get_distinct_active_submission_names();
 
   if ($redirect_submission == '' && !empty($_SESSION['transperfect_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_selected_submission'];
@@ -68,7 +68,7 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
       sleep(5);
       $selected_submission = $form_state['values']['submission'];
       $_SESSION['transperfect_selected_submission'] = '';
-      cancel_submission($selected_submission, $pd4);
+      transperfect_cancel_submission($selected_submission, $pd4);
       $_SESSION['transperfect_globalLink_arr'] = array();
       drupal_set_message(t('Submission has been cancelled successfully.'));
     }
@@ -136,7 +136,7 @@ function transperfect_dashboard_active() {
     $selected_value = $_SESSION['transperfect_selected_submission'];
   }
   elseif ($redirect_submission != '') {
-    $options = get_distinct_active_submission_names();
+    $options = transperfect_get_distinct_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -240,13 +240,13 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
     try {
       sleep(5);
       $rids_arr = array_filter($form_state['values']['table']);
-      $rids = check_tpt_status($rids_arr);
+      $rids = transperfect_check_tpt_status($rids_arr);
       if (count($rids) == 0) {
         drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
         return;
       }
       $_SESSION['transperfect_selected_submission'] = '';
-      cancel_select_records($rids, $pd4);
+      transperfect_cancel_select_records($rids, $pd4);
       $_SESSION['transperfect_globalLink_arr'] = array();
       drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
     }
@@ -263,7 +263,7 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
   }
   elseif ($op == TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS) {
     try {
-      $count = clear_cancelled_documents();
+      $count = transperfect_clear_cancelled_documents();
       $_SESSION['transperfect_selected_submission'] = '';
       $_SESSION['transperfect_globalLink_arr'] = array();
       if ($count > 0)

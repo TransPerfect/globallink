@@ -561,7 +561,7 @@ function transperfect_dashboard_node_form() {
             }
 
             $results = $d_query->execute();
-            $active_subs = get_active_submission_rows_by_nid($include_node_arr);
+            $active_subs = transperfect_get_active_submission_rows_by_nid($include_node_arr);
 
             $rows = array();
             foreach ($results as $item) {
@@ -635,7 +635,7 @@ function transperfect_dashboard_node_form() {
           $rows = array();
           foreach ($results as $item) {
             $count++;
-            $active_arr = get_active_submission_by_nid($item->nid);
+            $active_arr = transperfect_get_active_submission_by_nid($item->nid);
 
             $vid = $item->vid;
             if ($revisioning) {
@@ -727,7 +727,7 @@ function transperfect_dashboard_node_form() {
           foreach ($results as $item) {
             $count++;
 
-            $active_arr = get_active_submission_by_nid($item->nid);
+            $active_arr = transperfect_get_active_submission_by_nid($item->nid);
 
             $vid = $item->vid;
             if ($revisioning) {
@@ -952,7 +952,7 @@ function node_form_clear_submit($form, &$form_state) {
         list($nid, $vid) = explode('-', $nvid, 2);
         array_push($nid_arr, $nid);
       }
-      update_node_change_flag($nid_arr, $source, $tgt_arr);
+      transperfect_update_node_change_flag($nid_arr, $source, $tgt_arr);
       drupal_set_message(t('Status has been cleared successfully for selected record(s).'));
     }
   }
@@ -1030,10 +1030,10 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
 
       gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Sending submission - [" . $submission_name . "]");
 
-      $updated_globalLink_arr = send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+      $updated_globalLink_arr = transperfect_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
       if (count($updated_globalLink_arr) > 0) {
-        update_node_ticket_id($updated_globalLink_arr, $project_code);
+        transperfect_update_node_ticket_id($updated_globalLink_arr, $project_code);
         drupal_set_message(t('Content has been successfully sent for translations.'));
       }
       else {

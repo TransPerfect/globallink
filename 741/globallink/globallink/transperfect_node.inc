@@ -26,7 +26,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
  * @return
  *   Associative array representing a GlobalLink object.
  */
-function send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $node_check = variable_get('transperfect_implementation_type', 0);
   $submitter = $submission_details['submitter'];
   $globalLink_arr = array();
@@ -69,7 +69,7 @@ function send_for_translations($nids, $pd4, $submission_name, $due_date, $projec
     $tvid = NULL;
 
     $name = '.xml';
-    $xml = get_xml($node, $drupal_target_arr, $tnid, $tvid, $name);
+    $xml = transperfect_get_xml($node, $drupal_target_arr, $tnid, $tvid, $name);
     if (!$xml) {
       gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, "Cannot create XML. Skipping nid - [" . $nid . "]");
       continue;
@@ -107,7 +107,7 @@ function send_for_translations($nids, $pd4, $submission_name, $due_date, $projec
  * @param string $project_code
  *   The project's registered code.
  */
-function update_node_ticket_id($arr, $project_code) {
+function transperfect_update_node_ticket_id($arr, $project_code) {
   foreach ($arr as $globalLink) {
     $nid = $globalLink->nid;
     $node = node_load($nid);
@@ -134,7 +134,7 @@ function update_node_ticket_id($arr, $project_code) {
   }
 }
 
-function update_node_change_flag($nids, $source, $tgts) {
+function transperfect_update_node_change_flag($nids, $source, $tgts) {
   gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "CHANGED Status Cleared for Node Ids - [" . implode(",", $nids) . "]");
 
   $insert_arr = array();
@@ -186,7 +186,7 @@ function update_node_change_flag($nids, $source, $tgts) {
  * @param string $pd4
  *   The project director details.
  */
-function cancel_select_records($rowids, $pd4) {
+function transperfect_cancel_select_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
     $row = get_transperfect_row($rid);
@@ -199,7 +199,7 @@ function cancel_select_records($rowids, $pd4) {
   }
 
   cancel_select_documents($pd4, $globalLink_arr);
-  update_transperfect_row_document($globalLink_arr);
+  transperfect_update_row_document($globalLink_arr);
 }
 
 /**
@@ -208,15 +208,15 @@ function cancel_select_records($rowids, $pd4) {
  * @param string $selected_submission
  *   The submission ticket.
  */
-function cancel_submission($selected_submission) {
+function transperfect_cancel_submission($selected_submission) {
   $pd4 = get_project_director_details();
   $globalLink = new GlobalLink();
-  $submission_name = get_submission_name($selected_submission);
+  $submission_name = transperfect_get_submission_name($selected_submission);
   $globalLink->submissionName = $submission_name;
   $globalLink->submissionTicket = $selected_submission;
 
   cancel_ProjectDirector_submission($pd4, $globalLink);
-  update_transperfect_row_submission($globalLink);
+  transperfect_update_row_submission($globalLink);
 }
 
 /**
@@ -228,7 +228,7 @@ function cancel_submission($selected_submission) {
  * @return string
  *   The name of the submission.
  */
-function get_submission_name($submission_ticket) {
+function transperfect_get_submission_name($submission_ticket) {
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -246,7 +246,7 @@ function get_submission_name($submission_ticket) {
  * @param array $globalLink_arr
  *   Array of GlobalLink objects.
  */
-function update_transperfect_row_document(&$globalLink_arr) {
+function transperfect_update_row_document(&$globalLink_arr) {
   foreach ($globalLink_arr as $globalLink) {
     if ($globalLink->cancelled) {
       db_update('transperfect_core')
@@ -263,7 +263,7 @@ function update_transperfect_row_document(&$globalLink_arr) {
  * @param object $globalLink
  *   A GlobalLink object.
  */
-function update_transperfect_row_submission(&$globalLink) {
+function transperfect_update_row_submission(&$globalLink) {
   db_update('transperfect_core')
           ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
           ->condition('submission_ticket', $globalLink->submissionTicket, '=')
@@ -277,7 +277,7 @@ function update_transperfect_row_submission(&$globalLink) {
  * @return array
  *   Array containing all active submission names.
  */
-function get_distinct_active_submission_names() {
+function transperfect_get_distinct_active_submission_names() {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->distinct();
@@ -299,7 +299,7 @@ function get_distinct_active_submission_names() {
  * @return string
  *   The name of the submission.
  */
-function get_submission_from_nid($nid) {
+function transperfect_get_submission_from_nid($nid) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->condition('nid', $nid, '=');
@@ -315,7 +315,7 @@ function get_submission_from_nid($nid) {
 /**
  * @todo Document this function.
  */
-function get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+function transperfect_get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
@@ -339,18 +339,18 @@ function get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $t
  * @return
  *   True if the update is successful.
  */
-function update_deleted_records($pd4, $globalLink) {
+function transperfect_update_deleted_records($pd4, $globalLink) {
   try {
     $globalLink->status = TPT_STATUS_SOURCE_DELETED;
     sendDownloadConfirmation($globalLink->targetTicket, $pd4);
-    update_tpt_status($globalLink);
+    transperfect_update_tpt_status($globalLink);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_records - Code[$se->faultcode], Message[$se->faultstring]");
+    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - transperfect_update_deleted_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in transperfect_update_deleted_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -368,7 +368,7 @@ function update_deleted_records($pd4, $globalLink) {
  * @return int
  *   Number of rows translated.
  */
-function get_translated_content($pd4, &$globalLink_arr) {
+function transperfect_get_translated_content($pd4, &$globalLink_arr) {
   try {
     $count = 0;
     foreach ($globalLink_arr as $globalLink) {
@@ -376,10 +376,10 @@ function get_translated_content($pd4, &$globalLink_arr) {
         $globalLink->targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
         if (isset($globalLink->targetXML)) {
           $count++;
-          update_node($globalLink);
+          transperfect_update_node($globalLink);
           if ($globalLink->status != TPT_STATUS_ERROR) {
             sendDownloadConfirmation($globalLink->targetTicket, $pd4);
-            update_tpt_status($globalLink);
+            transperfect_update_tpt_status($globalLink);
           }
           else {
             $count--;
@@ -389,11 +389,11 @@ function get_translated_content($pd4, &$globalLink_arr) {
     }
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - get_translated_content - Code[$se->faultcode], Message[$se->faultstring]");
+    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - transperfect_get_translated_content - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in get_translated_content - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in transperfect_get_translated_content - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -403,7 +403,7 @@ function get_translated_content($pd4, &$globalLink_arr) {
 /**
  * @todo Document this function.
  */
-function update_tpt_status(&$globalLink) {
+function transperfect_update_tpt_status(&$globalLink) {
   if ($globalLink->status != TPT_STATUS_SOURCE_DELETED && $globalLink->status != TPT_STATUS_ERROR) {
     $row = get_transperfect_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
     $node = node_load($row->nid);
@@ -460,7 +460,7 @@ function update_tpt_status(&$globalLink) {
  * @param array $t_arr
  *   The translated array.  Defaults to null.
  */
-function update_node(&$globalLink, $t_arr = NULL) {
+function transperfect_update_node(&$globalLink, $t_arr = NULL) {
   $success = FALSE;
   try {
     $default_language = language_default();
@@ -475,7 +475,7 @@ function update_node(&$globalLink, $t_arr = NULL) {
       $translated_arr = $t_arr;
     }
     else {
-      $translated_arr = get_translated_array($globalLink->targetXML);
+      $translated_arr = transperfect_get_translated_array($globalLink->targetXML);
     }
 
     $target_nid = $translated_arr['nid'];
@@ -633,7 +633,7 @@ function update_node(&$globalLink, $t_arr = NULL) {
           }
         }
 
-        $success = save_translated_node_with_fields($node, $new_node, $translated_arr);
+        $success = transperfect_save_translated_node_with_fields($node, $new_node, $translated_arr);
 
         // Exclude Title Module Support
         if ($success && $exclude_title_module_exists) {
@@ -769,7 +769,7 @@ function update_node(&$globalLink, $t_arr = NULL) {
         }
       }
 
-      $success = save_translated_node_with_fields($node, $new_node, $translated_arr);
+      $success = transperfect_save_translated_node_with_fields($node, $new_node, $translated_arr);
 
       if ($success) {
          // Exclude Title Module Support
@@ -812,7 +812,7 @@ function update_node(&$globalLink, $t_arr = NULL) {
  * @return array
  *   The array of translated content.
  */
-function get_translated_array($xml) {
+function transperfect_get_translated_array($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -1003,7 +1003,7 @@ function get_translated_array($xml) {
  * @return array
  *   An array representing the active submission.
  */
-function get_active_submission_by_nid($nid) {
+function transperfect_get_active_submission_by_nid($nid) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->condition('nid', $nid, '=');
@@ -1033,7 +1033,7 @@ function get_active_submission_by_nid($nid) {
  * @return array
  *   The array of the active submission.
  */
-function get_active_submission_rows_by_nid($nids) {
+function transperfect_get_active_submission_rows_by_nid($nids) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->condition('nid', $nids, 'IN');
@@ -1102,7 +1102,7 @@ function transperfect_node_save(&$node) {
  * @return
  *   True if save is successful.
  */
-function save_translated_node_with_fields($node, &$tnode, $t_arr) {
+function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
   $field_arr = field_info_instances('node', $node->type);
   $keys = array_keys($field_arr);
   foreach ($keys as $field) {
@@ -1183,7 +1183,7 @@ function save_translated_node_with_fields($node, &$tnode, $t_arr) {
   $success = transperfect_node_save($tnode);
   if ($success) {
     if (module_exists("field_collection") && isset($t_arr['field_collection'])) {
-      save_field_collections($node, $tnode, $t_arr);
+      transperfect_save_field_collections($node, $tnode, $t_arr);
     }
   }
 
@@ -1200,7 +1200,7 @@ function save_translated_node_with_fields($node, &$tnode, $t_arr) {
  * @param array $t_arr
  *   The translated array.
  */
-function save_field_collections($node, $tnode, $t_arr) {
+function transperfect_save_field_collections($node, $tnode, $t_arr) {
   $field_arr = field_info_instances('node', $node->type);
   $keys = array_keys($field_arr);
   foreach ($keys as $field) {
@@ -1212,7 +1212,7 @@ function save_field_collections($node, $tnode, $t_arr) {
           foreach ($items as $entity_id_arr) {
             if (isset($entity_id_arr['value'])) {
               $fc_entity_id = $entity_id_arr['value'];
-              save_field_collections_recursively('node', $tnode, $fc_entity_id, $t_arr['field_collection'][$field]);
+              transperfect_save_field_collections_recursively('node', $tnode, $fc_entity_id, $t_arr['field_collection'][$field]);
             }
           }
         }
@@ -1233,7 +1233,7 @@ function save_field_collections($node, $tnode, $t_arr) {
  * @param array $translated_fc_arr
  *   The array of translated field collections.
  */
-function save_field_collections_recursively($entity_type, $host_entity, $fc_entity_id, $translated_fc_arr) {
+function transperfect_save_field_collections_recursively($entity_type, $host_entity, $fc_entity_id, $translated_fc_arr) {
   $fieldCollectionItemEntity = entity_load_unchanged('field_collection_item', $fc_entity_id);
   if (!$fieldCollectionItemEntity) {
     return;
@@ -1303,7 +1303,7 @@ function save_field_collections_recursively($entity_type, $host_entity, $fc_enti
           foreach ($items as $entity_id_arr) {
             if (isset($entity_id_arr['value'])) {
               $fc_entity_id = $entity_id_arr['value'];
-              save_field_collections_recursively('field_collection_item', $field_collection_item, $fc_entity_id, $translated_fc_arr);
+              transperfect_save_field_collections_recursively('field_collection_item', $field_collection_item, $fc_entity_id, $translated_fc_arr);
             }
           }
         }
@@ -1315,7 +1315,7 @@ function save_field_collections_recursively($entity_type, $host_entity, $fc_enti
 /**
  * @todo Document this function.
  */
-function get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE) {
+function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE) {
   if (is_null($node)) {
     return TPT_STATUS_SOURCE_DELETED;
   }
@@ -1330,7 +1330,7 @@ function get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $f
     else {
       $name = format_file_name($node->title) . $name;
     }
-    $xml = generate_xml_document($node, $target_arr, $tnid, $tvid, $for_display);
+    $xml = transperfect_generate_xml_document($node, $target_arr, $tnid, $tvid, $for_display);
     return $xml;
   }
 
@@ -1340,7 +1340,7 @@ function get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $f
 /**
  * @todo Document this function.
  */
-function generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE) {
+function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE) {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
   try {
@@ -1408,7 +1408,7 @@ function generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $
             $fieldCollectionItemEntity = entity_load('field_collection_item', array($items[0]['value']), array('revision_id' => $items[0]['revision_id']));
           }
         }
-        traverse_fields_and_field_collections('node', $node->type, $parent_fc, $node->type, $node->nid, $items, $field, $dom, $root, $node, $target_arr, $is_hook_enabled, $langcode);
+        transperfect_traverse_fields_and_field_collections('node', $node->type, $parent_fc, $node->type, $node->nid, $items, $field, $dom, $root, $node, $target_arr, $is_hook_enabled, $langcode);
       }
     }
 
@@ -1480,7 +1480,7 @@ function generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $
  * @param string $langcode
  *   The language code.  Defaults to LANGUAGE_NONE.
  */
-function traverse_fields_and_field_collections($entity_type, $content_type, $parent_fc, $bundle, $entity_id, $items, $field, $dom, $root, $source_node, $target_arr, $is_hook_enabled = 0, $langcode = LANGUAGE_NONE) {
+function transperfect_traverse_fields_and_field_collections($entity_type, $content_type, $parent_fc, $bundle, $entity_id, $items, $field, $dom, $root, $source_node, $target_arr, $is_hook_enabled = 0, $langcode = LANGUAGE_NONE) {
   if (!$items) {
     return;
   }
@@ -1572,7 +1572,7 @@ function traverse_fields_and_field_collections($entity_type, $content_type, $par
               if ($fc_field_def['type'] != 'list_boolean' && $fc_field_def['type'] != 'file' && $fc_field_def['type'] != 'taxonomy_term_reference') {
                 $fc_item = field_get_items('field_collection_item', $fieldCollectionItemEntity, $key);
                 if ($fc_item) {
-                  traverse_fields_and_field_collections('field_collection_item', $content_type, $parent_fc, $field_collection_name, $fc_entity_id, $fc_item, $key, $dom, $root, $source_node, $target_arr, $is_hook_enabled);
+                  transperfect_traverse_fields_and_field_collections('field_collection_item', $content_type, $parent_fc, $field_collection_name, $fc_entity_id, $fc_item, $key, $dom, $root, $source_node, $target_arr, $is_hook_enabled);
                 }
               }
             }
@@ -1592,7 +1592,7 @@ function traverse_fields_and_field_collections($entity_type, $content_type, $par
  * @return string
  *   The title of the node.
  */
-function get_node_title(&$globalLink) {
+function transperfect_get_node_title(&$globalLink) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
           ->condition('document_ticket', $globalLink->documentTicket, '=')
@@ -1628,7 +1628,7 @@ function get_node_title(&$globalLink) {
  * @param string $status
  *   The submission status.  Defaults to TPT_STATUS_CANCELLED.
  */
-function update_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
   db_update('transperfect_core')
           ->fields(array(
               'status' => $status,
@@ -1642,7 +1642,7 @@ function update_submission_status($submission_ticket, $status = TPT_STATUS_CANCE
 /**
  * Retrieves submission status for a translation on GlobalLink.
  */
-function get_submission_status() {
+function transperfect_get_submission_status() {
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
@@ -1654,14 +1654,14 @@ function get_submission_status() {
         $pd4 = get_project_director_details();
         $status = get_status($pd4, $row->submission_ticket);
         if (!$status || $status == PD_STATUS_CANCELLED) {
-          update_submission_status($row->submission_ticket);
+          transperfect_update_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        update_submission_status($row->submission_ticket);
+        transperfect_update_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        update_submission_status($row->submission_ticket);
+        transperfect_update_submission_status($row->submission_ticket);
       }
     }
   }
@@ -1670,7 +1670,7 @@ function get_submission_status() {
 /**
  * @todo Document this function.
  */
-function check_tpt_status($rids_arr) {
+function transperfect_check_tpt_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core', 'tc')
           ->fields('tc', array('rid'))
@@ -1701,7 +1701,7 @@ function check_tpt_status($rids_arr) {
  * @return int
  *   Number of cancelled documents that have been cleared.
  */
-function clear_cancelled_documents() {
+function transperfect_clear_cancelled_documents() {
   $count = 0;
   $query = db_select('transperfect_core', 'tc')
           ->fields('tc', array('submission_ticket'))
@@ -1709,7 +1709,7 @@ function clear_cancelled_documents() {
           ->condition('status', TPT_STATUS_CANCELLED, '=');
   $results = $query->execute();
   foreach ($results as $item) {
-    update_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+    transperfect_update_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
     $count++;
   }
 
