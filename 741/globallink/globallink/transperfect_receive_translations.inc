@@ -22,7 +22,7 @@ function transperfect_dashboard_receive_page($type) {
 function transperfect_node_receive_filter_form() {
   $form = array();
 
-  $submission_options = get_distinct_active_submission_names();
+  $submission_options = transperfect_get_distinct_active_submission_names();
   unset($submission_options['']);
   $submission_options['[any]'] = 'Any';
   $default_submission = '[any]';
@@ -274,7 +274,7 @@ function transperfect_dashboard_receive() {
 
         $source_xml = '';
         $status = TPT_STATUS_COMPLETED;
-        $title = get_node_title($globalLink);
+        $title = transperfect_get_node_title($globalLink);
         if (!$title) {
           $title = $globalLink->title;
           $status = TPT_STATUS_SOURCE_DELETED;
@@ -301,7 +301,7 @@ function transperfect_dashboard_receive() {
           continue;
         }
 
-        $tpt_row_id = get_tpt_row_id_from_submission($globalLink->submissionTicket, $globalLink->documentTicket, $globalLink->targetLocale);
+        $tpt_row_id = transperfect_get_tpt_row_id_from_submission($globalLink->submissionTicket, $globalLink->documentTicket, $globalLink->targetLocale);
         if ($tpt_row_id) {
           $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
         }
@@ -408,7 +408,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   if ($op == TPT_BTN_DASHBOARD_UPDATE_ALL) {
     try {
       $globalLink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
-      $count = get_translated_content($pd4, $globalLink_arr);
+      $count = transperfect_get_translated_content($pd4, $globalLink_arr);
       $error = FALSE;
       $delete_records_selected = FALSE;
       foreach ($globalLink_arr as $updated) {
@@ -416,7 +416,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
           $delete_records_selected = TRUE;
         }
         if ($updated->status == TPT_STATUS_ERROR) {
-          update_tpt_status($updated);
+          transperfect_update_tpt_status($updated);
           $error = TRUE;
         }
       }
@@ -447,7 +447,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       $count = 0;
       foreach ($globalLink_arr as $globalLink) {
         if ($globalLink->sourceDeleted == TRUE) {
-          $success = update_deleted_records($pd4, $globalLink);
+          $success = transperfect_update_deleted_records($pd4, $globalLink);
           $count++;
         }
       }
@@ -478,7 +478,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       foreach ($rids as $rid) {
         array_push($updated_globalLink_arr, $globalLink_arr[$rid]);
       }
-      $count = get_translated_content($pd4, $updated_globalLink_arr);
+      $count = transperfect_get_translated_content($pd4, $updated_globalLink_arr);
       $error = FALSE;
       foreach ($updated_globalLink_arr as $updated) {
         if ($updated->sourceDeleted == TRUE) {
@@ -486,7 +486,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         }
         if ($updated->status == TPT_STATUS_ERROR) {
           $error = TRUE;
-          update_tpt_status($updated);
+          transperfect_update_tpt_status($updated);
         }
       }
       $status = 'status';
@@ -547,10 +547,10 @@ function receive_translated_contents_automatically($cron_type) {
       $globalLink_arr = array($globalLink);
       switch ($type) {
         case "Node":
-          $count = get_translated_content($pd4, $globalLink_arr);
+          $count = transperfect_get_translated_content($pd4, $globalLink_arr);
           gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Node");
           if ($globalLink->status == TPT_STATUS_ERROR) {
-            update_tpt_status($globalLink);
+            transperfect_update_tpt_status($globalLink);
           }
           $_SESSION['transperfect_globalLink_arr'] = array();
           $_SESSION['transperfect_selected_submission'] = array();
@@ -647,7 +647,7 @@ function get_translations_for_row_id($row_id) {
           $globalLink->targetTicket = $target->ticket;
           $globalLink->targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
           if (!is_null($globalLink->targetXML) && $globalLink->targetXML != '') {
-            $translation = get_translated_array($globalLink->targetXML);
+            $translation = transperfect_get_translated_array($globalLink->targetXML);
             $nid = $translation['nid'];
             $vid = $translation['vid'];
             $node = node_load($nid, $vid);
@@ -661,10 +661,10 @@ function get_translations_for_row_id($row_id) {
                 }
               }
               $name = '';
-              $source_xml = get_xml($node, $globalLink->targetLocale, NULL, NULL, $name, TRUE);
+              $source_xml = transperfect_get_xml($node, $globalLink->targetLocale, NULL, NULL, $name, TRUE);
               $source_arr = array();
               if ($source_xml != TPT_STATUS_SOURCE_DELETED) {
-                $source_arr = get_translated_array($source_xml);
+                $source_arr = transperfect_get_translated_array($source_xml);
               }
             }
             else {
