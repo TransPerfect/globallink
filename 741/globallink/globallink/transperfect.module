@@ -96,7 +96,7 @@ function transperfect_permission() {
 }
 
 /**
- * @todo Document this function.
+ * Implements hook_form_FORM_ID_alter().
  */
 function transperfect_form_field_ui_field_delete_form_alter(&$form, &$form_state) {
   $field_name = $form['field_name']['#value'];
