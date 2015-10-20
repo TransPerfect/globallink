@@ -3,6 +3,29 @@
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 
+/**
+ * Sends content to GlobalLink for translation.
+ *
+ * @param array $nid
+ *   The array of nids.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return
+ *   Associative array representing a GlobalLink object.
+ */
 function send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $node_check = variable_get('transperfect_implementation_type', 0);
   $submitter = $submission_details['submitter'];
@@ -76,6 +99,14 @@ function send_for_translations($nids, $pd4, $submission_name, $due_date, $projec
   return $globalLink_arr;
 }
 
+/**
+ * Updates the ticket id for a specified node.
+ *
+ * @param array $arr
+ *   An array of GlobalLink objects.
+ * @param string $project_code
+ *   The project's registered code.
+ */
 function update_node_ticket_id($arr, $project_code) {
   foreach ($arr as $globalLink) {
     $nid = $globalLink->nid;
@@ -147,6 +178,14 @@ function update_node_change_flag($nids, $source, $tgts) {
   }
 }
 
+/**
+ * Cancels select records.
+ *
+ * @param array $rowids
+ *   Array of row ids to cancel select records for.
+ * @param string $pd4
+ *   The project director details.
+ */
 function cancel_select_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
@@ -163,6 +202,12 @@ function cancel_select_records($rowids, $pd4) {
   update_transperfect_row_document($globalLink_arr);
 }
 
+/**
+ * Cancels submission to GlobalLink.
+ *
+ * @param string $selected_submission
+ *   The submission ticket.
+ */
 function cancel_submission($selected_submission) {
   $pd4 = get_project_director_details();
   $globalLink = new GlobalLink();
@@ -174,6 +219,15 @@ function cancel_submission($selected_submission) {
   update_transperfect_row_submission($globalLink);
 }
 
+/**
+ * Retrieves submission name from GlobalLink
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The name of the submission.
+ */
 function get_submission_name($submission_ticket) {
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc');
@@ -186,6 +240,12 @@ function get_submission_name($submission_ticket) {
   }
 }
 
+/**
+ * Updates a row document on GlobalLink.
+ *
+ * @param array $globalLink_arr
+ *   Array of GlobalLink objects.
+ */
 function update_transperfect_row_document(&$globalLink_arr) {
   foreach ($globalLink_arr as $globalLink) {
     if ($globalLink->cancelled) {
@@ -197,6 +257,12 @@ function update_transperfect_row_document(&$globalLink_arr) {
   }
 }
 
+/**
+ * Updates a submission on GlobalLink.
+ *
+ * @param object $globalLink
+ *   A GlobalLink object.
+ */
 function update_transperfect_row_submission(&$globalLink) {
   db_update('transperfect_core')
           ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
@@ -205,6 +271,12 @@ function update_transperfect_row_submission(&$globalLink) {
           ->execute();
 }
 
+/**
+ * Retrieves all active submission names.
+ *
+ * @return array
+ *   Array containing all active submission names.
+ */
 function get_distinct_active_submission_names() {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
@@ -218,6 +290,15 @@ function get_distinct_active_submission_names() {
   return $arr;
 }
 
+/**
+ * Retrieves submission name from nid.
+ *
+ * @param string $nid
+ *   The nid to pass in.
+ *
+ * @return string
+ *   The name of the submission.
+ */
 function get_submission_from_nid($nid) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
@@ -231,6 +312,9 @@ function get_submission_from_nid($nid) {
   }
 }
 
+/**
+ * @todo Document this function.
+ */
 function get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -244,6 +328,17 @@ function get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $t
   }
 }
 
+/**
+ * Updates deleted records on GlobalLink.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globalLink
+ *   A GlobalLink object.
+ *
+ * @return
+ *   True if the update is successful.
+ */
 function update_deleted_records($pd4, $globalLink) {
   try {
     $globalLink->status = TPT_STATUS_SOURCE_DELETED;
@@ -262,6 +357,17 @@ function update_deleted_records($pd4, $globalLink) {
   return TRUE;
 }
 
+/**
+ * Retrieves translated content from GlobalLink.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globalLink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   Number of rows translated.
+ */
 function get_translated_content($pd4, &$globalLink_arr) {
   try {
     $count = 0;
@@ -294,6 +400,9 @@ function get_translated_content($pd4, &$globalLink_arr) {
   return $count;
 }
 
+/**
+ * @todo Document this function.
+ */
 function update_tpt_status(&$globalLink) {
   if ($globalLink->status != TPT_STATUS_SOURCE_DELETED && $globalLink->status != TPT_STATUS_ERROR) {
     $row = get_transperfect_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
@@ -343,6 +452,14 @@ function update_tpt_status(&$globalLink) {
   }
 }
 
+/**
+ * Updates node.
+ *
+ * @param object $globalLink
+ *   A GlobalLink object.
+ * @param array $t_arr
+ *   The translated array.  Defaults to null.
+ */
 function update_node(&$globalLink, $t_arr = NULL) {
   $success = FALSE;
   try {
@@ -686,6 +803,15 @@ function update_node(&$globalLink, $t_arr = NULL) {
   }
 }
 
+/**
+ * Retrieves translated array from XML input.
+ *
+ * @param string $xml
+ *   A string of raw XML.
+ *
+ * @return array
+ *   The array of translated content.
+ */
 function get_translated_array($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
@@ -868,8 +994,16 @@ function get_translated_array($xml) {
   return $arr;
 }
 
+/**
+ * Retrieves active submission from nid.
+ *
+ * @param string $nid
+ *   The nid to pass in.
+ *
+ * @return array
+ *   An array representing the active submission.
+ */
 function get_active_submission_by_nid($nid) {
-
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->condition('nid', $nid, '=');
@@ -890,6 +1024,15 @@ function get_active_submission_by_nid($nid) {
   return $arr;
 }
 
+/**
+ * Retrieves active submission rows from nid.
+ *
+ * @param string $nids
+ *   The nid to pass in.
+ *
+ * @return array
+ *   The array of the active submission.
+ */
 function get_active_submission_rows_by_nid($nids) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
@@ -926,6 +1069,15 @@ function get_active_submission_rows_by_nid($nids) {
   return FALSE;
 }
 
+/**
+ * Saves Transperfect node.
+ *
+ * @param object $node
+ *   The node to save.
+ *
+ * @return
+ *   True if save is successful.
+ */
 function transperfect_node_save(&$node) {
   try {
     node_save($node);
@@ -937,6 +1089,19 @@ function transperfect_node_save(&$node) {
   }
 }
 
+/**
+ * Saves translated node with fields.
+ *
+ * @param object $node
+ *   The original node.
+ * @param object $tnode
+ *   The translated node.
+ * @param array $t_arr
+ *   The translated array.
+ *
+ * @return
+ *   True if save is successful.
+ */
 function save_translated_node_with_fields($node, &$tnode, $t_arr) {
   $field_arr = field_info_instances('node', $node->type);
   $keys = array_keys($field_arr);
@@ -1025,6 +1190,16 @@ function save_translated_node_with_fields($node, &$tnode, $t_arr) {
   return $success;
 }
 
+/**
+ * Saves field collections.
+ *
+ * @param object $node
+ *   The original node.
+ * @param object $tnode
+ *   The translated node.
+ * @param array $t_arr
+ *   The translated array.
+ */
 function save_field_collections($node, $tnode, $t_arr) {
   $field_arr = field_info_instances('node', $node->type);
   $keys = array_keys($field_arr);
@@ -1046,6 +1221,18 @@ function save_field_collections($node, $tnode, $t_arr) {
   }
 }
 
+/**
+ * Saves field collections recursively.
+ *
+ * @param string $entity_type
+ *   The type of entity.
+ * @param string $host_entity
+ *   The host entity.
+ * @param string $fc_entity_id
+ *   The id of the field collection.
+ * @param array $translated_fc_arr
+ *   The array of translated field collections.
+ */
 function save_field_collections_recursively($entity_type, $host_entity, $fc_entity_id, $translated_fc_arr) {
   $fieldCollectionItemEntity = entity_load_unchanged('field_collection_item', $fc_entity_id);
   if (!$fieldCollectionItemEntity) {
@@ -1125,6 +1312,9 @@ function save_field_collections_recursively($entity_type, $host_entity, $fc_enti
   }
 }
 
+/**
+ * @todo Document this function.
+ */
 function get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE) {
   if (is_null($node)) {
     return TPT_STATUS_SOURCE_DELETED;
@@ -1147,6 +1337,9 @@ function get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $f
   return TPT_STATUS_SOURCE_DELETED;
 }
 
+/**
+ * @todo Document this function.
+ */
 function generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE) {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
@@ -1255,6 +1448,38 @@ function generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $
   return $dom->saveXML();
 }
 
+/**
+ * Traverses fields and field collections.
+ *
+ * @todo Clarify this documentation to make it more specific.
+ *
+ * @param string $entity_type
+ *   The type of entity.
+ * @param string $content_type
+ *   The content type.
+ * @param string $parent_fc
+ *   The parent field collection.
+ * @param string $bundle
+ *   The field collection bundle.
+ * @param string $entity_id
+ *   The id of the entity.
+ * @param array $items
+ *   Array of content.
+ * @param string $field
+ *   The name of the field.
+ * @param array $dom
+ *   Array representation of the DOM.
+ * @param array $root
+ *   The root of the DOM.
+ * @param object $source_node
+ *   The source node.
+ * @param array $target_arr
+ *   The target array.
+ * @param bool $is_hook_enabled
+ *   Whether or not the hook is enabled.  Defaults to false.
+ * @param string $langcode
+ *   The language code.  Defaults to LANGUAGE_NONE.
+ */
 function traverse_fields_and_field_collections($entity_type, $content_type, $parent_fc, $bundle, $entity_id, $items, $field, $dom, $root, $source_node, $target_arr, $is_hook_enabled = 0, $langcode = LANGUAGE_NONE) {
   if (!$items) {
     return;
@@ -1358,6 +1583,15 @@ function traverse_fields_and_field_collections($entity_type, $content_type, $par
   }
 }
 
+/**
+ * Retrieves node title.
+ *
+ * @param object $globalLink
+ *   A GlobalLink object.
+ *
+ * @return string
+ *   The title of the node.
+ */
 function get_node_title(&$globalLink) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
@@ -1386,6 +1620,14 @@ function get_node_title(&$globalLink) {
   return FALSE;
 }
 
+/**
+ * Update submission status for a translation on GlobalLink.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $status
+ *   The submission status.  Defaults to TPT_STATUS_CANCELLED.
+ */
 function update_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
   db_update('transperfect_core')
           ->fields(array(
@@ -1397,6 +1639,9 @@ function update_submission_status($submission_ticket, $status = TPT_STATUS_CANCE
           ->execute();
 }
 
+/**
+ * Retrieves submission status for a translation on GlobalLink.
+ */
 function get_submission_status() {
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc', array('submission_ticket'));
@@ -1422,6 +1667,9 @@ function get_submission_status() {
   }
 }
 
+/**
+ * @todo Document this function.
+ */
 function check_tpt_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core', 'tc')
@@ -1447,6 +1695,12 @@ function check_tpt_status($rids_arr) {
   return $rids_arr;
 }
 
+/**
+ * Clear cancelled documents on GlobalLink.
+ *
+ * @return int
+ *   Number of cancelled documents that have been cleared.
+ */
 function clear_cancelled_documents() {
   $count = 0;
   $query = db_select('transperfect_core', 'tc')
