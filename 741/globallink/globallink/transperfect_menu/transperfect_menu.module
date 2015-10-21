@@ -9,7 +9,7 @@ function transperfect_menu_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/dashboard/menu')] = array(
       'title' => ' Menus ',
       'page callback' => 'transperfect_dashboard_menu',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
       'file' => 'transperfect_menu_send.inc',
@@ -19,7 +19,7 @@ function transperfect_menu_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/menu')] = array(
       'title' => ' Menus ',
       'page callback' => 'transperfect_menu_active_submissions',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'file' => 'transperfect_menu_active_submissions.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
@@ -29,7 +29,7 @@ function transperfect_menu_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/menu')] = array(
       'title' => ' Menus ',
       'page callback' => 'transperfect_menu_receive_submissions',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'file' => 'transperfect_menu_receive.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
@@ -40,7 +40,7 @@ function transperfect_menu_menu() {
       'title' => 'Preview Translation',
       'page callback' => 'preview_translated_menu_content',
       'file' => 'transperfect_menu_receive.inc',
-      'access callback' => 'tpt_access_callback_admin',
+      'access callback' => 'transperfect_tpt_access_callback_admin',
       'type' => MENU_CALLBACK,
   );
 
