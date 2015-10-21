@@ -55,7 +55,7 @@ function get_interface_xml($lid, $source_arr) {
   $id->value = $lid;
   $root->appendChild($id);
 
-  insert_child_element($dom, $root, "interface", $source_arr['source'], array('name' => 'source',
+  transperfect_insert_child_element($dom, $root, "interface", $source_arr['source'], array('name' => 'source',
       'lid' => $lid,
       'location' => $source_arr['location']));
 
@@ -69,7 +69,7 @@ function update_interface_ticket_id($arr, $project_code) {
     $type = $globalLink->type;
     if ($type == 'interface') {
       $lid = $globalLink->otherObjectId;
-      $interface = load_source_data($lid);
+      $interface = transperfect_load_source_data($lid);
       foreach ($target_locale_arr as $target_locale) {
         $row = get_transperfect_interface_row($lid, $type, $globalLink->sourceLocale, $target_locale);
         if ($row) {
@@ -94,7 +94,7 @@ function update_interface_ticket_id($arr, $project_code) {
 }
 
 function interface_locale_languages($lid) {
-  $mapped_locales = get_mapped_tpt_locales_with_drupal_desc(TRUE);
+  $mapped_locales = transperfect_get_mapped_tpt_locales_with_drupal_desc(TRUE);
   $translation_status = '';
   foreach ($mapped_locales as $code => $locale) {
     $result = get_interface_submission_status($lid, $code);
@@ -150,7 +150,7 @@ function get_interface_translation_status($lid, $tgt_locale, &$title) {
   $results = $query->execute();
   foreach ($results as $row) {
     $title = $row->title;
-    $interface = load_source_data($lid);
+    $interface = transperfect_load_source_data($lid);
     if (!$interface || is_null($interface))
       return TPT_STATUS_SOURCE_DELETED;
     elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)
@@ -169,12 +169,12 @@ function update_deleted_interface_records($pd4, $globalLink) {
     update_tpt_interface_status($globalLink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_interface_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_interface_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_interface_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_interface_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -189,7 +189,7 @@ function get_translated_interfaces($pd4, &$globalLink_arr) {
     if (!$globalLink->sourceDeleted) {
       if (isset($targetXML)) {
         $count++;
-        $language = get_drupal_locale_code($globalLink->targetLocale);
+        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
         $translated_arr = get_translated_interface_items($targetXML);
         try {
           $lid = $translated_arr['lid'];
@@ -199,7 +199,7 @@ function get_translated_interfaces($pd4, &$globalLink_arr) {
             }
             $interface = '';
             if ($attribute == 'source') {
-              $interface = load_source_data($translations['lid']);
+              $interface = transperfect_load_source_data($translations['lid']);
               if ($interface == '') {
                 throw new Exception("Source string not found for interface id $lid and field name $attribute");
               }
@@ -274,7 +274,7 @@ function get_interface_active_submission_names() {
 function cancel_interface_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
-    $row = get_transperfect_other_row($rid, 'interface');
+    $row = transperfect_get_other_row($rid, 'interface');
     $globalLink = new GlobalLink();
     $globalLink->tptRowId = $row->rid;
     $globalLink->targetLocale = $row->target;

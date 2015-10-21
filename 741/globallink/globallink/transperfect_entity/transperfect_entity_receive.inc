@@ -35,7 +35,7 @@ function transperfect_entity_receive_filter_form() {
   }
 
   $n_arr = array('[any]' => t(' Any '));
-  $t_arr = get_mapped_tpt_locales_with_drupal_desc(FALSE);
+  $t_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
   $status_arr = array('[any]' => t(' Any '),
@@ -216,11 +216,11 @@ function transperfect_entity_receive_form() {
         }
       }
       catch (SoapFault $se) {
-        gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
+        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
     }
@@ -234,7 +234,7 @@ function transperfect_entity_receive_form() {
         'title' => TPT_LABEL_TITLE,
         'status' => TPT_LABEL_STATUS);
 
-    if (is_preview_enabled()) {
+    if (transperfect_is_preview_enabled()) {
       $header['preview'] = '';
     }
 
@@ -300,8 +300,8 @@ function transperfect_entity_receive_form() {
           $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
         }
 
-        $source_name = get_drupal_locale_name($globalLink->sourceLocale);
-        $target_name = get_drupal_locale_name($globalLink->targetLocale);
+        $source_name = transperfect_get_drupal_locale_name($globalLink->sourceLocale);
+        $target_name = transperfect_get_drupal_locale_name($globalLink->targetLocale);
 
         $rows[$key] = array(
             'submissionName' => $globalLink->submissionName,
@@ -311,7 +311,7 @@ function transperfect_entity_receive_form() {
             'status' => $status,
         );
 
-        if (is_preview_enabled()) {
+        if (transperfect_is_preview_enabled()) {
           $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(' Preview Translations ', 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
         }
 
@@ -328,13 +328,13 @@ function transperfect_entity_receive_form() {
     $form['table'] = array(
         '#type' => 'tableselect',
         '#header' => $header,
-        '#options' => pager_array_splice($rows, $page_count),
+        '#options' => transperfect_pager_array_splice($rows, $page_count),
         '#empty' => t('No items available'),
     );
 
     $form['pager'] = array('#markup' => theme('pager'));
 
-    if (is_preview_enabled()) {
+    if (transperfect_is_preview_enabled()) {
       $lcount = 1;
       $div_arr = array();
 
@@ -425,7 +425,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -459,7 +459,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -494,7 +494,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -509,11 +509,11 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
       $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -573,7 +573,7 @@ function get_translations_for_entity_row_id($row_id) {
             $vid = $translation['vid'];
             $node = node_load($nid, $vid);
             if ($node && is_object($node) && !is_null($node)) {
-              $drupal_locale_code = get_drupal_locale_code($globalLink->sourceLocale);
+              $drupal_locale_code = transperfect_get_drupal_locale_code($globalLink->sourceLocale);
               if ($node->tnid != 0 && $node->language != $drupal_locale_code) {
                 $translations = translation_node_get_translations($node->tnid);
                 if (isset($translations) && isset($translations[$drupal_locale_code])) {

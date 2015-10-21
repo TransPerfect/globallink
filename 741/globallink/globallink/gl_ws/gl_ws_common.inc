@@ -70,11 +70,11 @@ function test_ProjectDirector_connectivity($pdObject) {
       $project = @FindProjectByShortCode($projectService, $proj_code, $token);
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - getReadyTranslationsDetailsFromPD - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - getReadyTranslationsDetailsFromPD - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
 
