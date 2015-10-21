@@ -534,7 +534,13 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   }
 }
 
-function receive_translated_contents_automatically($cron_type) {
+/**
+ * Automatically receives the translated contents.
+ *
+ * @param string $cron_type
+ *   The type of cron job.
+ */
+function transperfect_auto_receive($cron_type) {
   drupal_set_time_limit(0); //set it so your cron wont time out if it takes a long time to process
   gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
 

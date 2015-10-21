@@ -997,13 +997,6 @@ function transperfect_menu() {
       'type' => MENU_LOCAL_TASK,
       'file' => 'transperfect_field_configuration.inc',
   );
-  $items[transperfect_get_root_menu('transperfect-translations/cron')] = array(
-      'title' => 'Receive Translations Cron',
-      'page callback' => 'receive_translated_contents_automatically',
-      'file' => 'transperfect_receive_translations.inc',
-      'access callback' => 'tpt_access_callback_admin',
-      'type' => MENU_CALLBACK,
-  );
   $items[transperfect_get_root_menu('transperfect-translations/preview')] = array(
       'title' => 'Preview Translation',
       'page callback' => 'preview_translated_content',
@@ -1035,9 +1028,9 @@ function tpt_access_callback_admin() {
  * Implements hook_cron().
  */
 function transperfect_cron() {
-//Only run this if settings are set to Drupal Cron
-  if (1 == variable_get('transperfect_cron_type', 0)) {
-    receive_translated_contents_automatically('hook_cron');
+  //Only run this if settings are set to Drupal Cron
+  if (variable_get('transperfect_cron_type', 0)) {
+    transperfect_auto_receive('hook_cron');
   }
 }
 
