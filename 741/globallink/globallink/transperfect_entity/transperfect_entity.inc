@@ -26,7 +26,7 @@ function send_entity_for_translations($nids, $pd4, $submission_name, $due_date, 
 
     if ($node_check == 1) {
       foreach ($target_arr as $key => $target_locale) {
-        if (!tpt_translate_node_for_language($node, transperfect_get_drupal_locale_code($target_locale))) {
+        if (!transperfect_tpt_translate_node_for_language($node, get_drupal_locale_code($target_locale))) {
           unset($target_arr[$key]);
         }
       }
@@ -730,7 +730,7 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
 
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
   if ($is_hook_enabled == 1) {
-    tpt_update_node($node, $node);
+    transperfect_tpt_update_node($node, $node);
   }
 
   // Currently doesn't work for entity translation
@@ -1014,7 +1014,7 @@ function traverse_entity_fields_and_field_collections($entity_type, $content_typ
           }
         }
         else {
-          if (tpt_is_field_translatable($source_node, $field, $target_arr)) {
+          if (transperfect_tpt_is_field_translatable($source_node, $field, $target_arr)) {
             //Regular Text Field, get the content directly from items array
             foreach ($items as $delta => $item) {
               if (isset($item['value']) && is_string($item['value'])) {

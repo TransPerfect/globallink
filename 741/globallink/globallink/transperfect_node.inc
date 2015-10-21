@@ -6,8 +6,8 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 /**
  * Sends content to GlobalLink for translation.
  *
- * @param array $nid
- *   The array of nids.
+ * @param array $nids
+ *   The array of node nids.
  * @param string $pd4
  *   The project director details.
  * @param string $submission_name
@@ -49,7 +49,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
 
     if ($node_check == 1) {
       foreach ($target_arr as $key => $target_locale) {
-        if (!tpt_translate_node_for_language($node, transperfect_get_drupal_locale_code($target_locale))) {
+        if (!transperfect_tpt_translate_node_for_language($node, get_drupal_locale_code($target_locale))) {
           unset($target_arr[$key]);
         }
       }
@@ -134,6 +134,16 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
   }
 }
 
+/**
+ * Update node modified flag.
+ *
+ * @param array $nids
+ *   Array of node nids.
+ * @param string $source
+ *   Transperfect locale code.
+ * @param array $tgts
+ *   Array of transperfect locale codes.
+ */
 function transperfect_update_node_change_flag($nids, $source, $tgts) {
   transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "CHANGED Status Cleared for Node Ids - [" . implode(",", $nids) . "]");
 
@@ -313,7 +323,17 @@ function transperfect_get_submission_from_nid($nid) {
 }
 
 /**
- * @todo Document this function.
+ * Retrieve the row id.
+ *
+ * @param string $submission_ticket
+ *   The translation submission ticket.
+ * @param string $document_ticket
+ *   The translation document ticket.
+ * @param string $target_locale
+ *   The locale the submission is being translated into.
+ *
+ * @return int
+ *   The id of the row.
  */
 function transperfect_get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core', 'tc');
@@ -336,7 +356,7 @@ function transperfect_get_tpt_row_id_from_submission($submission_ticket, $docume
  * @param object $globalLink
  *   A GlobalLink object.
  *
- * @return
+ * @return bool
  *   True if the update is successful.
  */
 function transperfect_update_deleted_records($pd4, $globalLink) {
@@ -401,7 +421,10 @@ function transperfect_get_translated_content($pd4, &$globalLink_arr) {
 }
 
 /**
- * @todo Document this function.
+ * Update the translation status.
+ *
+ * @param object $globalLink
+ *   The globallink translation data.
  */
 function transperfect_update_tpt_status(&$globalLink) {
   if ($globalLink->status != TPT_STATUS_SOURCE_DELETED && $globalLink->status != TPT_STATUS_ERROR) {
@@ -1177,7 +1200,7 @@ function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
 
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
   if ($is_hook_enabled == 1) {
-    tpt_update_node($node, $tnode);
+    transperfect_tpt_update_node($node, $tnode);
   }
 
   $success = transperfect_node_save($tnode);
@@ -1314,6 +1337,22 @@ function transperfect_save_field_collections_recursively($entity_type, $host_ent
 
 /**
  * @todo Document this function.
+ *
+ * @param object $node
+ *   The node data.
+ * @param string $target_arr
+ *   Array of locales node is being translated into.
+ * @param int $tnid
+ *   The node nid for existing translations.
+ * @param int $tvid
+ *    The node vid for existing translations.
+ * @param string $name
+ *   The xml document name.
+ * @param bool $for_display
+ *   Indicate for display purposes only.
+ *
+ * @return string
+ *   The node deleted status or the translation XML data.
  */
 function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE) {
   if (is_null($node)) {
@@ -1338,7 +1377,23 @@ function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$
 }
 
 /**
- * @todo Document this function.
+ * Build XML document with transltion data.
+ *
+ * @param object $node
+ *   The node data.
+ * @param string $target_arr
+ *   Array of locales node is being translated into.
+ * @param int $tnid
+ *   The node nid for existing translations.
+ * @param int $tvid
+ *    The node vid for existing translations.
+ * @param string $name
+ *   The xml document name.
+ * @param bool $for_display
+ *   Indicate for display purposes only.
+ *
+ * @return string
+ *   The transltion XML data.
  */
 function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE) {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
@@ -1384,8 +1439,8 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       transperfect_insert_child_element($dom, $root, "title", $node->title);
     }
     elseif ($is_hook_enabled == 1) {
-      if (tpt_is_field_translatable($node, 'title', $target_arr)) {
-        transperfect_insert_child_element($dom, $root, "title", $node->title);
+      if (transperfect_tpt_is_field_translatable($node, 'title', $target_arr)) {
+        insert_child_element($dom, $root, "title", $node->title);
       }
     }
 
@@ -1449,9 +1504,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
 }
 
 /**
- * Traverses fields and field collections.
- *
- * @todo Clarify this documentation to make it more specific.
+ * Recursively add fields and field collections to translation XML document.
  *
  * @param string $entity_type
  *   The type of entity.
@@ -1522,7 +1575,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
         }
       }
       else {
-        if (tpt_is_field_translatable($source_node, $field, $target_arr)) {
+        if (transperfect_tpt_is_field_translatable($source_node, $field, $target_arr)) {
           //Regular Text Field, get the content directly from items array
           foreach ($items as $delta => $item) {
             if (isset($item['value']) && is_string($item['value'])) {
@@ -1668,7 +1721,13 @@ function transperfect_get_submission_status() {
 }
 
 /**
- * @todo Document this function.
+ * Check translation status.
+ *
+ * @param array $rids_arr
+ *   Array of row ids.
+ *
+ * @return array
+ *   An array of row ids.
  */
 function transperfect_check_tpt_status($rids_arr) {
   $status = TRUE;

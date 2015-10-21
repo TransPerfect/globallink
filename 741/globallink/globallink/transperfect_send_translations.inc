@@ -542,7 +542,7 @@ function transperfect_dashboard_node_form() {
             $selected_target_lang = $tgt_lang;
           }
           foreach ($include_node_arr as $key => $nid) {
-            if (!tpt_is_node_translatable(node_load($nid), $selected_target_lang)) {
+            if (!transperfect_tpt_is_node_translatable(node_load($nid), $selected_target_lang)) {
               unset($include_node_arr[$key]);
             }
           }
