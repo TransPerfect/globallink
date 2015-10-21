@@ -41,7 +41,7 @@ function transperfect_node_receive_filter_form() {
   }
 
   $n_arr = array('[any]' => t(' Any '));
-  $t_arr = get_mapped_tpt_locales_with_drupal_desc(FALSE);
+  $t_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
   $status_arr = array('[any]' => t(' Any '),
@@ -222,11 +222,11 @@ function transperfect_dashboard_receive() {
         }
       }
       catch (SoapFault $se) {
-        gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
+        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
     }
@@ -240,7 +240,7 @@ function transperfect_dashboard_receive() {
         'title' => TPT_LABEL_TITLE,
         'status' => TPT_LABEL_STATUS);
 
-    if (is_preview_enabled()) {
+    if (transperfect_is_preview_enabled()) {
       $header['preview'] = '';
     }
 
@@ -306,8 +306,8 @@ function transperfect_dashboard_receive() {
           $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
         }
 
-        $source_name = get_drupal_locale_name($globalLink->sourceLocale);
-        $target_name = get_drupal_locale_name($globalLink->targetLocale);
+        $source_name = transperfect_get_drupal_locale_name($globalLink->sourceLocale);
+        $target_name = transperfect_get_drupal_locale_name($globalLink->targetLocale);
 
         $rows[$key] = array(
             'submissionName' => $globalLink->submissionName,
@@ -317,7 +317,7 @@ function transperfect_dashboard_receive() {
             'status' => $status,
         );
 
-        if (is_preview_enabled()) {
+        if (transperfect_is_preview_enabled()) {
           $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(' Preview Translations ', 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
         }
 
@@ -334,13 +334,13 @@ function transperfect_dashboard_receive() {
     $form['table'] = array(
         '#type' => 'tableselect',
         '#header' => $header,
-        '#options' => pager_array_splice($rows, $page_count),
+        '#options' => transperfect_pager_array_splice($rows, $page_count),
         '#empty' => t('No items available'),
     );
 
     $form['pager'] = array('#markup' => theme('pager'));
 
-    if (is_preview_enabled()) {
+    if (transperfect_is_preview_enabled()) {
       $lcount = 1;
       $div_arr = array();
 
@@ -431,7 +431,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -465,7 +465,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -500,7 +500,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -515,11 +515,11 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -542,7 +542,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
  */
 function transperfect_auto_receive($cron_type) {
   drupal_set_time_limit(0); //set it so your cron wont time out if it takes a long time to process
-  gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
+  transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
 
   try {
     $pd4 = get_project_director_details();
@@ -554,7 +554,7 @@ function transperfect_auto_receive($cron_type) {
       switch ($type) {
         case "Node":
           $count = transperfect_get_translated_content($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Node");
+          transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Node");
           if ($globalLink->status == TPT_STATUS_ERROR) {
             transperfect_update_tpt_status($globalLink);
           }
@@ -563,7 +563,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case "Entity":
           $count = get_translated_entity($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Entity");
+          transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Entity");
           if ($globalLink->status == TPT_STATUS_ERROR) {
             update_tpt_entity_status($globalLink);
           }
@@ -572,31 +572,31 @@ function transperfect_auto_receive($cron_type) {
           break;
         case "Block":
           $count += get_translated_blocks($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_DEBUG, "Imported Block");
+          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_DEBUG, "Imported Block");
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
           break;
         case "Interface":
           $count += get_translated_interfaces($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_DEBUG, "Imported Interface");
+          transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_DEBUG, "Imported Interface");
           $_SESSION['transperfect_interface_globalLink_arr'] = array();
           $_SESSION['transperfect_interface_selected_submission'] = array();
           break;
         case "Menu":
           $count += get_translated_menus($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_DEBUG, "Imported Menu");
+          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_DEBUG, "Imported Menu");
           $_SESSION['transperfect_menu_globalLink_arr'] = array();
           $_SESSION['transperfect_menu_selected_submission'] = array();
           break;
         case "Taxonomy":
           $count += get_translated_taxonomies($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_DEBUG, "Imported Taxonomy");
+          transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_DEBUG, "Imported Taxonomy");
           $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
           break;
         case "Webform":
           $count += get_translated_webforms($pd4, $globalLink_arr);
-          gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_DEBUG, "Imported Webform");
+          transperfect_gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_DEBUG, "Imported Webform");
           $_SESSION['transperfect_webform_globalLink_arr'] = array();
           $_SESSION['transperfect_webform_selected_submission'] = array();
           break;
@@ -604,13 +604,13 @@ function transperfect_auto_receive($cron_type) {
     }
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations Cron - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations Cron - Code[$se->faultcode], Message[$se->faultstring]");
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations Cron - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations Cron - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
   }
 
-  gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_INFO, "Cron Completed - $count Records Updated.");
+  transperfect_gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_INFO, "Cron Completed - $count Records Updated.");
 }
 
 function preview_translated_content() {
@@ -620,7 +620,7 @@ function preview_translated_content() {
 }
 
 function get_translations_for_row_id($row_id) {
-  $row = get_transperfect_row($row_id);
+  $row = transperfect_get_row($row_id);
 
   $globalLink = new GlobalLink();
   $globalLink->tptRowId = $row_id;
@@ -658,7 +658,7 @@ function get_translations_for_row_id($row_id) {
             $vid = $translation['vid'];
             $node = node_load($nid, $vid);
             if ($node && is_object($node) && !is_null($node)) {
-              $drupal_locale_code = get_drupal_locale_code($globalLink->sourceLocale);
+              $drupal_locale_code = transperfect_get_drupal_locale_code($globalLink->sourceLocale);
               if ($node->tnid != 0 && $node->language != $drupal_locale_code) {
                 $translations = translation_node_get_translations($node->tnid);
                 if (isset($translations) && isset($translations[$drupal_locale_code])) {

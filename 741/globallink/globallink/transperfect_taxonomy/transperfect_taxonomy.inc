@@ -20,7 +20,7 @@ function send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_da
     }
 
     $term = taxonomy_term_load($lid);
-    $path = drupal_lookup_path('alias', 'taxonomy/term/'.$lid, get_drupal_locale_code($source_locale));
+    $path = drupal_lookup_path('alias', 'taxonomy/term/'.$lid, transperfect_get_drupal_locale_code($source_locale));
 
     if (empty($term->name)) {
       continue;
@@ -60,13 +60,13 @@ function get_taxonomy_xml($term, $path) {
   $root->appendChild($id);
 
   if (!empty($term->name)) {
-    insert_child_element($dom, $root, "taxonomy", $term->name, array('name' => 'name'));
+    transperfect_insert_child_element($dom, $root, "taxonomy", $term->name, array('name' => 'name'));
   }
   if (!empty($term->description)) {
-    insert_child_element($dom, $root, "taxonomy", $term->description, array('name' => 'description'));
+    transperfect_insert_child_element($dom, $root, "taxonomy", $term->description, array('name' => 'description'));
   }
   if (!empty($path)) {
-    insert_child_element($dom, $root, "taxonomy", $path, array('name' => 'path'));
+    transperfect_insert_child_element($dom, $root, "taxonomy", $path, array('name' => 'path'));
   }
 
   $xml = $dom->saveXML();
@@ -145,12 +145,12 @@ function update_deleted_taxonomy_records($pd4, $globalLink) {
     update_tpt_taxonomy_status($globalLink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_taxonomy_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_taxonomy_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -195,7 +195,7 @@ function get_taxonomy_active_submission_names() {
 function cancel_taxonomy_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
-    $row = get_transperfect_other_row($rid, 'taxonomy');
+    $row = transperfect_get_other_row($rid, 'taxonomy');
     $globalLink = new GlobalLink();
     $globalLink->tptRowId = $row->rid;
     $globalLink->targetLocale = $row->target;
@@ -258,7 +258,7 @@ function get_translated_taxonomies($pd4, &$globalLink_arr) {
       if (isset($targetXML)) {
         $count++;
 
-        $language = get_drupal_locale_code($globalLink->targetLocale);
+        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
         $translated_arr = get_translated_taxonomy_items($targetXML);
 
         try {
@@ -303,13 +303,13 @@ function get_translated_taxonomies($pd4, &$globalLink_arr) {
         catch (SoapFault $se) {
           $count--;
           update_tpt_taxonomy_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[$se->faultcode], Message[$se->faultstring]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[$se->faultcode], Message[$se->faultstring]");
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
           update_tpt_taxonomy_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving taxonomy Objects - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving taxonomy Objects - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }

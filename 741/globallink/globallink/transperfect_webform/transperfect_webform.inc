@@ -67,7 +67,7 @@ function get_webform_xml($lid) {
           ->execute();
 
   foreach ($result as $row) {
-    insert_child_element($dom, $root, "webform", $row->source, array('name' => $property_arr['property'], 'lid' => $lid,
+    transperfect_insert_child_element($dom, $root, "webform", $row->source, array('name' => $property_arr['property'], 'lid' => $lid,
         'location' => $row->location,
         'format' => isset($lid['format']) ? $lid['format'] : ''));
   }
@@ -82,7 +82,7 @@ function update_webform_ticket_id($arr, $project_code) {
     $type = $globalLink->type;
     if ($type == 'webform') {
       $lid = $globalLink->otherObjectId;
-      $webform = load_source_data($lid);
+      $webform = transperfect_load_source_data($lid);
       foreach ($target_locale_arr as $target_locale) {
         $row = get_transperfect_webform_row($lid, $type, $globalLink->sourceLocale, $target_locale);
         if ($row) {
@@ -113,12 +113,12 @@ function update_deleted_webform_records($pd4, $globalLink) {
     update_tpt_webform_status($globalLink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_webform_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_webform_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_block_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_block_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -133,7 +133,7 @@ function get_translated_webforms($pd4, &$globalLink_arr) {
     if (!$globalLink->sourceDeleted) {
       if (isset($targetXML)) {
         $count++;
-        $language = get_drupal_locale_code($globalLink->targetLocale);
+        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
         $translated_arr = get_translated_webform_items($targetXML);
         try {
           $lid = $translated_arr['lid'];
@@ -143,7 +143,7 @@ function get_translated_webforms($pd4, &$globalLink_arr) {
             }
             $webform = '';
             if ($attribute == '#title' || $attribute == '#description') {
-              $webform = load_source_data($translations['lid']);
+              $webform = transperfect_load_source_data($translations['lid']);
               if ($webform == '') {
                 throw new Exception("Source string not found for webform id $lid and field name $attribute");
               }
@@ -200,7 +200,7 @@ function get_webform_submission_status($lid, $locale_code) {
 }
 
 function webform_locale_languages($lid) {
-  $mapped_locales = get_mapped_tpt_locales_with_drupal_desc(TRUE);
+  $mapped_locales = transperfect_get_mapped_tpt_locales_with_drupal_desc(TRUE);
   $translation_status = '';
   foreach ($mapped_locales as $code => $locale) {
     $result = get_webform_submission_status($lid, $code);
@@ -398,7 +398,7 @@ function get_webform_translation_status($lid, $tgt_locale, &$title) {
   $results = $query->execute();
   foreach ($results as $row) {
     $title = $row->title;
-    $webform = load_source_data($lid);
+    $webform = transperfect_load_source_data($lid);
     if (!$webform || is_null($webform))
       return TPT_STATUS_SOURCE_DELETED;
     elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)

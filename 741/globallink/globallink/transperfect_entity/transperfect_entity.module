@@ -17,7 +17,7 @@ function transperfect_entity_form_node_type_form_alter(&$form, $form_state) {
 
 function transperfect_entity_form_node_type_form_validate($form, &$form_state) {
   $language_content_type = $form_state['values']['language_content_type'];
-  if ($language_content_type != 2 && pending_submissions_exists_for_content_type($form_state['values']['old_type'])) {
+  if ($language_content_type != 2 && transperfect_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
     form_set_error('language_content_type', 'Active submission exists for this content type in GlobalLink.');
   }
 }
@@ -34,7 +34,7 @@ function transperfect_entity_presave($node) {
   }
 
   $handler = entity_translation_get_handler("node", $node);
-  $config_fields = get_translatable_fields($node->type, $node->type);
+  $config_fields = transperfect_get_translatable_fields($node->type, $node->type);
   $orig = $node->original;
   $lang = $handler->getFormLanguage(); // language of the node
 
@@ -46,7 +46,7 @@ function transperfect_entity_presave($node) {
     $field_name = $field->field_name;
     if ($field_name == 'title') {
       if ($orig->title != $node->title) {
-        update_change_detection_entity($node, $lang);
+        transperfect_update_change_detection_entity($node, $lang);
         break;
       }
     }
@@ -74,53 +74,53 @@ function transperfect_entity_presave($node) {
                 foreach ($o_arr[$lang] as $delta => $n_field) {
                   if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
                     if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
-                      update_change_detection_entity($node, $lang);
+                      transperfect_update_change_detection_entity($node, $lang);
                       break 2;
                     }
                   }
                   else {
-                    update_change_detection_entity($node, $lang);
+                    transperfect_update_change_detection_entity($node, $lang);
                     break 2;
                   }
                 }
               }
               else {
-                update_change_detection_entity($node, $lang);
+                transperfect_update_change_detection_entity($node, $lang);
                 break;
               }
             }
             else {
               if ($o_arr != $n_arr) {
-                update_change_detection_entity($node, $lang);
+                transperfect_update_change_detection_entity($node, $lang);
                 break;
               }
             }
           }
           else {
-            update_change_detection_entity($node, $lang);
+            transperfect_update_change_detection_entity($node, $lang);
             break;
           }
         }
         else {
           if ($o_arr != $n_arr) {
-            update_change_detection($node, $lang);
+            transperfect_update_change_detection($node, $lang);
             break;
           }
         }
       }
       else {
-        update_change_detection_entity($node, $lang);
+        transperfect_update_change_detection_entity($node, $lang);
         break;
       }
     }
     else {
-      update_change_detection_entity($node, $lang);
+      transperfect_update_change_detection_entity($node, $lang);
       break;
     }
   }
 }
 
-function update_change_detection_entity($node, $lang) {
+function transperfect_update_change_detection_entity($node, $lang) {
   $tpt_locale_code = get_tpt_locale_code($lang);
   db_update('transperfect_core_entity')
           ->fields(array('last_modified' => REQUEST_TIME, 'changed' => 1))
@@ -146,7 +146,7 @@ function update_change_detection_entity($node, $lang) {
 //      }
 //
 //      if ($node_check == 1) {
-//        if (!tpt_is_node_translatable(node_load($nid))) {
+//        if (!transperfect_tpt_is_node_translatable(node_load($nid))) {
 //          return;
 //        }
 //      }
@@ -160,7 +160,7 @@ function update_change_detection_entity($node, $lang) {
 //          $langs = language_list();
 //          unset($langs[$source]);
 //          if (count($langs) > 0) {
-//            $tgt_arr = get_tpt_sent_rows($nid, $source);
+//            $tgt_arr = transperfect_get_tpt_sent_rows($nid, $source);
 //            $tpt_count = count($tgt_arr);
 //            if ($tpt_count > 0 && $tpt_count == count($langs)) {
 //              $pending = FALSE;
@@ -195,15 +195,15 @@ function get_tpt_entity_sent_rows($nid, $source) {
           ->fields('tc')
           ->condition('nid', $nid, '=')
           ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
-          ->condition('source', get_tpt_locale_code($source), '=');
+          ->condition('source', transperfect_get_tpt_locale_code($source), '=');
   $result = $query->execute();
   foreach ($result as $row) {
-    $arr[] = get_drupal_locale_code($row->target);
+    $arr[] = transperfect_get_drupal_locale_code($row->target);
   }
   return $arr;
 }
 
-function entity_update_change_detection($node, $lang) {
+function transperfect_entity_update_change_detection($node, $lang) {
   $tpt_locale_code = get_tpt_locale_code($lang);
   db_update('transperfect_core_entity')
           ->fields(array('last_modified' => REQUEST_TIME, 'changed' => 1))
@@ -221,7 +221,7 @@ function transperfect_entity_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/dashboard/entity')] = array(
       'title' => ' Entity ',
       'page callback' => 'transperfect_dashboard_entity',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'type' => MENU_LOCAL_TASK,
       'file' => 'transperfect_entity_send.inc',
       'page arguments' => array('entity'),
@@ -230,7 +230,7 @@ function transperfect_entity_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity')] = array(
       'title' => ' Entity ',
       'page callback' => 'transperfect_entity_active_submissions',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'file' => 'transperfect_entity_active_submissions.inc',
       'type' => MENU_LOCAL_TASK,
       'page arguments' => array('entity'),
@@ -239,7 +239,7 @@ function transperfect_entity_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/entity')] = array(
       'title' => ' Entity ',
       'page callback' => 'transperfect_entity_receive_submissions',
-      'access callback' => 'tpt_access_callback_any',
+      'access callback' => 'transperfect_tpt_access_callback_any',
       'type' => MENU_LOCAL_TASK,
       'file' => 'transperfect_entity_receive.inc',
       'page arguments' => array('entity'),
@@ -249,7 +249,7 @@ function transperfect_entity_menu() {
       'title' => 'Preview Translation',
       'page callback' => 'preview_translated_entity',
       'file' => 'transperfect_entity_receive.inc',
-      'access callback' => 'tpt_access_callback_admin',
+      'access callback' => 'transperfect_tpt_access_callback_admin',
       'type' => MENU_CALLBACK,
   );
 

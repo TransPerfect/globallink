@@ -5,7 +5,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
 function send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
-  $strings = transperfect_get_strings(get_drupal_locale_code($source_locale), 'blocks');
+  $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($source_locale), 'blocks');
   $submitter = $submission_details['submitter'];
   $globalLink_arr = array();
   foreach ($bids as $bid) {
@@ -59,13 +59,13 @@ function get_block_xml($bid, $title_string_arr, $body_string_arr) {
 
   $custom_block = block_custom_block_get($bid);
   if ($title_string_arr) {
-    insert_child_element($dom, $root, "block", $title_string_arr['source'], array('name' => 'title', 'lid' => $title_string_arr['lid'],
+    transperfect_insert_child_element($dom, $root, "block", $title_string_arr['source'], array('name' => 'title', 'lid' => $title_string_arr['lid'],
         'location' => $title_string_arr['location'],
         'context' => $title_string_arr['context']));
   }
   if ($body_string_arr) {
     $format = isset($custom_block['format']) ? $custom_block['format'] : '';
-    insert_child_element($dom, $root, "block", $body_string_arr['source'], array('name' => 'body', 'lid' => $body_string_arr['lid'],
+    transperfect_insert_child_element($dom, $root, "block", $body_string_arr['source'], array('name' => 'body', 'lid' => $body_string_arr['lid'],
         'location' => $body_string_arr['location'],
         'context' => $body_string_arr['context'],
         'format' => $format));
@@ -148,12 +148,12 @@ function update_deleted_block_records($pd4, $globalLink) {
     update_tpt_block_status($globalLink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_block_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_block_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -198,7 +198,7 @@ function get_block_active_submission_names() {
 function cancel_block_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
-    $row = get_transperfect_other_row($rid, 'block');
+    $row = transperfect_get_other_row($rid, 'block');
     $globalLink = new GlobalLink();
     $globalLink->tptRowId = $row->rid;
     $globalLink->targetLocale = $row->target;
@@ -262,7 +262,7 @@ function get_translated_blocks($pd4, &$globalLink_arr) {
     if (!$globalLink->sourceDeleted) {
       if (isset($targetXML)) {
         $count++;
-        $language = get_drupal_locale_code($globalLink->targetLocale);
+        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
         $translated_arr = get_translated_block_items($targetXML);
         try {
           $bid = $translated_arr['bid'];
@@ -296,13 +296,13 @@ function get_translated_blocks($pd4, &$globalLink_arr) {
         catch (SoapFault $se) {
           $count--;
           update_tpt_block_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
           update_tpt_block_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving block Objects - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving block Objects - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }

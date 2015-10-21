@@ -17,9 +17,9 @@ function transperfect_dashboard_webform_page($type) {
 function transperfect_dashboard_webform_filter_form() {
   $form = array();
 
-  $locales = get_mapped_drupal_locales(FALSE);
+  $locales = transperfect_get_mapped_drupal_locales(FALSE);
   if (isset($locales) && count($locales) > 1) {
-    $results = drupal_search_query();
+    $results = transperfect_drupal_search_query();
 
     $form['filter'] = array(
         '#type' => 'fieldset',
@@ -134,7 +134,7 @@ function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) 
 
 function transperfect_dashboard_webform_pager_form() {
   $form = array();
-  $locales = get_mapped_drupal_locales(FALSE);
+  $locales = transperfect_get_mapped_drupal_locales(FALSE);
   if (isset($locales) && count($locales) > 1) {
     $form['page_counter']['markup'] = array(
         '#type' => 'container',
@@ -182,10 +182,10 @@ function webform_pager_form_submit($form, &$form_state) {
 function transperfect_dashboard_webform_form() {
   $form = array();
   $module_path = drupal_get_path('module', 'transperfect');
-  $locales = get_mapped_drupal_locales(FALSE);
+  $locales = transperfect_get_mapped_drupal_locales(FALSE);
   if (isset($locales) && count($locales) > 1) {
-    $target_lang_arr = get_mapped_tpt_locales_with_drupal_desc(FALSE);
-    $source_lang_arr = get_mapped_tpt_locales_with_drupal_desc(FALSE);
+    $target_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+    $source_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
 
     $page_count = TPT_PAGER_LIMIT;
     if (isset($_SESSION['transperfect_webform_page_count'])) {
@@ -198,7 +198,7 @@ function transperfect_dashboard_webform_form() {
       $default = $_SESSION['transperfect_selected_webform_language'];
     }
 
-    unset($target_lang_arr[get_tpt_locale_code($default)]);
+    unset($target_lang_arr[transperfect_get_tpt_locale_code($default)]);
     $t_count = 0;
     foreach ($target_lang_arr as $key => $value) {
       $t_count++;
@@ -281,7 +281,7 @@ function transperfect_dashboard_webform_form() {
       $active_subs = get_webform_active_submission_rows_by_lid($lids);
     }
 
-    $locales = get_mapped_drupal_locales(FALSE);
+    $locales = transperfect_get_mapped_drupal_locales(FALSE);
     $webform_results = $sql_query->execute();
 
     $rows = array();
@@ -293,14 +293,14 @@ function transperfect_dashboard_webform_form() {
         $sub_name = "";
         $tgt_arr = array();
         foreach ($sub_arr as $sub_name => $tgt_arr) {
-          $l_title = format_display_string($sub_name);
+          $l_title = transperfect_format_display_string($sub_name);
           $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/webform');
           $l_options = array('query' => array('submission' => urlencode($sub_name)));
           $active .= l($l_title, $l_href, $l_options) . "&nbsp;&nbsp;- &nbsp;&nbsp;";
           $t_count = 0;
           foreach ($tgt_arr as $tgt) {
             $t_count++;
-            $tgt_name = $locales[get_drupal_locale_code($tgt)];
+            $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
             if ($t_count == count($tgt_arr)) {
               $active .= $tgt_name . " <BR/> ";
             }
@@ -406,7 +406,7 @@ function transperfect_dashboard_webform_form() {
         );
         $form['send_submission']['submission_source_locale'] = array(
             '#type' => 'select', '#title' => t('Source Language'), '#required' => TRUE,
-            '#options' => $source_lang_arr, '#default_value' => get_tpt_locale_code($default),
+            '#options' => $source_lang_arr, '#default_value' => transperfect_get_tpt_locale_code($default),
             '#disabled' => TRUE,
             '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
             '#suffix' => '</tr>',
@@ -463,7 +463,7 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
       form_set_error('', t('No items selected.'));
     }
     if (!empty($form_state['values']['submission_due_date'])) {
-      $due_date = (convert_date_to_timestamp($form_state['values']['submission_due_date'])) / 1000;
+      $due_date = (transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date'])) / 1000;
       if ($due_date < REQUEST_TIME) {
         form_set_error('', t('The specified date is in past.'));
       }
@@ -511,7 +511,7 @@ function transperfect_dashboard_webform_form_submit($form, &$form_state) {
           unset($target_locale_arr[$key]);
         }
       }
-      $due_date = convert_date_to_timestamp($form_state['values']['submission_due_date']);
+      $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
       $project_code = $form_state['values']['submission_pd_project'];
       $updated_globalLink_arr = send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
       if (count($updated_globalLink_arr) > 0) {
