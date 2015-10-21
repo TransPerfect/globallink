@@ -54,11 +54,11 @@ function get_menu_xml($mlid) {
   $root->appendChild($id);
 
   $link = menu_link_load($mlid);
-  insert_child_element($dom, $root, "menu", $link['link_title'], array('name' => 'link_title'));
+  transperfect_insert_child_element($dom, $root, "menu", $link['link_title'], array('name' => 'link_title'));
 
   if (isset($link['options']) && isset($link['options']['attributes']) && isset($link['options']['attributes']['title'])) {
     if (is_string($link['options']['attributes']['title'])) {
-      insert_child_element($dom, $root, "menu", $link['options']['attributes']['title'], array('name' => 'title'));
+      transperfect_insert_child_element($dom, $root, "menu", $link['options']['attributes']['title'], array('name' => 'title'));
     }
   }
 
@@ -118,12 +118,12 @@ function update_deleted_menu_records($pd4, $globalLink) {
     update_tpt_menu_status($globalLink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_menu_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_menu_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -168,7 +168,7 @@ function get_menu_active_submission_names() {
 function cancel_menu_records($rowids, $pd4) {
   $globalLink_arr = array();
   foreach ($rowids as $rid) {
-    $row = get_transperfect_other_row($rid, 'menu');
+    $row = transperfect_get_other_row($rid, 'menu');
     $globalLink = new GlobalLink();
     $globalLink->tptRowId = $row->rid;
     $globalLink->targetLocale = $row->target;
@@ -287,7 +287,7 @@ function get_translated_menus($pd4, &$globalLink_arr) {
     if (!$globalLink->sourceDeleted) {
       if (isset($targetXML)) {
         $count++;
-        $language = get_drupal_locale_code($globalLink->targetLocale);
+        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
         $arr = get_translated_menu_items($targetXML);
         try {
           $mlid = $arr['mlid'];
@@ -396,13 +396,13 @@ function get_translated_menus($pd4, &$globalLink_arr) {
         catch (SoapFault $se) {
           $count--;
           update_tpt_menu_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
           update_tpt_menu_status($globalLink, TPT_STATUS_ERROR);
-          gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving Menu Object - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving Menu Object - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }

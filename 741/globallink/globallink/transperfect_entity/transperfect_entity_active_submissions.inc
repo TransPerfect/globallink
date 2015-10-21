@@ -72,11 +72,11 @@ function transperfect_entity_active_select_form_submit($form, &$form_state) {
       drupal_set_message(t('Submission has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Submissions - transperfect_node_active_select_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Submissions - transperfect_node_active_select_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Submissions - transperfect_node_active_select_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Submissions - transperfect_node_active_select_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -142,7 +142,7 @@ function transperfect_entity_active_form() {
   if (!empty($_SESSION['transpefect_entity_active_type'])) {
 
     $content_types = node_type_get_names();
-    $projects = get_PD_projects();
+    $projects = transperfect_get_PD_projects();
 
     $page_count = TPT_PAGER_LIMIT;
     if (isset($_SESSION['transperfect_entity_active_page_count'])) {
@@ -185,7 +185,7 @@ function transperfect_entity_active_form() {
           'nid' => $item->nid,
           'vid' => $item->vid,
           'submission' => $item->submission,
-          'title' => l(format_display_string($item->title), 'node/' . $item->nid),
+          'title' => l(transperfect_format_display_string($item->title), 'node/' . $item->nid),
           'project_code' => isset($projects[$item->project_code]) ? $projects[$item->project_code] : '',
           'type' => isset($content_types[$item->type]) ? $content_types[$item->type] : '',
           'status' => $item->status,
@@ -251,12 +251,12 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
     }
     catch (SoapFault $se) {
       $_SESSION['transperfect_entity_selected_submission'] = '';
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $_SESSION['transperfect_entity_selected_submission'] = '';
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -271,7 +271,7 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
         drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

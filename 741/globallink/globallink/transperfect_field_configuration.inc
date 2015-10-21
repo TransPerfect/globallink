@@ -14,7 +14,7 @@ function transperfect_field() {
 
   $form = array();
   $n_arr = array('' => t('--Select Content Type--'));
-  $t_arr = get_all_translatable_node_types_and_names();
+  $t_arr = transperfect_get_all_translatable_node_types_and_names();
   $node_types = $n_arr + $t_arr;
 
   $form['select_field'] = array(
@@ -36,7 +36,7 @@ function transperfect_field() {
   if ($selected_value != '') {
     $disabled = FALSE;
     $f_arr = array('[all]' => t('All'));
-    $p_arr = get_pending_fields($selected_value);
+    $p_arr = transperfect_get_pending_fields($selected_value);
     $pending_fields = $f_arr + $p_arr;
 
     if(count($pending_fields) == 1) {
@@ -183,7 +183,7 @@ function update_gl_field_config($type, $fids) {
 }
 
 function insert_gl_field_config($field_name, $content_type) {
-  $p_arr = get_pending_fields($content_type);
+  $p_arr = transperfect_get_pending_fields($content_type);
   if ($field_name == '[all]') {
     $f_keys = array_keys($p_arr);
     foreach ($f_keys as $f_key) {

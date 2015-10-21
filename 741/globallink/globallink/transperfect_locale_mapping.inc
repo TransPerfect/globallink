@@ -114,7 +114,7 @@ function transperfect_locale_submit($form, &$form_state) {
   else {
     $locales_arr = array_filter($form_state['values']['table']);
     foreach ($locales_arr as $locale) {
-      $locale_name = get_drupal_locale_name($locale);
+      $locale_name = transperfect_get_drupal_locale_name($locale);
       if (check_pending_submission($locale)) {
         delete_locale_mapping($locale);
         drupal_set_message(t($locale_name . ' mapping deleted successfully.'));

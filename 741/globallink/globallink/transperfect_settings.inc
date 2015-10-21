@@ -133,11 +133,11 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -168,11 +168,11 @@ function transperfect_pd_settings_submit($form, &$form_state) {
       drupal_set_message(t('Settings Saved and Connection Test Successful.'));
     }
     catch (SoapFault $se) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -289,7 +289,7 @@ function transperfect_adaptor_settings() {
 
 function view_log_submit($form, &$form_state) {
   $from_date = $form_state['input']['log_view_date'];
-  $from_date = convert_date_to_timestamp($from_date) / 1000;
+  $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
   $destination = 'temporary://' . 'globallink_log.html';
   $my_file_obj = file_unmanaged_save_data(get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
   file_transfer($my_file_obj, array('Content-Type' => 'application/htm',
@@ -337,7 +337,7 @@ function transperfect_adaptor_settings_validate($form, &$form_state) {
     }
     $value = $form_state['values']['transperfect_implementation_type'];
     if ($value != variable_get('transperfect_implementation_type')) {
-      if (pending_submissions_exists()) {
+      if (transperfect_pending_submission_exists()) {
         form_set_error('', t('Active submission exists. Please make sure there are no active submissions before changing this value.'));
       }
     }
@@ -437,5 +437,5 @@ function validate_project_director_details($pd4) {
 }
 
 function view_log($from_date) {
-  $from_date = convert_date_to_timestamp($from_date);
+  $from_date = transperfect_convert_date_to_timestamp($from_date);
 }
