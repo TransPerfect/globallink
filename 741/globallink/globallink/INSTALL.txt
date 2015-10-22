@@ -16,7 +16,7 @@ INSTALLATION:
 POST-INSTALLATION/CONFIGURATION:
 ================================
 - First of all review Drupal language settings and make sure you have chosen the right default language.
-- Enable the needed modules grouped under "GlobalLink" package
+- Enable the needed modules grouped under 'GlobalLink' package
 
 IMPORTANT:
 ==========

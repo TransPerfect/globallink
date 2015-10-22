@@ -49,7 +49,7 @@ function transperfect_taxonomy_active_select_form() {
   else {
     $form['select_submission']['br_markup'] = array(
         '#type' => 'markup',
-        '#markup' => "<BR/><BR/>",
+        '#markup' => '<BR/><BR/>',
     );
   }
 
@@ -59,7 +59,7 @@ function transperfect_taxonomy_active_select_form() {
 function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
-  };
+  }
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_GO) {
     $_SESSION['transperfect_taxonomy_selected_submission'] = $form_state['values']['submission'];
@@ -74,11 +74,11 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
       drupal_set_message(t('Submission has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Submissions - transperfect_taxonomy_active_select_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Submissions - transperfect_taxonomy_active_select_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Submissions - transperfect_taxonomy_active_select_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Submissions - transperfect_taxonomy_active_select_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -143,7 +143,7 @@ function transperfect_taxonomy_active_form() {
     $page_count = $_SESSION['transperfect_taxonomy_active_page_count'][0];
   }
 
-  $projects = transperfect_get_PD_projects();
+  $projects = transperfect_get_pd_projects();
 
   $header = array(
       'submission' => array('field' => 'submission', 'data' => t('Submission Name')),
@@ -181,7 +181,7 @@ function transperfect_taxonomy_active_form() {
         'source_name' => $item->source_name,
         'target_name' => $item->target_name,
         'status' => $item->status,
-        'timestamp' => date("Y-m-d H:i:s", $item->timestamp),
+        'timestamp' => date('Y-m-d H:i:s', $item->timestamp),
     );
   }
 
@@ -210,8 +210,8 @@ function transperfect_taxonomy_active_form() {
 }
 
 function transperfect_taxonomy_active_form_validate($form, &$form_state) {
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
@@ -225,7 +225,7 @@ function transperfect_taxonomy_active_form_validate($form, &$form_state) {
 function transperfect_taxonomy_active_form_submit($form, &$form_state) {
   sleep(5);
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
     try {
       $rids_arr = array_filter($form_state['values']['table']);
@@ -240,11 +240,11 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
       drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Document - transperfect_taxonomy_active_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_taxonomy_active_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Document - transperfect_taxonomy_active_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_taxonomy_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -253,13 +253,15 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
       $count = clear_cancelled_taxonomy_documents();
       $_SESSION['transperfect_selected_submission'] = '';
       $_SESSION['transperfect_globalLink_arr'] = array();
-      if ($count > 0)
+      if ($count > 0) {
         drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
-      else
+      }
+      else {
         drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+      }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, "Exception in Clear Cancel Document - transperfect_taxonomy_active_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_taxonomy_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

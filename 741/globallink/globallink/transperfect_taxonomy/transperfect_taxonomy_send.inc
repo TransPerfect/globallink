@@ -77,13 +77,13 @@ function transperfect_dashboard_taxonomy_filter_form() {
       $form['filter-search']['filter-markup'] = array(
           '#type' => 'container',
       );
-      $form['filter-search']['filter-markup'][] = array('#markup' => "<table>");
-      $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . t("Vocabulary") . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $vocab_arr[$default_vocab] . "</td></tr>");
+      $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
+      $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Vocabulary') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $vocab_arr[$default_vocab] . '</td></tr>');
       if ($default_info != '') {
-        $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . t("Term Name") . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $default_info . "</td></tr>");
+        $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Term Name') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $default_info . '</td></tr>');
       }
 
-      $form['filter-search']['filter-markup'][] = array('#markup' => "</table>");
+      $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
       $form['filter-search']['status']['actions'] = array(
           '#type' => 'actions',
           '#attributes' => array('class' => array('container-inline')),
@@ -163,7 +163,7 @@ function transperfect_dashboard_taxonomy_form() {
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
   if (isset($locales) && count($locales) > 1) {
-    $target_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+    $target_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
     $source_lang_arr = $target_lang_arr;
 
     $count = 0;
@@ -181,7 +181,7 @@ function transperfect_dashboard_taxonomy_form() {
     $default_language = language_default();
     $default = $default_language->language;
 
-    unset($target_lang_arr[transperfect_get_tpt_locale_code($default)]);
+    unset($target_lang_arr[transperfect_get_locale_code($default)]);
 
     $t_count = 0;
     foreach ($target_lang_arr as $key => $value) {
@@ -253,22 +253,22 @@ function transperfect_dashboard_taxonomy_form() {
         $active_subs = get_active_taxonomy_submission_rows($item->tid);
         if ($active_subs && array_key_exists($item->tid, $active_subs)) {
           $sub_arr = $active_subs[$item->tid];
-          $sub_name = "";
+          $sub_name = '';
           $tgt_arr = array();
           foreach ($sub_arr as $sub_name => $tgt_arr) {
             $l_title = transperfect_format_display_string($sub_name);
             $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/taxonomy');
             $l_options = array('query' => array('submission' => urlencode($sub_name)));
-            $active .= l($l_title, $l_href, $l_options) . "&nbsp;&nbsp;- &nbsp;&nbsp;";
+            $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
             $t_count = 0;
             foreach ($tgt_arr as $tgt) {
               $t_count++;
               $tgt_name = $source_lang_arr[$tgt];
               if ($t_count == count($tgt_arr)) {
-                $active .= $tgt_name . " <BR/> ";
+                $active .= $tgt_name . ' <BR/> ';
               }
               else {
-                $active .= $tgt_name . ", &nbsp;&nbsp;";
+                $active .= $tgt_name . ', &nbsp;&nbsp;';
               }
             }
           }
@@ -299,7 +299,7 @@ function transperfect_dashboard_taxonomy_form() {
       if ($count > 0) {
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid', "");
+          $projects = variable_get('transperfect_pd_projectid', '');
           if ($projects != '') {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
@@ -353,7 +353,7 @@ function transperfect_dashboard_taxonomy_form() {
             '#attributes' => array('class' => array('pickadate1'),
                 'style' => array('padding:0px;')),
             '#default_value' => $default_date,
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
             '#field_prefix' => '<BR/><div class="description">' . t('Expected Completion Date for this Submission.') . '</div></td><td>',
@@ -361,16 +361,16 @@ function transperfect_dashboard_taxonomy_form() {
         $form['send_submission']['submission_pd_project'] = array(
             '#type' => 'select', '#title' => t('Project Name'), '#required' => TRUE,
             '#options' => $r_proj_arr, '#default_value' => $p_key,
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
             '#field_prefix' => '<BR/><div class="description">' . t('GlobalLink Project Name for this Submission') . '</div></td><td>',
         );
         $form['send_submission']['submission_source_locale'] = array(
             '#type' => 'select', '#title' => t('Source Language'), '#required' => TRUE,
-            '#options' => $source_lang_arr, '#default_value' => transperfect_get_tpt_locale_code($default),
+            '#options' => $source_lang_arr, '#default_value' => transperfect_get_locale_code($default),
             '#disabled' => TRUE,
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
             '#field_prefix' => '<BR/><div class="description">' . t('Source language for this Submission.') . '</div></td><td>',
@@ -379,7 +379,7 @@ function transperfect_dashboard_taxonomy_form() {
             '#options' => $target_lang_arr,
             '#title' => t('Target Language(s)'),
             '#required' => TRUE,
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
             '#field_prefix' => '<BR/><div class="description">' . t('Target language(s) for this Submission.') . '</div></td><td>',
@@ -389,7 +389,7 @@ function transperfect_dashboard_taxonomy_form() {
             '#type' => 'textfield', '#title' => 'Submitter',
             '#size' => 40, '#required' => TRUE,
             '#default_value' => check_plain($user->name),
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
             '#field_prefix' => '<BR/><div class="description">' . t('Username for this new Submission.') . '</div></td><td>',
@@ -399,7 +399,7 @@ function transperfect_dashboard_taxonomy_form() {
             '#attributes' => array('style' => 'width: 275px;resize: none;'),
             '#rows' => 3,
             '#resizable' => FALSE,
-            '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+            '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr></table></div>',
             '#field_suffix' => '</div></td>',
             '#field_prefix' => '<BR/><div class="description">' . t('Other instructions for this Submission.') . '</div></td><td>',
@@ -413,8 +413,8 @@ function transperfect_dashboard_taxonomy_form() {
 
 function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
@@ -461,7 +461,7 @@ function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
   $submission_details = array();
   if ($op == TPT_BTN_DASHBOARD_SEND) {
     try {
-      $pd4 = get_project_director_details();
+      $pd4 = transperfect_get_project_director_details();
       $lids = array_filter($form_state['values']['table']);
       $submission_name = $form_state['values']['submission_name'];
       $source_locale = $form_state['values']['submission_source_locale'];

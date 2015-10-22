@@ -7,6 +7,7 @@
 	xmlns:ax241="http://dto.model.projectdirector.gs4tr.org/xsd"
 	targetNamespace="http://impl.services2.service.ws.projectdirector.gs4tr.org">
 	<wsdl:documentation>TargetService2</wsdl:documentation>
+	<commons:userAgent xmlns:commons="http://commons.ws.projectdirector.gs4tr.org">Drupal</commons:userAgent>
 	<wsdl:types>
 		<xs:schema xmlns:ax242="http://dto.model.projectdirector.gs4tr.org/xsd"
 			attributeFormDefault="qualified" elementFormDefault="qualified"
@@ -57,6 +58,22 @@
 					<xs:sequence>
 						<xs:element name="return" nillable="true"
 							type="ax241:RepositoryItem" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="downloadTranslationPreview">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="uuid" nillable="false" type="xs:string" />
+						<xs:element name="userId" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="downloadTranslationPreviewResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" nillable="true"
+							type="ax241:PreviewResult" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -129,6 +146,60 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
+
+			<xs:element name="getPagedCompletedTargetsByProjects">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="projectTickets"
+							nillable="false" type="xs:string" />
+						<xs:element name="info" nillable="false" type="ax241:PagedListInfo" />
+						<xs:element name="userId" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getPagedCompletedTargetsByProjectsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" nillable="true"
+							type="ax241:TargetPagedList" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getPagedCompletedTargetsBySubmissions">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="submissionTickets"
+							nillable="false" type="xs:string" />
+						<xs:element name="info" nillable="false" type="ax241:PagedListInfo" />
+						<xs:element name="userId" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getPagedCompletedTargetsBySubmissionsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" nillable="true"
+							type="ax241:TargetPagedList" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="requestTranslationPreview">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="targetId" nillable="false" maxOccurs="unbounded"
+							type="xs:string" />
+						<xs:element name="userId" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="requestTranslationPreviewResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="return" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="search">
 				<xs:complexType>
 					<xs:sequence>
@@ -144,6 +215,24 @@
 					<xs:sequence>
 						<xs:element name="return" nillable="true"
 							type="ax241:TargetPagedList" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="browseTargetsByDocuments">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" name="documentTickets"
+							nillable="false" type="xs:string" />
+						<xs:element name="info" nillable="false" type="ax241:PagedListInfo" />
+						<xs:element name="userId" nillable="false" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="browseTargetsByDocumentsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="return"
+							nillable="true" type="ax241:Target" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -249,11 +338,34 @@
 	<wsdl:message name="getCompletedTargetsByProjectsResponse">
 		<wsdl:part name="parameters" element="ns:getCompletedTargetsByProjectsResponse" />
 	</wsdl:message>
+
+	<wsdl:message name="getPagedCompletedTargetsBySubmissionsRequest">
+		<wsdl:part name="parameters"
+			element="ns:getPagedCompletedTargetsBySubmissions" />
+	</wsdl:message>
+	<wsdl:message name="getPagedCompletedTargetsBySubmissionsResponse">
+		<wsdl:part name="parameters"
+			element="ns:getPagedCompletedTargetsBySubmissionsResponse" />
+	</wsdl:message>
+	<wsdl:message name="getPagedCompletedTargetsByProjectsRequest">
+		<wsdl:part name="parameters" element="ns:getPagedCompletedTargetsByProjects" />
+	</wsdl:message>
+	<wsdl:message name="getPagedCompletedTargetsByProjectsResponse">
+		<wsdl:part name="parameters"
+			element="ns:getPagedCompletedTargetsByProjectsResponse" />
+	</wsdl:message>
+
 	<wsdl:message name="downloadTargetResourceRequest">
 		<wsdl:part name="parameters" element="ns:downloadTargetResource" />
 	</wsdl:message>
 	<wsdl:message name="downloadTargetResourceResponse">
 		<wsdl:part name="parameters" element="ns:downloadTargetResourceResponse" />
+	</wsdl:message>
+	<wsdl:message name="downloadTranslationPreviewRequest">
+		<wsdl:part name="parameters" element="ns:downloadTranslationPreview" />
+	</wsdl:message>
+	<wsdl:message name="downloadTranslationPreviewResponse">
+		<wsdl:part name="parameters" element="ns:downloadTranslationPreviewResponse" />
 	</wsdl:message>
 	<wsdl:message name="sendDownloadConfirmationRequest">
 		<wsdl:part name="parameters" element="ns:sendDownloadConfirmation" />
@@ -267,11 +379,23 @@
 	<wsdl:message name="getCompletedTargetsByDocumentsResponse">
 		<wsdl:part name="parameters" element="ns:getCompletedTargetsByDocumentsResponse" />
 	</wsdl:message>
+	<wsdl:message name="requestTranslationPreviewRequest">
+		<wsdl:part name="parameters" element="ns:requestTranslationPreview" />
+	</wsdl:message>
+	<wsdl:message name="requestTranslationPreviewResponse">
+		<wsdl:part name="parameters" element="ns:requestTranslationPreviewResponse" />
+	</wsdl:message>
 	<wsdl:message name="searchRequest">
 		<wsdl:part name="parameters" element="ns:search" />
 	</wsdl:message>
 	<wsdl:message name="searchResponse">
 		<wsdl:part name="parameters" element="ns:searchResponse" />
+	</wsdl:message>
+	<wsdl:message name="browseTargetsByDocumentsRequest">
+		<wsdl:part name="parameters" element="ns:browseTargetsByDocuments" />
+	</wsdl:message>
+	<wsdl:message name="browseTargetsByDocumentsResponse">
+		<wsdl:part name="parameters" element="ns:browseTargetsByDocumentsResponse" />
 	</wsdl:message>
 	<wsdl:message name="getCanceledTargetsByDocumentsRequest">
 		<wsdl:part name="parameters" element="ns:getCanceledTargetsByDocuments" />
@@ -320,11 +444,31 @@
 			<wsdl:output message="ns:getCompletedTargetsByProjectsResponse"
 				wsaw:Action="urn:getCompletedTargetsByProjectsResponse" />
 		</wsdl:operation>
+
+		<wsdl:operation name="getPagedCompletedTargetsBySubmissions">
+			<wsdl:input message="ns:getPagedCompletedTargetsBySubmissionsRequest"
+				wsaw:Action="urn:getPagedCompletedTargetsBySubmissions" />
+			<wsdl:output message="ns:getPagedCompletedTargetsBySubmissionsResponse"
+				wsaw:Action="urn:getPagedCompletedTargetsBySubmissionsResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="getPagedCompletedTargetsByProjects">
+			<wsdl:input message="ns:getPagedCompletedTargetsByProjectsRequest"
+				wsaw:Action="urn:getPagedCompletedTargetsByProjects" />
+			<wsdl:output message="ns:getPagedCompletedTargetsByProjectsResponse"
+				wsaw:Action="urn:getPagedCompletedTargetsByProjectsResponse" />
+		</wsdl:operation>
+
 		<wsdl:operation name="downloadTargetResource">
 			<wsdl:input message="ns:downloadTargetResourceRequest"
 				wsaw:Action="urn:downloadTargetResource" />
 			<wsdl:output message="ns:downloadTargetResourceResponse"
 				wsaw:Action="urn:downloadTargetResourceResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="downloadTranslationPreview">
+			<wsdl:input message="ns:downloadTranslationPreviewRequest"
+				wsaw:Action="urn:downloadTranslationPreview" />
+			<wsdl:output message="ns:downloadTranslationPreviewResponse"
+				wsaw:Action="urn:downloadTranslationPreviewResponse" />
 		</wsdl:operation>
 		<wsdl:operation name="sendDownloadConfirmation">
 			<wsdl:input message="ns:sendDownloadConfirmationRequest"
@@ -338,9 +482,22 @@
 			<wsdl:output message="ns:getCompletedTargetsByDocumentsResponse"
 				wsaw:Action="urn:getCompletedTargetsByDocumentsResponse" />
 		</wsdl:operation>
+		<wsdl:operation name="requestTranslationPreview">
+			<wsdl:input message="ns:requestTranslationPreviewRequest"
+				wsaw:Action="urn:requestTranslationPreview" />
+			<wsdl:output message="ns:requestTranslationPreviewResponse"
+				wsaw:Action="urn:requestTranslationPreviewResponse" />
+		</wsdl:operation>
 		<wsdl:operation name="search">
+			<wsdl:documentation>Deprecated since 4.5.0</wsdl:documentation>
 			<wsdl:input message="ns:searchRequest" wsaw:Action="urn:search" />
 			<wsdl:output message="ns:searchResponse" wsaw:Action="urn:searchResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="browseTargetsByDocuments">
+			<wsdl:input message="ns:browseTargetsByDocumentsRequest"
+				wsaw:Action="urn:browseTargetsByDocuments" />
+			<wsdl:output message="ns:browseTargetsByDocumentsResponse"
+				wsaw:Action="urn:browseTargetsByDocumentsResponse" />
 		</wsdl:operation>
 		<wsdl:operation name="getCanceledTargetsByDocuments">
 			<wsdl:input message="ns:getCanceledTargetsByDocumentsRequest"
@@ -412,8 +569,40 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
+
+		<wsdl:operation name="getPagedCompletedTargetsBySubmissions">
+			<soap:operation soapAction="urn:getPagedCompletedTargetsBySubmissions"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPagedCompletedTargetsByProjects">
+			<soap:operation soapAction="urn:getPagedCompletedTargetsByProjects"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
 		<wsdl:operation name="downloadTargetResource">
 			<soap:operation soapAction="urn:downloadTargetResource"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="downloadTranslationPreview">
+			<soap:operation soapAction="urn:downloadTranslationPreview"
 				style="document" />
 			<wsdl:input>
 				<soap:body use="literal" />
@@ -442,7 +631,26 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
+		<wsdl:operation name="requestTranslationPreview">
+			<soap:operation soapAction="urn:requestTranslationPreview"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
 		<wsdl:operation name="search">
+			<soap:operation soapAction="urn:search" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="browseTargetsByDocuments">
 			<soap:operation soapAction="urn:search" style="document" />
 			<wsdl:input>
 				<soap:body use="literal" />
@@ -535,8 +743,40 @@
 				<soap12:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
+
+		<wsdl:operation name="getPagedCompletedTargetsBySubmissions">
+			<soap12:operation soapAction="urn:getPagedCompletedTargetsBySubmissions"
+				style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPagedCompletedTargetsByProjects">
+			<soap12:operation soapAction="urn:getPagedCompletedTargetsByProjects"
+				style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+
 		<wsdl:operation name="downloadTargetResource">
 			<soap12:operation soapAction="urn:downloadTargetResource"
+				style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="downloadTranslationPreview">
+			<soap12:operation soapAction="urn:downloadTranslationPreview"
 				style="document" />
 			<wsdl:input>
 				<soap12:body use="literal" />
@@ -565,7 +805,26 @@
 				<soap12:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
+		<wsdl:operation name="requestTranslationPreview">
+			<soap12:operation soapAction="urn:requestTranslationPreview"
+				style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
 		<wsdl:operation name="search">
+			<soap12:operation soapAction="urn:search" style="document" />
+			<wsdl:input>
+				<soap12:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="browseTargetsByDocuments">
 			<soap12:operation soapAction="urn:search" style="document" />
 			<wsdl:input>
 				<soap12:body use="literal" />
@@ -652,6 +911,32 @@
 				<mime:content type="text/xml" part="getCompletedTargetsByProjects" />
 			</wsdl:output>
 		</wsdl:operation>
+
+		<wsdl:operation name="getPagedCompletedTargetsBySubmissions">
+			<http:operation
+				location="TargetService2_490/getPagedCompletedTargetsBySubmissions" />
+			<wsdl:input>
+				<mime:content type="text/xml"
+					part="getPagedCompletedTargetsBySubmissions" />
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content type="text/xml"
+					part="getPagedCompletedTargetsBySubmissions" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPagedCompletedTargetsByProjects">
+			<http:operation
+				location="TargetService2_490/getPagedCompletedTargetsByProjects" />
+			<wsdl:input>
+				<mime:content type="text/xml"
+					part="getPagedCompletedTargetsByProjects" />
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content type="text/xml"
+					part="getPagedCompletedTargetsByProjects" />
+			</wsdl:output>
+		</wsdl:operation>
+
 		<wsdl:operation name="downloadTargetResource">
 			<http:operation location="TargetService2/downloadTargetResource" />
 			<wsdl:input>
@@ -659,6 +944,15 @@
 			</wsdl:input>
 			<wsdl:output>
 				<mime:content type="text/xml" part="downloadTargetResource" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="downloadTranslationPreview">
+			<http:operation location="TargetService2_490/downloadTranslationPreview" />
+			<wsdl:input>
+				<mime:content type="text/xml" part="downloadTranslationPreview" />
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content type="text/xml" part="downloadTranslationPreview" />
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="sendDownloadConfirmation">
@@ -679,6 +973,15 @@
 				<mime:content type="text/xml" part="getCompletedTargetsByDocuments" />
 			</wsdl:output>
 		</wsdl:operation>
+		<wsdl:operation name="requestTranslationPreview">
+			<http:operation location="TargetService2_490/requestTranslationPreview" />
+			<wsdl:input>
+				<mime:content type="text/xml" part="requestTranslationPreview" />
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content type="text/xml" part="requestTranslationPreview" />
+			</wsdl:output>
+		</wsdl:operation>
 		<wsdl:operation name="search">
 			<http:operation location="TargetService2/search" />
 			<wsdl:input>
@@ -686,6 +989,15 @@
 			</wsdl:input>
 			<wsdl:output>
 				<mime:content type="text/xml" part="search" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="browseTargetsByDocuments">
+			<http:operation location="TargetService2_490/browseTargetsByDocuments" />
+			<wsdl:input>
+				<mime:content type="text/xml" part="browseTargetsByDocuments" />
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content type="text/xml" part="browseTargetsByDocuments" />
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="getCanceledTargetsByDocuments">

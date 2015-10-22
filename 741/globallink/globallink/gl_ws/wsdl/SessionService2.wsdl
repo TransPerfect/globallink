@@ -5,6 +5,7 @@
 	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://impl.services2.service.ws.projectdirector.gs4tr.org">
 	<wsdl:documentation>SessionService2</wsdl:documentation>
+	<commons:userAgent xmlns:commons="http://commons.ws.projectdirector.gs4tr.org">Drupal</commons:userAgent>
 	<wsdl:types>
 		<xs:schema xmlns:ax22="http://impl.services2.service.ws.projectdirector.gs4tr.org/xsd"
 			attributeFormDefault="qualified" elementFormDefault="qualified"

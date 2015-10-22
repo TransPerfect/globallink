@@ -8,7 +8,7 @@ function transperfect_locale_page() {
 function transperfect_locale() {
   $form = array();
   $languages = language_list('language', TRUE);
-  $mapped_languages = get_mapped_locale_codes();
+  $mapped_languages = transperfect_get_mapped_locale_codes();
 
   if (sizeof($mapped_languages) > 0) {
     foreach ($mapped_languages as $mlang) {
@@ -28,7 +28,7 @@ function transperfect_locale() {
     }
   }
 
-  $tpt_list = get_tpt_list();
+  $tpt_list = transperfect_get_tpt_list();
 
   $header = array(
       'drupal_locale_code' => array('field' => 'tl.drupal_locale_desc', 'data' => t('Drupal Site Locales')),
@@ -108,25 +108,25 @@ function transperfect_locale_submit($form, &$form_state) {
     $drupal_seleced_locale = $form_state['values']['drupal_locale_list'];
     $drupal_locale = explode("|", $drupal_seleced_locale);
     $locale_code = $form_state['values']['tpt_locale_list'];
-    add_locale_mapping($drupal_locale[0], $drupal_locale[1], $locale_code);
+    transperfect_add_locale_mapping($drupal_locale[0], $drupal_locale[1], $locale_code);
     drupal_set_message(t('Mapping added successfully.'));
   }
   else {
     $locales_arr = array_filter($form_state['values']['table']);
     foreach ($locales_arr as $locale) {
       $locale_name = transperfect_get_drupal_locale_name($locale);
-      if (check_pending_submission($locale)) {
-        delete_locale_mapping($locale);
-        drupal_set_message(t($locale_name . ' mapping deleted successfully.'));
+      if (transperfect_check_pending_submission($locale)) {
+        transperfect_delete_locale_mapping($locale);
+        drupal_set_message(t(check_plain($locale_name) . ' mapping deleted successfully.'));
       }
       else {
-        form_set_error('', t($locale_name . ' mapping cannot be deleted because there is a pending submission.'));
+        form_set_error('', t(check_plain($locale_name) . ' mapping cannot be deleted because there is a pending submission.'));
       }
     }
   }
 }
 
-function check_pending_submission($locale) {
+function transperfect_check_pending_submission($locale) {
   $query1 = db_select('transperfect_core', 'tc')
           ->fields('tc', array('rid')) ->condition('tc.status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
           ->condition(db_or()->condition('tc.source', $locale)->condition('tc.target', $locale));
@@ -162,21 +162,21 @@ function check_pending_submission($locale) {
   return TRUE;
 }
 
-function add_locale_mapping($drupal_locale, $drupal_locale_desc, $locale_code) {
+function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $locale_code) {
   db_update('transperfect_locale')
           ->fields(array('drupal_locale_code' => $drupal_locale, 'drupal_locale_desc' => $drupal_locale_desc))
           ->condition('locale_code', $locale_code, '=')
           ->execute();
 }
 
-function delete_locale_mapping($locale_code) {
+function transperfect_delete_locale_mapping($locale_code) {
   db_update('transperfect_locale')
           ->fields(array('drupal_locale_code' => NULL))
           ->condition('locale_code', $locale_code, '=')
           ->execute();
 }
 
-function get_tpt_list() {
+function transperfect_get_tpt_list() {
   $languages = array();
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -190,7 +190,7 @@ function get_tpt_list() {
   return $languages;
 }
 
-function get_mapped_locale_codes() {
+function transperfect_get_mapped_locale_codes() {
   $languages = array();
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -204,7 +204,7 @@ function get_mapped_locale_codes() {
   return $languages;
 }
 
-function get_mapped_tpt_locales($remove_default = TRUE) {
+function transperfect_get_mapped_tpt_locales($remove_default = TRUE) {
   $languages = array();
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')

@@ -40,11 +40,11 @@ function transperfect_node_receive_filter_form() {
     $filter = TRUE;
   }
 
-  $n_arr = array('[any]' => t(' Any '));
-  $t_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+  $n_arr = array('[any]' => t('Any'));
+  $t_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
-  $status_arr = array('[any]' => t(' Any '),
+  $status_arr = array('[any]' => t('Any'),
       TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
       TPT_STATUS_ERROR => TPT_STATUS_ERROR,
       TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED);
@@ -208,30 +208,30 @@ function transperfect_dashboard_receive() {
   if (!empty($_SESSION['transpefect_dashboard_receive_type'])) {
     $type = $_SESSION['transpefect_dashboard_receive_type'];
 
-    $globalLink_arr = array();
+    $globallink_arr = array();
 
     if (empty($_SESSION['transperfect_globalLink_arr'])) {
       try {
-        $pd4 = get_project_director_details();
-        if (validate_project_director_details($pd4)) {
+        $pd4 = transperfect_get_project_director_details();
+        if (transperfect_validate_project_director_details($pd4)) {
           $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
-          $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
-          if (sizeof($globalLink_arr) > 0) {
-            $_SESSION['transperfect_globalLink_arr'] = serialize($globalLink_arr);
+          $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+          if (sizeof($globallink_arr) > 0) {
+            $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
           }
         }
       }
       catch (SoapFault $se) {
-        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_dashboard_receive - Code[$se->faultcode], Message[$se->faultstring]");
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_dashboard_receive - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
     }
     else {
-      $globalLink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
+      $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
     }
 
     $header = array('submissionName' => TPT_LABEL_SUBMISSION,
@@ -252,42 +252,42 @@ function transperfect_dashboard_receive() {
       $filter_lang = $_SESSION['transperfect_node_receive_filter_language'];
     }
 
-    if (isset($globalLink_arr) && is_array($globalLink_arr)) {
-      foreach ($globalLink_arr as $key => &$globalLink) {
-        if ($filter_lang != '[any]' && $globalLink->targetLocale != $filter_lang) {
-          unset($globalLink_arr[$key]);
+    if (isset($globallink_arr) && is_array($globallink_arr)) {
+      foreach ($globallink_arr as $key => &$globallink) {
+        if ($filter_lang != '[any]' && $globallink->targetLocale != $filter_lang) {
+          unset($globallink_arr[$key]);
         }
       }
     }
 
-    if (isset($globalLink_arr) && is_array($globalLink_arr)) {
+    if (isset($globallink_arr) && is_array($globallink_arr)) {
       $filter_status = '[any]';
       if (!empty($_SESSION['transperfect_node_receive_filter_status'])) {
         $filter_status = $_SESSION['transperfect_node_receive_filter_status'];
       }
 
       $rid_arr = array();
-      foreach ($globalLink_arr as $key => &$globalLink) {
-        if ($globalLink->type != "Node") {
+      foreach ($globallink_arr as $key => &$globallink) {
+        if ($globallink->type != "Node") {
           continue;
         }
 
         $source_xml = '';
         $status = TPT_STATUS_COMPLETED;
-        $title = transperfect_get_node_title($globalLink);
+        $title = transperfect_get_node_title($globallink);
         if (!$title) {
-          $title = $globalLink->title;
+          $title = $globallink->title;
           $status = TPT_STATUS_SOURCE_DELETED;
           $source_xml = TPT_STATUS_SOURCE_DELETED;
-          $globalLink->status = TPT_STATUS_SOURCE_DELETED;
-          $globalLink->sourceDeleted = TRUE;
+          $globallink->status = TPT_STATUS_SOURCE_DELETED;
+          $globallink->sourceDeleted = TRUE;
         }
-        if ($globalLink->status == TPT_STATUS_ERROR) {
+        if ($globallink->status == TPT_STATUS_ERROR) {
           $status = TPT_STATUS_ERROR;
         }
 
         if ($filter_status != '[any]' && $status != $filter_status) {
-          unset($globalLink_arr[$key]);
+          unset($globallink_arr[$key]);
           continue;
         }
 
@@ -296,21 +296,21 @@ function transperfect_dashboard_receive() {
           $filter_submission = $_SESSION['transperfect_node_receive_filter_submission'];
         }
 
-        if ($filter_submission != '[any]' && $globalLink->submissionName != $filter_submission) {
-          unset($globalLink_arr[$key]);
+        if ($filter_submission != '[any]' && $globallink->submissionName != $filter_submission) {
+          unset($globallink_arr[$key]);
           continue;
         }
 
-        $tpt_row_id = transperfect_get_tpt_row_id_from_submission($globalLink->submissionTicket, $globalLink->documentTicket, $globalLink->targetLocale);
+        $tpt_row_id = transperfect_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
         if ($tpt_row_id) {
           $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
         }
 
-        $source_name = transperfect_get_drupal_locale_name($globalLink->sourceLocale);
-        $target_name = transperfect_get_drupal_locale_name($globalLink->targetLocale);
+        $source_name = transperfect_get_drupal_locale_name($globallink->sourceLocale);
+        $target_name = transperfect_get_drupal_locale_name($globallink->targetLocale);
 
         $rows[$key] = array(
-            'submissionName' => $globalLink->submissionName,
+            'submissionName' => $globallink->submissionName,
             'sourceLocale' => $source_name,
             'targetLocale' => $target_name,
             'title' => $title,
@@ -318,14 +318,14 @@ function transperfect_dashboard_receive() {
         );
 
         if (transperfect_is_preview_enabled()) {
-          $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(' Preview Translations ', 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
+          $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
         }
 
         $count++;
       }
 
-      if (sizeof($globalLink_arr) > 0) {
-        $_SESSION['transperfect_globalLink_arr'] = serialize($globalLink_arr);
+      if (sizeof($globallink_arr) > 0) {
+        $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
       }
     }
 
@@ -390,8 +390,8 @@ function transperfect_dashboard_receive() {
 function transperfect_dashboard_receive_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
 
   if ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
     $rids = array_filter($form_state['values']['table']);
@@ -404,19 +404,19 @@ function transperfect_dashboard_receive_validate($form, &$form_state) {
 function transperfect_dashboard_receive_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_dashboard_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_UPDATE_ALL) {
     try {
-      $globalLink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
-      $count = transperfect_get_translated_content($pd4, $globalLink_arr);
+      $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
+      $count = transperfect_get_translated_content($pd4, $globallink_arr);
       $error = FALSE;
       $delete_records_selected = FALSE;
-      foreach ($globalLink_arr as $updated) {
+      foreach ($globallink_arr as $updated) {
         if ($updated->sourceDeleted == TRUE) {
           $delete_records_selected = TRUE;
         }
         if ($updated->status == TPT_STATUS_ERROR) {
-          transperfect_update_tpt_status($updated);
+          transperfect_update_status($updated);
           $error = TRUE;
         }
       }
@@ -431,7 +431,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -442,12 +442,12 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   elseif ($op == TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS) {
     try {
       sleep(2);
-      $globalLink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
+      $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
       $success = FALSE;
       $count = 0;
-      foreach ($globalLink_arr as $globalLink) {
-        if ($globalLink->sourceDeleted == TRUE) {
-          $success = transperfect_update_deleted_records($pd4, $globalLink);
+      foreach ($globallink_arr as $globallink) {
+        if ($globallink->sourceDeleted == TRUE) {
+          $success = transperfect_update_deleted_records($pd4, $globallink);
           $count++;
         }
       }
@@ -465,18 +465,18 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
   elseif ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
     try {
       $delete_records_selected = FALSE;
-      $globalLink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
+      $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
       $updated_globalLink_arr = array();
       $rids = array_filter($form_state['values']['table']);
       foreach ($rids as $rid) {
-        array_push($updated_globalLink_arr, $globalLink_arr[$rid]);
+        array_push($updated_globalLink_arr, $globallink_arr[$rid]);
       }
       $count = transperfect_get_translated_content($pd4, $updated_globalLink_arr);
       $error = FALSE;
@@ -486,7 +486,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         }
         if ($updated->status == TPT_STATUS_ERROR) {
           $error = TRUE;
-          transperfect_update_tpt_status($updated);
+          transperfect_update_status($updated);
         }
       }
       $status = 'status';
@@ -500,7 +500,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -510,21 +510,21 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   }
   elseif ($op == TPT_BTN_DASHBOARD_REFRESH) {
     sleep(2);
-    $pd4 = get_project_director_details();
+    $pd4 = transperfect_get_project_director_details();
     try {
-      $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
+      $globallink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
-    if (sizeof($globalLink_arr) > 0) {
-      $_SESSION['transperfect_globalLink_arr'] = serialize($globalLink_arr);
+    if (sizeof($globallink_arr) > 0) {
+      $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
       $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
     }
     else {
@@ -534,125 +534,131 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   }
 }
 
-function receive_translated_contents_automatically($cron_type) {
-  drupal_set_time_limit(0); //set it so your cron wont time out if it takes a long time to process
-  transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
+function transperfect_receive_translated_contents_automatically($cron_type) {
+  drupal_set_time_limit(0); // set it so your cron wont time out if it takes a long time to process
+  transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
 
   try {
-    $pd4 = get_project_director_details();
-    $all_target_arr = getAllReadyTranslationsDetailsFromPD($pd4);
+    $pd4 = transperfect_get_project_director_details();
+    $all_target_arr = get_all_ready_translations_details_from_pd($pd4);
     $count = 0;
-    foreach ($all_target_arr as $globalLink) {
-      $type = $globalLink->type;
-      $globalLink_arr = array($globalLink);
+    foreach ($all_target_arr as $globallink) {
+      $type = $globallink->type;
+      $globallink_arr = array($globallink);
       switch ($type) {
         case "Node":
-          $count = transperfect_get_translated_content($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Node");
-          if ($globalLink->status == TPT_STATUS_ERROR) {
-            transperfect_update_tpt_status($globalLink);
+          $count = transperfect_get_translated_content($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Node");
+          if ($globallink->status == TPT_STATUS_ERROR) {
+            transperfect_update_status($globallink);
           }
           $_SESSION['transperfect_globalLink_arr'] = array();
           $_SESSION['transperfect_selected_submission'] = array();
           break;
         case "Entity":
-          $count = get_translated_entity($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Entity");
-          if ($globalLink->status == TPT_STATUS_ERROR) {
-            update_tpt_entity_status($globalLink);
+          $count = get_translated_entity($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, "Imported Entity");
+          if ($globallink->status == TPT_STATUS_ERROR) {
+            update_tpt_entity_status($globallink);
           }
           $_SESSION['transperfect_entity_globalLink_arr'] = array();
           $_SESSION['transperfect_entity_selected_submission'] = array();
           break;
         case "Block":
-          $count += get_translated_blocks($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_DEBUG, "Imported Block");
+          $count += get_translated_blocks($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_DEBUG, "Imported Block");
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
           break;
         case "Interface":
-          $count += get_translated_interfaces($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_DEBUG, "Imported Interface");
+          $count += get_translated_interfaces($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_DEBUG, "Imported Interface");
           $_SESSION['transperfect_interface_globalLink_arr'] = array();
           $_SESSION['transperfect_interface_selected_submission'] = array();
           break;
         case "Menu":
-          $count += get_translated_menus($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_DEBUG, "Imported Menu");
+          $count += get_translated_menus($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_DEBUG, "Imported Menu");
           $_SESSION['transperfect_menu_globalLink_arr'] = array();
           $_SESSION['transperfect_menu_selected_submission'] = array();
           break;
         case "Taxonomy":
-          $count += get_translated_taxonomies($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_DEBUG, "Imported Taxonomy");
+          $count += get_translated_taxonomies($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_DEBUG, "Imported Taxonomy");
           $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
           break;
         case "Webform":
-          $count += get_translated_webforms($pd4, $globalLink_arr);
-          transperfect_gl_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_DEBUG, "Imported Webform");
+          $count += get_translated_webforms($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_DEBUG, "Imported Webform");
           $_SESSION['transperfect_webform_globalLink_arr'] = array();
           $_SESSION['transperfect_webform_selected_submission'] = array();
+          break;
+        case "Fieldable_Panels_Panes":
+          $count += get_translated_fieldable_panels($pd4, $globallink_arr);
+          transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_DEBUG, "Imported Fieldable Panels Panes");
+          $_SESSION['transperfect_fieldable_panels_panes_globalLink_arr'] = array();
+          $_SESSION['transperfect_fieldable_panels_panes_selected_submission'] = array();
           break;
       }
     }
   }
   catch (SoapFault $se) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations Cron - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations Cron - Code[$se->faultcode], Message[$se->faultstring]");
   }
   catch (Exception $e) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations Cron - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations Cron - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
   }
 
-  transperfect_gl_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_INFO, "Cron Completed - $count Records Updated.");
+  transperfect_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_INFO, "Cron Completed - $count Records Updated.");
 }
 
-function preview_translated_content() {
+function transperfect_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = get_translations_for_row_id($row_id);
+  $arr = transperfect_get_translations_for_row_id($row_id);
   drupal_json_output($arr);
 }
 
-function get_translations_for_row_id($row_id) {
+function transperfect_get_translations_for_row_id($row_id) {
   $row = transperfect_get_row($row_id);
 
-  $globalLink = new GlobalLink();
-  $globalLink->tptRowId = $row_id;
-  $globalLink->nid = $row->nid;
-  $globalLink->vid = $row->vid;
-  $globalLink->type = $row->type;
-  $globalLink->title = $row->title;
-  $globalLink->sourceLocale = $row->source;
-  $globalLink->targetLocale = $row->target;
-  $globalLink->documentTicket = $row->document_ticket;
-  $globalLink->submissionTicket = $row->submission_ticket;
-  $globalLink->submission = $row->submission;
-  $globalLink->status = $row->status;
+  $globallink = new GlobalLink();
+  $globallink->tptRowId = $row_id;
+  $globallink->nid = $row->nid;
+  $globallink->vid = $row->vid;
+  $globallink->type = $row->type;
+  $globallink->title = $row->title;
+  $globallink->sourceLocale = $row->source;
+  $globallink->targetLocale = $row->target;
+  $globallink->documentTicket = $row->document_ticket;
+  $globallink->submissionTicket = $row->submission_ticket;
+  $globallink->submission = $row->submission;
+  $globallink->status = $row->status;
 
   $source_arr = array();
   $translation = array();
 
   $error = FALSE;
   try {
-    $pd4 = get_project_director_details();
-    $targets = getCompletedTargetsByDoc($pd4, $globalLink->documentTicket);
+    $pd4 = transperfect_get_project_director_details();
+    $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
 
     if (!is_array($targets)) {
       $targets = array($targets);
     }
 
     foreach ($targets as $target) {
-      if (str_replace('-', '_', $target->targetLanguage->locale) == $globalLink->targetLocale) {
+      if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
         if (!is_null($target->ticket) && $target->ticket != '') {
-          $globalLink->targetTicket = $target->ticket;
-          $globalLink->targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-          if (!is_null($globalLink->targetXML) && $globalLink->targetXML != '') {
-            $translation = transperfect_get_translated_array($globalLink->targetXML);
+          $globallink->targetTicket = $target->ticket;
+          $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+          if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
+            $translation = transperfect_get_translated_array($globallink->targetXML);
             $nid = $translation['nid'];
             $vid = $translation['vid'];
             $node = node_load($nid, $vid);
             if ($node && is_object($node) && !is_null($node)) {
-              $drupal_locale_code = transperfect_get_drupal_locale_code($globalLink->sourceLocale);
+              $drupal_locale_code = transperfect_get_drupal_locale_code($globallink->sourceLocale);
               if ($node->tnid != 0 && $node->language != $drupal_locale_code) {
                 $translations = translation_node_get_translations($node->tnid);
                 if (isset($translations) && isset($translations[$drupal_locale_code])) {
@@ -661,7 +667,7 @@ function get_translations_for_row_id($row_id) {
                 }
               }
               $name = '';
-              $source_xml = transperfect_get_xml($node, $globalLink->targetLocale, NULL, NULL, $name, TRUE);
+              $source_xml = transperfect_get_xml($node, $globallink->targetLocale, NULL, NULL, $name, TRUE);
               $source_arr = array();
               if ($source_xml != TPT_STATUS_SOURCE_DELETED) {
                 $source_arr = transperfect_get_translated_array($source_xml);
@@ -669,7 +675,7 @@ function get_translations_for_row_id($row_id) {
             }
             else {
               $source_xml = TPT_STATUS_SOURCE_DELETED;
-              $globalLink->sourceDeleted = TRUE;
+              $globallink->sourceDeleted = TRUE;
             }
           }
         }
@@ -684,8 +690,8 @@ function get_translations_for_row_id($row_id) {
   }
 
   $arr = array();
-  $arr['target_ticket'] = $globalLink->targetTicket;
-  if ($globalLink->sourceDeleted) {
+  $arr['target_ticket'] = $globallink->targetTicket;
+  if ($globallink->sourceDeleted) {
     $arr = array(TPT_STATUS_SOURCE_DELETED);
   }
   elseif ($error) {
