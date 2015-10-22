@@ -1121,10 +1121,23 @@ function transperfect_tpt_access_callback_admin() {
  * Implements hook_cron().
  */
 function transperfect_cron() {
-  //Only run this if settings are set to Drupal Cron
-  if (variable_get('transperfect_cron_type', 0)) {
-    transperfect_auto_receive('hook_cron');
+  // Only run this if settings are set to Drupal Cron.
+  if (!variable_get('transperfect_cron_type', 0)) {
+    return;
   }
+
+  // Create Drupal queue item.
+  $queue = DrupalQueue::get('auto_receive');
+  $queue->createItem('hook_cron');
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function transperfect_cron_queue_info() {
+  $queues['auto_receive'] = array(
+    'worker callback' => 'transperfect_auto_receive',
+  );
 }
 
 /*
