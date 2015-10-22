@@ -73,11 +73,11 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
       drupal_set_message(t('Submission has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Submissions - transperfect_node_active_select_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      watchdog(TPT_OBJECT_TYPE_CONTENT, t('SOAP Exception in Cancel Submissions - transperfect_node_active_select_form_submit - Code[@faultcode], Message[@faultstring]', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)), array(), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Submissions - transperfect_node_active_select_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      watchdog(TPT_OBJECT_TYPE_CONTENT, t('Exception in Cancel Submissions - transperfect_node_active_select_form_submit - File[@file], Line[@line], Code[@code], Message[@message]', array('@file' => $e->getFile(), '@line' => $e->getLine(), '@code' => $e->getCode(), '@message' => $e->getMessage()), array(), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

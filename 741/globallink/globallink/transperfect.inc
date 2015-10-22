@@ -976,40 +976,6 @@ function transperfect_get_PD_projects() {
 }
 
 /**
- * Log function.
- *
- * @param string $type
- *   The log type.
- * @param string $severity
- *   The severity of the log.
- * @param string $message
- *   The log message.
- */
-function transperfect_gl_log($type, $severity, $message) {
-  //Always log anything with severity error and warning
-  if ($severity == TPT_LOGGING_SEVERITY_ERROR || $severity == TPT_LOGGING_SEVERITY_WARNING) {
-    db_insert('transperfect_log')
-            ->fields(array('severity' => $severity, 'type' => $type, 'message' => $message, 'timestamp' => REQUEST_TIME))
-            ->execute();
-    return;
-  }
-
-  $debug_type = variable_get('transperfect_debug_type', TPT_LOGGING_CONFIG_INFO);
-
-  if ($debug_type == TPT_LOGGING_CONFIG_DISABLED) {
-    return;
-  }
-
-  if ($debug_type == TPT_LOGGING_CONFIG_INFO && $severity == TPT_LOGGING_SEVERITY_DEBUG) {
-    return;
-  }
-
-  db_insert('transperfect_log')
-          ->fields(array('severity' => $severity, 'type' => $type, 'message' => $message, 'timestamp' => REQUEST_TIME))
-          ->execute();
-}
-
-/**
  * Determines if the workbench is enabled for a content type.
  *
  * @param string $type
