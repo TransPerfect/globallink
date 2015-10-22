@@ -28,7 +28,7 @@ var _img;
                             url: previewpath,
                             dataType: 'json',
                             data: 'rid=' + rids[div],
-                            success: ajaxCompleted,
+                            success: ajax_completed,
                             error: function(xhr, textStatus, errorThrown) {
                                 $('#' + _div).empty();
                                 $('#'+div).html(textStatus);
@@ -41,12 +41,12 @@ var _img;
     }
 })(jQuery);
 
-function escapeHTML( string )
+function escape_html (string)
 {
     return jQuery( '<pre>' ).text( string ).html();
 }
 
-function ajaxCompleted (data) {
+function ajax_completed (data) {
     var content = '<TABLE class="tpt_popup_table"><TR><TH>&nbsp;</TH><TH>Source Content</TH><TH>Translated Content</TH></TR>';
     error = data['error'];
     target = data['target'];
@@ -69,19 +69,19 @@ function ajaxCompleted (data) {
                             var source_text = '';
                             var target_text = '';
                             if(source_obj[field] != null && source_obj[field] != undefined) {
-                                source_text = escapeHTML(source_obj[field][t_und][delta]['translatedContent']);
+                                source_text = escape_html(source_obj[field][t_und][delta]['translatedContent']);
                                 console.info(source_text);
                             }
                             if(source_text == '') {
                                 source_text = '<span style="color:red;">Field Deleted</span>';
                             }
                             if(obj != null && obj != undefined) {
-                                target_text = escapeHTML(obj['translatedContent']);
+                                target_text = escape_html(obj['translatedContent']);
                                 if(target_text != '') {
                                     if(field == 'link_title') {
                                         label = 'Title';
                                     }
-                                    content += '<TR><TD><b>' + escapeHTML(obj['fieldName'])  + '</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+                                    content += '<TR><TD><b>' + escape_html(obj['fieldName'])  + '</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
                                 }
                             }
                         });

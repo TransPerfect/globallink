@@ -1018,7 +1018,7 @@ function transperfect_gl_log($type, $severity, $message) {
  * @return
  *   True if the workbench is enabled for that content type.
  */
-function content_type_workbench_enabled($type) {
+function transperfect_content_type_workbench_enabled($type) {
   if (!module_exists('workbench_moderation')) {
     return false;
   }

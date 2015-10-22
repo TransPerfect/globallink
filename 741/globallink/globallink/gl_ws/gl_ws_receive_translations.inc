@@ -5,33 +5,33 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/TargetService2.php');
 
-function getReadyTranslationsDetailsFromPD($pdObject, $type = 'node') {
-  $username = $pdObject->username;
-  $password = $pdObject->password;
-  $url = $pdObject->url;
-  $projectShortCode = $pdObject->projectShortCode;
+function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
+  $username = $pd_obj->username;
+  $password = $pd_obj->password;
+  $url = $pd_obj->url;
+  $project_short_code = $pd_obj->projectShortCode;
   $proj_arr = array();
-  if ($projectShortCode != '') {
-    $arr = explode(',', $projectShortCode);
+  if ($project_short_code != '') {
+    $arr = explode(',', $project_short_code);
     foreach ($arr as $value) {
       $proj_arr[$value] = $value;
     }
   }
 
-  $sessionService = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . "/services/SessionService2"
+  $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
+              'location' => $url . '/services/SessionService2'
           ));
-  $projectService = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . "/services/ProjectService2"
+  $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
+              'location' => $url . '/services/ProjectService2'
           ));
-  $targetService = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . "/services/TargetService2"
+  $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
+              'location' => $url . '/services/TargetService2'
           ));
 
-  $globalLink_arr = array();
+  $globallink_arr = array();
 
-  $token = @Login($sessionService, $username, $password);
-  $projects = GetUserProjects($projectService, $token);
+  $token = @login($session_service, $username, $password);
+  $projects = get_user_projects($project_service, $token);
   $proj_ticket_arr = array();
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
@@ -43,19 +43,19 @@ function getReadyTranslationsDetailsFromPD($pdObject, $type = 'node') {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = @getCompletedTargetsByProjects($targetService, $proj_ticket_arr, $token, $pdObject);
+    $targets = @getCompletedTargetsByProjects($target_service, $proj_ticket_arr, $token, $pd_obj);
     $count = 1;
     if (is_array($targets)) {
       foreach ($targets as $target) {
         if (!is_null($target->ticket) && $target->ticket != '') {
-          $sourceFile = $target->document->documentInfo->name;
+          $source_file = $target->document->documentInfo->name;
           $m_arr = $target->document->documentInfo->metadata;
-          $sourceType = '';
+          $source_type = '';
           $type_id = '';
           if (is_array($m_arr)) {
             foreach ($m_arr as $m) {
               if ($m->key == 'type') {
-                $sourceType = $m->value;
+                $source_type = $m->value;
               }
               else {
                 $type_id = $m->value;
@@ -63,65 +63,65 @@ function getReadyTranslationsDetailsFromPD($pdObject, $type = 'node') {
             }
           }
           else {
-            $sourceType = $target->document->documentInfo->metadata->value;
+            $source_type = $target->document->documentInfo->metadata->value;
           }
           if ($type == 'entity') {
-            if ($sourceType != 'Entity') {
+            if ($source_type != 'Entity') {
               continue;
             }
           }
           elseif ($type == 'menu') {
-            if ($sourceType != 'Menu') {
+            if ($source_type != 'Menu') {
               continue;
             }
           }
           elseif ($type == 'block') {
-            if ($sourceType != 'Block') {
+            if ($source_type != 'Block') {
               continue;
             }
           }
           elseif ($type == 'taxonomy') {
-            if ($sourceType != 'Taxonomy') {
+            if ($source_type != 'Taxonomy') {
               continue;
             }
           }
           elseif ($type == 'interface') {
-            if ($sourceType != 'Interface') {
+            if ($source_type != 'Interface') {
               continue;
             }
           }
           elseif ($type == 'webform') {
-            if ($sourceType != 'Webform') {
+            if ($source_type != 'Webform') {
               continue;
             }
           }
           elseif ($type == 'fieldable_panels') {
-            if ($sourceType != 'Fieldable_Panels_Panes') {
+            if ($source_type != 'Fieldable_Panels_Panes') {
               continue;
             }
           }
           else {
-            if ($sourceType == 'Entity' || $sourceType == 'Menu' || $sourceType == 'Block' || $sourceType == 'Taxonomy' || $sourceType == 'Interface' || $sourceType == 'Webform' || $sourceType == 'Fieldable_Panels_Panes') {
+            if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
               continue;
             }
           }
 
-          $globalLink = new GlobalLink();
-          $globalLink->submissionTicket = $target->document->documentGroup->submission->ticket;
-          $globalLink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
-          $globalLink->documentTicket = $target->document->ticket;
-          $globalLink->sourceFileName = $sourceFile;
-          $globalLink->targetTicket = $target->ticket;
-          $globalLink->sourceLocale = str_replace("-", "_", $target->sourceLanguage->locale);
-          $globalLink->targetLocale = str_replace("-", "_", $target->targetLanguage->locale);
-          $globalLink->type = $sourceType;
-          if ($sourceType != 'Node' && $sourceType != 'Entity') {
-            $globalLink->otherObjectId = $type_id;
+          $globallink = new GlobalLink();
+          $globallink->submissionTicket = $target->document->documentGroup->submission->ticket;
+          $globallink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
+          $globallink->documentTicket = $target->document->ticket;
+          $globallink->sourceFileName = $source_file;
+          $globallink->targetTicket = $target->ticket;
+          $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
+          $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
+          $globallink->type = $source_type;
+          if ($source_type != 'Node' && $source_type != 'Entity') {
+            $globallink->otherObjectId = $type_id;
           }
           else {
-            $globalLink->nid = $type_id;
+            $globallink->nid = $type_id;
           }
-          $globalLink_arr[$count] = $globalLink;
+          $globallink_arr[$count] = $globallink;
           $count++;
         }
       }
@@ -129,14 +129,14 @@ function getReadyTranslationsDetailsFromPD($pdObject, $type = 'node') {
     elseif (!is_null($targets)) {
       $target = $targets;
       if (!is_null($target->ticket) && $target->ticket != '') {
-        $sourceFile = $target->document->documentInfo->name;
+        $source_file = $target->document->documentInfo->name;
         $m_arr = $target->document->documentInfo->metadata;
-        $sourceType = '';
+        $source_type = '';
         $type_id = '';
         if (is_array($m_arr)) {
           foreach ($m_arr as $m) {
             if ($m->key == 'type') {
-              $sourceType = $m->value;
+              $source_type = $m->value;
             }
             else {
               $type_id = $m->value;
@@ -144,98 +144,98 @@ function getReadyTranslationsDetailsFromPD($pdObject, $type = 'node') {
           }
         }
         else {
-          $sourceType = $target->document->documentInfo->metadata->value;
+          $source_type = $target->document->documentInfo->metadata->value;
         }
         if ($type == 'entity') {
-          if ($sourceType != 'Entity') {
-            return $globalLink_arr;
+          if ($source_type != 'Entity') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'menu') {
-          if ($sourceType != 'Menu') {
-            return $globalLink_arr;
+          if ($source_type != 'Menu') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'block') {
-          if ($sourceType != 'Block') {
-            return $globalLink_arr;
+          if ($source_type != 'Block') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'taxonomy') {
-          if ($sourceType != 'Taxonomy') {
-            return $globalLink_arr;
+          if ($source_type != 'Taxonomy') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'interface') {
-          if ($sourceType != 'Interface') {
-            return $globalLink_arr;
+          if ($source_type != 'Interface') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'webform') {
-          if ($sourceType != 'Webform') {
-            return $globalLink_arr;
+          if ($source_type != 'Webform') {
+            return $globallink_arr;
           }
         }
         elseif ($type == 'fieldable_panels') {
-          if ($sourceType != 'Fieldable_Panels_Panes') {
-            return $globalLink_arr;
+          if ($source_type != 'Fieldable_Panels_Panes') {
+            return $globallink_arr;
           }
         }
         else {
-          if ($sourceType == 'Entity' || $sourceType == 'Menu' || $sourceType == 'Block' || $sourceType == 'Taxonomy' || $sourceType == 'Interface' || $sourceType == 'Webform' || $sourceType == 'Fieldable_Panels_Panes') {
-            return $globalLink_arr;
+          if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
+            return $globallink_arr;
           }
         }
 
-        $globalLink = new GlobalLink();
-        $globalLink->submissionTicket = $target->document->documentGroup->submission->ticket;
-        $globalLink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
-        $globalLink->documentTicket = $target->document->ticket;
-        $globalLink->sourceFileName = $sourceFile;
-        $globalLink->targetTicket = $target->ticket;
-        $globalLink->sourceLocale = str_replace("-", "_", $target->sourceLanguage->locale);
-        $globalLink->targetLocale = str_replace("-", "_", $target->targetLanguage->locale);
-        $globalLink->type = $sourceType;
-        if ($sourceType != 'Node' && $sourceType != 'Entity') {
-          $globalLink->otherObjectId = $type_id;
+        $globallink = new GlobalLink();
+        $globallink->submissionTicket = $target->document->documentGroup->submission->ticket;
+        $globallink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
+        $globallink->documentTicket = $target->document->ticket;
+        $globallink->sourceFileName = $source_file;
+        $globallink->targetTicket = $target->ticket;
+        $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
+        $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
+        $globallink->type = $source_type;
+        if ($source_type != 'Node' && $source_type != 'Entity') {
+          $globallink->otherObjectId = $type_id;
         }
         else {
-          $globalLink->nid = $type_id;
+          $globallink->nid = $type_id;
         }
-        $globalLink_arr[$count] = $globalLink;
+        $globallink_arr[$count] = $globallink;
       }
     }
   }
-  return $globalLink_arr;
+  return $globallink_arr;
 }
 
-function getAllReadyTranslationsDetailsFromPD($pdObject) {
-  $username = $pdObject->username;
-  $password = $pdObject->password;
-  $url = $pdObject->url;
-  $projectShortCode = $pdObject->projectShortCode;
+function get_all_ready_translations_details_from_pd($pd_obj) {
+  $username = $pd_obj->username;
+  $password = $pd_obj->password;
+  $url = $pd_obj->url;
+  $project_short_code = $pd_obj->projectShortCode;
   $proj_arr = array();
-  if ($projectShortCode != '') {
-    $arr = explode(',', $projectShortCode);
+  if ($project_short_code != '') {
+    $arr = explode(',', $project_short_code);
     foreach ($arr as $value) {
       $proj_arr[$value] = $value;
     }
   }
 
-  $sessionService = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . "/services/SessionService2"
+  $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
+              'location' => $url . '/services/SessionService2'
           ));
-  $projectService = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . "/services/ProjectService2"
+  $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
+              'location' => $url . '/services/ProjectService2'
           ));
-  $targetService = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . "/services/TargetService2"
+  $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
+              'location' => $url . '/services/TargetService2'
           ));
 
-  $globalLink_arr = array();
+  $globallink_arr = array();
 
-  $token = @Login($sessionService, $username, $password);
-  $projects = GetUserProjects($projectService, $token);
+  $token = @login($session_service, $username, $password);
+  $projects = get_user_projects($project_service, $token);
   $proj_ticket_arr = array();
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
@@ -247,19 +247,19 @@ function getAllReadyTranslationsDetailsFromPD($pdObject) {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = @getCompletedTargetsByProjects($targetService, $proj_ticket_arr, $token, $pdObject);
+    $targets = @get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
     $count = 1;
     if (is_array($targets)) {
       foreach ($targets as $target) {
         if (!is_null($target->ticket) && $target->ticket != '') {
-          $sourceFile = $target->document->documentInfo->name;
+          $source_file = $target->document->documentInfo->name;
           $m_arr = $target->document->documentInfo->metadata;
-          $sourceType = '';
+          $source_type = '';
           $type_id = '';
           if (is_array($m_arr)) {
             foreach ($m_arr as $m) {
               if ($m->key == 'type') {
-                $sourceType = $m->value;
+                $source_type = $m->value;
               }
               else {
                 $type_id = $m->value;
@@ -267,26 +267,26 @@ function getAllReadyTranslationsDetailsFromPD($pdObject) {
             }
           }
           else {
-            $sourceType = $target->document->documentInfo->metadata->value;
+            $source_type = $target->document->documentInfo->metadata->value;
           }
 
-          $globalLink = new GlobalLink();
-          $globalLink->submissionTicket = $target->document->documentGroup->submission->ticket;
-          $globalLink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
-          $globalLink->documentTicket = $target->document->ticket;
-          $globalLink->sourceFileName = $sourceFile;
-          $globalLink->targetTicket = $target->ticket;
-          $globalLink->sourceLocale = str_replace("-", "_", $target->sourceLanguage->locale);
-          $globalLink->targetLocale = str_replace("-", "_", $target->targetLanguage->locale);
-          $globalLink->type = $sourceType;
-          if ($sourceType != 'Node') {
-            $globalLink->otherObjectId = $type_id;
+          $globallink = new GlobalLink();
+          $globallink->submissionTicket = $target->document->documentGroup->submission->ticket;
+          $globallink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
+          $globallink->documentTicket = $target->document->ticket;
+          $globallink->sourceFileName = $source_file;
+          $globallink->targetTicket = $target->ticket;
+          $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
+          $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
+          $globallink->type = $source_type;
+          if ($source_type != 'Node') {
+            $globallink->otherObjectId = $type_id;
           }
           else {
-            $globalLink->nid = $type_id;
+            $globallink->nid = $type_id;
           }
 
-          $globalLink_arr[$count] = $globalLink;
+          $globallink_arr[$count] = $globallink;
           $count++;
         }
       }
@@ -294,14 +294,14 @@ function getAllReadyTranslationsDetailsFromPD($pdObject) {
     elseif (!is_null($targets)) {
       $target = $targets;
       if (!is_null($target->ticket) && $target->ticket != '') {
-        $sourceFile = $target->document->documentInfo->name;
+        $source_file = $target->document->documentInfo->name;
         $m_arr = $target->document->documentInfo->metadata;
-        $sourceType = '';
+        $source_type = '';
         $type_id = '';
         if (is_array($m_arr)) {
           foreach ($m_arr as $m) {
             if ($m->key == 'type') {
-              $sourceType = $m->value;
+              $source_type = $m->value;
             }
             else {
               $type_id = $m->value;
@@ -309,112 +309,112 @@ function getAllReadyTranslationsDetailsFromPD($pdObject) {
           }
         }
         else {
-          $sourceType = $target->document->documentInfo->metadata->value;
+          $source_type = $target->document->documentInfo->metadata->value;
         }
 
-        $globalLink = new GlobalLink();
-        $globalLink->submissionTicket = $target->document->documentGroup->submission->ticket;
-        $globalLink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
-        $globalLink->documentTicket = $target->document->ticket;
-        $globalLink->sourceFileName = $sourceFile;
-        $globalLink->targetTicket = $target->ticket;
-        $globalLink->sourceLocale = str_replace("-", "_", $target->sourceLanguage->locale);
-        $globalLink->targetLocale = str_replace("-", "_", $target->targetLanguage->locale);
-        $globalLink->type = $sourceType;
-        if ($sourceType != 'Node') {
-          $globalLink->otherObjectId = $type_id;
+        $globallink = new GlobalLink();
+        $globallink->submissionTicket = $target->document->documentGroup->submission->ticket;
+        $globallink->submissionName = $target->document->documentGroup->submission->submissionInfo->name;
+        $globallink->documentTicket = $target->document->ticket;
+        $globallink->sourceFileName = $source_file;
+        $globallink->targetTicket = $target->ticket;
+        $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
+        $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
+        $globallink->type = $source_type;
+        if ($source_type != 'Node') {
+          $globallink->otherObjectId = $type_id;
         }
         else {
-          $globalLink->nid = $type_id;
+          $globallink->nid = $type_id;
         }
 
-        $globalLink_arr[$count] = $globalLink;
+        $globallink_arr[$count] = $globallink;
       }
     }
   }
-  return $globalLink_arr;
+  return $globallink_arr;
 }
 
-function getCompletedTargetsByProjects($targetService, $projectTickets, $token, $pdObject) {
-  $getCompletedTargetsByProjectsRequest = new getCompletedTargetsByProjects();
+function get_completed_targets_by_projects($target_service, $project_tickets, $token, $pd_obj) {
+  $get_completed_targets_by_projects_request = new getCompletedTargetsByProjects();
 
-  $getCompletedTargetsByProjectsRequest->projectTickets = $projectTickets;
-  $getCompletedTargetsByProjectsRequest->maxResults = $pdObject->maxTargetCount;
-  $getCompletedTargetsByProjectsRequest->userId = $token;
+  $get_completed_targets_by_projects_request->projectTickets = $project_tickets;
+  $get_completed_targets_by_projects_request->maxResults = $pd_obj->maxTargetCount;
+  $get_completed_targets_by_projects_request->userId = $token;
 
-  $getCompletedTargetsByProjectsResponse = $targetService->getCompletedTargetsByProjects($getCompletedTargetsByProjectsRequest);
+  $get_completed_targets_by_projects_response = $target_service->getCompletedTargetsByProjects($get_completed_targets_by_projects_request);
 
-  return $getCompletedTargetsByProjectsResponse->return;
+  return $get_completed_targets_by_projects_response->return;
 }
 
-function getCompletedTargetsByDoc($pdObject, $ticket) {
-  $username = $pdObject->username;
-  $password = $pdObject->password;
-  $url = $pdObject->url;
+function get_completed_targets_by_doc($pd_obj, $ticket) {
+  $username = $pd_obj->username;
+  $password = $pd_obj->password;
+  $url = $pd_obj->url;
 
-  $sessionService = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . "/services/SessionService2"
+  $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
+              'location' => $url . '/services/SessionService2'
           ));
 
-  $targetService = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . "/services/TargetService2"
+  $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
+              'location' => $url . '/services/TargetService2'
           ));
 
-  $token = Login($sessionService, $username, $password);
+  $token = login($session_service, $username, $password);
 
-  $getCompletedTargetsByDocumentsRequest = new getCompletedTargetsByDocuments();
+  $get_completed_targets_by_documents_request = new getCompletedTargetsByDocuments();
 
-  $getCompletedTargetsByDocumentsRequest->documentTickets = array($ticket);
-  $getCompletedTargetsByDocumentsRequest->maxResults = 99;
-  $getCompletedTargetsByDocumentsRequest->userId = $token;
+  $get_completed_targets_by_documents_request->documentTickets = array($ticket);
+  $get_completed_targets_by_documents_request->maxResults = 99;
+  $get_completed_targets_by_documents_request->userId = $token;
 
-  $getCompletedTargetsByDocumentsResponse = $targetService->getCompletedTargetsByDocuments($getCompletedTargetsByDocumentsRequest);
+  $get_completed_targets_by_documents_response = $target_service->getCompletedTargetsByDocuments($get_completed_targets_by_documents_request);
 
-  return $getCompletedTargetsByDocumentsResponse->return;
+  return $get_completed_targets_by_documents_response->return;
 }
 
-function downloadTargetResource($pdObject, $targetTicket) {
-  $username = $pdObject->username;
-  $password = $pdObject->password;
-  $url = $pdObject->url;
+function download_target_resource($pd_obj, $target_ticket) {
+  $username = $pd_obj->username;
+  $password = $pd_obj->password;
+  $url = $pd_obj->url;
 
-  $sessionService = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . "/services/SessionService2"
+  $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
+              'location' => $url . '/services/SessionService2'
           ));
-  $targetService = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . "/services/TargetService2"
+  $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
+              'location' => $url . '/services/TargetService2'
           ));
-  $token = @Login($sessionService, $username, $password);
-  $downloadTargetResourceRequest = new downloadTargetResource();
+  $token = @login($session_service, $username, $password);
+  $download_target_resource_request = new downloadTargetResource();
 
-  $downloadTargetResourceRequest->targetId = $targetTicket;
-  $downloadTargetResourceRequest->userId = $token;
+  $download_target_resource_request->targetId = $target_ticket;
+  $download_target_resource_request->userId = $token;
 
-  $downloadTargetResourceResponse = $targetService->downloadTargetResource($downloadTargetResourceRequest);
-  $repositoryItem = $downloadTargetResourceResponse->return;
-  $targetContent = $repositoryItem->data->_;
+  $download_target_resource_response = $target_service->downloadTargetResource($download_target_resource_request);
+  $repository_item = $download_target_resource_response->return;
+  $target_content = $repository_item->data->_;
 
-  return $targetContent;
+  return $target_content;
 }
 
-function sendDownloadConfirmation($targetTicket, $pdObject) {
-  $username = $pdObject->username;
-  $password = $pdObject->password;
-  $url = $pdObject->url;
+function send_download_confirmation($target_ticket, $pd_obj) {
+  $username = $pd_obj->username;
+  $password = $pd_obj->password;
+  $url = $pd_obj->url;
 
-  $sessionService = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . "/services/SessionService2"
+  $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
+              'location' => $url . '/services/SessionService2'
           ));
-  $targetService = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . "/services/TargetService2"
+  $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
+              'location' => $url . '/services/TargetService2'
           ));
-  $token = Login($sessionService, $username, $password);
-  $sendDownloadConfirmationRequest = new sendDownloadConfirmation();
+  $token = login($session_service, $username, $password);
+  $send_download_confirmation_request = new sendDownloadConfirmation();
 
-  $sendDownloadConfirmationRequest->targetId = $targetTicket;
-  $sendDownloadConfirmationRequest->userId = $token;
+  $send_download_confirmation_request->targetId = $target_ticket;
+  $send_download_confirmation_request->userId = $token;
 
-  $sendDownloadConfirmationResponse = $targetService->sendDownloadConfirmation($sendDownloadConfirmationRequest);
+  $send_download_confirmation_response = $target_service->sendDownloadConfirmation($send_download_confirmation_request);
 
-  return $sendDownloadConfirmationResponse->return;
+  return $send_download_confirmation_response->return;
 }

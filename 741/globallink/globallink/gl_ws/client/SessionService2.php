@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("login")) {
+if (!class_exists('login')) {
 
     class login {
 
@@ -11,7 +11,7 @@ if (!class_exists("login")) {
 
 }
 
-if (!class_exists("loginResponse")) {
+if (!class_exists('loginResponse')) {
 
     class loginResponse {
 
@@ -21,7 +21,7 @@ if (!class_exists("loginResponse")) {
 
 }
 
-if (!class_exists("logout")) {
+if (!class_exists('logout')) {
 
     class logout {
 
@@ -31,7 +31,7 @@ if (!class_exists("logout")) {
 
 }
 
-if (!class_exists("logoutResponse")) {
+if (!class_exists('logoutResponse')) {
 
     class logoutResponse {
 
@@ -59,7 +59,7 @@ class SessionService2 extends SoapClient {
         'logoutResponse' => 'logoutResponse',
     );
 
-    public function SessionService2($wsdl = "http://localhost:8080/pd4/services/SessionService2?wsdl", $options = array()) {
+    public function SessionService2($wsdl = 'http://localhost:8080/pd4/services/SessionService2?wsdl', $options = array()) {
         foreach (self::$classmap as $key => $value) {
             if (!isset($options['classmap'][$key])) {
                 $options['classmap'][$key] = $value;

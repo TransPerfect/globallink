@@ -49,7 +49,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
 
       $form['filters']['status']['filters'] = array(
           '#type' => 'container',
-          '#attributes' => array('style' => "padding: 0px;"),
+          '#attributes' => array('style' => 'padding: 0px;'),
       );
       $module_path = drupal_get_path('module', 'transperfect');
       drupal_add_css($module_path . '/css/transperfect.css');
@@ -71,7 +71,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#default_value' => $default,
                 '#disabled' => $disabled,
                 '#attributes' => array('style' => array('padding:5px;')),
-                '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+                '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                 '#field_prefix' => '</td><td>',
                 '#ajax' => array(
                     'event' => 'change',
@@ -92,7 +92,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
             if (isset($form_state['values']['language_name'])) {
               $form['filters']['status']['filters'][$key] = array(
                   '#type' => $filter['form-type'],
-                  '#options' => get_target_options($form_state['values']['language_name']),
+                  '#options' => transperfect_entity_get_target_options($form_state['values']['language_name']),
                   '#disabled' => $disabled,
                   '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
                   '#attributes' => array('style' => array('padding:0px;')),
@@ -103,12 +103,12 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
             else {
               $form['filters']['status']['filters'][$key] = array(
                   '#type' => $filter['form-type'],
-                  '#options' => get_target_options($selected_source_lang),
+                  '#options' => transperfect_entity_get_target_options($selected_source_lang),
                   '#title' => check_plain($filter['title']),
                   '#disabled' => $disabled,
                   '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
                   '#attributes' => array('style' => array('padding:0px;')),
-                  '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+                  '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                   '#suffix' => '</tr>',
                   '#field_prefix' => '</td><td><div id="replace-target">',
                   '#field_suffix' => '</div></td>',
@@ -116,7 +116,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
             }
           }
           else {
-            if ($key == 'status' && module_exists("revisioning"))
+            if ($key == 'status' && module_exists('revisioning'))
               $default = 'status-1';
 
             $form['filters']['status']['filters'][$key] = array(
@@ -126,7 +126,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#disabled' => $disabled,
                 '#default_value' => isset($selected_arr[$key]) ? $selected_arr[$key] : $default,
                 '#attributes' => array('style' => array('padding:0px;')),
-                '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+                '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                 '#suffix' => '</tr>',
                 '#field_suffix' => '</td>',
                 '#field_prefix' => '</td><td>',
@@ -152,7 +152,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
               '#attributes' => array('class' => array('pickadate'),
                   'style' => array('padding:0px;')),
               '#default_value' => isset($selected_arr[$key]) ? date('m/d/Y', $selected_arr[$key]) : '',
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr></table></div>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '</td><td>',
@@ -179,7 +179,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
               '#disabled' => $disabled,
               '#default_value' => isset($selected_arr[$key]) ? $selected_arr[$key] : '',
               '#attributes' => array('size' => 30),
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '</td><td>',
@@ -213,7 +213,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
         $form['filter-search']['filter-markup'] = array(
             '#type' => 'container',
         );
-        $form['filter-search']['filter-markup'][] = array('#markup' => "<table>");
+        $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
         $filters = transperfect_build_filters(FALSE);
         foreach ($session as $filter) {
           list($type, $value) = $filter;
@@ -231,9 +231,9 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
           else {
             $label = $value;
           }
-          $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . $filters[$type]['title'] . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . str_replace('&nbsp;', '', $label) . "</td></tr>");
+          $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . $filters[$type]['title'] . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . str_replace('&nbsp;', '', $label) . '</td></tr>');
         }
-        $form['filter-search']['filter-markup'][] = array('#markup' => "</table>");
+        $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
         $form['filter-search']['status']['actions'] = array(
             '#type' => 'actions',
             '#attributes' => array('class' => array('container-inline')),
@@ -255,7 +255,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
   return $form;
 }
 
-function get_target_options($selected) {
+function transperfect_entity_get_target_options($selected) {
   $lang_filter = array();
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
   foreach ($languages as $key => $lang) {
@@ -286,8 +286,8 @@ function transperfect_dashboard_entity_filter_form_submit($form, &$form_state) {
         if ($filter == 'modified-after') {
           if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
             list($month, $day, $year) = explode('/', $form_state['values'][$filter]);
-            $timeStamp = mktime(0, 0, 0, $month, $day, $year);
-            $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $timeStamp);
+            $time_stamp = mktime(0, 0, 0, $month, $day, $year);
+            $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $time_stamp);
           }
         }
         elseif ($filter == 'modified') {
@@ -384,7 +384,6 @@ function transperfect_dashboard_entity_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_entity_form() {
-  $revisioning_module_exists = module_exists("revisioning");
   $default_checked_ids = array();
   $module_path = drupal_get_path('module', 'transperfect');
   $form = array();
@@ -406,8 +405,8 @@ function transperfect_dashboard_entity_form() {
       );
 
       $node_check = variable_get('transperfect_implementation_type', 0);
-      $source_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
-      $target_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+      $source_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
+      $target_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
       $include_node_arr = array();
 
       $query = db_select('node', 'n');
@@ -437,7 +436,7 @@ function transperfect_dashboard_entity_form() {
       }
 
       $status = '';
-      if ($revisioning_module_exists) {
+      if (module_exists('revisioning')) {
         if (isset($_SESSION['transperfect_entity_filter']['status'])) {
           list($key, $value) = explode('-', $_SESSION['transperfect_entity_filter']['status'][1], 2);
           $status = $value;
@@ -448,7 +447,7 @@ function transperfect_dashboard_entity_form() {
       }
 
       $source_lang = empty($_SESSION['transperfect_entity_source_locale']) ? $GLOBALS['transperfect_entity_source_locale'] : $_SESSION['transperfect_entity_source_locale'];
-      $tpt_locale_code = transperfect_get_tpt_locale_code($source_lang);
+      $tpt_locale_code = transperfect_get_locale_code($source_lang);
       $drupal_locale_desc = transperfect_get_drupal_locale_name($tpt_locale_code);
 
       $t_count = 0;
@@ -469,7 +468,7 @@ function transperfect_dashboard_entity_form() {
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $target_lang_arr_keys = array_keys($target_lang_arr);
         foreach ($target_lang_arr_keys as $t_key) {
-          if (transperfect_get_tpt_locale_code($tgt_lang) != $t_key) {
+          if (transperfect_get_locale_code($tgt_lang) != $t_key) {
             unset($target_lang_arr[$t_key]);
           }
         }
@@ -477,7 +476,7 @@ function transperfect_dashboard_entity_form() {
 
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $t_query = db_select('transperfect_core_entity', 'tc');
-        $t_query->condition('target', transperfect_get_tpt_locale_code($tgt_lang));
+        $t_query->condition('target', transperfect_get_locale_code($tgt_lang));
         $t_query->fields('tc');
         $t_query->orderBy('nid', 'ASC');
 
@@ -500,7 +499,7 @@ function transperfect_dashboard_entity_form() {
         $item_arr = array();
         foreach ($results as $item) {
           $key = array_search($item->nid, $include_node_arr);
-          if (false !== $key) {
+          if ($key !== FALSE) {
             if (array_key_exists($item->nid, $item_arr)) {
               array_push($item_arr[$item->nid], $item);
             }
@@ -547,7 +546,7 @@ function transperfect_dashboard_entity_form() {
             $selected_target_lang = $tgt_lang;
           }
           foreach ($include_node_arr as $key => $nid) {
-            if (!transperfect_tpt_is_node_translatable(node_load($nid), $selected_target_lang)) {
+            if (!transperfect_is_node_translatable(node_load($nid), $selected_target_lang)) {
               unset($include_node_arr[$key]);
             }
           }
@@ -573,28 +572,28 @@ function transperfect_dashboard_entity_form() {
               $node = node_load($item->nid);
               if ($active_subs && array_key_exists($item->nid, $active_subs)) {
                 $sub_arr = $active_subs[$item->nid];
-                $sub_name = "";
+                $sub_name = '';
                 $tgt_arr = array();
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = transperfect_format_display_string($sub_name);
                   $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
-                  $active .= l($l_title, $l_href, $l_options) . "&nbsp;&nbsp;- &nbsp;&nbsp;";
+                  $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                   $t_count = 0;
                   foreach ($tgt_arr as $tgt) {
                     $t_count++;
                     $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
                     if ($t_count == count($tgt_arr)) {
-                      $active .= $tgt_name . " <BR/> ";
+                      $active .= $tgt_name . ' <BR/> ';
                     }
                     else {
-                      $active .= $tgt_name . ", &nbsp;&nbsp;";
+                      $active .= $tgt_name . ', &nbsp;&nbsp;';
                     }
                   }
                 }
               }
 
-              if (module_exists("title") && isset($node->title_field[$source_lang])) {
+              if (module_exists('title') && isset($node->title_field[$source_lang])) {
                 $title = l(transperfect_format_display_string($node->title_field[$source_lang][0]['value']), 'node/' . $item->nid);
               }
               else {
@@ -617,7 +616,7 @@ function transperfect_dashboard_entity_form() {
         //Request coming from dashboard
         $revisioning = FALSE;
 
-        if ($revisioning_module_exists && $status != '') {
+        if (module_exists('revisioning') && $status != '') {
           if ($status == '1') {
             $d_query->condition('status', 1, '=');
           }
@@ -657,25 +656,25 @@ function transperfect_dashboard_entity_form() {
                 $l_title = transperfect_format_display_string($sub_name);
                 $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
-                $active .= l($l_title, $l_href, $l_options) . "&nbsp;&nbsp;- &nbsp;&nbsp;";
+                $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                 if (count($tgt_arr) > 1) {
                   $t_count = 1;
                   foreach ($tgt_arr as $tgt => $_vid) {
                     $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
                     if ($t_count == count($tgt_arr)) {
                       if ($_vid != $vid) {
-                        $active .= $tgt_name . " (Different version)<BR/> ";
+                        $active .= $tgt_name . ' (Different version)<BR/> ';
                       }
                       else {
-                        $active .= $tgt_name . " <BR/> ";
+                        $active .= $tgt_name . ' <BR/> ';
                       }
                     }
                     else {
                       if ($_vid != $vid) {
-                        $active .= $tgt_name . " (Different version), &nbsp;&nbsp;";
+                        $active .= $tgt_name . ' (Different version), &nbsp;&nbsp;';
                       }
                       else {
-                        $active .= $tgt_name . ", &nbsp;&nbsp;";
+                        $active .= $tgt_name . ', &nbsp;&nbsp;';
                       }
                     }
                     $t_count++;
@@ -685,17 +684,17 @@ function transperfect_dashboard_entity_form() {
                   foreach ($tgt_arr as $tgt => $_vid) {
                     $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
                     if ($_vid != $vid) {
-                      $active .= $tgt_name . " (Different version) <BR/> ";
+                      $active .= $tgt_name . ' (Different version) <BR/> ';
                     }
                     else {
-                      $active .= $tgt_name . " <BR/> ";
+                      $active .= $tgt_name . ' <BR/> ';
                     }
                   }
                 }
               }
             }
 
-            if (module_exists("title") && isset($node->title_field[$source_lang])) {
+            if (module_exists('title') && isset($node->title_field[$source_lang])) {
               $node_title = transperfect_format_display_string($node->title_field[$source_lang][0]['value']);
             }
             else {
@@ -755,25 +754,25 @@ function transperfect_dashboard_entity_form() {
                 $l_title = transperfect_format_display_string($sub_name);
                 $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
-                $active .= l($l_title, $l_href, $l_options) . "&nbsp;&nbsp;- &nbsp;&nbsp;";
+                $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                 if (count($tgt_arr) > 1) {
                   $t_count = 1;
                   foreach ($tgt_arr as $tgt => $_vid) {
                     $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
                     if ($t_count == count($tgt_arr)) {
                       if ($_vid != $vid) {
-                        $active .= $tgt_name . " (Different version)<BR/> ";
+                        $active .= $tgt_name . ' (Different version)<BR/> ';
                       }
                       else {
-                        $active .= $tgt_name . " <BR/> ";
+                        $active .= $tgt_name . ' <BR/> ';
                       }
                     }
                     else {
                       if ($_vid != $vid) {
-                        $active .= $tgt_name . " (Different version), &nbsp;&nbsp;";
+                        $active .= $tgt_name . ' (Different version), &nbsp;&nbsp;';
                       }
                       else {
-                        $active .= $tgt_name . ", &nbsp;&nbsp;";
+                        $active .= $tgt_name . ', &nbsp;&nbsp;';
                       }
                     }
                     $t_count++;
@@ -783,17 +782,17 @@ function transperfect_dashboard_entity_form() {
                   foreach ($tgt_arr as $tgt => $_vid) {
                     $tgt_name = $locales[transperfect_get_drupal_locale_code($tgt)];
                     if ($_vid != $vid) {
-                      $active .= $tgt_name . " (Different version) <BR/> ";
+                      $active .= $tgt_name . ' (Different version) <BR/> ';
                     }
                     else {
-                      $active .= $tgt_name . " <BR/> ";
+                      $active .= $tgt_name . ' <BR/> ';
                     }
                   }
                 }
               }
             }
 
-            if (module_exists("title") && isset($node->title_field[$source_lang])) {
+            if (module_exists('title') && isset($node->title_field[$source_lang])) {
               $node_title = l(transperfect_format_display_string($node->title_field[$source_lang][0]['value']), 'node/' . $item->nid);
             }
             else {
@@ -833,7 +832,7 @@ function transperfect_dashboard_entity_form() {
             $form['clear_changed_flag'] = array('#type' => 'submit',
                 '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
                 '#limit_validation_errors' => array(),
-                '#submit' => array('entity_form_clear_submit'),
+                '#submit' => array('transperfect_entity_form_clear_submit'),
                 '#access' => TRUE,
                 '#attributes' => array('onclick' => 'if(!confirm("Are you sure you want to clear the changed status for the selected content(s)?")){return false;}')
             );
@@ -842,7 +841,7 @@ function transperfect_dashboard_entity_form() {
           drupal_add_css($module_path . '/css/transperfect.css');
           $proj_arr = variable_get('transperfect_pd_projects', array());
           if (count($proj_arr) > 0) {
-            $projects = variable_get('transperfect_pd_projectid', "");
+            $projects = variable_get('transperfect_pd_projectid', '');
             if ($projects != '') {
               $arr = explode(',', $projects);
               foreach ($arr as $value) {
@@ -896,7 +895,7 @@ function transperfect_dashboard_entity_form() {
               '#attributes' => array('class' => array('pickadate1'),
                   'style' => array('padding:0px;')),
               '#default_value' => $default_date,
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Expected Completion Date for this Submission.') . '</div></td><td>',
@@ -904,16 +903,16 @@ function transperfect_dashboard_entity_form() {
           $form['send_submission']['submission_pd_project'] = array(
               '#type' => 'select', '#title' => t('Project Name'), '#required' => TRUE,
               '#options' => $r_proj_arr, '#default_value' => $p_key,
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('GlobalLink Project Name for this Submission') . '</div></td><td>',
           );
           $form['send_submission']['submission_source_locale'] = array(
               '#type' => 'select', '#title' => t('Source Language'), '#required' => TRUE,
-              '#options' => $source_lang_arr, '#default_value' => transperfect_get_tpt_locale_code(empty($_SESSION['transperfect_entity_source_locale']) ? $GLOBALS['transperfect_entity_source_locale'] : $_SESSION['transperfect_entity_source_locale']),
+              '#options' => $source_lang_arr, '#default_value' => transperfect_get_locale_code(empty($_SESSION['transperfect_entity_source_locale']) ? $GLOBALS['transperfect_entity_source_locale'] : $_SESSION['transperfect_entity_source_locale']),
               '#disabled' => TRUE,
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Source language for this Submission.') . '</div></td><td>',
@@ -922,7 +921,7 @@ function transperfect_dashboard_entity_form() {
               '#options' => $target_lang_arr,
               '#title' => t('Target Language(s)'),
               '#required' => TRUE,
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Target language(s) for this Submission.') . '</div></td><td>',
@@ -932,7 +931,7 @@ function transperfect_dashboard_entity_form() {
               '#type' => 'textfield', '#title' => 'Submitter',
               '#size' => 40, '#required' => TRUE,
               '#default_value' => check_plain($user->name),
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr>',
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Username for this new Submission.') . '</div></td><td>',
@@ -942,7 +941,7 @@ function transperfect_dashboard_entity_form() {
               '#attributes' => array('style' => 'width: 275px;resize: none;'),
               '#rows' => 3,
               '#resizable' => FALSE,
-              '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+              '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr></table></div>',
               '#field_suffix' => '</div></td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Other instructions for this Submission.') . '</div></td><td>',
@@ -957,7 +956,7 @@ function transperfect_dashboard_entity_form() {
   return $form;
 }
 
-function entity_form_clear_submit($form, &$form_state) {
+function transperfect_entity_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG) {
     $nids = array_filter($form_state['input']['table']);
@@ -966,7 +965,7 @@ function entity_form_clear_submit($form, &$form_state) {
     }
     else {
       $tgt_arr = $form_state['input']['submission_target_locale'];
-      $source = transperfect_get_tpt_locale_code($GLOBALS['transperfect_entity_source_locale']);
+      $source = transperfect_get_locale_code($GLOBALS['transperfect_entity_source_locale']);
       $nid_arr = array();
       foreach ($nids as $nvid) {
         list($nid, $vid) = explode('-', $nvid, 2);
@@ -980,8 +979,8 @@ function entity_form_clear_submit($form, &$form_state) {
 
 function transperfect_dashboard_entity_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
@@ -1031,7 +1030,7 @@ function transperfect_dashboard_entity_form_validate($form, &$form_state) {
 function transperfect_dashboard_entity_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_SEND) {
     try {
       $nids = array_filter($form_state['values']['table']);
@@ -1048,7 +1047,7 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
       $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
       $project_code = $form_state['values']['submission_pd_project'];
 
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Sending submission - [" . $submission_name . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, 'Sending submission - [' . $submission_name . ']');
 
       $updated_globalLink_arr = send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
@@ -1067,11 +1066,11 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

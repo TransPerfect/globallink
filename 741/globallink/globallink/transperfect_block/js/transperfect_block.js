@@ -28,7 +28,7 @@ var _img;
                             url: previewpath,
                             dataType: 'json',
                             data: 'rid=' + rids[div],
-                            success: ajaxCompleted,
+                            success: ajax_completed,
                             error: function(xhr, textStatus, errorThrown) {
                                 $('#' + _div).empty();
                                 $('#'+div).html(textStatus);
@@ -41,16 +41,16 @@ var _img;
     }
 })(jQuery);
 
-function escapeHTML( string )
+function escape_html (string)
 {
     return jQuery( '<pre>' ).text( string ).html();
 }
 
-function ajaxCompleted ($data) {
+function ajax_completed (data) {
     var content = '<TABLE class="tpt_popup_table"><TR><TH>&nbsp;</TH><TH>Source Content</TH><TH>Translated Content</TH></TR>';
-    error = $data['error'];
-    target = $data['target'];
-    source_obj = $data['source'];
+    error = data['error'];
+    target = data['target'];
+    source_obj = data['source'];
     if(error != null && error != undefined) {
         content += '<TR><TD colspan="3"><span style="color: red;text-align: center;">' + error + '</span></TD></TR>';
         content += '</TABLE>';
@@ -66,13 +66,13 @@ function ajaxCompleted ($data) {
                 var source_text = '';
                 var target_text = '';
                 if(source_obj[field] != null && source_obj[field] != undefined) {
-                    source_text = escapeHTML(source_obj[field]);
+                    source_text = escape_html(source_obj[field]);
                 }
                 if(source_text == '') {
                     source_text = '<span style="color:red;">Field Empty</span>';
                 }
                 if(f_object != null && f_object != undefined) {
-                    target_text = escapeHTML(f_object);
+                    target_text = escape_html(f_object);
                     if(target_text != '') {
                         if(field == 'title') {
                             label = 'Title';
@@ -85,13 +85,13 @@ function ajaxCompleted ($data) {
             var source_text = '';
             var target_text = '';
             if(source_obj[field] != null && source_obj[field] != undefined) {
-                source_text = escapeHTML(source_obj[field]);
+                source_text = escape_html(source_obj[field]);
             }           
             if(source_text == '') {
                 source_text = '<span style="color:red;">Field Empty</span>';
             }
             if(f_object != null && f_object != undefined) {
-                target_text = escapeHTML(f_object);
+                target_text = escape_html(f_object);
                 if(target_text != '') {
                     if(field == 'body') {
                         label = 'Body';

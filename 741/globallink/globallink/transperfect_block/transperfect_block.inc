@@ -7,7 +7,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 function send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($source_locale), 'blocks');
   $submitter = $submission_details['submitter'];
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($bids as $bid) {
     $rows = get_sent_tpt_block_rows_by_bid($bid);
     $target_arr = $target_locale_arr;
@@ -19,38 +19,38 @@ function send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, 
     if (empty($target_arr)) {
       continue;
     }
-    $title_string_arr = isset($strings["blocks:block:$bid:title"]) ? $strings["blocks:block:$bid:title"] : FALSE;
-    $body_string_arr = isset($strings["blocks:block:$bid:body"]) ? $strings["blocks:block:$bid:body"] : FALSE;
+    $title_string_arr = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
+    $body_string_arr = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
     if (!$body_string_arr) {
       continue;
     }
     $xml = get_block_xml($bid, $title_string_arr, $body_string_arr);
-    $name = "Block_" . $bid . ".xml";
-    $globalLink = new GlobalLink();
-    $globalLink->type = 'block';
-    $globalLink->metadata = 'Block';
-    $globalLink->sourceLocale = $source_locale;
-    $globalLink->targetLocale = $target_arr;
-    $globalLink->sourceXML = $xml;
-    $globalLink->sourceFileName = $name;
-    $globalLink->submissionName = $submission_name;
-    $globalLink->dueDate = $due_date;
-    $globalLink->otherObjectId = $bid;
-    $globalLink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
-    $globalLink_arr[] = $globalLink;
+    $name = 'Block_' . $bid . '.xml';
+    $globallink = new GlobalLink();
+    $globallink->type = 'block';
+    $globallink->metadata = 'Block';
+    $globallink->sourceLocale = $source_locale;
+    $globallink->targetLocale = $target_arr;
+    $globallink->sourceXML = $xml;
+    $globallink->sourceFileName = $name;
+    $globallink->submissionName = $submission_name;
+    $globallink->dueDate = $due_date;
+    $globallink->otherObjectId = $bid;
+    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
+    $globallink_arr[] = $globallink;
   }
 
-  if (!empty($globalLink_arr)) {
-    sendDocumentsForTranslationToPD($globalLink_arr, $pd4, $project_code, $submitter);
+  if (!empty($globallink_arr)) {
+    send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
-  return $globalLink_arr;
+  return $globallink_arr;
 }
 
 function get_block_xml($bid, $title_string_arr, $body_string_arr) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
-  $root = $dom->createElement("content");
+  $root = $dom->createElement('content');
   $dom->appendChild($root);
 
   $id = $dom->createAttribute('bid');
@@ -59,13 +59,13 @@ function get_block_xml($bid, $title_string_arr, $body_string_arr) {
 
   $custom_block = block_custom_block_get($bid);
   if ($title_string_arr) {
-    transperfect_insert_child_element($dom, $root, "block", $title_string_arr['source'], array('name' => 'title', 'lid' => $title_string_arr['lid'],
+    transperfect_insert_child_element($dom, $root, 'block', $title_string_arr['source'], array('name' => 'title', 'lid' => $title_string_arr['lid'],
         'location' => $title_string_arr['location'],
         'context' => $title_string_arr['context']));
   }
   if ($body_string_arr) {
     $format = isset($custom_block['format']) ? $custom_block['format'] : '';
-    transperfect_insert_child_element($dom, $root, "block", $body_string_arr['source'], array('name' => 'body', 'lid' => $body_string_arr['lid'],
+    transperfect_insert_child_element($dom, $root, 'block', $body_string_arr['source'], array('name' => 'body', 'lid' => $body_string_arr['lid'],
         'location' => $body_string_arr['location'],
         'context' => $body_string_arr['context'],
         'format' => $format));
@@ -77,10 +77,10 @@ function get_block_xml($bid, $title_string_arr, $body_string_arr) {
 
 function transperfect_get_strings($language = NULL, $group = 'blocks') {
   if (isset($language)) {
-    $result = db_query("SELECT s.lid, s.source, s.context, s.location, t.plid, t.plural FROM {locales_source} s LEFT JOIN {locales_target} t ON s.lid = t.lid AND t.language = :language WHERE s.textgroup = :textgroup ORDER BY t.plid, t.plural", array(':language' => $language, ':textgroup' => $group));
+    $result = db_query('SELECT s.lid, s.source, s.context, s.location, t.plid, t.plural FROM {locales_source} s LEFT JOIN {locales_target} t ON s.lid = t.lid AND t.language = :language WHERE s.textgroup = :textgroup ORDER BY t.plid, t.plural', array(':language' => $language, ':textgroup' => $group));
   }
   else {
-    $result = db_query("SELECT s.lid, s.source, s.context, s.location, t.plid, t.plural FROM {locales_source} s LEFT JOIN {locales_target} t ON s.lid = t.lid WHERE s.textgroup = :textgroup ORDER BY t.plid, t.plural", array(':textgroup' => $group));
+    $result = db_query('SELECT s.lid, s.source, s.context, s.location, t.plid, t.plural FROM {locales_source} s LEFT JOIN {locales_target} t ON s.lid = t.lid WHERE s.textgroup = :textgroup ORDER BY t.plid, t.plural', array(':textgroup' => $group));
   }
   $strings = array();
   foreach ($result as $child) {
@@ -96,28 +96,27 @@ function transperfect_get_strings($language = NULL, $group = 'blocks') {
 }
 
 function update_block_ticket_id($arr, $project_code) {
-  foreach ($arr as $globalLink) {
-    $target_locale_arr = $globalLink->targetLocale;
-    $type = $globalLink->type;
+  foreach ($arr as $globallink) {
+    $target_locale_arr = $globallink->targetLocale;
+    $type = $globallink->type;
     if ($type == 'block') {
-      $bid = $globalLink->otherObjectId;
-//      $block = block_load('block', $bid);
+      $bid = $globallink->otherObjectId;
       $block = load_block_data($bid);
       foreach ($target_locale_arr as $target_locale) {
-        $row = get_transperfect_block_row($bid, $type, $globalLink->sourceLocale, $target_locale);
+        $row = get_transperfect_block_row($bid, $type, $globallink->sourceLocale, $target_locale);
         if ($row) {
           db_update('transperfect_core_block')
-                  ->fields(array('title' => $block[0]->info, 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('title' => $block[0]->info, 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->condition('rid', $row->rid, '=')
                   ->execute();
         }
         else {
           db_insert('transperfect_core_block')
-                  ->fields(array('object_id' => $bid, 'object_type' => $globalLink->type, 'title' => $block[0]->info,
-                      'source' => $globalLink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('object_id' => $bid, 'object_type' => $globallink->type, 'title' => $block[0]->info,
+                      'source' => $globallink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->execute();
         }
@@ -141,19 +140,19 @@ function get_transperfect_block_row($object_id, $object_type, $source, $target) 
   return FALSE;
 }
 
-function update_deleted_block_records($pd4, $globalLink) {
+function update_deleted_block_records($pd4, $globallink) {
   try {
-    $globalLink->status = TPT_STATUS_SOURCE_DELETED;
-    sendDownloadConfirmation($globalLink->targetTicket, $pd4);
-    update_tpt_block_status($globalLink, TPT_STATUS_SOURCE_DELETED);
+    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    send_download_confirmation($globallink->targetTicket, $pd4);
+    update_tpt_block_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_block_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in update_deleted_block_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -196,41 +195,41 @@ function get_block_active_submission_names() {
 }
 
 function cancel_block_records($rowids, $pd4) {
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($rowids as $rid) {
     $row = transperfect_get_other_row($rid, 'block');
-    $globalLink = new GlobalLink();
-    $globalLink->tptRowId = $row->rid;
-    $globalLink->targetLocale = $row->target;
-    $globalLink->documentTicket = $row->document_ticket;
-    $globalLink->submissionTicket = $row->submission_ticket;
-    $globalLink_arr[$rid] = $globalLink;
+    $globallink = new GlobalLink();
+    $globallink->tptRowId = $row->rid;
+    $globallink->targetLocale = $row->target;
+    $globallink->documentTicket = $row->document_ticket;
+    $globallink->submissionTicket = $row->submission_ticket;
+    $globallink_arr[$rid] = $globallink;
   }
 
-  cancel_select_documents($pd4, $globalLink_arr);
-  update_block_row_document($globalLink_arr);
+  cancel_select_documents($pd4, $globallink_arr);
+  update_block_row_document($globallink_arr);
 }
 
-function update_block_row_document(&$globalLink_arr) {
-  foreach ($globalLink_arr as $globalLink) {
-    if ($globalLink->cancelled) {
+function update_block_row_document(&$globallink_arr) {
+  foreach ($globallink_arr as $globallink) {
+    if ($globallink->cancelled) {
       db_update('transperfect_core_block')
               ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $globalLink->tptRowId, '=')
+              ->condition('rid', $globallink->tptRowId, '=')
               ->execute();
     }
   }
 }
 
 function cancel_block_submission($selected_submission) {
-  $pd4 = get_project_director_details();
-  $globalLink = new GlobalLink();
+  $pd4 = transperfect_get_project_director_details();
+  $globallink = new GlobalLink();
   $submission_name = get_block_submission_name($selected_submission);
-  $globalLink->submissionName = $submission_name;
-  $globalLink->submissionTicket = $selected_submission;
+  $globallink->submissionName = $submission_name;
+  $globallink->submissionTicket = $selected_submission;
 
-  cancel_ProjectDirector_submission($pd4, $globalLink);
-  update_transperfect_block_submission($globalLink);
+  cancel_pd_submission($pd4, $globallink);
+  update_transperfect_block_submission($globallink);
 }
 
 function get_block_submission_name($submission_ticket) {
@@ -245,25 +244,25 @@ function get_block_submission_name($submission_ticket) {
   }
 }
 
-function update_transperfect_block_submission(&$globalLink) {
+function update_transperfect_block_submission(&$globallink) {
   db_update('transperfect_core_block')
           ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-          ->condition('submission_ticket', $globalLink->submissionTicket, '=')
-          ->condition('submission', $globalLink->submissionName, '=')
+          ->condition('submission_ticket', $globallink->submissionTicket, '=')
+          ->condition('submission', $globallink->submissionName, '=')
           ->execute();
 }
 
-function get_translated_blocks($pd4, &$globalLink_arr) {
+function get_translated_blocks($pd4, &$globallink_arr) {
   $count = 0;
   $source_link = array('link_title' => 'No Title');
   $strings = transperfect_get_strings(NULL, 'blocks');
-  foreach ($globalLink_arr as $globalLink) {
-    $targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-    if (!$globalLink->sourceDeleted) {
-      if (isset($targetXML)) {
+  foreach ($globallink_arr as $globallink) {
+    $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+    if (!$globallink->sourceDeleted) {
+      if (isset($target_xml)) {
         $count++;
-        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
-        $translated_arr = get_translated_block_items($targetXML);
+        $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
+        $translated_arr = get_translated_block_items($target_xml);
         try {
           $bid = $translated_arr['bid'];
           foreach ($translated_arr as $attribute => $translations) {
@@ -272,17 +271,16 @@ function get_translated_blocks($pd4, &$globalLink_arr) {
             }
             $source = '';
             if ($attribute == 'title') {
-              $title_string_arr = isset($strings["blocks:block:$bid:title"]) ? $strings["blocks:block:$bid:title"] : FALSE;
+              $title_string_arr = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
               if (!$title_string_arr) {
                 continue;
-                //throw new Exception("Source string not found for block id $bid and field name $attribute");
               }
               $source = $title_string_arr['source'];
             }
             elseif ($attribute == 'body') {
-              $body_string_arr = isset($strings["blocks:block:$bid:body"]) ? $strings["blocks:block:$bid:body"] : FALSE;
+              $body_string_arr = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
               if (!$body_string_arr) {
-                throw new Exception("Source string not found for block id $bid and field name $attribute");
+                throw new Exception('Source string not found for block id ' . $bid . ' and field name ' . $attribute);
               }
               $source = $body_string_arr['source'];
             }
@@ -290,19 +288,19 @@ function get_translated_blocks($pd4, &$globalLink_arr) {
             _locale_import_one_string_db($report, $language, $translations['context'], $source, $translations['translation'], 'blocks', $translations['location'], LOCALE_IMPORT_OVERWRITE);
           }
 
-          update_tpt_block_status($globalLink);
-          sendDownloadConfirmation($globalLink->targetTicket, $pd4);
+          update_tpt_block_status($globallink);
+          send_download_confirmation($globallink->targetTicket, $pd4);
         }
         catch (SoapFault $se) {
           $count--;
-          update_tpt_block_status($globalLink, TPT_STATUS_ERROR);
-          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[$se->faultcode], Message[$se->faultstring]");
+          update_tpt_block_status($globallink, TPT_STATUS_ERROR);
+          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_block_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
-          update_tpt_block_status($globalLink, TPT_STATUS_ERROR);
-          transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving block Objects - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+          update_tpt_block_status($globallink, TPT_STATUS_ERROR);
+          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Saving block Objects - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }
@@ -325,9 +323,9 @@ function get_translated_block_items($xml) {
   $bid = '';
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
-      foreach ($content->attributes as $attrName => $attrNode) {
-        if ('bid' == $attrName) {
-          $bid = $attrNode->value;
+      foreach ($content->attributes as $attr_name => $attr_node) {
+        if ($attr_name == 'bid') {
+          $bid = $attr_node->value;
         }
       }
     }
@@ -344,8 +342,8 @@ function get_translated_block_items($xml) {
   foreach ($blocks as $block) {
     if (!is_null($block->attributes)) {
       $b_arr = array();
-      foreach ($block->attributes as $attrName => $attrNode) {
-        $b_arr[$attrName] = $attrNode->value;
+      foreach ($block->attributes as $attr_name => $attr_node) {
+        $b_arr[$attr_name] = $attr_node->value;
       }
       $b_arr['translation'] = $block->nodeValue;
       $block_arr[$b_arr['name']] = $b_arr;
@@ -355,13 +353,13 @@ function get_translated_block_items($xml) {
   return $block_arr;
 }
 
-function update_tpt_block_status(&$globalLink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function update_tpt_block_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
   db_update('transperfect_core_block')
           ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
-          ->condition('submission', $globalLink->submissionName, '=')
-          ->condition('document_ticket', $globalLink->documentTicket, '=')
-          ->condition('source', $globalLink->sourceLocale, '=')
-          ->condition('target', $globalLink->targetLocale, '=')
+          ->condition('submission', $globallink->submissionName, '=')
+          ->condition('document_ticket', $globallink->documentTicket, '=')
+          ->condition('source', $globallink->sourceLocale, '=')
+          ->condition('target', $globallink->targetLocale, '=')
           ->execute();
 }
 
@@ -453,9 +451,9 @@ function get_arr_block_items($xml) {
   $bid = '';
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
-      foreach ($content->attributes as $attrName => $attrNode) {
-        if ('bid' == $attrName) {
-          $bid = $attrNode->value;
+      foreach ($content->attributes as $attr_name => $attr_node) {
+        if ($attr_name == 'bid') {
+          $bid = $attr_node->value;
         }
       }
     }
@@ -471,8 +469,8 @@ function get_arr_block_items($xml) {
   foreach ($blocks as $block) {
     if (!is_null($block->attributes)) {
       $b_arr = array();
-      foreach ($block->attributes as $attrName => $attrNode) {
-        $b_arr[$attrName] = $attrNode->value;
+      foreach ($block->attributes as $attr_name => $attr_node) {
+        $b_arr[$attr_name] = $attr_node->value;
       }
       $block_arr[$b_arr['name']] = $block->nodeValue;
     }
@@ -487,7 +485,7 @@ function get_distinct_active_block_submission_names() {
   $query->distinct();
   $query->fields('tc');
   $results = $query->execute();
-  $arr = array('[any]' => t(' Any '));
+  $arr = array('[any]' => t('Any'));
   foreach ($results as $row) {
     $arr[$row->submission] = $row->submission;
   }
@@ -514,7 +512,7 @@ function get_block_submission_status() {
   foreach ($results as $row) {
     if ($row->submission_ticket) {
       try {
-        $pd4 = get_project_director_details();
+        $pd4 = transperfect_get_project_director_details();
         $status = get_status($pd4, $row->submission_ticket);
         if (!$status || $status == PD_STATUS_CANCELLED) {
           update_block_submission_status($row->submission_ticket);
