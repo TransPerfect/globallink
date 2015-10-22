@@ -48,7 +48,7 @@ function transperfect_fieldable_panels_active_select_form() {
   else {
     $form['select_submission']['br_markup'] = array(
         '#type' => 'markup',
-        '#markup' => "<BR/><BR/>",
+        '#markup' => '<BR/><BR/>',
     );
   }
 
@@ -73,11 +73,11 @@ function transperfect_fieldable_panels_active_select_form_submit($form, &$form_s
       drupal_set_message(t('Submission has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Submissions - transperfect_fieldable_panels_active_select_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Submissions - transperfect_fieldable_panels_active_select_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Submissions - transperfect_fieldable_panels_active_select_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Submissions - transperfect_fieldable_panels_active_select_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -141,7 +141,7 @@ function transperfect_fieldable_panels_active_form() {
     $page_count = $_SESSION['transperfect_fieldable_panels_active_page_count'][0];
   }
 
-  $projects = transperfect_get_PD_projects();
+  $projects = transperfect_get_pd_projects();
 
   $header = array(
       'submission' => array('field' => 'submission', 'data' => t('Submission Name')),
@@ -179,7 +179,7 @@ function transperfect_fieldable_panels_active_form() {
         'source_name' => $item->source_name,
         'target_name' => $item->target_name,
         'status' => $item->status,
-        'timestamp' => date("Y-m-d H:i:s", $item->timestamp),
+        'timestamp' => date('Y-m-d H:i:s', $item->timestamp),
     );
   }
 
@@ -208,8 +208,8 @@ function transperfect_fieldable_panels_active_form() {
 }
 
 function transperfect_fieldable_panels_active_form_validate($form, &$form_state) {
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
@@ -223,7 +223,7 @@ function transperfect_fieldable_panels_active_form_validate($form, &$form_state)
 function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
   sleep(5);
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
     try {
       $ids_arr = array_filter($form_state['values']['table']);
@@ -233,16 +233,16 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
         return;
       }
       $_SESSION['transperfect_fieldable_panels_selected_submission'] = '';
-      cancel_menu_records($ids, $pd4);
+      transperfect_cancel_fieldable_panels_records($ids, $pd4);
       $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
       drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -259,7 +259,7 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, "Exception in Clear Cancel Document - transperfect_fieldable_panels_active_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

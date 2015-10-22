@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("anonymous0")) {
+if (!class_exists('anonymous0')) {
 
     class anonymous0 {
         
@@ -8,7 +8,7 @@ if (!class_exists("anonymous0")) {
 
 }
 
-if (!class_exists("base64Binary")) {
+if (!class_exists('base64Binary')) {
 
     class base64Binary {
 
@@ -19,7 +19,7 @@ if (!class_exists("base64Binary")) {
 
 }
 
-if (!class_exists("hexBinary")) {
+if (!class_exists('hexBinary')) {
 
     class hexBinary {
 
@@ -30,7 +30,7 @@ if (!class_exists("hexBinary")) {
 
 }
 
-if (!class_exists("Notification")) {
+if (!class_exists('Notification')) {
 
     class Notification {
 
@@ -43,7 +43,7 @@ if (!class_exists("Notification")) {
 
 }
 
-if (!class_exists("NotificationPriority")) {
+if (!class_exists('NotificationPriority')) {
 
     class NotificationPriority {
 
@@ -53,7 +53,7 @@ if (!class_exists("NotificationPriority")) {
 
 }
 
-if (!class_exists("Announcement")) {
+if (!class_exists('Announcement')) {
 
     class Announcement {
 
@@ -64,7 +64,7 @@ if (!class_exists("Announcement")) {
 
 }
 
-if (!class_exists("ContentMonitorPluginInfo")) {
+if (!class_exists('ContentMonitorPluginInfo')) {
 
     class ContentMonitorPluginInfo {
 
@@ -75,7 +75,7 @@ if (!class_exists("ContentMonitorPluginInfo")) {
 
 }
 
-if (!class_exists("Date")) {
+if (!class_exists('Date')) {
 
     class Date {
 
@@ -86,7 +86,7 @@ if (!class_exists("Date")) {
 
 }
 
-if (!class_exists("Document")) {
+if (!class_exists('Document')) {
 
     class Document {
 
@@ -101,7 +101,7 @@ if (!class_exists("Document")) {
 
 }
 
-if (!class_exists("DocumentGroup")) {
+if (!class_exists('DocumentGroup')) {
 
     class DocumentGroup {
 
@@ -114,7 +114,7 @@ if (!class_exists("DocumentGroup")) {
 
 }
 
-if (!class_exists("DocumentInfo")) {
+if (!class_exists('DocumentInfo')) {
 
     class DocumentInfo {
 
@@ -133,7 +133,7 @@ if (!class_exists("DocumentInfo")) {
 
 }
 
-if (!class_exists("DocumentPagedList")) {
+if (!class_exists('DocumentPagedList')) {
 
     class DocumentPagedList {
 
@@ -146,7 +146,7 @@ if (!class_exists("DocumentPagedList")) {
 
 }
 
-if (!class_exists("DocumentSearchRequest")) {
+if (!class_exists('DocumentSearchRequest')) {
 
     class DocumentSearchRequest {
 
@@ -158,7 +158,7 @@ if (!class_exists("DocumentSearchRequest")) {
 
 }
 
-if (!class_exists("DocumentTicket")) {
+if (!class_exists('DocumentTicket')) {
 
     class DocumentTicket {
 
@@ -169,7 +169,7 @@ if (!class_exists("DocumentTicket")) {
 
 }
 
-if (!class_exists("EntityTypeEnum")) {
+if (!class_exists('EntityTypeEnum')) {
 
     class EntityTypeEnum {
 
@@ -180,7 +180,7 @@ if (!class_exists("EntityTypeEnum")) {
 
 }
 
-if (!class_exists("FileFormatProfile")) {
+if (!class_exists('FileFormatProfile')) {
 
     class FileFormatProfile {
 
@@ -197,7 +197,7 @@ if (!class_exists("FileFormatProfile")) {
 
 }
 
-if (!class_exists("FileFormatProgressData")) {
+if (!class_exists('FileFormatProgressData')) {
 
     class FileFormatProgressData {
 
@@ -213,7 +213,7 @@ if (!class_exists("FileFormatProgressData")) {
 
 }
 
-if (!class_exists("FileProgressData")) {
+if (!class_exists('FileProgressData')) {
 
     class FileProgressData {
 
@@ -229,7 +229,7 @@ if (!class_exists("FileProgressData")) {
 
 }
 
-if (!class_exists("FuzzyTmStatistics")) {
+if (!class_exists('FuzzyTmStatistics')) {
 
     class FuzzyTmStatistics {
 
@@ -240,7 +240,7 @@ if (!class_exists("FuzzyTmStatistics")) {
 
 }
 
-if (!class_exists("ItemFolderEnum")) {
+if (!class_exists('ItemFolderEnum')) {
 
     class ItemFolderEnum {
 
@@ -250,7 +250,7 @@ if (!class_exists("ItemFolderEnum")) {
 
 }
 
-if (!class_exists("ItemStatusEnum")) {
+if (!class_exists('ItemStatusEnum')) {
 
     class ItemStatusEnum {
 
@@ -261,7 +261,7 @@ if (!class_exists("ItemStatusEnum")) {
 
 }
 
-if (!class_exists("Metadata")) {
+if (!class_exists('Metadata')) {
 
     class Metadata {
 
@@ -272,7 +272,7 @@ if (!class_exists("Metadata")) {
 
 }
 
-if (!class_exists("Language")) {
+if (!class_exists('Language')) {
 
     class Language {
 
@@ -283,7 +283,7 @@ if (!class_exists("Language")) {
 
 }
 
-if (!class_exists("LanguageDirection")) {
+if (!class_exists('LanguageDirection')) {
 
     class LanguageDirection {
 
@@ -294,7 +294,7 @@ if (!class_exists("LanguageDirection")) {
 
 }
 
-if (!class_exists("LanguageDirectionModel")) {
+if (!class_exists('LanguageDirectionModel')) {
 
     class LanguageDirectionModel {
 
@@ -311,7 +311,7 @@ if (!class_exists("LanguageDirectionModel")) {
 
 }
 
-if (!class_exists("PagedListInfo")) {
+if (!class_exists('PagedListInfo')) {
 
     class PagedListInfo {
 
@@ -325,7 +325,7 @@ if (!class_exists("PagedListInfo")) {
 
 }
 
-if (!class_exists("Phase")) {
+if (!class_exists('Phase')) {
 
     class Phase {
 
@@ -338,7 +338,7 @@ if (!class_exists("Phase")) {
 
 }
 
-if (!class_exists("Priority")) {
+if (!class_exists('Priority')) {
 
     class Priority {
 
@@ -349,7 +349,7 @@ if (!class_exists("Priority")) {
 
 }
 
-if (!class_exists("Project")) {
+if (!class_exists('Project')) {
 
     class Project {
 
@@ -371,7 +371,7 @@ if (!class_exists("Project")) {
 
 }
 
-if (!class_exists("ProjectInfo")) {
+if (!class_exists('ProjectInfo')) {
 
     class ProjectInfo {
 
@@ -387,7 +387,7 @@ if (!class_exists("ProjectInfo")) {
 
 }
 
-if (!class_exists("ProjectLanguage")) {
+if (!class_exists('ProjectLanguage')) {
 
     class ProjectLanguage {
 
@@ -398,7 +398,7 @@ if (!class_exists("ProjectLanguage")) {
 
 }
 
-if (!class_exists("RepositoryItem")) {
+if (!class_exists('RepositoryItem')) {
 
     class RepositoryItem {
 
@@ -409,7 +409,7 @@ if (!class_exists("RepositoryItem")) {
 
 }
 
-if (!class_exists("ResourceInfo")) {
+if (!class_exists('ResourceInfo')) {
 
     class ResourceInfo {
 
@@ -429,7 +429,7 @@ if (!class_exists("ResourceInfo")) {
 
 }
 
-if (!class_exists("ResourceType")) {
+if (!class_exists('ResourceType')) {
 
     class ResourceType {
 
@@ -439,7 +439,7 @@ if (!class_exists("ResourceType")) {
 
 }
 
-if (!class_exists("Submission")) {
+if (!class_exists('Submission')) {
 
     class Submission {
 
@@ -464,7 +464,7 @@ if (!class_exists("Submission")) {
 
 }
 
-if (!class_exists("SubmissionInfo")) {
+if (!class_exists('SubmissionInfo')) {
 
     class SubmissionInfo {
 
@@ -480,7 +480,7 @@ if (!class_exists("SubmissionInfo")) {
 
 }
 
-if (!class_exists("SubmissionPagedList")) {
+if (!class_exists('SubmissionPagedList')) {
 
     class SubmissionPagedList {
 
@@ -493,7 +493,7 @@ if (!class_exists("SubmissionPagedList")) {
 
 }
 
-if (!class_exists("SimpleSubmissionSearchModel")) {
+if (!class_exists('SimpleSubmissionSearchModel')) {
 
     class SimpleSubmissionSearchModel {
 
@@ -524,7 +524,7 @@ if (!class_exists("SimpleSubmissionSearchModel")) {
 
 }
 
-if (!class_exists("anonymous0")) {
+if (!class_exists('anonymous0')) {
 
     class SubmissionSearchModelPagedList {
 
@@ -537,7 +537,7 @@ if (!class_exists("anonymous0")) {
 
 }
 
-if (!class_exists("SubmissionSearchRequest")) {
+if (!class_exists('SubmissionSearchRequest')) {
 
     class SubmissionSearchRequest {
 
@@ -551,7 +551,7 @@ if (!class_exists("SubmissionSearchRequest")) {
 
 }
 
-if (!class_exists("Target")) {
+if (!class_exists('Target')) {
 
     class Target {
 
@@ -580,7 +580,7 @@ if (!class_exists("Target")) {
 
 }
 
-if (!class_exists("TargetInfo")) {
+if (!class_exists('TargetInfo')) {
 
     class TargetInfo {
 
@@ -597,7 +597,7 @@ if (!class_exists("TargetInfo")) {
 
 }
 
-if (!class_exists("TargetPagedList")) {
+if (!class_exists('TargetPagedList')) {
 
     class TargetPagedList {
 
@@ -610,7 +610,7 @@ if (!class_exists("TargetPagedList")) {
 
 }
 
-if (!class_exists("TargetSearchRequest")) {
+if (!class_exists('TargetSearchRequest')) {
 
     class TargetSearchRequest {
 
@@ -625,7 +625,7 @@ if (!class_exists("TargetSearchRequest")) {
 
 }
 
-if (!class_exists("Task")) {
+if (!class_exists('Task')) {
 
     class Task {
 
@@ -639,7 +639,7 @@ if (!class_exists("Task")) {
 
 }
 
-if (!class_exists("TmStatistics")) {
+if (!class_exists('TmStatistics')) {
 
     class TmStatistics {
 
@@ -663,7 +663,7 @@ if (!class_exists("TmStatistics")) {
 
 }
 
-if (!class_exists("WorkflowDefinition")) {
+if (!class_exists('WorkflowDefinition')) {
 
     class WorkflowDefinition {
 
@@ -676,7 +676,7 @@ if (!class_exists("WorkflowDefinition")) {
 
 }
 
-if (!class_exists("UserInfo")) {
+if (!class_exists('UserInfo')) {
 
     class UserInfo {
 
@@ -700,7 +700,7 @@ if (!class_exists("UserInfo")) {
 
 }
 
-if (!class_exists("TiUserInfo")) {
+if (!class_exists('TiUserInfo')) {
 
     class TiUserInfo {
 
@@ -715,7 +715,7 @@ if (!class_exists("TiUserInfo")) {
 
 }
 
-if (!class_exists("cancelTargetByDocumentId")) {
+if (!class_exists('cancelTargetByDocumentId')) {
 
     class cancelTargetByDocumentId {
 
@@ -727,7 +727,7 @@ if (!class_exists("cancelTargetByDocumentId")) {
 
 }
 
-if (!class_exists("cancelTargetByDocumentIdResponse")) {
+if (!class_exists('cancelTargetByDocumentIdResponse')) {
 
     class cancelTargetByDocumentIdResponse {
 
@@ -737,7 +737,7 @@ if (!class_exists("cancelTargetByDocumentIdResponse")) {
 
 }
 
-if (!class_exists("cancelTarget")) {
+if (!class_exists('cancelTarget')) {
 
     class cancelTarget {
 
@@ -748,7 +748,7 @@ if (!class_exists("cancelTarget")) {
 
 }
 
-if (!class_exists("cancelTargetResponse")) {
+if (!class_exists('cancelTargetResponse')) {
 
     class cancelTargetResponse {
 
@@ -758,7 +758,7 @@ if (!class_exists("cancelTargetResponse")) {
 
 }
 
-if (!class_exists("downloadTargetResource")) {
+if (!class_exists('downloadTargetResource')) {
 
     class downloadTargetResource {
 
@@ -769,7 +769,7 @@ if (!class_exists("downloadTargetResource")) {
 
 }
 
-if (!class_exists("downloadTargetResourceResponse")) {
+if (!class_exists('downloadTargetResourceResponse')) {
 
     class downloadTargetResourceResponse {
 
@@ -779,7 +779,7 @@ if (!class_exists("downloadTargetResourceResponse")) {
 
 }
 
-if (!class_exists("findByTicket")) {
+if (!class_exists('findByTicket')) {
 
     class findByTicket {
 
@@ -790,7 +790,7 @@ if (!class_exists("findByTicket")) {
 
 }
 
-if (!class_exists("findByTicketResponse")) {
+if (!class_exists('findByTicketResponse')) {
 
     class findByTicketResponse {
 
@@ -800,7 +800,7 @@ if (!class_exists("findByTicketResponse")) {
 
 }
 
-if (!class_exists("getCompletedTargetsByDocuments")) {
+if (!class_exists('getCompletedTargetsByDocuments')) {
 
     class getCompletedTargetsByDocuments {
 
@@ -812,7 +812,7 @@ if (!class_exists("getCompletedTargetsByDocuments")) {
 
 }
 
-if (!class_exists("getCompletedTargetsByDocumentsResponse")) {
+if (!class_exists('getCompletedTargetsByDocumentsResponse')) {
 
     class getCompletedTargetsByDocumentsResponse {
 
@@ -822,7 +822,7 @@ if (!class_exists("getCompletedTargetsByDocumentsResponse")) {
 
 }
 
-if (!class_exists("getCompletedTargetsByProjects")) {
+if (!class_exists('getCompletedTargetsByProjects')) {
 
     class getCompletedTargetsByProjects {
 
@@ -834,7 +834,7 @@ if (!class_exists("getCompletedTargetsByProjects")) {
 
 }
 
-if (!class_exists("getCompletedTargetsByProjectsResponse")) {
+if (!class_exists('getCompletedTargetsByProjectsResponse')) {
 
     class getCompletedTargetsByProjectsResponse {
 
@@ -844,7 +844,7 @@ if (!class_exists("getCompletedTargetsByProjectsResponse")) {
 
 }
 
-if (!class_exists("getCompletedTargetsBySubmissions")) {
+if (!class_exists('getCompletedTargetsBySubmissions')) {
 
     class getCompletedTargetsBySubmissions {
 
@@ -856,7 +856,7 @@ if (!class_exists("getCompletedTargetsBySubmissions")) {
 
 }
 
-if (!class_exists("getCompletedTargetsBySubmissionsResponse")) {
+if (!class_exists('getCompletedTargetsBySubmissionsResponse')) {
 
     class getCompletedTargetsBySubmissionsResponse {
 
@@ -866,7 +866,7 @@ if (!class_exists("getCompletedTargetsBySubmissionsResponse")) {
 
 }
 
-if (!class_exists("search")) {
+if (!class_exists('search')) {
 
     class search {
 
@@ -878,7 +878,7 @@ if (!class_exists("search")) {
 
 }
 
-if (!class_exists("searchResponse")) {
+if (!class_exists('searchResponse')) {
 
     class searchResponse {
 
@@ -888,7 +888,7 @@ if (!class_exists("searchResponse")) {
 
 }
 
-if (!class_exists("sendDownloadConfirmation")) {
+if (!class_exists('sendDownloadConfirmation')) {
 
     class sendDownloadConfirmation {
 
@@ -899,7 +899,7 @@ if (!class_exists("sendDownloadConfirmation")) {
 
 }
 
-if (!class_exists("sendDownloadConfirmationResponse")) {
+if (!class_exists('sendDownloadConfirmationResponse')) {
 
     class sendDownloadConfirmationResponse {
 
@@ -909,7 +909,7 @@ if (!class_exists("sendDownloadConfirmationResponse")) {
 
 }
 
-if (!class_exists("getCanceledTargetsByDocuments")) {
+if (!class_exists('getCanceledTargetsByDocuments')) {
 
     class getCanceledTargetsByDocuments {
 
@@ -921,7 +921,7 @@ if (!class_exists("getCanceledTargetsByDocuments")) {
 
 }
 
-if (!class_exists("getCanceledTargetsByDocumentsResponse")) {
+if (!class_exists('getCanceledTargetsByDocumentsResponse')) {
 
     class getCanceledTargetsByDocumentsResponse {
 
@@ -931,7 +931,7 @@ if (!class_exists("getCanceledTargetsByDocumentsResponse")) {
 
 }
 
-if (!class_exists("getCanceledTargetsByProjects")) {
+if (!class_exists('getCanceledTargetsByProjects')) {
 
     class getCanceledTargetsByProjects {
 
@@ -943,7 +943,7 @@ if (!class_exists("getCanceledTargetsByProjects")) {
 
 }
 
-if (!class_exists("getCanceledTargetsByProjectsResponse")) {
+if (!class_exists('getCanceledTargetsByProjectsResponse')) {
 
     class getCanceledTargetsByProjectsResponse {
 
@@ -953,7 +953,7 @@ if (!class_exists("getCanceledTargetsByProjectsResponse")) {
 
 }
 
-if (!class_exists("getCanceledTargetsBySubmissions")) {
+if (!class_exists('getCanceledTargetsBySubmissions')) {
 
     class getCanceledTargetsBySubmissions {
 
@@ -965,7 +965,7 @@ if (!class_exists("getCanceledTargetsBySubmissions")) {
 
 }
 
-if (!class_exists("getCanceledTargetsBySubmissionsResponse")) {
+if (!class_exists('getCanceledTargetsBySubmissionsResponse')) {
 
     class getCanceledTargetsBySubmissionsResponse {
 
@@ -977,12 +977,6 @@ if (!class_exists("getCanceledTargetsBySubmissionsResponse")) {
 
 /**
  * TargetService2 class
- * 
- *  
- * 
- * @author    {author}
- * @copyright {copyright}
- * @package   {package}
  */
 class TargetService2 extends SoapClient {
 
@@ -1062,7 +1056,7 @@ class TargetService2 extends SoapClient {
         'getCanceledTargetsBySubmissionsResponse' => 'getCanceledTargetsBySubmissionsResponse',
     );
 
-    public function TargetService2($wsdl = "http://localhost:8080/pd4/services/TargetService2?wsdl", $options = array()) {
+    public function TargetService2($wsdl = 'http://localhost:8080/pd4/services/TargetService2?wsdl', $options = array()) {
         foreach (self::$classmap as $key => $value) {
             if (!isset($options['classmap'][$key])) {
                 $options['classmap'][$key] = $value;

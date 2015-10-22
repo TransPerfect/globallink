@@ -1,6 +1,5 @@
 <?php
 
-
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
@@ -9,8 +8,8 @@ function transperfect_block_receive_submissions($type) {
   $_SESSION['transpefect_block_receive_type'] = $type;
   $arr = array();
   $arr[] = drupal_get_form('transperfect_block_receive_filter_form');
-  $arr[] = drupal_get_form("transperfect_block_receive_pager_form");
-  $arr[] = drupal_get_form("transperfect_block_receive_form");
+  $arr[] = drupal_get_form('transperfect_block_receive_pager_form');
+  $arr[] = drupal_get_form('transperfect_block_receive_form');
   return $arr;
 }
 
@@ -31,11 +30,11 @@ function transperfect_block_receive_filter_form() {
     $filter = TRUE;
   }
 
-  $n_arr = array('[any]' => t(' Any '));
-  $t_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+  $n_arr = array('[any]' => t('Any'));
+  $t_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
-  $status_arr = array('[any]' => t(' Any '),
+  $status_arr = array('[any]' => t('Any'),
       TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
       TPT_STATUS_ERROR => TPT_STATUS_ERROR,
       TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED);
@@ -63,14 +62,14 @@ function transperfect_block_receive_filter_form() {
       '#attributes' => array('class' => array('container-inline')),
   );
 
-  $form['block_receive_filter']['filters'][] = array('#markup' => "<table>");
+  $form['block_receive_filter']['filters'][] = array('#markup' => '<table>');
 
   $form['block_receive_filter']['filters']['language'] = array(
       '#type' => 'select', '#title' => TPT_LABEL_TARGET_LANG . ':&nbsp;&nbsp;',
       '#options' => $languages,
       '#default_value' => $default,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
@@ -81,7 +80,7 @@ function transperfect_block_receive_filter_form() {
       '#options' => $status_arr,
       '#default_value' => $default_status,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
@@ -92,13 +91,13 @@ function transperfect_block_receive_filter_form() {
       '#options' => $submission_options,
       '#default_value' => $default_submission,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
   );
 
-  $form['block_receive_filter']['filters'][] = array('#markup' => "</table>");
+  $form['block_receive_filter']['filters'][] = array('#markup' => '</table>');
 
   $disable_submit = $filter ? TRUE : FALSE;
   $form['block_receive_filter']['filters']['filter'] = array(
@@ -117,11 +116,11 @@ function transperfect_block_receive_filter_form() {
     $form['filter-search']['filter-markup'] = array(
         '#type' => 'container',
     );
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<table>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_TARGET_LANG . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $languages[$default] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_STATUS . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $status_arr[$default_status] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_SUBMISSION . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $submission_options[$default_submission] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "</table>");
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
     $form['filter-search']['status']['actions'] = array(
         '#type' => 'actions',
         '#attributes' => array('class' => array('container-inline')),
@@ -202,30 +201,30 @@ function transperfect_block_receive_form() {
     $type = $_SESSION['transpefect_block_receive_type'];
   }
 
-  $globalLink_arr = array();
+  $globallink_arr = array();
 
   if (empty($_SESSION['transperfect_block_globalLink_arr'])) {
     try {
-      $pd4 = get_project_director_details();
-      if (validate_project_director_details($pd4)) {
-        $_SESSION['transperfect_block_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
-        $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
-        if (sizeof($globalLink_arr) > 0) {
-          $_SESSION['transperfect_block_globalLink_arr'] = serialize($globalLink_arr);
+      $pd4 = transperfect_get_project_director_details();
+      if (transperfect_validate_project_director_details($pd4)) {
+        $_SESSION['transperfect_block_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+        $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+        if (sizeof($globallink_arr) > 0) {
+          $_SESSION['transperfect_block_globalLink_arr'] = serialize($globallink_arr);
         }
       }
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_block_receive_form - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - transperfect_block_receive_form - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_block_receive_form - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - transperfect_block_receive_form - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
   else {
-    $globalLink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
+    $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
   }
 
   $page_count = isset($_SESSION['transperfect_block_receive_page_count']) ? $_SESSION['transperfect_block_receive_page_count'][0] : TPT_PAGER_LIMIT;
@@ -237,15 +236,15 @@ function transperfect_block_receive_form() {
     $filter_lang = $_SESSION['transperfect_block_receive_filter_language'];
   }
 
-  if (isset($globalLink_arr) && is_array($globalLink_arr)) {
-    foreach ($globalLink_arr as $key => &$globalLink) {
-      if ($filter_lang != '[any]' && $globalLink->targetLocale != $filter_lang) {
-        unset($globalLink_arr[$key]);
+  if (isset($globallink_arr) && is_array($globallink_arr)) {
+    foreach ($globallink_arr as $key => &$globallink) {
+      if ($filter_lang != '[any]' && $globallink->targetLocale != $filter_lang) {
+        unset($globallink_arr[$key]);
       }
     }
   }
 
-  if (isset($globalLink_arr) && is_array($globalLink_arr)) {
+  if (isset($globallink_arr) && is_array($globallink_arr)) {
     $strings = transperfect_get_strings(NULL, 'blocks');
     $filter_status = '[any]';
     if (!empty($_SESSION['transperfect_block_receive_filter_status'])) {
@@ -264,25 +263,25 @@ function transperfect_block_receive_form() {
 
     $count = 1;
     $rid_arr = array();
-    foreach ($globalLink_arr as $key => &$globalLink) {
-      if ($globalLink->type != "Block") {
+    foreach ($globallink_arr as $key => &$globallink) {
+      if ($globallink->type != 'Block') {
         continue;
       }
 
-      $pd4 = get_project_director_details();
-      $targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-      $block_arr = get_translated_block_items($targetXML);
+      $pd4 = transperfect_get_project_director_details();
+      $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+      $block_arr = get_translated_block_items($target_xml);
 
       if (count($block_arr) > 0) {
         $bid = $block_arr['bid'];
         $title = '';
 
-        $status = get_block_translation_status($bid, $globalLink->targetLocale, $title);
+        $status = get_block_translation_status($bid, $globallink->targetLocale, $title);
         if ($status == TPT_STATUS_SOURCE_DELETED)
-          $globalLink->sourceDeleted = TRUE;
+          $globallink->sourceDeleted = TRUE;
 
         if ($filter_status != '[any]' && $status != $filter_status) {
-          unset($globalLink_arr[$key]);
+          unset($globallink_arr[$key]);
           continue;
         }
 
@@ -291,25 +290,25 @@ function transperfect_block_receive_form() {
           $filter_submission = $_SESSION['transperfect_block_receive_filter_submission'];
         }
 
-        if ($filter_submission != '[any]' && $globalLink->submissionName != $filter_submission) {
-          unset($globalLink_arr[$key]);
+        if ($filter_submission != '[any]' && $globallink->submissionName != $filter_submission) {
+          unset($globallink_arr[$key]);
           continue;
         }
 
         if (transperfect_is_preview_enabled()) {
           if ($status != TPT_STATUS_SOURCE_DELETED) {
-            $tpt_row_id = get_tpt_block_row_id_from_submission($globalLink->submissionTicket, $globalLink->documentTicket, $globalLink->targetLocale);
+            $tpt_row_id = get_tpt_block_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
             if ($tpt_row_id) {
               $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
             }
           }
         }
 
-        $source_name = transperfect_get_drupal_locale_name($globalLink->sourceLocale);
-        $target_name = transperfect_get_drupal_locale_name($globalLink->targetLocale);
+        $source_name = transperfect_get_drupal_locale_name($globallink->sourceLocale);
+        $target_name = transperfect_get_drupal_locale_name($globallink->targetLocale);
 
         $rows[$key] = array(
-            'submissionName' => $globalLink->submissionName,
+            'submissionName' => $globallink->submissionName,
             'sourceLocale' => $source_name,
             'targetLocale' => $target_name,
             'title' => $title,
@@ -317,7 +316,7 @@ function transperfect_block_receive_form() {
         );
 
         if (transperfect_is_preview_enabled()) {
-          $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(' Preview Translations ', 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('id' => 'tpt_content_link_' . $key))) : '';
+          $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('id' => 'tpt_content_link_' . $key))) : '';
         }
 
         $count++;
@@ -359,11 +358,11 @@ function transperfect_block_receive_form() {
       $form['submit_clear_deleted'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS);
     }
 
-    if (sizeof($globalLink_arr) > 0) {
-      $_SESSION['transperfect_block_globalLink_arr'] = serialize($globalLink_arr);
+    if (sizeof($globallink_arr) > 0) {
+      $_SESSION['transperfect_block_globalLink_arr'] = serialize($globallink_arr);
     }
 
-    $last_refreshed = "";
+    $last_refreshed = '';
     if (isset($_SESSION['transperfect_block_globalLink_arr_last_refreshed'])) {
       $last_refreshed = $_SESSION['transperfect_block_globalLink_arr_last_refreshed'];
     }
@@ -386,8 +385,8 @@ function transperfect_block_receive_form() {
 
 function transperfect_block_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
 
   if ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
     $rids = array_filter($form_state['values']['table']);
@@ -400,14 +399,14 @@ function transperfect_block_receive_form_validate($form, &$form_state) {
 function transperfect_block_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_block_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_UPDATE_ALL) {
     try {
-      $globalLink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
-      $count = get_translated_blocks($pd4, $globalLink_arr);
+      $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
+      $count = get_translated_blocks($pd4, $globallink_arr);
       $error = FALSE;
       $delete_records_selected = FALSE;
-      foreach ($globalLink_arr as $updated) {
+      foreach ($globallink_arr as $updated) {
         if ($updated->sourceDeleted == TRUE) {
           $delete_records_selected = TRUE;
         }
@@ -426,7 +425,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update All - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
     $_SESSION['transperfect_block_globalLink_arr'] = array();
@@ -435,12 +434,12 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
   }
   elseif ($op == TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS) {
     try {
-      $globalLink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
+      $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
       $success = FALSE;
       $count = 0;
-      foreach ($globalLink_arr as $globalLink) {
-        if ($globalLink->sourceDeleted == TRUE) {
-          $success = update_deleted_block_records($pd4, $globalLink);
+      foreach ($globallink_arr as $globallink) {
+        if ($globallink->sourceDeleted == TRUE) {
+          $success = update_deleted_block_records($pd4, $globallink);
           $count++;
         }
       }
@@ -459,23 +458,23 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Deleted Records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
   elseif ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
     try {
 
-      $globalLink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
+      $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
       $updated_globalLink_arr = array();
       $rids = array_filter($form_state['values']['table']);
       foreach ($rids as $rid) {
-        array_push($updated_globalLink_arr, $globalLink_arr[$rid]);
+        array_push($updated_globalLink_arr, $globallink_arr[$rid]);
       }
       $count = get_translated_blocks($pd4, $updated_globalLink_arr);
       $error = FALSE;
       $delete_records_selected = FALSE;
-      foreach ($globalLink_arr as $updated) {
+      foreach ($globallink_arr as $updated) {
         if ($updated->sourceDeleted == TRUE) {
           $delete_records_selected = TRUE;
         }
@@ -494,7 +493,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
       }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Selected - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
@@ -504,22 +503,22 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
   }
   elseif ($op == TPT_BTN_DASHBOARD_REFRESH) {
     sleep(2);
-    $pd4 = get_project_director_details();
+    $pd4 = transperfect_get_project_director_details();
     try {
-      $globalLink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
+      $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Refresh - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
 
-    if (sizeof($globalLink_arr) > 0) {
-      $_SESSION['transperfect_block_globalLink_arr'] = serialize($globalLink_arr);
-      $_SESSION['transperfect_block_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
+    if (sizeof($globallink_arr) > 0) {
+      $_SESSION['transperfect_block_globalLink_arr'] = serialize($globallink_arr);
+      $_SESSION['transperfect_block_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
     }
     else {
       $_SESSION['transperfect_block_globalLink_arr'] = array();
@@ -536,39 +535,39 @@ function preview_translated_block_content() {
 
 function get_block_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'block');
-  $globalLink = new GlobalLink();
-  $globalLink->tptRowId = $row_id;
-  $globalLink->otherObjectId = $row->object_id;
-  $globalLink->type = $row->object_type;
-  $globalLink->title = $row->title;
-  $globalLink->sourceLocale = $row->source;
-  $globalLink->targetLocale = $row->target;
-  $globalLink->documentTicket = $row->document_ticket;
-  $globalLink->submissionTicket = $row->submission_ticket;
-  $globalLink->submission = $row->submission;
-  $globalLink->status = $row->status;
+  $globallink = new GlobalLink();
+  $globallink->tptRowId = $row_id;
+  $globallink->otherObjectId = $row->object_id;
+  $globallink->type = $row->object_type;
+  $globallink->title = $row->title;
+  $globallink->sourceLocale = $row->source;
+  $globallink->targetLocale = $row->target;
+  $globallink->documentTicket = $row->document_ticket;
+  $globallink->submissionTicket = $row->submission_ticket;
+  $globallink->submission = $row->submission;
+  $globallink->status = $row->status;
 
   $source_arr = array();
   $translation = array();
 
   $error = FALSE;
   try {
-    $pd4 = get_project_director_details();
-    $targets = getCompletedTargetsByDoc($pd4, $globalLink->documentTicket);
+    $pd4 = transperfect_get_project_director_details();
+    $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
     if (is_array($targets)) {
       foreach ($targets as $target) {
-        if (str_replace('-', '_', $target->targetLanguage->locale) == $globalLink->targetLocale) {
+        if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
           if (!is_null($target->ticket) && $target->ticket != '') {
-            $globalLink->targetTicket = $target->ticket;
-            $globalLink->targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-            if (!is_null($globalLink->targetXML) && $globalLink->targetXML != '') {
-              $translation = get_arr_block_items($globalLink->targetXML);
+            $globallink->targetTicket = $target->ticket;
+            $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+            if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
+              $translation = get_arr_block_items($globallink->targetXML);
               $bid = $translation['bid'];
               $block = load_block_data($bid);
               if ($block && is_array($block) && !is_null($block)) {
-                $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globalLink->sourceLocale), 'blocks');
-                $title = isset($strings["blocks:block:$bid:title"]) ? $strings["blocks:block:$bid:title"] : FALSE;
-                $body = isset($strings["blocks:block:$bid:body"]) ? $strings["blocks:block:$bid:body"] : FALSE;
+                $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
+                $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
+                $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
                 $source_xml = get_block_xml($bid, $title, $body);
                 $source_arr = array();
                 if ($source_xml) {
@@ -577,7 +576,7 @@ function get_block_translations_for_row_id($row_id) {
               }
               else {
                 $source_xml = TPT_STATUS_SOURCE_DELETED;
-                $globalLink->sourceDeleted = TRUE;
+                $globallink->sourceDeleted = TRUE;
               }
             }
           }
@@ -586,18 +585,18 @@ function get_block_translations_for_row_id($row_id) {
     }
     elseif (!is_null($targets)) {
       $target = $targets;
-      if (str_replace('-', '_', $target->targetLanguage->locale) == $globalLink->targetLocale) {
+      if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
         if (!is_null($target->ticket) && $target->ticket != '') {
-          $globalLink->targetTicket = $target->ticket;
-          $globalLink->targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-          if (!is_null($globalLink->targetXML) && $globalLink->targetXML != '') {
-            $translation = get_arr_block_items($globalLink->targetXML);
+          $globallink->targetTicket = $target->ticket;
+          $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+          if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
+            $translation = get_arr_block_items($globallink->targetXML);
             $bid = $translation['bid'];
             $block = load_block_data($bid);
             if ($block && is_array($block) && !is_null($block)) {
-              $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globalLink->sourceLocale), 'blocks');
-              $title = isset($strings["blocks:block:$bid:title"]) ? $strings["blocks:block:$bid:title"] : FALSE;
-              $body = isset($strings["blocks:block:$bid:body"]) ? $strings["blocks:block:$bid:body"] : FALSE;
+              $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
+              $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
+              $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
               $source_xml = get_block_xml($bid, $title, $body);
               $source_arr = array();
               if ($source_xml) {
@@ -606,7 +605,7 @@ function get_block_translations_for_row_id($row_id) {
             }
             else {
               $source_xml = TPT_STATUS_SOURCE_DELETED;
-              $globalLink->sourceDeleted = TRUE;
+              $globallink->sourceDeleted = TRUE;
             }
           }
         }
@@ -621,8 +620,8 @@ function get_block_translations_for_row_id($row_id) {
   }
 
   $arr = array();
-  $arr['target_ticket'] = $globalLink->targetTicket;
-  if ($globalLink->sourceDeleted) {
+  $arr['target_ticket'] = $globallink->targetTicket;
+  if ($globallink->sourceDeleted) {
     $arr = array(TPT_STATUS_SOURCE_DELETED);
   }
   elseif ($error) {

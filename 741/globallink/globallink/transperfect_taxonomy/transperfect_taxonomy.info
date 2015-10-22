@@ -5,5 +5,5 @@ dependencies[] = i18n_string
 dependencies[] = transperfect
 dependencies[] = i18n_taxonomy
 package = GlobalLink
-version = 7.X-4.1.0
+version = 7.X-5.0.0
 php = 5.2.5
