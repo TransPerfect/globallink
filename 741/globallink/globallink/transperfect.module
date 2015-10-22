@@ -1,9 +1,11 @@
 <?php
 
 define('TPT_ROOT', dirname(__FILE__));
+
 require_once TPT_ROOT . '/' . ('transperfect.inc');
 require_once TPT_ROOT . '/' . ('transperfect_receive_translations.inc');
 require_once TPT_ROOT . '/' . ('transperfect_field_configuration.inc');
+require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 
 define('TPT_ROLE_MANAGE_TRANSLATIONS', t('can manage GlobalLink translation tasks and settings'));
 define('TPT_ROLE_DO_TRANSALTIONS', t('can manage GlobalLink translation tasks'));
