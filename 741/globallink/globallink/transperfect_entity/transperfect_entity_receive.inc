@@ -234,7 +234,7 @@ function transperfect_entity_receive_form() {
         'title' => TPT_LABEL_TITLE,
         'status' => TPT_LABEL_STATUS);
 
-    if (transperfect_is_preview_enabled()) {
+    if (variable_get('transperfect_enable_preview', 1)) {
       $header['preview'] = '';
     }
 
@@ -311,7 +311,7 @@ function transperfect_entity_receive_form() {
             'status' => $status,
         );
 
-        if (transperfect_is_preview_enabled()) {
+        if (variable_get('transperfect_enable_preview', 1)) {
           $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
         }
 
@@ -334,7 +334,7 @@ function transperfect_entity_receive_form() {
 
     $form['pager'] = array('#markup' => theme('pager'));
 
-    if (transperfect_is_preview_enabled()) {
+    if (variable_get('transperfect_enable_preview', 1)) {
       $lcount = 1;
       $div_arr = array();
 
