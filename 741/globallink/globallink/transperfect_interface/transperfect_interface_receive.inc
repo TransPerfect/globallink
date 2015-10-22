@@ -255,7 +255,7 @@ function transperfect_interface_receive_form() {
         'source' => 'Source',
         'status' => TPT_LABEL_STATUS);
 
-    if (transperfect_is_preview_enabled()) {
+    if (variable_get('transperfect_enable_preview', 1)) {
       $header['preview'] = '';
     }
 
@@ -300,7 +300,7 @@ function transperfect_interface_receive_form() {
           continue;
         }
 
-        if (transperfect_is_preview_enabled()) {
+        if (variable_get('transperfect_enable_preview', 1)) {
           if ($status != TPT_STATUS_SOURCE_DELETED) {
             $tpt_row_id = get_tpt_interface_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
             if ($tpt_row_id) {
@@ -320,7 +320,7 @@ function transperfect_interface_receive_form() {
             'status' => $status
         );
 
-        if (transperfect_is_preview_enabled()) {
+        if (variable_get('transperfect_enable_preview', 1)) {
           $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('id' => 'tpt_content_link_' . $key))) : '';
         }
 
@@ -337,7 +337,7 @@ function transperfect_interface_receive_form() {
 
     $form['pager'] = array('#markup' => theme('pager'));
 
-    if (transperfect_is_preview_enabled()) {
+    if (variable_get('transperfect_enable_preview', 1)) {
       $lcount = 1;
       $div_arr = array();
       foreach ($rid_arr as $key => $rid) {
