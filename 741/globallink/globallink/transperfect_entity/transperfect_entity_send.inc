@@ -283,47 +283,52 @@ function transperfect_dashboard_entity_filter_form_submit($form, &$form_state) {
     case t('Refine'):
       // Apply every filter that has a choice selected other than 'any'.
       foreach ($filters as $filter => $options) {
-        if ($filter == 'modified-after') {
-          if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
-            list($month, $day, $year) = explode('/', $form_state['values'][$filter]);
-            $time_stamp = mktime(0, 0, 0, $month, $day, $year);
-            $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $time_stamp);
-          }
-        }
-        elseif ($filter == 'modified') {
-          if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
-            $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
-          }
-        }
-        elseif ($filter == 'title') {
-          if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
-            $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
-          }
-        }
-        elseif ($filter == 'node_parent') {
-          if (isset($form_state['values']['node_parent']) && $form_state['values']['node_parent'] != '') {
-            $_SESSION['transperfect_entity_filter']['node_parent'] = array('node_parent', $form_state['values']['node_parent']);
-          }
-        }
-        else {
-          if ($filter == 'language_name') {
-            $_SESSION['transperfect_entity_source_locale'] = $form_state['values'][$filter];
-          }
-          if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '[any]') {
-            // Merge an array of arrays into one if necessary.
-            $options = ($filter == 'type') ? form_options_flatten($filters[$filter]['options']) : $filters[$filter]['options'];
-            // Only accept valid selections offered on the dropdown, block bad input.
-            if (isset($options[$form_state['values'][$filter]])) {
-              if ($filter == 'status') {
-                $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
-              }
-              else {
-                if (!isset($_SESSION['transperfect_entity_filter'][$filter])) {
+        switch ($filter) {
+          case 'modified-after':
+            if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
+              list($month, $day, $year) = explode('/', $form_state['values'][$filter]);
+              $time_stamp = mktime(0, 0, 0, $month, $day, $year);
+              $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $time_stamp);
+            }
+
+            break;
+          case 'modified':
+            if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
+              $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
+            }
+
+            break;
+          case 'title':
+            if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
+              $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
+            }
+
+            break;
+          case 'node_parent':
+            if (isset($form_state['values']['node_parent']) && $form_state['values']['node_parent'] != '') {
+              $_SESSION['transperfect_entity_filter']['node_parent'] = array('node_parent', $form_state['values']['node_parent']);
+            }
+
+            break;
+          default:
+            if ($filter == 'language_name') {
+              $_SESSION['transperfect_entity_source_locale'] = $form_state['values'][$filter];
+            }
+            if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '[any]') {
+              // Merge an array of arrays into one if necessary.
+              $options = ($filter == 'type') ? form_options_flatten($filters[$filter]['options']) : $filters[$filter]['options'];
+              // Only accept valid selections offered on the dropdown, block bad input.
+              if (isset($options[$form_state['values'][$filter]])) {
+                if ($filter == 'status') {
                   $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
+                }
+                else {
+                  if (!isset($_SESSION['transperfect_entity_filter'][$filter])) {
+                    $_SESSION['transperfect_entity_filter'][$filter] = array($filter, $form_state['values'][$filter]);
+                  }
                 }
               }
             }
-          }
         }
       }
       break;

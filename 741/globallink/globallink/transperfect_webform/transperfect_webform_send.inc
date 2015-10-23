@@ -80,20 +80,37 @@ function transperfect_dashboard_webform_filter_form() {
       );
 
       foreach ($_SESSION['transperfect_webform_filter'] as $key => $value) {
-        if ($key == 'string' && $value != '') {
-          $form['filter-search']['filter-markup'][] = array(
+        switch ($key) {
+          case 'string':
+            if (empty($value)) {
+              continue;
+            }
+
+            $form['filter-search']['filter-markup'][] = array(
               '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'String contains' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $value . '</td></tr>',
-          );
-        }
-        elseif ($key == 'language' && $value != '') {
-          $form['filter-search']['filter-markup'][] = array(
+            );
+
+            break;
+          case 'language':
+            if (empty($value)) {
+              continue;
+            }
+
+            $form['filter-search']['filter-markup'][] = array(
               '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Language' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['language']['options'][$value] . '</td></tr>',
-          );
-        }
-        elseif ($key == 'translation' && $value != '') {
-          $form['filter-search']['filter-markup'][] = array(
+            );
+
+            break;
+          case 'translation':
+            if (empty($value)) {
+              continue;
+            }
+
+            $form['filter-search']['filter-markup'][] = array(
               '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Filter in' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['translation']['options'][$value] . '</td></tr>',
-          );
+            );
+
+            break;
         }
       }
 

@@ -321,14 +321,14 @@ function get_transperfect_entity_row($row_id) {
 }
 
 function update_tpt_entity_status(&$globallink) {
-	switch ($globallink->status) {
-		case TPT_STATUS_SOURCE_DELETED:
-		case TPT_STATUS_ERROR:
-	    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-	    $node = node_load($row->nid);
+  switch ($globallink->status) {
+    case TPT_STATUS_SOURCE_DELETED:
+    case TPT_STATUS_ERROR:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      $node = node_load($row->nid);
 
-	    if ($node->vid != $row->vid) {
-	      db_update('transperfect_core_entity')
+      if ($node->vid != $row->vid) {
+        db_update('transperfect_core_entity')
         ->fields(array(
           'vid' => $node->vid,
           'title' => $node->title,
@@ -337,22 +337,22 @@ function update_tpt_entity_status(&$globallink) {
         ))
         ->condition('rid', $row->rid, '=')
         ->execute();
-	    }
-	    else {
-	      db_update('transperfect_core_entity')
+      }
+      else {
+        db_update('transperfect_core_entity')
         ->fields(array(
-					'status' => TPT_STATUS_PENDING_TRANSLATIONS,
-					'timestamp' => REQUEST_TIME,
-				))
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
         ->condition('rid', $row->rid, '=')
         ->execute();
-	    }
+      }
 
-			break;
-		case TPT_STATUS_SOURCE_DELETED:
-	    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      break;
+    case TPT_STATUS_SOURCE_DELETED:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
 
-	    db_update('transperfect_core_entity')
+      db_update('transperfect_core_entity')
       ->fields(array(
         'status' => TPT_STATUS_SOURCE_DELETED,
         'document_ticket' => '',
@@ -362,10 +362,10 @@ function update_tpt_entity_status(&$globallink) {
       ->condition('rid', $row->rid, '=')
       ->execute();
 
-			break;
-  	case TPT_STATUS_ERROR:
-	    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-	    db_update('transperfect_core_entity')
+      break;
+    case TPT_STATUS_ERROR:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      db_update('transperfect_core_entity')
       ->fields(array(
         'status' => TPT_STATUS_ERROR,
         'timestamp' => REQUEST_TIME,
@@ -373,7 +373,7 @@ function update_tpt_entity_status(&$globallink) {
       ->condition('rid', $row->rid, '=')
       ->execute();
 
-			break;
+      break;
   }
 }
 
@@ -486,7 +486,7 @@ function get_translated_entity_array($xml, $target_lang = LANGUAGE_NONE) {
         if ($attr_name == 'rid') {
           $arr['rid'] = $attr_node->value;
         }
-        if ($attr_name == 'nid') {
+        elseif ($attr_name == 'nid') {
           $arr['nid'] = $attr_node->value;
         }
         elseif ($attr_name == 'vid') {
