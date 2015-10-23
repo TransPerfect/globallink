@@ -44,14 +44,19 @@ function transperfect_entity_presave($node) {
     }
 
     $field_name = $field->field_name;
-    if ($field_name == 'title') {
-      if ($orig->title != $node->title) {
-        transperfect_update_change_detection_entity($node, $lang);
-        break;
-      }
-    }
-    elseif ($field_name == 'metatags') {
-      continue;
+
+    switch ($field_name) {
+      case 'title':
+        if ($orig->title != $node->title) {
+          transperfect_update_change_detection_entity($node, $lang);
+          break 2;
+        }
+
+        break 1;
+      case 'metatags':
+        continue 2;
+
+        break 1;
     }
 
     $field_info = field_info_field($field_name);
