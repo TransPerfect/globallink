@@ -372,7 +372,7 @@ function update_tpt_entity_status(&$globallink) {
       ))
       ->condition('rid', $row->rid, '=')
       ->execute();
-			
+
 			break;
   }
 }
@@ -486,7 +486,7 @@ function get_translated_entity_array($xml, $target_lang = LANGUAGE_NONE) {
         if ($attr_name == 'rid') {
           $arr['rid'] = $attr_node->value;
         }
-        if ($attr_name == 'nid') {
+        elseif ($attr_name == 'nid') {
           $arr['nid'] = $attr_node->value;
         }
         elseif ($attr_name == 'vid') {
