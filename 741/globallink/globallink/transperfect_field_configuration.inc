@@ -230,32 +230,39 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
   else {
     if ($field_name != 'title' && $field_name != 'metatags') {
       $field = field_info_field($field_name);
-      if ($field['type'] != 'list_boolean'
-              && $field['type'] != 'file'
-              && $field['type'] != 'taxonomy_term_reference'
-              && $field['type'] != 'field_collection') {
-        db_insert('transperfect_field_config')
-                ->fields(array('content_type' => $content_type,
-                    'entity_type' => 'node',
-                    'bundle' => $content_type,
-                    'field_name' => $field_name,
-                    'field_type' => $field['type'],
-                    'field_label' => $p_arr[$field_name],
-                    'translatable' => 1))->execute();
-      }
-      elseif ($field['type'] == 'field_collection') {
-        transperfect_insert_fc('node', $field_name, $content_type, $content_type);
+
+      switch ($field['type']) {
+        case 'list_boolean':
+        case 'file':
+        case 'taxonomy_term_reference':
+          break;
+        case 'field_collection':
+          transperfect_insert_fc('node', $field_name, $content_type, $content_type);
+
+          break;
+        default:
+          db_insert('transperfect_field_config')
+          ->fields(array(
+            'content_type' => $content_type,
+            'entity_type' => 'node',
+            'bundle' => $content_type,
+            'field_name' => $field_name,
+            'field_type' => $field['type'],
+            'field_label' => $p_arr[$field_name],
+            'translatable' => 1),
+          )->execute();
       }
     }
     else {
       db_insert('transperfect_field_config')
-              ->fields(array('content_type' => $content_type,
-                  'entity_type' => 'node',
-                  'bundle' => $content_type,
-                  'field_name' => $field_name,
-                  'field_type' => 'text',
-                  'field_label' => $p_arr[$field_name],
-                  'translatable' => 1))->execute();
+      ->fields(array('content_type' => $content_type,
+        'entity_type' => 'node',
+        'bundle' => $content_type,
+        'field_name' => $field_name,
+        'field_type' => 'text',
+        'field_label' => $p_arr[$field_name],
+        'translatable' => 1),
+      )->execute();
     }
   }
 }
