@@ -282,20 +282,24 @@ function get_translated_taxonomies($pd4, &$globallink_arr) {
           }
 
           foreach ($translated_arr as $attribute => $translations) {
-            if ($attribute == 'name') {
-              $term->name = $translations['translation'];
-            }
-            elseif ($attribute == 'description') {
-              $term->description = $translations['translation'];
-            }
-            elseif ($attribute == 'path') {
-              $term->path['pathauto'] = FALSE;
+            switch ($attribute) {
+              case 'name':
+                $term->name = $translations['translation'];
 
-              $uri = taxonomy_term_uri($term);
-              $new_path = path_load($uri['path']);
-              $new_path['alias'] = $translations['translation'];
-              path_save($new_path);
+                break;
+              case 'description':
+                $term->description = $translations['translation'];
 
+                break;
+              case 'path':
+                $term->path['pathauto'] = FALSE;
+
+                $uri = taxonomy_term_uri($term);
+                $new_path = path_load($uri['path']);
+                $new_path['alias'] = $translations['translation'];
+                path_save($new_path);
+
+                break;
             }
           }
 
