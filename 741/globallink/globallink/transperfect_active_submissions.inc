@@ -40,7 +40,7 @@ function transperfect_node_active_select_form() {
   $form['select_submission']['go'] = array(
       '#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_GO,
       '#attributes' => array('style' => 'display: none;'));
-      
+
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
         '#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
