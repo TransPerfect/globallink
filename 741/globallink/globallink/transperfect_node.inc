@@ -427,51 +427,57 @@ function transperfect_get_translated_content($pd4, &$globalLink_arr) {
  *   The GlobalLink translation data.
  */
 function transperfect_update_tpt_status(&$globalLink) {
-  if ($globalLink->status != TPT_STATUS_SOURCE_DELETED && $globalLink->status != TPT_STATUS_ERROR) {
-    $row = transperfect_get_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
-    $node = node_load($row->nid);
-    if ($node->vid != $row->vid) {
+  switch ($globallink->status) {
+    case TPT_STATUS_SOURCE_DELETED:
+      $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+
       db_update('transperfect_core')
-              ->fields(array(
-                  'vid' => $node->vid,
-                  'title' => $node->title,
-                  'status' => TPT_STATUS_PENDING_TRANSLATIONS,
-                  'timestamp' => REQUEST_TIME
-                      )
-              )
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-    else {
+      ->fields(array(
+        'status' => TPT_STATUS_SOURCE_DELETED,
+        'document_ticket' => '',
+        'submission_ticket' => '',
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
+    case TPT_STATUS_ERROR:
+      $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+
       db_update('transperfect_core')
-              ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-  }
-  elseif ($globallink->status == TPT_STATUS_SOURCE_DELETED) {
-    $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core')
-            ->fields(array(
-                'status' => TPT_STATUS_SOURCE_DELETED,
-                'document_ticket' => '',
-                'submission_ticket' => '',
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
-  }
-  elseif ($globallink->status == TPT_STATUS_ERROR) {
-    $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core')
-            ->fields(array(
-                'status' => TPT_STATUS_ERROR,
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
+      ->fields(array(
+        'status' => TPT_STATUS_ERROR,
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
+    default:
+      $row = transperfect_get_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
+      $node = node_load($row->nid);
+
+      if ($node->vid != $row->vid) {
+        db_update('transperfect_core')
+        ->fields(array(
+          'vid' => $node->vid,
+          'title' => $node->title,
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
+      else {
+        db_update('transperfect_core')
+        ->fields(array(
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
   }
 }
 
