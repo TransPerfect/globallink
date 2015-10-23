@@ -718,7 +718,6 @@ function transperfect_entity_save(&$node) {
 }
 
 function save_translated_entity_with_fields(&$node, $translation_arr, $target_lang) {
-
   $config_fields = transperfect_get_config_fields($node->type);
   foreach ($config_fields as $field_name => $field_info) {
     if ($field_info->field_type == 'image' && $field_info->translatable == 1) {
@@ -726,7 +725,6 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
       $node->{$field_name}[$target_lang] = $node->{$field_name}[$source_lang];
     }
   }
-
 
   foreach ($translation_arr as $field => $values) {
     if (!is_array($values)) {
