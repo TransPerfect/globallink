@@ -249,8 +249,8 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
             'field_name' => $field_name,
             'field_type' => $field['type'],
             'field_label' => $p_arr[$field_name],
-            'translatable' => 1),
-          )->execute();
+            'translatable' => 1,
+          ))->execute();
       }
     }
     else {
@@ -261,8 +261,8 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
         'field_name' => $field_name,
         'field_type' => 'text',
         'field_label' => $p_arr[$field_name],
-        'translatable' => 1),
-      )->execute();
+        'translatable' => 1,
+      ))->execute();
     }
   }
 }
