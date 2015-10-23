@@ -858,14 +858,19 @@ function transperfect_get_translated_array($xml) {
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
       foreach ($content->attributes as $attr_name => $attr_node) {
-        if ($attr_name == 'rid') {
-          $arr['rid'] = $attr_node->value;
-        }
-        if ($attr_name == 'nid') {
-          $arr['nid'] = $attr_node->value;
-        }
-        elseif ($attr_name == 'vid') {
-          $arr['vid'] = $attr_node->value;
+        switch ($attr_name) {
+          case 'rid':
+            $arr['rid'] = $attr_node->value;
+
+            break;
+          case 'nid':
+            $arr['nid'] = $attr_node->value;
+
+            break;
+          case 'vid':
+            $arr['vid'] = $attr_node->value;
+
+            break;
         }
       }
     }
@@ -1670,10 +1675,18 @@ function transperfect_get_node_title(&$globalLink) {
     $globallink->vid = $item->vid;
     $globallink->tptRowId = $item->rid;
     $globallink->title = $item->title;
-    if ($item->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)
-      $globallink->status = TPT_STATUS_COMPLETED;
-    elseif ($item->status == TPT_STATUS_ERROR)
-      $globallink->status = TPT_STATUS_ERROR;
+
+    switch ($item->status) {
+      case TPT_STATUS_SENT_FOR_TRANSLATIONS:
+        $globallink->status = TPT_STATUS_COMPLETED;
+
+        break;
+      case TPT_STATUS_ERROR:
+        $globallink->status = TPT_STATUS_ERROR;
+
+        break;
+    }
+
     if (!$node || is_null($node) || !is_object($node)) {
       return FALSE;
     }
