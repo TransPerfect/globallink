@@ -116,8 +116,9 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
             }
           }
           else {
-            if ($key == 'status' && module_exists("revisioning"))
+            if ($key == 'status' && module_exists("revisioning")) {
               $default = 'status-1';
+            }
 
             $form['filters']['status']['filters'][$key] = array(
                 '#type' => $filter['form-type'],
