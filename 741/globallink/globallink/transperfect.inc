@@ -22,7 +22,6 @@ function transperfect_get_root_menu($menu_item) {
  *   Array of filter parameters.
  */
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
-  $revisioning_module_exists = module_exists("revisioning");
   $filters = transperfect_build_filters(TRUE);
   $count = 0;
   foreach ($filter_array as $filter) {
@@ -36,7 +35,7 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
     elseif ($key == 'title') {
       $query->condition($filters[$key]['field'], '%' . $value . '%', 'LIKE');
     }
-    elseif ($key == 'status' && !$revisioning_module_exists) {
+    elseif ($key == 'status' && !module_exists('revisioning')) {
       list($key, $value) = explode('-', $value, 2);
       $query->condition($key, $value, '=');
     }
@@ -96,8 +95,7 @@ function transperfect_build_filters($content_translation) {
           '&nbsp;&nbsp;' . t('Everything') . '&nbsp;&nbsp;'),
   );
 
-  $revisioning_module_exists = module_exists("revisioning");
-  if ($revisioning_module_exists) {
+  if (module_exists('revisioning')) {
     $filters['status'] = array(
         'title' => TPT_LABEL_STATUS,
         'options' => array(
