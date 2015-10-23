@@ -121,7 +121,6 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
               );
 
               break;
-            }
           }
           else {
             if ($key == 'status' && module_exists('revisioning'))
