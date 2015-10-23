@@ -240,46 +240,51 @@ function transperfect_entity_active_form_validate($form, &$form_state) {
 function transperfect_entity_active_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
-  if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
-    try {
-      sleep(5);
-      $rids_arr = array_filter($form_state['values']['table']);
-      $rids = check_tpt_entity_status($rids_arr);
-      if (count($rids) == 0) {
-        drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
-        return;
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT:
+      try {
+        sleep(5);
+        $rids_arr = array_filter($form_state['values']['table']);
+        $rids = check_tpt_entity_status($rids_arr);
+        if (count($rids) == 0) {
+          drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
+          return;
+        }
+        $_SESSION['transperfect_entity_selected_submission'] = '';
+        cancel_select_entity_records($rids, $pd4);
+        $_SESSION['transperfect_entity_globalLink_arr'] = array();
+        drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
-      $_SESSION['transperfect_entity_selected_submission'] = '';
-      cancel_select_entity_records($rids, $pd4);
-      $_SESSION['transperfect_entity_globalLink_arr'] = array();
-      drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
-    }
-    catch (SoapFault $se) {
-      $_SESSION['transperfect_entity_selected_submission'] = '';
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
-    }
-    catch (Exception $e) {
-      $_SESSION['transperfect_entity_selected_submission'] = '';
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS) {
-    try {
-      $count = clear_cancelled_entity_documents();
-      $_SESSION['transperfect_entity_selected_submission'] = '';
-      $_SESSION['transperfect_entity_globalLink_arr'] = array();
-      if ($count > 0) {
-        drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
+      catch (SoapFault $se) {
+        $_SESSION['transperfect_entity_selected_submission'] = '';
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+        form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
-      else {
-        drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+      catch (Exception $e) {
+        $_SESSION['transperfect_entity_selected_submission'] = '';
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+
+      break;
+    case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
+      try {
+        $count = clear_cancelled_entity_documents();
+        $_SESSION['transperfect_entity_selected_submission'] = '';
+        $_SESSION['transperfect_entity_globalLink_arr'] = array();
+        if ($count > 0) {
+          drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
+        }
+        else {
+          drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+        }
+      }
+      catch (Exception $e) {
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      }
+
+      break;
   }
 }
