@@ -145,36 +145,41 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
 
 function transperfect_pd_settings_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_SETTINGS_PD) {
-    foreach ($form_state['values'] as $key => $value) {
-      if (is_array($value) && isset($form_state['values']['array_filter'])) {
-        $value = array_keys(array_filter($value));
-      }
-      variable_set($key, $value);
-    }
-    transperfect_save_project_names();
-    drupal_set_message(t('The configuration options have been saved.'));
-  }
-  elseif ($op == TPT_BTN_SETTINGS_SAVE_TEST_PD) {
-    try {
+
+  switch ($op) {
+    case TPT_BTN_SETTINGS_PD:
       foreach ($form_state['values'] as $key => $value) {
         if (is_array($value) && isset($form_state['values']['array_filter'])) {
           $value = array_keys(array_filter($value));
         }
         variable_set($key, $value);
       }
-
       transperfect_save_project_names();
-      drupal_set_message(t('Settings Saved and Connection Test Successful.'));
-    }
-    catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+      drupal_set_message(t('The configuration options have been saved.'));
+
+      break;
+    case TPT_BTN_SETTINGS_SAVE_TEST_PD:
+      try {
+        foreach ($form_state['values'] as $key => $value) {
+          if (is_array($value) && isset($form_state['values']['array_filter'])) {
+            $value = array_keys(array_filter($value));
+          }
+          variable_set($key, $value);
+        }
+
+        transperfect_save_project_names();
+        drupal_set_message(t('Settings Saved and Connection Test Successful.'));
+      }
+      catch (SoapFault $se) {
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+        form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+      }
+      catch (Exception $e) {
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      }
+
+      break;
   }
 }
 
