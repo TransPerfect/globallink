@@ -433,17 +433,17 @@ function transperfect_convert_date_to_timestamp($date) {
 /**
  * Checks for existence of node id from GlobalLink object.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   The GlobalLink object.
  *
  * @return
  *   True if the node exists.
  */
-function transperfect_get_nid(&$globalLink) {
-  $translated_arr = transperfect_get_content_attributes_from_xml($globalLink->targetXML);
+function transperfect_get_nid(&$globallink) {
+  $translated_arr = transperfect_get_content_attributes_from_xml($globallink->targetXML);
   if (count($translated_arr) > 0) {
-    $globalLink->nid = isset($translated_arr['nid']) ? $translated_arr['nid'] : 0;
-    $globalLink->tptRowId = isset($translated_arr['rid']) ? $translated_arr['rid'] : 0;
+    $globallink->nid = isset($translated_arr['nid']) ? $translated_arr['nid'] : 0;
+    $globallink->tptRowId = isset($translated_arr['rid']) ? $translated_arr['rid'] : 0;
     return TRUE;
   }
   return FALSE;
@@ -971,7 +971,7 @@ function transperfect_get_PD_projects() {
  * @param string $message
  *   The log message.
  */
-function transperfect_gl_log($type, $severity, $message) {
+function transperfect_log($type, $severity, $message) {
   //Always log anything with severity error and warning
   if ($severity == TPT_LOGGING_SEVERITY_ERROR || $severity == TPT_LOGGING_SEVERITY_WARNING) {
     db_insert('transperfect_log')

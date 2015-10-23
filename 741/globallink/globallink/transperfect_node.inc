@@ -209,7 +209,7 @@ function transperfect_cancel_select_records($rowids, $pd4) {
   }
 
   cancel_select_documents($pd4, $globallink_arr);
-  transperfect_update_by_row_id($globallink_arr);
+  transperfect_update_row_document($globallink_arr);
 }
 
 /**
@@ -226,7 +226,7 @@ function transperfect_cancel_submission($selected_submission) {
   $globallink->submissionTicket = $selected_submission;
 
   cancel_pd_submission($pd4, $globallink);
-  transperfect_update_row_by_submission($globallink);
+  transperfect_update_row_submission($globallink);
 }
 
 /**
@@ -253,14 +253,14 @@ function transperfect_get_submission_name($submission_ticket) {
 /**
  * Updates a row document on GlobalLink.
  *
- * @param array $globalLink_arr
+ * @param array $globallink_arr
  *   Array of GlobalLink objects.
  */
-function transperfect_update_row_document(&$globalLink_arr) {
-  foreach ($globalLink_arr as $globalLink) {
-    if ($globalLink->cancelled) {
+function transperfect_update_row_document(&$globallink_arr) {
+  foreach ($globallink_arr as $globallink) {
+    if ($globallink->cancelled) {
       db_update('transperfect_core')
-              ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
+              ->fields(array('status' => TPT_STATUS_CANCELLED, 'timestamp' => REQUEST_TIME, 'changed' => 1))
               ->condition('rid', $globallink->tptRowId, '=')
               ->execute();
     }
@@ -270,12 +270,12 @@ function transperfect_update_row_document(&$globalLink_arr) {
 /**
  * Updates a submission on GlobalLink.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  */
-function transperfect_update_row_submission(&$globalLink) {
+function transperfect_update_row_submission(&$globallink) {
   db_update('transperfect_core')
-          ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
+          ->fields(array('status' => TPT_STATUS_CANCELLED, 'timestamp' => REQUEST_TIME, 'changed' => 1))
           ->condition('submission_ticket', $globallink->submissionTicket, '=')
           ->condition('submission', $globallink->submissionName, '=')
           ->execute();
@@ -335,7 +335,7 @@ function transperfect_get_submission_from_nid($nid) {
  * @return int
  *   The id of the row.
  */
-function transperfect_get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+function transperfect_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
@@ -353,13 +353,13 @@ function transperfect_get_tpt_row_id_from_submission($submission_ticket, $docume
  *
  * @param string $pd4
  *   The project director details.
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  *
  * @return bool
  *   True if the update is successful.
  */
-function transperfect_update_deleted_records($pd4, $globalLink) {
+function transperfect_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = TPT_STATUS_SOURCE_DELETED;
     send_download_confirmation($globallink->targetTicket, $pd4);
@@ -382,13 +382,13 @@ function transperfect_update_deleted_records($pd4, $globalLink) {
  *
  * @param string $pd4
  *   The project director details.
- * @param array $globalLink_arr
+ * @param array $globallink_arr
  *   Array of GlobalLink objects.
  *
  * @return int
  *   Number of rows translated.
  */
-function transperfect_get_translated_content($pd4, &$globalLink_arr) {
+function transperfect_get_translated_content($pd4, &$globallink_arr) {
   try {
     $count = 0;
     foreach ($globallink_arr as $globallink) {
@@ -423,10 +423,10 @@ function transperfect_get_translated_content($pd4, &$globalLink_arr) {
 /**
  * Updates the translation status.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   The GlobalLink translation data.
  */
-function transperfect_update_tpt_status(&$globalLink) {
+function transperfect_update_status(&$globallink) {
   switch ($globallink->status) {
     case TPT_STATUS_SOURCE_DELETED:
       $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
@@ -484,12 +484,12 @@ function transperfect_update_tpt_status(&$globalLink) {
 /**
  * Updates node.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  * @param array $t_arr
  *   The translated array. Defaults to null.
  */
-function transperfect_update_node(&$globalLink, $t_arr = NULL) {
+function transperfect_update_node(&$globallink, $t_arr = NULL) {
   $success = FALSE;
   try {
     $default_language = language_default();
@@ -1656,13 +1656,13 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
 /**
  * Gets node title.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  *
  * @return string
  *   The title of the node.
  */
-function transperfect_get_node_title(&$globalLink) {
+function transperfect_get_node_title(&$globallink) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
           ->condition('document_ticket', $globallink->documentTicket, '=')
@@ -1754,7 +1754,7 @@ function transperfect_get_submission_status() {
  * @return array
  *   An array of row ids.
  */
-function transperfect_check_tpt_status($rids_arr) {
+function transperfect_check_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core', 'tc')
           ->fields('tc', array('rid'))
