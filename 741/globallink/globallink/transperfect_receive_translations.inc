@@ -478,14 +478,14 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
     try {
       $delete_records_selected = FALSE;
       $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
-      $updated_globalLink_arr = array();
+      $updated_globallink_arr = array();
       $rids = array_filter($form_state['values']['table']);
       foreach ($rids as $rid) {
-        array_push($updated_globalLink_arr, $globallink_arr[$rid]);
+        array_push($updated_globallink_arr, $globallink_arr[$rid]);
       }
-      $count = transperfect_get_translated_content($pd4, $updated_globalLink_arr);
+      $count = transperfect_get_translated_content($pd4, $updated_globallink_arr);
       $error = FALSE;
-      foreach ($updated_globalLink_arr as $updated) {
+      foreach ($updated_globallink_arr as $updated) {
         if ($updated->sourceDeleted == TRUE) {
           $delete_records_selected = TRUE;
         }
@@ -517,7 +517,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
     sleep(2);
     $pd4 = transperfect_get_project_director_details();
     try {
-      $globallink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
+      $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
     }
     catch (SoapFault $se) {
       transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");

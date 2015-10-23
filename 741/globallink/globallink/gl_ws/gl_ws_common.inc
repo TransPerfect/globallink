@@ -150,7 +150,7 @@ function cancel_select_documents($pd_obj, &$globallink_arr) {
     $cancel_target_submission = new cancelTargetByDocumentId();
     $document_ticket = new DocumentTicket();
     $document_ticket->submissionTicket = $globallink->submissionTicket;
-    $document_ticket->ticketId = $globallink->document_ticket;
+    $document_ticket->ticketId = $globallink->documentTicket;
     $cancel_target_submission->documentId = $document_ticket;
     $cancel_target_submission->targetLocale = $globallink->targetLocale;
     $cancel_target_submission->userId = $token;
