@@ -50,7 +50,7 @@ function transperfect_node_active_select_form() {
   else {
     $form['select_submission']['br_markup'] = array(
         '#type' => 'markup',
-        '#markup' => "<BR/><BR/>",
+        '#markup' => '<BR/><BR/>',
     );
   }
 
@@ -60,9 +60,9 @@ function transperfect_node_active_select_form() {
 function transperfect_node_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
-  };
+  }
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SUBMISSION) {
     try {
       sleep(5);
@@ -107,13 +107,13 @@ function transperfect_node_active_pager_form() {
       '#value' => TPT_BTN_DASHBOARD_GO,
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('node_active_pager_form_submit'),
+      '#submit' => array('transperfect_node_active_pager_form_submit'),
       '#access' => TRUE,
   );
   return $form;
 }
 
-function node_active_pager_form_submit($form, &$form_state) {
+function transperfect_node_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
   if ($op == TPT_BTN_DASHBOARD_GO) {
     $page_count = $form_state['input']['p_count'];
@@ -143,7 +143,7 @@ function transperfect_dashboard_active() {
   if (!empty($_SESSION['transpefect_dashboard_active_type'])) {
 
     $content_types = node_type_get_names();
-    $projects = transperfect_get_PD_projects();
+    $projects = transperfect_get_pd_projects();
 
     $page_count = TPT_PAGER_LIMIT;
     if (isset($_SESSION['transperfect_node_active_page_count'])) {
@@ -190,7 +190,7 @@ function transperfect_dashboard_active() {
           'project_code' => isset($projects[$item->project_code]) ? $projects[$item->project_code] : '',
           'type' => isset($content_types[$item->type]) ? $content_types[$item->type] : '',
           'status' => $item->status,
-          'timestamp' => date("Y-m-d H:i:s", $item->timestamp),
+          'timestamp' => date('Y-m-d H:i:s', $item->timestamp),
           'source_name' => $item->source_name,
           'target_name' => $item->target_name,
       );
@@ -221,8 +221,8 @@ function transperfect_dashboard_active() {
 }
 
 function transperfect_dashboard_active_validate($form, &$form_state) {
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
@@ -235,12 +235,12 @@ function transperfect_dashboard_active_validate($form, &$form_state) {
 
 function transperfect_dashboard_active_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
     try {
       sleep(5);
       $rids_arr = array_filter($form_state['values']['table']);
-      $rids = transperfect_check_tpt_status($rids_arr);
+      $rids = transperfect_check_status($rids_arr);
       if (count($rids) == 0) {
         drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
         return;
@@ -252,12 +252,12 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
     }
     catch (SoapFault $se) {
       $_SESSION['transperfect_selected_submission'] = '';
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_dashboard_active_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $_SESSION['transperfect_selected_submission'] = '';
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -266,13 +266,15 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
       $count = transperfect_clear_cancelled_documents();
       $_SESSION['transperfect_selected_submission'] = '';
       $_SESSION['transperfect_globalLink_arr'] = array();
-      if ($count > 0)
+      if ($count > 0) {
         drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
-      else
+      }
+      else {
         drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+      }
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_dashboard_active_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

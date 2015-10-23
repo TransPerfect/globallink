@@ -39,7 +39,7 @@ function transperfect_field() {
     $p_arr = transperfect_get_pending_fields($selected_value);
     $pending_fields = $f_arr + $p_arr;
 
-    if(count($pending_fields) == 1) {
+    if (count($pending_fields) == 1) {
       $pending_fields = array('' => '--Select--');
       $disabled = TRUE;
     }
@@ -114,7 +114,7 @@ function transperfect_field() {
         '#default_value' => $default_values,
     );
 
-    if (content_type_workbench_enabled($selected_value)) {
+    if (transperfect_content_type_workbench_enabled($selected_value)) {
       if ($states = workbench_moderation_state_labels()) {
 
         $mod_key = '';
@@ -146,30 +146,35 @@ function transperfect_field() {
 
 function transperfect_field_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_GO) {
-    $_SESSION['transperfect_selected_content_type'] = $form_state['values']['select_type'];
-  }
-  elseif ($op == TPT_BTN_FIELD_UPDATE) {
-    $type = $form_state['values']['select_type'];
-    $fids = array_filter($form_state['values']['table']);
-    update_gl_field_config($type, $fids);
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_GO:
+      $_SESSION['transperfect_selected_content_type'] = $form_state['values']['select_type'];
 
-    $state = isset($form_state['input']['state']) ? $form_state['input']['state'] : false;
-    if ($state) {
-      variable_set('transperfect_moderation_' . $type, $state);
-    }
+      break;
+    case TPT_BTN_FIELD_UPDATE:
+      $type = $form_state['values']['select_type'];
+      $fids = array_filter($form_state['values']['table']);
+      transperfect_update_gl_field_config($type, $fids);
 
-    drupal_set_message(t('Field configurations have been saved successfully.'));
-  }
-  elseif ($op == TPT_BTN_ADD) {
-    $field = $form_state['values']['pending_fields'];
-    insert_gl_field_config($field, $_SESSION['transperfect_selected_content_type']);
-    drupal_set_message(t('Field configurations have been added successfully.'));
+      $state = isset($form_state['input']['state']) ? $form_state['input']['state'] : FALSE;
+      if ($state) {
+        variable_set('transperfect_moderation_' . $type, $state);
+      }
+
+      drupal_set_message(t('Field configurations have been saved successfully.'));
+
+      break;
+    case TPT_BTN_ADD:
+      $field = $form_state['values']['pending_fields'];
+      transperfect_insert_gl_field_config($field, $_SESSION['transperfect_selected_content_type']);
+      drupal_set_message(t('Field configurations have been added successfully.'));
+
+      break;
   }
 }
 
-function update_gl_field_config($type, $fids) {
-  //First update everything to 0 for this type
+function transperfect_update_gl_field_config($type, $fids) {
+  // First update everything to 0 for this type
   db_update('transperfect_field_config')
           ->fields(array('translatable' => 0))
           ->condition('content_type', $type, '=')
@@ -182,7 +187,7 @@ function update_gl_field_config($type, $fids) {
   }
 }
 
-function insert_gl_field_config($field_name, $content_type) {
+function transperfect_insert_gl_field_config($field_name, $content_type) {
   $p_arr = transperfect_get_pending_fields($content_type);
   if ($field_name == '[all]') {
     $f_keys = array_keys($p_arr);

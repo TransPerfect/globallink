@@ -9,7 +9,7 @@ function transperfect_fieldable_panels_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/dashboard/fieldable_panels')] = array(
       'title' => ' Fieldable Panels Panes  ',
       'page callback' => 'transperfect_dashboard_fieldable_panels',
-      'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
       'type' => MENU_LOCAL_TASK,
       'file' => 'transperfect_fieldable_panels_send.inc',
       'weight' => 10,
@@ -19,7 +19,7 @@ function transperfect_fieldable_panels_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/fieldable_panels')] = array(
       'title' => ' Fieldable Panels Panes ',
       'page callback' => 'transperfect_fieldable_panels_active_submissions',
-      'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
       'file' => 'transperfect_fieldable_panels_active_submissions.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
@@ -29,7 +29,7 @@ function transperfect_fieldable_panels_menu() {
   $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels')] = array(
       'title' => ' Fieldable Panels Panes ',
       'page callback' => 'transperfect_fieldable_panels_receive_submissions',
-      'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
       'file' => 'transperfect_fieldable_panels_receive.inc',
       'type' => MENU_LOCAL_TASK,
       'weight' => 10,
@@ -40,7 +40,7 @@ function transperfect_fieldable_panels_menu() {
       'title' => 'Preview Translation',
       'page callback' => 'preview_translated_fieldable_panels_content',
       'file' => 'transperfect_fieldable_panels_receive.inc',
-      'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access callback' => 'transperfect_access_callback_admin',
       'type' => MENU_CALLBACK,
   );
 

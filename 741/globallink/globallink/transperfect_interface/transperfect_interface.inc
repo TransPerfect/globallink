@@ -8,7 +8,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 function send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $source_arr = transperfect_get_source('default');
   $submitter = $submission_details['submitter'];
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($lids as $lid) {
     $rows = get_sent_tpt_interface_rows_by_lid($lid);
     $target_arr = $target_locale_arr;
@@ -23,39 +23,39 @@ function send_interface_for_translations($lids, $pd4, $submission_name, $due_dat
     }
 
     $xml = get_interface_xml($lid, $source_arr[$lid]);
-    $name = "Interface_" . $lid . ".xml";
-    $globalLink = new GlobalLink();
-    $globalLink->type = 'interface';
-    $globalLink->metadata = 'Interface';
-    $globalLink->sourceLocale = $source_locale;
-    $globalLink->targetLocale = $target_arr;
-    $globalLink->sourceXML = $xml;
-    $globalLink->sourceFileName = $name;
-    $globalLink->submissionName = $submission_name;
-    $globalLink->dueDate = $due_date;
-    $globalLink->otherObjectId = $lid;
-    $globalLink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
-    $globalLink_arr[] = $globalLink;
+    $name = 'Interface_' . $lid . '.xml';
+    $globallink = new GlobalLink();
+    $globallink->type = 'interface';
+    $globallink->metadata = 'Interface';
+    $globallink->sourceLocale = $source_locale;
+    $globallink->targetLocale = $target_arr;
+    $globallink->sourceXML = $xml;
+    $globallink->sourceFileName = $name;
+    $globallink->submissionName = $submission_name;
+    $globallink->dueDate = $due_date;
+    $globallink->otherObjectId = $lid;
+    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink_arr[] = $globallink;
   }
 
-  if (!empty($globalLink_arr)) {
-    sendDocumentsForTranslationToPD($globalLink_arr, $pd4, $project_code, $submitter);
+  if (!empty($globallink_arr)) {
+    send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
-  return $globalLink_arr;
+  return $globallink_arr;
 }
 
 function get_interface_xml($lid, $source_arr) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
-  $root = $dom->createElement("content");
+  $root = $dom->createElement('content');
   $dom->appendChild($root);
 
   $id = $dom->createAttribute('lid');
   $id->value = $lid;
   $root->appendChild($id);
 
-  transperfect_insert_child_element($dom, $root, "interface", $source_arr['source'], array('name' => 'source',
+  transperfect_insert_child_element($dom, $root, 'interface', $source_arr['source'], array('name' => 'source',
       'lid' => $lid,
       'location' => $source_arr['location']));
 
@@ -64,27 +64,27 @@ function get_interface_xml($lid, $source_arr) {
 }
 
 function update_interface_ticket_id($arr, $project_code) {
-  foreach ($arr as $globalLink) {
-    $target_locale_arr = $globalLink->targetLocale;
-    $type = $globalLink->type;
+  foreach ($arr as $globallink) {
+    $target_locale_arr = $globallink->targetLocale;
+    $type = $globallink->type;
     if ($type == 'interface') {
-      $lid = $globalLink->otherObjectId;
+      $lid = $globallink->otherObjectId;
       $interface = transperfect_load_source_data($lid);
       foreach ($target_locale_arr as $target_locale) {
-        $row = get_transperfect_interface_row($lid, $type, $globalLink->sourceLocale, $target_locale);
+        $row = get_transperfect_interface_row($lid, $type, $globallink->sourceLocale, $target_locale);
         if ($row) {
           db_update('transperfect_core_interface')
-                  ->fields(array('title' => $interface[0]->source, 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('title' => $interface[0]->source, 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->condition('rid', $row->rid, '=')
                   ->execute();
         }
         else {
           db_insert('transperfect_core_interface')
-                  ->fields(array('object_id' => $lid, 'object_type' => $globalLink->type, 'title' => $interface[0]->source,
-                      'source' => $globalLink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('object_id' => $lid, 'object_type' => $globallink->type, 'title' => $interface[0]->source,
+                      'source' => $globallink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->execute();
         }
@@ -94,12 +94,12 @@ function update_interface_ticket_id($arr, $project_code) {
 }
 
 function interface_locale_languages($lid) {
-  $mapped_locales = transperfect_get_mapped_tpt_locales_with_drupal_desc(TRUE);
+  $mapped_locales = transperfect_get_mapped_locales_with_drupal_desc(TRUE);
   $translation_status = '';
   foreach ($mapped_locales as $code => $locale) {
     $result = get_interface_submission_status($lid, $code);
     if ($result) {
-      $translation_status .= $locale . " - " . $result['status'] . "<br />";
+      $translation_status .= $locale . ' - ' . $result['status'] . '<br />';
     }
   }
 
@@ -151,30 +151,33 @@ function get_interface_translation_status($lid, $tgt_locale, &$title) {
   foreach ($results as $row) {
     $title = $row->title;
     $interface = transperfect_load_source_data($lid);
-    if (!$interface || is_null($interface))
+    if (!$interface || is_null($interface)) {
       return TPT_STATUS_SOURCE_DELETED;
-    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)
+    }
+    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS) {
       return TPT_STATUS_COMPLETED;
-    elseif ($row->status == TPT_STATUS_ERROR)
+    }
+    elseif ($row->status == TPT_STATUS_ERROR) {
       return TPT_STATUS_ERROR;
+    }
   }
 
   return TPT_STATUS_SENT_FOR_TRANSLATIONS;
 }
 
-function update_deleted_interface_records($pd4, $globalLink) {
+function update_deleted_interface_records($pd4, $globallink) {
   try {
-    $globalLink->status = TPT_STATUS_SOURCE_DELETED;
-    sendDownloadConfirmation($globalLink->targetTicket, $pd4);
-    update_tpt_interface_status($globalLink, TPT_STATUS_SOURCE_DELETED);
+    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    send_download_confirmation($globallink->targetTicket, $pd4);
+    update_tpt_interface_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_interface_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_interface_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_interface_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in update_deleted_interface_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -182,15 +185,15 @@ function update_deleted_interface_records($pd4, $globalLink) {
   return TRUE;
 }
 
-function get_translated_interfaces($pd4, &$globalLink_arr) {
+function get_translated_interfaces($pd4, &$globallink_arr) {
   $count = 0;
-  foreach ($globalLink_arr as $globalLink) {
-    $targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-    if (!$globalLink->sourceDeleted) {
-      if (isset($targetXML)) {
+  foreach ($globallink_arr as $globallink) {
+    $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+    if (!$globallink->sourceDeleted) {
+      if (isset($target_xml)) {
         $count++;
-        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
-        $translated_arr = get_translated_interface_items($targetXML);
+        $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
+        $translated_arr = get_translated_interface_items($target_xml);
         try {
           $lid = $translated_arr['lid'];
           foreach ($translated_arr as $attribute => $translations) {
@@ -201,17 +204,17 @@ function get_translated_interfaces($pd4, &$globalLink_arr) {
             if ($attribute == 'source') {
               $interface = transperfect_load_source_data($translations['lid']);
               if ($interface == '') {
-                throw new Exception("Source string not found for interface id $lid and field name $attribute");
+                throw new Exception('Source string not found for interface id ' . $lid . ' and field name ' . $attribute);
               }
             }
             $report = &drupal_static(__FUNCTION__, array('additions' => 0, 'updates' => 0, 'deletes' => 0, 'skips' => 0));
             _locale_import_one_string_db($report, $language, '', $interface[0]->source, $translations['translation'], 'default', $translations['location'], LOCALE_IMPORT_OVERWRITE);
           }
-          if ($globalLink->status != TPT_STATUS_ERROR) {
-            if ($globalLink->status != TPT_STATUS_DELETED) {
-              sendDownloadConfirmation($globalLink->targetTicket, $pd4);
+          if ($globallink->status != TPT_STATUS_ERROR) {
+            if ($globallink->status != TPT_STATUS_DELETED) {
+              send_download_confirmation($globallink->targetTicket, $pd4);
             }
-            update_tpt_interface_status($globalLink);
+            update_tpt_interface_status($globallink);
           }
           else {
             $count--;
@@ -219,12 +222,12 @@ function get_translated_interfaces($pd4, &$globalLink_arr) {
         }
         catch (SoapFault $se) {
           $count--;
-          update_tpt_interface_status($globalLink, TPT_STATUS_ERROR);
+          update_tpt_interface_status($globallink, TPT_STATUS_ERROR);
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $ex) {
           $count--;
-          update_tpt_interface_status($globalLink, TPT_STATUS_ERROR);
+          update_tpt_interface_status($globallink, TPT_STATUS_ERROR);
           form_set_error('', check_plain('Error: ' . $ex->getMessage()));
         }
       }
@@ -233,13 +236,13 @@ function get_translated_interfaces($pd4, &$globalLink_arr) {
   return $count;
 }
 
-function update_tpt_interface_status(&$globalLink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function update_tpt_interface_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
   db_update('transperfect_core_interface')
           ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
-          ->condition('submission', $globalLink->submissionName, '=')
-          ->condition('document_ticket', $globalLink->documentTicket, '=')
-          ->condition('source', $globalLink->sourceLocale, '=')
-          ->condition('target', $globalLink->targetLocale, '=')
+          ->condition('submission', $globallink->submissionName, '=')
+          ->condition('document_ticket', $globallink->documentTicket, '=')
+          ->condition('source', $globallink->sourceLocale, '=')
+          ->condition('target', $globallink->targetLocale, '=')
           ->execute();
 }
 
@@ -272,41 +275,41 @@ function get_interface_active_submission_names() {
 }
 
 function cancel_interface_records($rowids, $pd4) {
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($rowids as $rid) {
     $row = transperfect_get_other_row($rid, 'interface');
-    $globalLink = new GlobalLink();
-    $globalLink->tptRowId = $row->rid;
-    $globalLink->targetLocale = $row->target;
-    $globalLink->documentTicket = $row->document_ticket;
-    $globalLink->submissionTicket = $row->submission_ticket;
-    $globalLink_arr[$rid] = $globalLink;
+    $globallink = new GlobalLink();
+    $globallink->tptRowId = $row->rid;
+    $globallink->targetLocale = $row->target;
+    $globallink->documentTicket = $row->document_ticket;
+    $globallink->submissionTicket = $row->submission_ticket;
+    $globallink_arr[$rid] = $globallink;
   }
 
-  cancel_select_documents($pd4, $globalLink_arr);
-  update_interface_row_document($globalLink_arr);
+  cancel_select_documents($pd4, $globallink_arr);
+  update_interface_row_document($globallink_arr);
 }
 
-function update_interface_row_document(&$globalLink_arr) {
-  foreach ($globalLink_arr as $globalLink) {
-    if ($globalLink->cancelled) {
+function update_interface_row_document(&$globallink_arr) {
+  foreach ($globallink_arr as $globallink) {
+    if ($globallink->cancelled) {
       db_update('transperfect_core_interface')
               ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $globalLink->tptRowId, '=')
+              ->condition('rid', $globallink->tptRowId, '=')
               ->execute();
     }
   }
 }
 
 function cancel_interface_submission($selected_submission) {
-  $pd4 = get_project_director_details();
-  $globalLink = new GlobalLink();
+  $pd4 = transperfect_get_project_director_details();
+  $globallink = new GlobalLink();
   $submission_name = get_interface_submission_name($selected_submission);
-  $globalLink->submissionName = $submission_name;
-  $globalLink->submissionTicket = $selected_submission;
+  $globallink->submissionName = $submission_name;
+  $globallink->submissionTicket = $selected_submission;
 
-  cancel_ProjectDirector_submission($pd4, $globalLink);
-  update_transperfect_interface_submission($globalLink);
+  cancel_pd_submission($pd4, $globallink);
+  update_transperfect_interface_submission($globallink);
 }
 
 function get_interface_submission_name($submission_ticket) {
@@ -321,11 +324,11 @@ function get_interface_submission_name($submission_ticket) {
   }
 }
 
-function update_transperfect_interface_submission(&$globalLink) {
+function update_transperfect_interface_submission(&$globallink) {
   db_update('transperfect_core_interface')
           ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-          ->condition('submission_ticket', $globalLink->submissionTicket, '=')
-          ->condition('submission', $globalLink->submissionName, '=')
+          ->condition('submission_ticket', $globallink->submissionTicket, '=')
+          ->condition('submission', $globallink->submissionName, '=')
           ->execute();
 }
 
@@ -343,9 +346,9 @@ function get_translated_interface_items($xml) {
   $lid = '';
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
-      foreach ($content->attributes as $attrName => $attrNode) {
-        if ('lid' == $attrName) {
-          $lid = $attrNode->value;
+      foreach ($content->attributes as $attr_name => $attr_node) {
+        if ($attr_name == 'lid') {
+          $lid = $attr_node->value;
         }
       }
     }
@@ -362,8 +365,8 @@ function get_translated_interface_items($xml) {
   foreach ($interfaces as $interface) {
     if (!is_null($interface->attributes)) {
       $i_arr = array();
-      foreach ($interface->attributes as $attrName => $attrNode) {
-        $i_arr[$attrName] = $attrNode->value;
+      foreach ($interface->attributes as $attr_name => $attr_node) {
+        $i_arr[$attr_name] = $attr_node->value;
       }
       $i_arr['translation'] = $interface->nodeValue;
       $interface_arr[$i_arr['name']] = $i_arr;
@@ -386,7 +389,7 @@ function get_tpt_interface_row_id_from_submission($submission_ticket, $document_
 }
 
 function get_active_submission_rows_by_lid($lids) {
-  if(is_array($lids) && empty($lids)) {
+  if (is_array($lids) && empty($lids)) {
     return FALSE;
   }
   $query = db_select('transperfect_core_interface', 'tci');
@@ -430,7 +433,7 @@ function get_distinct_active_interface_submission_names() {
   $query->distinct();
   $query->fields('tc');
   $results = $query->execute();
-  $arr = array('[any]' => t(' Any '));
+  $arr = array('[any]' => t('Any'));
   foreach ($results as $row) {
     $arr[$row->submission] = $row->submission;
   }
@@ -457,7 +460,7 @@ function get_interface_pd_submission_status() {
   foreach ($results as $row) {
     if ($row->submission_ticket) {
       try {
-        $pd4 = get_project_director_details();
+        $pd4 = transperfect_get_project_director_details();
         $status = get_status($pd4, $row->submission_ticket);
         if (!$status || $status == PD_STATUS_CANCELLED) {
           update_interface_submission_status($row->submission_ticket);

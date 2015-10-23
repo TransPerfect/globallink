@@ -6,7 +6,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
 function send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $submitter = $submission_details['submitter'];
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($mlids as $mlid) {
     $rows = get_sent_tpt_menu_rows_by_mlid($mlid);
     $target_arr = $target_locale_arr;
@@ -21,32 +21,32 @@ function send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, 
     }
 
     $xml = get_menu_xml($mlid);
-    $name = "Menu_" . $mlid . ".xml";
-    $globalLink = new GlobalLink();
-    $globalLink->type = 'menu';
-    $globalLink->metadata = 'Menu';
-    $globalLink->sourceLocale = $source_locale;
-    $globalLink->targetLocale = $target_arr;
-    $globalLink->sourceXML = $xml;
-    $globalLink->sourceFileName = $name;
-    $globalLink->submissionName = $submission_name;
-    $globalLink->dueDate = $due_date;
-    $globalLink->otherObjectId = $mlid;
-    $globalLink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
-    $globalLink_arr[] = $globalLink;
+    $name = 'Menu_' . $mlid . '.xml';
+    $globallink = new GlobalLink();
+    $globallink->type = 'menu';
+    $globallink->metadata = 'Menu';
+    $globallink->sourceLocale = $source_locale;
+    $globallink->targetLocale = $target_arr;
+    $globallink->sourceXML = $xml;
+    $globallink->sourceFileName = $name;
+    $globallink->submissionName = $submission_name;
+    $globallink->dueDate = $due_date;
+    $globallink->otherObjectId = $mlid;
+    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink_arr[] = $globallink;
   }
 
-  if (!empty($globalLink_arr)) {
-    sendDocumentsForTranslationToPD($globalLink_arr, $pd4, $project_code, $submitter);
+  if (!empty($globallink_arr)) {
+    send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
-  return $globalLink_arr;
+  return $globallink_arr;
 }
 
 function get_menu_xml($mlid) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
-  $root = $dom->createElement("content");
+  $root = $dom->createElement('content');
   $dom->appendChild($root);
 
   $id = $dom->createAttribute('mlid');
@@ -54,11 +54,11 @@ function get_menu_xml($mlid) {
   $root->appendChild($id);
 
   $link = menu_link_load($mlid);
-  transperfect_insert_child_element($dom, $root, "menu", $link['link_title'], array('name' => 'link_title'));
+  transperfect_insert_child_element($dom, $root, 'menu', $link['link_title'], array('name' => 'link_title'));
 
   if (isset($link['options']) && isset($link['options']['attributes']) && isset($link['options']['attributes']['title'])) {
     if (is_string($link['options']['attributes']['title'])) {
-      transperfect_insert_child_element($dom, $root, "menu", $link['options']['attributes']['title'], array('name' => 'title'));
+      transperfect_insert_child_element($dom, $root, 'menu', $link['options']['attributes']['title'], array('name' => 'title'));
     }
   }
 
@@ -67,27 +67,27 @@ function get_menu_xml($mlid) {
 }
 
 function update_menu_ticket_id($arr, $project_code) {
-  foreach ($arr as $globalLink) {
-    $target_locale_arr = $globalLink->targetLocale;
-    $type = $globalLink->type;
+  foreach ($arr as $globallink) {
+    $target_locale_arr = $globallink->targetLocale;
+    $type = $globallink->type;
     if ($type == 'menu') {
-      $mlid = $globalLink->otherObjectId;
+      $mlid = $globallink->otherObjectId;
       $link = menu_link_load($mlid);
       foreach ($target_locale_arr as $target_locale) {
-        $row = get_transperfect_menu_row($mlid, $type, $globalLink->sourceLocale, $target_locale);
+        $row = get_transperfect_menu_row($mlid, $type, $globallink->sourceLocale, $target_locale);
         if ($row) {
           db_update('transperfect_core_menu')
-                  ->fields(array('title' => $link['link_title'], 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('title' => $link['link_title'], 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->condition('rid', $row->rid, '=')
                   ->execute();
         }
         else {
           db_insert('transperfect_core_menu')
-                  ->fields(array('object_id' => $mlid, 'object_type' => $globalLink->type, 'title' => $link['link_title'],
-                      'source' => $globalLink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globalLink->documentTicket,
-                      'submission' => $globalLink->submissionName, 'submission_ticket' => $globalLink->submissionTicket,
+                  ->fields(array('object_id' => $mlid, 'object_type' => $globallink->type, 'title' => $link['link_title'],
+                      'source' => $globallink->sourceLocale, 'target' => $target_locale, 'document_ticket' => $globallink->documentTicket,
+                      'submission' => $globallink->submissionName, 'submission_ticket' => $globallink->submissionTicket,
                       'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'last_modified' => REQUEST_TIME, 'project_code' => $project_code))
                   ->execute();
         }
@@ -111,19 +111,19 @@ function get_transperfect_menu_row($object_id, $object_type, $source, $target) {
   return FALSE;
 }
 
-function update_deleted_menu_records($pd4, $globalLink) {
+function update_deleted_menu_records($pd4, $globallink) {
   try {
-    $globalLink->status = TPT_STATUS_SOURCE_DELETED;
-    sendDownloadConfirmation($globalLink->targetTicket, $pd4);
-    update_tpt_menu_status($globalLink, TPT_STATUS_SOURCE_DELETED);
+    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    send_download_confirmation($globallink->targetTicket, $pd4);
+    update_tpt_menu_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_menu_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, 'Exception in update_deleted_menu_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -141,12 +141,15 @@ function get_menu_translation_status($mlid, $tgt_locale, &$title) {
   foreach ($results as $row) {
     $title = $row->title;
     $s_link = menu_link_load($mlid);
-    if (!$s_link)
+    if (!$s_link) {
       return TPT_STATUS_SOURCE_DELETED;
-    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)
+    }
+    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS) {
       return TPT_STATUS_COMPLETED;
-    elseif ($row->status == TPT_STATUS_ERROR)
+    }
+    elseif ($row->status == TPT_STATUS_ERROR) {
       return TPT_STATUS_ERROR;
+    }
   }
 
   return TPT_STATUS_SENT_FOR_TRANSLATIONS;
@@ -166,41 +169,41 @@ function get_menu_active_submission_names() {
 }
 
 function cancel_menu_records($rowids, $pd4) {
-  $globalLink_arr = array();
+  $globallink_arr = array();
   foreach ($rowids as $rid) {
     $row = transperfect_get_other_row($rid, 'menu');
-    $globalLink = new GlobalLink();
-    $globalLink->tptRowId = $row->rid;
-    $globalLink->targetLocale = $row->target;
-    $globalLink->documentTicket = $row->document_ticket;
-    $globalLink->submissionTicket = $row->submission_ticket;
-    $globalLink_arr[$rid] = $globalLink;
+    $globallink = new GlobalLink();
+    $globallink->tptRowId = $row->rid;
+    $globallink->targetLocale = $row->target;
+    $globallink->documentTicket = $row->document_ticket;
+    $globallink->submissionTicket = $row->submission_ticket;
+    $globallink_arr[$rid] = $globallink;
   }
 
-  cancel_select_documents($pd4, $globalLink_arr);
-  update_menu_row_document($globalLink_arr);
+  cancel_select_documents($pd4, $globallink_arr);
+  update_menu_row_document($globallink_arr);
 }
 
-function update_menu_row_document(&$globalLink_arr) {
-  foreach ($globalLink_arr as $globalLink) {
-    if ($globalLink->cancelled) {
+function update_menu_row_document(&$globallink_arr) {
+  foreach ($globallink_arr as $globallink) {
+    if ($globallink->cancelled) {
       db_update('transperfect_core_menu')
               ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $globalLink->tptRowId, '=')
+              ->condition('rid', $globallink->tptRowId, '=')
               ->execute();
     }
   }
 }
 
 function cancel_menu_submission($selected_submission) {
-  $pd4 = get_project_director_details();
-  $globalLink = new GlobalLink();
+  $pd4 = transperfect_get_project_director_details();
+  $globallink = new GlobalLink();
   $submission_name = get_menu_submission_name($selected_submission);
-  $globalLink->submissionName = $submission_name;
-  $globalLink->submissionTicket = $selected_submission;
+  $globallink->submissionName = $submission_name;
+  $globallink->submissionTicket = $selected_submission;
 
-  cancel_ProjectDirector_submission($pd4, $globalLink);
-  update_transperfect_menu_submission($globalLink);
+  cancel_pd_submission($pd4, $globallink);
+  update_transperfect_menu_submission($globallink);
 }
 
 function get_menu_submission_name($submission_ticket) {
@@ -215,11 +218,11 @@ function get_menu_submission_name($submission_ticket) {
   }
 }
 
-function update_transperfect_menu_submission(&$globalLink) {
+function update_transperfect_menu_submission(&$globallink) {
   db_update('transperfect_core_menu')
           ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-          ->condition('submission_ticket', $globalLink->submissionTicket, '=')
-          ->condition('submission', $globalLink->submissionName, '=')
+          ->condition('submission_ticket', $globallink->submissionTicket, '=')
+          ->condition('submission', $globallink->submissionName, '=')
           ->execute();
 }
 
@@ -275,20 +278,20 @@ function count_parents($menu_link) {
   return $count;
 }
 
-function get_translated_menus($pd4, &$globalLink_arr) {
+function get_translated_menus($pd4, &$globallink_arr) {
   module_load_include('inc', 'i18n_menu', 'i18n_menu.admin');
   $count = 0;
   $source_link = array('link_title' => 'No Title');
 
-  usort($globalLink_arr, "sort_gl_objects_by_menu_order");
+  usort($globallink_arr, 'sort_gl_objects_by_menu_order');
 
-  foreach ($globalLink_arr as $globalLink) {
-    $targetXML = downloadTargetResource($pd4, $globalLink->targetTicket);
-    if (!$globalLink->sourceDeleted) {
-      if (isset($targetXML)) {
+  foreach ($globallink_arr as $globallink) {
+    $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+    if (!$globallink->sourceDeleted) {
+      if (isset($target_xml)) {
         $count++;
-        $language = transperfect_get_drupal_locale_code($globalLink->targetLocale);
-        $arr = get_translated_menu_items($targetXML);
+        $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
+        $arr = get_translated_menu_items($target_xml);
         try {
           $mlid = $arr['mlid'];
           $t_link_title = $arr['link_title'];
@@ -329,7 +332,7 @@ function get_translated_menus($pd4, &$globalLink_arr) {
             else {
               $link_path = $path_arr[$language];
             }
-            $t_link = null;
+            $t_link = NULL;
             if (isset($source_link['i18n_tsid']) && $source_link['i18n_tsid'] != 0) {
               $i18n_arr = transperfect_get_i18n_menu_set($source_link['i18n_tsid']);
               if (isset($i18n_arr[$language])) {
@@ -384,25 +387,25 @@ function get_translated_menus($pd4, &$globalLink_arr) {
             $translation_set->add_item($source_link, $source_link['language']);
             $translation_set->add_item($t_link, $language);
             $translation_set->save(TRUE);
-            update_tpt_menu_status($globalLink);
+            update_tpt_menu_status($globallink);
           }
           else {
             // Source Link is deleted
-            update_tpt_menu_status($globalLink, TPT_STATUS_SOURCE_DELETED);
+            update_tpt_menu_status($globallink, TPT_STATUS_SOURCE_DELETED);
           }
 
-          sendDownloadConfirmation($globalLink->targetTicket, $pd4);
+          send_download_confirmation($globallink->targetTicket, $pd4);
         }
         catch (SoapFault $se) {
           $count--;
-          update_tpt_menu_status($globalLink, TPT_STATUS_ERROR);
-          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[$se->faultcode], Message[$se->faultstring]");
+          update_tpt_menu_status($globallink, TPT_STATUS_ERROR);
+          transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_menu_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
-          update_tpt_menu_status($globalLink, TPT_STATUS_ERROR);
-          transperfect_gl_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, "Exception in Saving Menu Object - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+          update_tpt_menu_status($globallink, TPT_STATUS_ERROR);
+          transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Saving Menu Object - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }
@@ -427,9 +430,9 @@ function get_translated_menu_items($xml) {
   $mlid = '';
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
-      foreach ($content->attributes as $attrName => $attrNode) {
-        if ('mlid' == $attrName) {
-          $mlid = $attrNode->value;
+      foreach ($content->attributes as $attr_name => $attr_node) {
+        if ($attr_name == 'mlid') {
+          $mlid = $attr_node->value;
         }
       }
     }
@@ -444,9 +447,9 @@ function get_translated_menu_items($xml) {
   $menus = $dom->getElementsByTagName('menu');
   foreach ($menus as $menu) {
     $type = '';
-    foreach ($menu->attributes as $attrName => $attrNode) {
-      if ($attrName == 'name') {
-        $type = $attrNode->value;
+    foreach ($menu->attributes as $attr_name => $attr_node) {
+      if ($attr_name == 'name') {
+        $type = $attr_node->value;
       }
     }
     $arr[$type] = $menu->nodeValue;
@@ -455,13 +458,13 @@ function get_translated_menu_items($xml) {
   return $arr;
 }
 
-function update_tpt_menu_status(&$globalLink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function update_tpt_menu_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
   db_update('transperfect_core_menu')
           ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
-          ->condition('submission', $globalLink->submissionName, '=')
-          ->condition('document_ticket', $globalLink->documentTicket, '=')
-          ->condition('source', $globalLink->sourceLocale, '=')
-          ->condition('target', $globalLink->targetLocale, '=')
+          ->condition('submission', $globallink->submissionName, '=')
+          ->condition('document_ticket', $globallink->documentTicket, '=')
+          ->condition('source', $globallink->sourceLocale, '=')
+          ->condition('target', $globallink->targetLocale, '=')
           ->execute();
 }
 
@@ -562,7 +565,7 @@ function get_distinct_active_menu_submission_names() {
   $query->distinct();
   $query->fields('tc');
   $results = $query->execute();
-  $arr = array('[any]' => t(' Any '));
+  $arr = array('[any]' => t('Any'));
   foreach ($results as $row) {
     $arr[$row->submission] = $row->submission;
   }
@@ -590,7 +593,7 @@ function get_menu_submission_status() {
   foreach ($results as $row) {
     if ($row->submission_ticket) {
       try {
-        $pd4 = get_project_director_details();
+        $pd4 = transperfect_get_project_director_details();
         $status = get_status($pd4, $row->submission_ticket);
         if (!$status || $status == PD_STATUS_CANCELLED) {
           update_menu_submission_status($row->submission_ticket);
