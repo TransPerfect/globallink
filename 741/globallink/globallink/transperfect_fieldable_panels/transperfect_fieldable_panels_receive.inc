@@ -398,131 +398,138 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
   $type = $_SESSION['transpefect_fieldable_panels_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
-  if ($op == TPT_BTN_DASHBOARD_UPDATE_ALL) {
-    try {
-      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
-      $count = get_translated_fieldable_panels($pd4, $globallink_arr);
-      $error = FALSE;
-      $delete_records_selected = FALSE;
-      foreach ($globallink_arr as $updated) {
-        if ($updated->sourceDeleted == TRUE) {
-          $delete_records_selected = TRUE;
-        }
-        if ($updated->status == TPT_STATUS_ERROR) {
-          $error = TRUE;
-        }
-      }
-      $status = 'status';
-      if ($error) {
-        drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
-        $status = 'warning';
-      }
-      drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
-      if ($delete_records_selected) {
-        drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
-      }
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update All - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
 
-    $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-    $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
-    unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS) {
-     try {
-      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
-      $success = FALSE;
-      $count = 0;
-      foreach ($globallink_arr as $globallink) {
-        if ($globallink->sourceDeleted == TRUE) {
-          $success = update_deleted_fieldable_panels_records($pd4, $globallink);
-          $count++;
-        }
-      }
+	switch ($op) {
+		case TPT_BTN_DASHBOARD_UPDATE_ALL:
+	    try {
+	      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
+	      $count = get_translated_fieldable_panels($pd4, $globallink_arr);
+	      $error = FALSE;
+	      $delete_records_selected = FALSE;
+	      foreach ($globallink_arr as $updated) {
+	        if ($updated->sourceDeleted == TRUE) {
+	          $delete_records_selected = TRUE;
+	        }
+	        if ($updated->status == TPT_STATUS_ERROR) {
+	          $error = TRUE;
+	        }
+	      }
+	      $status = 'status';
+	      if ($error) {
+	        drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
+	        $status = 'warning';
+	      }
+	      drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
+	      if ($delete_records_selected) {
+	        drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
+	      }
+	    }
+	    catch (Exception $e) {
+	      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update All - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+	      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+	    }
 
-      if ($count == 0) {
-        drupal_set_message(t('No source record(s) deleted.'), 'warning', NULL);
-      }
-      else {
-        $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-        $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
-        unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
-      }
+	    $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+	    $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
+	    unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
 
-      if ($success) {
-        drupal_set_message(check_plain($count . ' Source Deleted record(s) cleared successfully.'), 'status', NULL);
-      }
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Deleted Records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
-    try {
-      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
-      $updated_globalLink_arr = array();
-      $rids = array_filter($form_state['values']['table']);
-      foreach ($rids as $rid) {
-        array_push($updated_globalLink_arr, $globallink_arr[$rid]);
-      }
-      $count = get_translated_fieldable_panels($pd4, $updated_globalLink_arr);
-      $error = FALSE;
-      $delete_records_selected = FALSE;
-      foreach ($globallink_arr as $updated) {
-        if ($updated->sourceDeleted == TRUE) {
-          $delete_records_selected = TRUE;
-        }
-        if ($updated->status == TPT_STATUS_ERROR) {
-          $error = TRUE;
-        }
-      }
-      $status = 'status';
-      if ($error) {
-        drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
-        $status = 'warning';
-      }
-      drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
-      if ($delete_records_selected) {
-        drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
-      }
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Selected - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+			break;
+		case TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS:
+	     try {
+	      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
+	      $success = FALSE;
+	      $count = 0;
+	      foreach ($globallink_arr as $globallink) {
+	        if ($globallink->sourceDeleted == TRUE) {
+	          $success = update_deleted_fieldable_panels_records($pd4, $globallink);
+	          $count++;
+	        }
+	      }
 
-    $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-    $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
-    unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_REFRESH) {
-    sleep(2);
-    $pd4 = transperfect_get_project_director_details();
-    try {
-      $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
-    }
-    catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Refresh - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+	      if ($count == 0) {
+	        drupal_set_message(t('No source record(s) deleted.'), 'warning', NULL);
+	      }
+	      else {
+	        $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+	        $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
+	        unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
+	      }
 
-    if (sizeof($globallink_arr) > 0) {
-      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = serialize($globallink_arr);
-      $_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
-    }
-    else {
-      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-      unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
-    }
-  }
+	      if ($success) {
+	        drupal_set_message(check_plain($count . ' Source Deleted record(s) cleared successfully.'), 'status', NULL);
+	      }
+	    }
+	    catch (Exception $e) {
+	      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Deleted Records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+	      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+	    }
+
+			break;
+		case TPT_BTN_DASHBOARD_UPDATE_SELECTED:
+	    try {
+	      $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
+	      $updated_globalLink_arr = array();
+	      $rids = array_filter($form_state['values']['table']);
+	      foreach ($rids as $rid) {
+	        array_push($updated_globalLink_arr, $globallink_arr[$rid]);
+	      }
+	      $count = get_translated_fieldable_panels($pd4, $updated_globalLink_arr);
+	      $error = FALSE;
+	      $delete_records_selected = FALSE;
+	      foreach ($globallink_arr as $updated) {
+	        if ($updated->sourceDeleted == TRUE) {
+	          $delete_records_selected = TRUE;
+	        }
+	        if ($updated->status == TPT_STATUS_ERROR) {
+	          $error = TRUE;
+	        }
+	      }
+	      $status = 'status';
+	      if ($error) {
+	        drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
+	        $status = 'warning';
+	      }
+	      drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
+	      if ($delete_records_selected) {
+	        drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
+	      }
+	    }
+	    catch (Exception $e) {
+	      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Selected - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+	      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+	    }
+
+	    $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+	    $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
+	    unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
+
+			break;
+	  case TPT_BTN_DASHBOARD_REFRESH:
+	    sleep(2);
+	    $pd4 = transperfect_get_project_director_details();
+	    try {
+	      $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+	    }
+	    catch (SoapFault $se) {
+	      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+	      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+	    }
+	    catch (Exception $e) {
+	      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Refresh - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+	      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+	    }
+
+	    if (sizeof($globallink_arr) > 0) {
+	      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = serialize($globallink_arr);
+	      $_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+	    }
+	    else {
+	      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+	      unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
+	    }
+
+			break;
+	}
 }
 
 function preview_translated_fieldable_panels_content() {
