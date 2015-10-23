@@ -368,7 +368,7 @@ function transperfect_get_node_source_languages($nid) {
  * @return string
  *   The Transperfect locale code.
  */
-function transperfect_get_tpt_locale_code($drupal_locale) {
+function transperfect_get_locale_code($drupal_locale) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
           ->condition('drupal_locale_code', $drupal_locale, '=')
@@ -823,7 +823,7 @@ function transperfect_get_drupal_locales() {
 /**
  * @todo Document this function.
  */
-function transperfect_get_mapped_tpt_locales_with_drupal_desc($remove_default = TRUE) {
+function transperfect_get_mapped_locales_with_drupal_desc($remove_default = TRUE) {
   $languages = array();
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')

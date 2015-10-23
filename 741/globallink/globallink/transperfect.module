@@ -910,7 +910,7 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
           ->fields('tc')
           ->condition('nid', $nid, '=')
           ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
-          ->condition('source', transperfect_get_tpt_locale_code($source), '=');
+          ->condition('source', transperfect_get_locale_code($source), '=');
   $result = $query->execute();
   foreach ($result as $row) {
     $arr[] = transperfect_get_drupal_locale_code($row->target);
