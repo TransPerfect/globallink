@@ -137,15 +137,20 @@ function transperfect_dashboard_webform_filter_form() {
 
 function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_webform_filter']['string'] = $form_state['values']['string'];
-    $_SESSION['transperfect_webform_filter']['language'] = $form_state['values']['language'];
-    $_SESSION['transperfect_webform_filter']['translation'] = $form_state['values']['translation'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_webform_filter']['string'] = '';
-    $_SESSION['transperfect_webform_filter']['language'] = '';
-    $_SESSION['transperfect_webform_filter']['translation'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_webform_filter']['string'] = $form_state['values']['string'];
+      $_SESSION['transperfect_webform_filter']['language'] = $form_state['values']['language'];
+      $_SESSION['transperfect_webform_filter']['translation'] = $form_state['values']['translation'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_webform_filter']['string'] = '';
+      $_SESSION['transperfect_webform_filter']['language'] = '';
+      $_SESSION['transperfect_webform_filter']['translation'] = '';
+
+      break;
   }
 }
 

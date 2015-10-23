@@ -61,26 +61,31 @@ function transperfect_webform_active_select_form_submit($form, &$form_state) {
     unset($_GET['submission']);
   }
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_GO) {
-    $_SESSION['transperfect_webform_selected_submission'] = $form_state['values']['submission'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_CANCEL_SUBMISSION) {
-    try {
-      sleep(5);
-      $selected_submission = $form_state['values']['submission'];
-      $_SESSION['transperfect_webform_selected_submission'] = '';
-      cancel_webform_submission($selected_submission);
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
-      drupal_set_message(t('Submission has been cancelled successfully.'));
-    }
-    catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Submissions - transperfect_webform_active_select_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Submissions - transperfect_webform_active_select_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_GO:
+      $_SESSION['transperfect_webform_selected_submission'] = $form_state['values']['submission'];
+
+      break;
+    case TPT_BTN_DASHBOARD_CANCEL_SUBMISSION:
+      try {
+        sleep(5);
+        $selected_submission = $form_state['values']['submission'];
+        $_SESSION['transperfect_webform_selected_submission'] = '';
+        cancel_webform_submission($selected_submission);
+        $_SESSION['transperfect_webform_globalLink_arr'] = array();
+        drupal_set_message(t('Submission has been cancelled successfully.'));
+      }
+      catch (SoapFault $se) {
+        transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Submissions - transperfect_webform_active_select_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+        form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+      }
+      catch (Exception $e) {
+        transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Submissions - transperfect_webform_active_select_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      }
+
+      break;
   }
 }
 
