@@ -5,7 +5,7 @@
  */
 function transperfect_schema() {
   $schema = array();
-  $schema ['transperfect_core'] = array(
+  $schema['transperfect_core'] = array(
       'description' => 'GlobalLink Core Table',
       'fields' => array(
           'rid' => array(
@@ -145,12 +145,12 @@ function transperfect_schema() {
               'description' => 'The content type for the field',
               'type' => 'varchar',
               'length' => 32,
-              'not null' => TRUE,),
+              'not null' => TRUE),
           'entity_type' => array(
               'description' => 'The entity type for the field',
               'type' => 'varchar',
               'length' => 255,
-              'not null' => TRUE,),
+              'not null' => TRUE),
           'bundle' => array(
               'description' => 'The node type for this field',
               'type' => 'varchar',
@@ -602,7 +602,7 @@ function transperfect_install() {
                   'field_label' => 'Title',
                   'translatable' => 1))->execute();
 
-      if (module_exists("metatag")) {
+      if (module_exists('metatag')) {
         db_insert('transperfect_field_config')
                 ->fields(array('content_type' => $node_type->type,
                     'entity_type' => 'node',
@@ -703,12 +703,12 @@ function transperfect_update_7200() {
               'description' => 'The content type for the field',
               'type' => 'varchar',
               'length' => 32,
-              'not null' => TRUE,),
+              'not null' => TRUE),
           'entity_type' => array(
               'description' => 'The entity type for the field',
               'type' => 'varchar',
               'length' => 255,
-              'not null' => TRUE,),
+              'not null' => TRUE),
           'bundle' => array(
               'description' => 'The node type for this field',
               'type' => 'varchar',
@@ -750,7 +750,6 @@ function transperfect_update_7200() {
 
   db_create_table('transperfect_field_config', $schema['transperfect_field_config']);
 
-  $field_collection_module_exists = module_exists("field_collection");
   $node_types = node_type_get_types();
   foreach ($node_types as $node_type) {
     if (translation_supported_type($node_type->type)) {
@@ -765,8 +764,7 @@ function transperfect_update_7200() {
                   'field_label' => 'Title',
                   'translatable' => 1))->execute();
 
-      $metatag_module_exists = module_exists("metatag");
-      if ($metatag_module_exists) {
+      if (module_exists('metatag')) {
         db_insert('transperfect_field_config')
                 ->fields(array('content_type' => $node_type->type,
                     'entity_type' => 'node',
@@ -790,7 +788,7 @@ function transperfect_update_7200() {
                       'translatable' => 1))->execute();
         }
         elseif ($field['type'] == 'field_collection') {
-          if ($field_collection_module_exists) {
+          if (module_exists('field_collection')) {
             db_insert('transperfect_field_config')
                     ->fields(array('content_type' => $node_type->type,
                         'entity_type' => 'node',
@@ -836,7 +834,7 @@ function transperfect_update_7201() {
     }
   }
 
-  if (module_exists("field_collection")) {
+  if (module_exists('field_collection')) {
 
     db_truncate('transperfect_field_config')->execute();
 
@@ -854,7 +852,7 @@ function transperfect_update_7201() {
                     'field_label' => 'Title',
                     'translatable' => 1))->execute();
 
-        if (module_exists("metatag")) {
+        if (module_exists('metatag')) {
           db_insert('transperfect_field_config')
                   ->fields(array('content_type' => $node_type->type,
                       'entity_type' => 'node',

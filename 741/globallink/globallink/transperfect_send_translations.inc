@@ -92,7 +92,7 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
             if (isset($form_state['values']['language_name'])) {
               $form['filters']['status']['filters'][$key] = array(
                   '#type' => $filter['form-type'],
-                  '#options' => get_target_options($form_state['values']['language_name']),
+                  '#options' => transperfect_get_target_options($form_state['values']['language_name']),
                   '#disabled' => $disabled,
                   '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
                   '#attributes' => array('style' => array('padding:0px;')),
@@ -103,7 +103,7 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
             else {
               $form['filters']['status']['filters'][$key] = array(
                   '#type' => $filter['form-type'],
-                  '#options' => get_target_options($selected_source_lang),
+                  '#options' => transperfect_get_target_options($selected_source_lang),
                   '#title' => check_plain($filter['title']),
                   '#disabled' => $disabled,
                   '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
@@ -255,7 +255,7 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
   return $form;
 }
 
-function get_target_options($selected) {
+function transperfect_get_target_options($selected) {
   $lang_filter = array();
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
   foreach ($languages as $key => $lang) {
@@ -284,8 +284,8 @@ function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
         if ($filter == 'modified-after') {
           if (isset($form_state['values'][$filter]) && $form_state['values'][$filter] != '') {
             list($month, $day, $year) = explode('/', $form_state['values'][$filter]);
-            $timeStamp = mktime(0, 0, 0, $month, $day, $year);
-            $_SESSION['transperfect_dashboard_filter'][$filter] = array($filter, $timeStamp);
+            $time_stamp = mktime(0, 0, 0, $month, $day, $year);
+            $_SESSION['transperfect_dashboard_filter'][$filter] = array($filter, $time_stamp);
           }
         }
         elseif ($filter == 'modified') {
@@ -360,14 +360,14 @@ function transperfect_dashboard_pager_form() {
         '#value' => TPT_BTN_DASHBOARD_GO,
         '#suffix' => '</div>',
         '#limit_validation_errors' => array(),
-        '#submit' => array('node_form_pager_submit'),
+        '#submit' => array('transperfect_node_form_pager_submit'),
         '#access' => TRUE,
     );
   }
   return $form;
 }
 
-function node_form_pager_submit($form, &$form_state) {
+function transperfect_node_form_pager_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
   if ($op == TPT_BTN_DASHBOARD_GO) {
     $page_count = $form_state['input']['p_count'];
@@ -382,7 +382,6 @@ function node_form_pager_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_node_form() {
-  $revisioning_module_exists = module_exists("revisioning");
   $default_checked_ids = array();
   $module_path = drupal_get_path('module', 'transperfect');
   $form = array();
@@ -404,8 +403,8 @@ function transperfect_dashboard_node_form() {
       );
 
       $node_check = variable_get('transperfect_implementation_type', 0);
-      $source_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
-      $target_lang_arr = transperfect_get_mapped_tpt_locales_with_drupal_desc(FALSE);
+      $source_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
+      $target_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
       $include_node_arr = array();
 
       $query = db_select('node', 'n');
@@ -435,7 +434,7 @@ function transperfect_dashboard_node_form() {
       }
 
       $status = '';
-      if ($revisioning_module_exists) {
+      if (module_exists('revisioning')) {
         if (isset($_SESSION['transperfect_dashboard_filter']['status'])) {
           list($key, $value) = explode('-', $_SESSION['transperfect_dashboard_filter']['status'][1], 2);
           $status = $value;
@@ -447,7 +446,7 @@ function transperfect_dashboard_node_form() {
 
       $t_count = 0;
       foreach ($target_lang_arr as $key => $value) {
-        if ($key == transperfect_get_tpt_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])) {
+        if ($key == transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])) {
           continue;
         }
         $t_count++;
@@ -459,11 +458,11 @@ function transperfect_dashboard_node_form() {
         }
       }
 
-      unset($target_lang_arr[transperfect_get_tpt_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])]);
+      unset($target_lang_arr[transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])]);
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $target_lang_arr_keys = array_keys($target_lang_arr);
         foreach ($target_lang_arr_keys as $t_key) {
-          if (transperfect_get_tpt_locale_code($tgt_lang) != $t_key) {
+          if (transperfect_get_locale_code($tgt_lang) != $t_key) {
             unset($target_lang_arr[$t_key]);
           }
         }
@@ -471,7 +470,7 @@ function transperfect_dashboard_node_form() {
 
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $t_query = db_select('transperfect_core', 'tc');
-        $t_query->condition('target', transperfect_get_tpt_locale_code($tgt_lang), '=');
+        $t_query->condition('target', transperfect_get_locale_code($tgt_lang), '=');
         $t_query->fields('tc');
         $t_query->orderBy('nid', 'ASC');
 
@@ -486,7 +485,7 @@ function transperfect_dashboard_node_form() {
 
       if ($modified == 0) {// Show modified records only
         $t_query = db_select('transperfect_core', 'tc');
-        $t_query->condition('source', transperfect_get_tpt_locale_code($GLOBALS['transperfect_source_locale']), '=');
+        $t_query->condition('source', transperfect_get_locale_code($GLOBALS['transperfect_source_locale']), '=');
         $t_query->fields('tc');
         $t_query->orderBy('nid', 'ASC');
 
@@ -495,7 +494,7 @@ function transperfect_dashboard_node_form() {
         $item_arr = array();
         foreach ($results as $item) {
           $key = array_search($item->nid, $include_node_arr);
-          if (false !== $key) {
+          if ($key !== FALSE) {
             if (array_key_exists($item->nid, $item_arr)) {
               array_push($item_arr[$item->nid], $item);
             }
@@ -542,7 +541,7 @@ function transperfect_dashboard_node_form() {
             $selected_target_lang = $tgt_lang;
           }
           foreach ($include_node_arr as $key => $nid) {
-            if (!transperfect_tpt_is_node_translatable(node_load($nid), $selected_target_lang)) {
+            if (!transperfect_is_node_translatable(node_load($nid), $selected_target_lang)) {
               unset($include_node_arr[$key]);
             }
           }
@@ -606,7 +605,7 @@ function transperfect_dashboard_node_form() {
         //Request coming from dashboard
         $revisioning = FALSE;
 
-        if ($revisioning_module_exists && $status != '') {
+        if (module_exists('revisioning') && $status != '') {
           if ($status == '1') {
             $d_query->condition('status', 1, '=');
           }
@@ -813,7 +812,7 @@ function transperfect_dashboard_node_form() {
             $form['clear_changed_flag'] = array('#type' => 'submit',
                 '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
                 '#limit_validation_errors' => array(),
-                '#submit' => array('node_form_clear_submit'),
+                '#submit' => array('transperfect_node_form_clear_submit'),
                 '#access' => TRUE,
                 '#attributes' => array('onclick' => 'if(!confirm("Are you sure you want to clear the changed status for the selected content(s)?")){return false;}')
             );
@@ -891,7 +890,7 @@ function transperfect_dashboard_node_form() {
           );
           $form['send_submission']['submission_source_locale'] = array(
               '#type' => 'select', '#title' => t('Source Language'), '#required' => TRUE,
-              '#options' => $source_lang_arr, '#default_value' => transperfect_get_tpt_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale']),
+              '#options' => $source_lang_arr, '#default_value' => transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale']),
               '#disabled' => TRUE,
               '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
               '#suffix' => '</tr>',
@@ -937,7 +936,7 @@ function transperfect_dashboard_node_form() {
   return $form;
 }
 
-function node_form_clear_submit($form, &$form_state) {
+function transperfect_node_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   if ($op == TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG) {
     $nids = array_filter($form_state['input']['table']);
@@ -946,7 +945,7 @@ function node_form_clear_submit($form, &$form_state) {
     }
     else {
       $tgt_arr = $form_state['input']['submission_target_locale'];
-      $source = transperfect_get_tpt_locale_code($GLOBALS['transperfect_source_locale']);
+      $source = transperfect_get_locale_code($GLOBALS['transperfect_source_locale']);
       $nid_arr = array();
       foreach ($nids as $nvid) {
         list($nid, $vid) = explode('-', $nvid, 2);
@@ -960,8 +959,8 @@ function node_form_clear_submit($form, &$form_state) {
 
 function transperfect_dashboard_node_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = get_project_director_details();
-  validate_project_director_details($pd4);
+  $pd4 = transperfect_get_project_director_details();
+  transperfect_validate_project_director_details($pd4);
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
@@ -992,7 +991,7 @@ function transperfect_dashboard_node_form_validate($form, &$form_state) {
             if ($node->tnid != 0 && $node->tnid != $node->nid) {
               $nid = $node->tnid;
             }
-            $rows = transperfect_get_sent_tpt_rows_by_nid($nid);
+            $rows = transperfect_get_sent_rows_by_nid($nid);
             foreach ($rows as $row) {
               if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
                 $message = TRUE;
@@ -1011,7 +1010,7 @@ function transperfect_dashboard_node_form_validate($form, &$form_state) {
 function transperfect_dashboard_node_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
-  $pd4 = get_project_director_details();
+  $pd4 = transperfect_get_project_director_details();
   if ($op == TPT_BTN_DASHBOARD_SEND) {
     try {
       $nids = array_filter($form_state['values']['table']);
@@ -1028,7 +1027,7 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
       $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
       $project_code = $form_state['values']['submission_pd_project'];
 
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Sending submission - [" . $submission_name . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Sending submission - [" . $submission_name . "]");
 
       $updated_globalLink_arr = transperfect_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
@@ -1047,11 +1046,11 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }

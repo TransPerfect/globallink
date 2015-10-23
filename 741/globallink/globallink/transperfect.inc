@@ -431,20 +431,6 @@ function transperfect_convert_date_to_timestamp($date) {
 }
 
 /**
- * Determines whether or not preview is enabled.
- *
- * @return
- *   True if yes.
- */
-function transperfect_is_preview_enabled() {
-  $preview_enabled = variable_get('transperfect_enable_preview', 1);
-  if ($preview_enabled == 0) {
-    return FALSE;
-  }
-  return TRUE;
-}
-
-/**
  * Checks for existence of node id from GlobalLink object.
  *
  * @param object $globalLink
@@ -1018,7 +1004,7 @@ function transperfect_gl_log($type, $severity, $message) {
  * @return
  *   True if the workbench is enabled for that content type.
  */
-function content_type_workbench_enabled($type) {
+function transperfect_content_type_workbench_enabled($type) {
   if (!module_exists('workbench_moderation')) {
     return false;
   }

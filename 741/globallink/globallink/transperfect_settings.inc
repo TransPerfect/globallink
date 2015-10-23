@@ -112,32 +112,32 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
   if (isset($form_state['values']['transperfect_pd_password'])
           && $form_state['values']['transperfect_pd_password'] != '') {
     try {
-      $pd4Object = new ProjectDirector();
+      $pd_obj = new ProjectDirector();
       $url = strrev($form_state['values']['transperfect_pd_url']);
       if (ord($url) == 47) {
         $url = substr($url, 1);
       }
       $r_url = strrev($url);
-      $pd4Object->url = $r_url;
-      $pd4Object->username = $form_state['values']['transperfect_pd_username'];
-      $pd4Object->password = $form_state['values']['transperfect_pd_password'];
-      $pd4Object->projectShortCode = $form_state['values']['transperfect_pd_projectid'];
-      $pd4Object->submissionPrefix = $form_state['values']['transperfect_pd_submissionprefix'];
-      $pd4Object->classifier = $form_state['values']['transperfect_pd_classifier'];
-      $pd4Object->maxTargetCount = $form_state['values']['transperfect_pd_max_target'];
+      $pd_obj->url = $r_url;
+      $pd_obj->username = $form_state['values']['transperfect_pd_username'];
+      $pd_obj->password = $form_state['values']['transperfect_pd_password'];
+      $pd_obj->projectShortCode = $form_state['values']['transperfect_pd_projectid'];
+      $pd_obj->submissionPrefix = $form_state['values']['transperfect_pd_submissionprefix'];
+      $pd_obj->classifier = $form_state['values']['transperfect_pd_classifier'];
+      $pd_obj->maxTargetCount = $form_state['values']['transperfect_pd_max_target'];
 
-      $success = test_ProjectDirector_connectivity($pd4Object);
+      $success = test_pd_connectivity($pd_obj);
 
       if (!is_bool($success)) {
         form_set_error('', check_plain($success));
       }
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -152,7 +152,7 @@ function transperfect_pd_settings_submit($form, &$form_state) {
       }
       variable_set($key, $value);
     }
-    save_project_names();
+    transperfect_save_project_names();
     drupal_set_message(t('The configuration options have been saved.'));
   }
   elseif ($op == TPT_BTN_SETTINGS_SAVE_TEST_PD) {
@@ -164,15 +164,15 @@ function transperfect_pd_settings_submit($form, &$form_state) {
         variable_set($key, $value);
       }
 
-      save_project_names();
+      transperfect_save_project_names();
       drupal_set_message(t('Settings Saved and Connection Test Successful.'));
     }
     catch (SoapFault $se) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -275,11 +275,18 @@ function transperfect_adaptor_settings() {
   );
   $form['transperfect_adaptor_settings']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => t(' Download '),
+      '#value' => t('Download'),
       '#suffix' => '</div></br>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('view_log_submit'),
+      '#submit' => array('transperfect_view_log_submit'),
       '#access' => TRUE,
+  );
+  $form['transperfect_adaptor_settings']['transperfect_proxy_url'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Proxy URL'),
+      '#default_value' => variable_get('transperfect_proxy_url', ''),
+      '#required' => FALSE,
+      '#size' => 50,
   );
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array('#type' => 'submit', '#value' => TPT_BTN_SETTINGS_GENERAL);
@@ -287,17 +294,17 @@ function transperfect_adaptor_settings() {
   return $form;
 }
 
-function view_log_submit($form, &$form_state) {
+function transperfect_view_log_submit($form, &$form_state) {
   $from_date = $form_state['input']['log_view_date'];
   $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
   $destination = 'temporary://' . 'globallink_log.html';
-  $my_file_obj = file_unmanaged_save_data(get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
+  $my_file_obj = file_unmanaged_save_data(transperfect_get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
   file_transfer($my_file_obj, array('Content-Type' => 'application/htm',
       'Content-Disposition' => 'inline; filename="' . 'globallink_log.html' . '"',
       'Content-Length' => filesize($my_file_obj)));
 }
 
-function get_log_data($from_date) {
+function transperfect_get_log_data($from_date) {
   $html = "<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>";
   $result = db_select('transperfect_log', 'tl')
           ->fields('tl')
@@ -337,7 +344,7 @@ function transperfect_adaptor_settings_validate($form, &$form_state) {
     }
     $value = $form_state['values']['transperfect_implementation_type'];
     if ($value != variable_get('transperfect_implementation_type')) {
-      if (transperfect_pending_submission_exists()) {
+      if (transperfect_pending_submissions_exists()) {
         form_set_error('', t('Active submission exists. Please make sure there are no active submissions before changing this value.'));
       }
     }
@@ -369,7 +376,7 @@ function transperfect_adaptor_settings_submit($form, &$form_state) {
   drupal_set_message(t('The configuration options have been saved.'));
 }
 
-function get_project_director_details() {
+function transperfect_get_project_director_details() {
   $pd4 = new ProjectDirector();
   $url = strrev(variable_get('transperfect_pd_url', ""));
   if (ord($url) == 47) {
@@ -387,13 +394,13 @@ function get_project_director_details() {
   return $pd4;
 }
 
-function save_project_names() {
-  $pd4 = get_project_director_details();
+function transperfect_save_project_names() {
+  $pd4 = transperfect_get_project_director_details();
   $projects_arr = get_user_PD_projects($pd4);
-  $projectShortCode = $pd4->projectShortCode;
+  $project_short_code = $pd4->projectShortCode;
   $var_arr = array();
-  if ($projectShortCode != '') {
-    $proj_code_arr = explode(',', $projectShortCode);
+  if ($project_short_code != '') {
+    $proj_code_arr = explode(',', $project_short_code);
     foreach ($proj_code_arr as $proj_code) {
       if (isset($projects_arr[$proj_code])) {
         $var_arr[$proj_code] = $projects_arr[$proj_code];
@@ -403,7 +410,7 @@ function save_project_names() {
   variable_set('transperfect_pd_projects', $var_arr);
 }
 
-function validate_project_director_details($pd4) {
+function transperfect_validate_project_director_details($pd4) {
   if ($pd4->url == "") {
     form_set_error('', t('GlobalLink URL is undefined.'));
     return FALSE;
@@ -436,6 +443,6 @@ function validate_project_director_details($pd4) {
   return TRUE;
 }
 
-function view_log($from_date) {
+function transperfect_view_log($from_date) {
   $from_date = transperfect_convert_date_to_timestamp($from_date);
 }
