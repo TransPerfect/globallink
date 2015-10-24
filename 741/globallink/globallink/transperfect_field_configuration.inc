@@ -58,7 +58,7 @@ function transperfect_field() {
 
     $form['select_field']['br_markup'] = array(
         '#type' => 'markup',
-        '#markup' => "<BR/><BR/>",
+        '#markup' => '<BR/><BR/>',
     );
 
     $header = array(
@@ -103,7 +103,7 @@ function transperfect_field() {
         '#type' => 'container',
     );
 
-    $form['field-heading'][] = array('#markup' => "<em>" . t("Check all the fields that you wish to translate for this content type.") . "</em><br>");
+    $form['field-heading'][] = array('#markup' => '<em>' . t('Check all the fields that you wish to translate for this content type.') . '</em><br>');
 
     //  $form['table'] = array('#markup' => theme('table', array('header' => $header, 'rows' => $rows)));
     $form['table'] = array(

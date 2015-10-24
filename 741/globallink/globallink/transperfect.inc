@@ -525,7 +525,7 @@ function transperfect_pager_array_splice($data, $limit = 9, $element = 0) {
  */
 function transperfect_format_display_string($string) {
   if (mb_strlen($string) > 25) {
-    return mb_substr($string, 0, 25) . "...";
+    return mb_substr($string, 0, 25) . '...';
   }
   return $string;
 }
@@ -541,8 +541,8 @@ function transperfect_format_display_string($string) {
  */
 function transperfect_format_file_name($string) {
   $bad = array_merge(
-          array_map('chr', range(0, 31)), array("<", ">", ":", '"', "/", "\\", "|", "?", "*", ";", "&", " ", "."));
-  $name = str_replace($bad, "_", utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
+          array_map('chr', range(0, 31)), array('<', '>', ':', '"', '/', '\\', '|', '?', '*', ';', '&', ' ', '.'));
+  $name = str_replace($bad, '_', utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
   if (strlen($name) > 50) {
     $name = substr($name, 0, 50);
   }
@@ -875,7 +875,7 @@ function transperfect_drupal_search_query() {
  * @todo Document this function.
  */
 function transperfect_get_source($group) {
-  $result = db_query("SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup", array(':textgroup' => $group));
+  $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(':textgroup' => $group));
   $strings = array();
   foreach ($result as $child) {
     $string = array(
@@ -942,7 +942,7 @@ function transperfect_get_other_row($row_id, $type) {
 function transperfect_get_PD_projects() {
   $proj_arr = variable_get('transperfect_pd_projects', array());
   if (count($proj_arr) > 0) {
-    $projects = variable_get('transperfect_pd_projectid', "");
+    $projects = variable_get('transperfect_pd_projectid', '');
     if ($projects != '') {
       $arr = explode(',', $projects);
       foreach ($arr as $value) {
