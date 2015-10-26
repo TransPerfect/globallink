@@ -395,34 +395,39 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
       $existing_field_name = $existing_field['field_name']['#value'];
       if ($existing_field_name != '') {
         $existing_field_info = field_info_field($existing_field_name);
-        if ($existing_field_info['type'] != 'list_boolean'
-                && $existing_field_info['type'] != 'image'
-                && $existing_field_info['type'] != 'file'
-                && $existing_field_info['type'] != 'taxonomy_term_reference'
-                && $existing_field_info['type'] != 'field_collection') {
-          // First get all the content types for this field-collection from config
-          // then add this field for all the content types in the config
-          $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
-          foreach ($content_types as $content_type) {
-            $existing_field_instance = field_info_instance($entity_type, $existing_field_name, $bundle);
-            db_insert('transperfect_field_config')
-                    ->fields(array('content_type' => $content_type,
-                        'entity_type' => $entity_type,
-                        'bundle' => $fc_name,
-                        'field_name' => $existing_field_name,
-                        'field_type' => $existing_field_info['type'],
-                        'field_label' => $existing_field_instance['label'],
-                        'translatable' => 1))->execute();
-          }
-        }
-        elseif ($existing_field_info['type'] == 'field_collection') {
-          // If existing field-collection is added to the field-collection, then add fields recursively
-          $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
-          // First get all the content types for this field-collection from config
-          // then add this field for all the content types in the config
-          foreach ($content_types as $content_type) {
-            transperfect_insert_fc($entity_type, $existing_field_name, $content_type, $fc_name);
-          }
+
+        switch ($existing_field_info['type']) {
+          case 'list_boolean':
+          case 'image':
+          case 'file':
+          case 'taxonomy_term_reference':
+            break;
+          case 'field_collection':
+            // If existing field-collection is added to the field-collection, then add fields recursively
+            $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
+            // First get all the content types for this field-collection from config
+            // then add this field for all the content types in the config
+            foreach ($content_types as $content_type) {
+              transperfect_insert_fc($entity_type, $existing_field_name, $content_type, $fc_name);
+            }
+          default:
+            // First get all the content types for this field-collection from config
+            // then add this field for all the content types in the config
+            $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
+
+            foreach ($content_types as $content_type) {
+              $existing_field_instance = field_info_instance($entity_type, $existing_field_name, $bundle);
+              db_insert('transperfect_field_config')
+              ->fields(array(
+                'content_type' => $content_type,
+                'entity_type' => $entity_type,
+                'bundle' => $fc_name,
+                'field_name' => $existing_field_name,
+                'field_type' => $existing_field_info['type'],
+                'field_label' => $existing_field_instance['label'],
+                'translatable' => 1),
+              )->execute();
+            }
         }
       }
     }
