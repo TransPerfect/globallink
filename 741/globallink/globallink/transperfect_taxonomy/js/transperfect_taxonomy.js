@@ -43,7 +43,7 @@ var _img;
 
 function escape_html(string)
 {
-    return jQuery('<pre>').text( string ).html();
+    return jQuery('<pre>').text(string).html();
 }
 
 function ajax_completed(data) {
