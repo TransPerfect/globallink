@@ -20,10 +20,10 @@ function transperfect_interface_active_select_form() {
   $selected_value = '';
   $options = get_interface_active_submission_names();
 
-  if ($redirect_submission == '' && !empty($_SESSION['transperfect_interface_selected_submission'])) {
+  if (empty($redirect_submission) && !empty($_SESSION['transperfect_interface_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_interface_selected_submission'];
   }
-  elseif ($redirect_submission != '') {
+  elseif (!empty($redirect_submission)) {
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -134,10 +134,10 @@ function transperfect_interface_active_form() {
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  if ($redirect_submission == '' && !empty($_SESSION['transperfect_interface_selected_submission'])) {
+  if (empty($redirect_submission) && !empty($_SESSION['transperfect_interface_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_interface_selected_submission'];
   }
-  elseif ($redirect_submission != '') {
+  elseif (!empty($redirect_submission)) {
     $options = get_interface_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }

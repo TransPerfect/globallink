@@ -20,10 +20,10 @@ function transperfect_block_active_select_form() {
   $selected_value = '';
   $options = get_block_active_submission_names();
 
-  if ($redirect_submission == '' && !empty($_SESSION['transperfect_block_selected_submission'])) {
+  if (empty($redirect_submission) && !empty($_SESSION['transperfect_block_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_block_selected_submission'];
   }
-  elseif ($redirect_submission != '') {
+  elseif (!empty($redirect_submission)) {
     $selected_value = array_search($redirect_submission, $options);
   }
 
