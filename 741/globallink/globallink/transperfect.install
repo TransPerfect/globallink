@@ -778,7 +778,7 @@ function transperfect_update_7200() {
       foreach ($keys as $field_name) {
         $field = field_info_field($field_name);
 
-        switch ($field) {
+        switch ($field['type']) {
           case 'list_boolean':
           case 'image':
           case 'file':
