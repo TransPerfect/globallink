@@ -813,36 +813,40 @@ function save_entity_field_collections_recursively($entity_type, $host_entity, $
     // Check if this key exists; If true then read this.
     $fc_field_def = field_read_field($key);
     if (!empty($fc_field_def) && isset($fc_field_def['type'])) {
-      if ($fc_field_def['type'] != 'list_boolean'
-              && $fc_field_def['type'] != 'file'
-              && $fc_field_def['type'] != 'taxonomy_term_reference'
-              && $fc_field_def['type'] != 'field_collection') {
+      switch ($fc_field_def['type']) {
+        case 'list_boolean':
+        case 'file':
+        case 'taxonomy_term_reference':
+          continue 2;
 
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
-          $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
-          foreach ($field_data_arr as $delta => $field_data) {
-            if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
-              $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
-              if (is_object($gl_obj)) {
-                $translated_content = $gl_obj->translatedContent;
-              }
-              else {
-                $translated_content = $gl_obj;
-              }
+          break;
+        case 'field_collection':
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][$target_lang])) {
+            $field_data_arr = $field_collection_item_array[$key][$target_lang];
+            $new_field_collection_arr[$key][$target_lang] = $field_data_arr;
+          }
 
-              $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
-              if (isset($field_data['format'])) {
-                $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
+          break;
+        default:
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
+            $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
+            foreach ($field_data_arr as $delta => $field_data) {
+              if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
+                $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
+                if (is_object($gl_obj)) {
+                  $translated_content = $gl_obj->translatedContent;
+                }
+                else {
+                  $translated_content = $gl_obj;
+                }
+
+                $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
+                if (isset($field_data['format'])) {
+                  $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
+                }
               }
             }
           }
-        }
-      }
-      elseif ($fc_field_def['type'] != 'field_collection') {
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][$target_lang])) {
-          $field_data_arr = $field_collection_item_array[$key][$target_lang];
-          $new_field_collection_arr[$key][$target_lang] = $field_data_arr;
-        }
       }
     }
   }

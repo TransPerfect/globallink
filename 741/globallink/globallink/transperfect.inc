@@ -26,24 +26,38 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
   $count = 0;
   foreach ($filter_array as $filter) {
     list($key, $value) = $filter;
-    if ($key == 'modified-after') {
-      $query->condition($filters[$key]['field'], $value, '>=');
+
+    switch ($key) {
+      case 'modified':
+      case 'target_language':
+        continue 2;
+
+        break;
+      case 'modified-after':
+        $query->condition($filters[$key]['field'], $value, '>=');
+
+        break;
+      case 'title':
+        $query->condition($filters[$key]['field'], '%' . $value . '%', 'LIKE');
+
+        break;
+      case 'status':
+        if (module_exists('revisioning')) {
+          continue 2;
+        }
+
+        list($key, $value) = explode('-', $value, 2);
+        $query->condition($key, $value, '=');
+      case 'node_parent':
+        if ($value == 1) {
+          $query->where('tnid = nid OR tnid = 0');
+        }
+
+        break;
+      default:
+        $query->condition($filters[$key]['field'], $value);
     }
-    elseif ($key != 'modified' && $key != 'title' && $key != 'target_language' && $key != 'status' && $key != 'node_parent') {
-      $query->condition($filters[$key]['field'], $value);
-    }
-    elseif ($key == 'title') {
-      $query->condition($filters[$key]['field'], '%' . $value . '%', 'LIKE');
-    }
-    elseif ($key == 'status' && !module_exists('revisioning')) {
-      list($key, $value) = explode('-', $value, 2);
-      $query->condition($key, $value, '=');
-    }
-    elseif ($key == 'node_parent') {
-      if ($value == 1) {
-        $query->where('tnid = nid OR tnid = 0');
-      }
-    }
+
     $count++;
   }
 }

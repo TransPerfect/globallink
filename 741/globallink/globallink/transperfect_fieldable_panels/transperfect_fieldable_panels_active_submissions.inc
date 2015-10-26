@@ -19,10 +19,10 @@ function transperfect_fieldable_panels_active_select_form() {
   $selected_value = '';
   $options = get_fieldable_panels_active_submission_names();
 
-  if ($redirect_submission == '' && !empty($_SESSION['transperfect_fieldable_panels_selected_submission'])) {
+  if (empty($redirect_submission) && !empty($_SESSION['transperfect_fieldable_panels_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_fieldable_panels_selected_submission'];
   }
-  elseif ($redirect_submission != '') {
+  elseif (!empty($redirect_submission)) {
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -132,10 +132,10 @@ function transperfect_fieldable_panels_active_form() {
   $form = array();
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  if ($redirect_submission == '' && !empty($_SESSION['transperfect_fieldable_panels_selected_submission'])) {
+  if (empty($redirect_submission) && !empty($_SESSION['transperfect_fieldable_panels_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_fieldable_panels_selected_submission'];
   }
-  elseif ($redirect_submission != '') {
+  elseif (!empty($redirect_submission)) {
     $options = get_fieldable_panels_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
@@ -228,43 +228,48 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
   sleep(5);
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
-  if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
-    try {
-      $ids_arr = array_filter($form_state['values']['table']);
-      $ids = check_tpt_fieldable_panels_status($ids_arr);
-      if (count($ids) == 0) {
-        drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
-        return;
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT:
+      try {
+        $ids_arr = array_filter($form_state['values']['table']);
+        $ids = check_tpt_fieldable_panels_status($ids_arr);
+        if (count($ids) == 0) {
+          drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
+          return;
+        }
+        $_SESSION['transperfect_fieldable_panels_selected_submission'] = '';
+        transperfect_cancel_fieldable_panels_records($ids, $pd4);
+        $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+        drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
-      $_SESSION['transperfect_fieldable_panels_selected_submission'] = '';
-      transperfect_cancel_fieldable_panels_records($ids, $pd4);
-      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-      drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
-    }
-    catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS) {
-    try {
-      $count = clear_cancelled_fieldable_panels_documents();
-      $_SESSION['transperfect_selected_submission'] = '';
-      $_SESSION['transperfect_globalLink_arr'] = array();
-      if ($count > 0) {
-        drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
+      catch (SoapFault $se) {
+        transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+        form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
-      else {
-        drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+      catch (Exception $e) {
+        transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
-    }
-    catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
-    }
+
+      break;
+    case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
+      try {
+        $count = clear_cancelled_fieldable_panels_documents();
+        $_SESSION['transperfect_selected_submission'] = '';
+        $_SESSION['transperfect_globalLink_arr'] = array();
+        if ($count > 0) {
+          drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
+        }
+        else {
+          drupal_set_message(t('No document(s) to clear.'), 'warning', NULL);
+        }
+      }
+      catch (Exception $e) {
+        transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Clear Cancel Document - transperfect_fieldable_panels_active_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      }
+
+      break;
   }
 }

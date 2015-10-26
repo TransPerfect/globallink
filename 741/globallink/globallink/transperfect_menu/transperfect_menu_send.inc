@@ -126,7 +126,7 @@ function transperfect_dashboard_menu_filter_form() {
       if ($default_title != '') {
         $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Link Title' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $default_title . '</td></tr>');
       }
-      
+
       $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
       $form['filter-search']['status']['actions'] = array(
           '#type' => 'actions',
@@ -147,15 +147,20 @@ function transperfect_dashboard_menu_filter_form() {
 
 function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_selected_menu_types'] = $form_state['values']['types'];
-    $_SESSION['transperfect_selected_menu_language'] = $form_state['values']['language'];
-    $_SESSION['transperfect_selected_menu_title'] = $form_state['values']['link_title'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_selected_menu_types'] = '';
-    $_SESSION['transperfect_selected_menu_language'] = '';
-    $_SESSION['transperfect_selected_menu_title'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_selected_menu_types'] = $form_state['values']['types'];
+      $_SESSION['transperfect_selected_menu_language'] = $form_state['values']['language'];
+      $_SESSION['transperfect_selected_menu_title'] = $form_state['values']['link_title'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_selected_menu_types'] = '';
+      $_SESSION['transperfect_selected_menu_language'] = '';
+      $_SESSION['transperfect_selected_menu_title'] = '';
+
+      break;
   }
 }
 
