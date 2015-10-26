@@ -73,7 +73,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                     '#default_value' => $default,
                     '#disabled' => $disabled,
                     '#attributes' => array('style' => array('padding:5px;')),
-                '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+                    '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                     '#field_prefix' => '</td><td>',
                     '#ajax' => array(
                         'event' => 'change',
@@ -135,11 +135,12 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                     '#field_suffix' => '</td>',
                     '#field_prefix' => '</td><td>',
                 );
-                
+
                 break;
               }
+
             break;
-            case 'modified-after':
+          case 'modified-after':
             drupal_add_library('system', 'ui.datepicker');
             drupal_add_js('jQuery(document).ready(function(){
             jQuery( ".pickadate" ).datepicker({
@@ -163,7 +164,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#field_suffix' => '</td>',
                 '#field_prefix' => '</td><td>',
             );
-            
+
             break;
           case 'modified':
             $form['filters']['status']['filters'][$key] = array(
@@ -178,7 +179,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#field_suffix' => '</td>',
                 '#field_prefix' => '</td><td>',
             );
-            
+
             break;
           case 'title':
             $form['filters']['status']['filters'][$key] = array(
@@ -192,6 +193,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#field_suffix' => '</td>',
                 '#field_prefix' => '</td><td>',
             );
+
             break;
         }
       }
