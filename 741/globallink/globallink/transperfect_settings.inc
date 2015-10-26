@@ -21,14 +21,14 @@ function transperfect_pd_settings() {
   $form['transperfect_pd_settings']['transperfect_pd_url'] = array(
       '#type' => 'textfield',
       '#title' => t('URL'),
-      '#default_value' => variable_get('transperfect_pd_url', ""),
+      '#default_value' => variable_get('transperfect_pd_url', ''),
       '#required' => TRUE,
       '#size' => 50);
 
   $form['transperfect_pd_settings']['transperfect_pd_username'] = array(
       '#type' => 'textfield',
       '#title' => t('User Id'),
-      '#default_value' => variable_get('transperfect_pd_username', ""),
+      '#default_value' => variable_get('transperfect_pd_username', ''),
       '#required' => TRUE,
       '#size' => 20);
 
@@ -42,32 +42,31 @@ function transperfect_pd_settings() {
       '#type' => 'textfield',
       '#title' => t('Project Short Code(s)'),
       '#description' => t('Enter comma separated codes for multiple projects.'),
-      '#default_value' => variable_get('transperfect_pd_projectid', ""),
+      '#default_value' => variable_get('transperfect_pd_projectid', ''),
       '#required' => TRUE,
       '#size' => 50);
 
   $form['transperfect_pd_settings']['transperfect_pd_submissionprefix'] = array(
       '#type' => 'textfield',
       '#title' => t('Submission Name Prefix'),
-      '#default_value' => variable_get('transperfect_pd_submissionprefix', "DRU_"),
+      '#default_value' => variable_get('transperfect_pd_submissionprefix', 'DRU_'),
       '#required' => FALSE,
       '#size' => 20);
 
   $form['transperfect_pd_settings']['transperfect_pd_classifier'] = array(
       '#type' => 'textfield',
       '#title' => t('Classifier'),
-      '#default_value' => variable_get('transperfect_pd_classifier', "XML"),
+      '#default_value' => variable_get('transperfect_pd_classifier', 'XML'),
       '#required' => TRUE,
       '#size' => 10);
 
   $form['transperfect_pd_settings']['transperfect_pd_max_target'] = array(
       '#type' => 'textfield',
       '#title' => t('Max Target Count'),
-      '#default_value' => variable_get('transperfect_pd_max_target', "99999"),
+      '#default_value' => variable_get('transperfect_pd_max_target', '99999'),
       '#required' => TRUE,
       '#size' => 10);
 
-//  $form['transperfect_pd_settings']['submit_pd_save'] = array('#type' => 'submit', '#value' => TPT_BTN_SETTINGS_PD, '#prefix' => '<div class="form-item">');
   $form['transperfect_pd_settings']['submit_pd_test'] = array('#type' => 'submit', '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD, '#suffix' => '</div>');
 
   return $form;
@@ -76,7 +75,7 @@ function transperfect_pd_settings() {
 function transperfect_pd_settings_validate(&$form, &$form_state) {
   $project_short_code_char_arr = str_split(str_replace(' ', '', $form_state['values']['transperfect_pd_projectid']));
   foreach ($project_short_code_char_arr as $val) {
-    if (!preg_match("/[a-zA-Z0-9\,_]/", $val)) {
+    if (!preg_match('/[a-zA-Z0-9\,_]/', $val)) {
       form_set_error('', t('Only enter comma seperated GlobalLink Project Short Code.'));
       return FALSE;
     }
@@ -105,7 +104,7 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
 
   $prefix_len = strlen($form_state['values']['transperfect_pd_submissionprefix']);
   if ($prefix_len > 118) {
-    form_set_error('transperfect_pd_max_target', t("Submission Name cannot be longer than 118 characters. Currently $prefix_len characters long."));
+    form_set_error('transperfect_pd_max_target', t('Submission Name cannot be longer than 118 characters. Currently ' . $prefix_len . ' characters long.'));
     return FALSE;
   }
 
@@ -133,11 +132,11 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Test Connection - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Test Connection - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -171,11 +170,11 @@ function transperfect_pd_settings_submit($form, &$form_state) {
         drupal_set_message(t('Settings Saved and Connection Test Successful.'));
       }
       catch (SoapFault $se) {
-        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Test Connection - Code[$se->faultcode], Message[$se->faultstring]");
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Test Connection - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Test Connection - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Test Connection - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -250,7 +249,7 @@ function transperfect_adaptor_settings() {
       '#options' => array(TPT_LOGGING_CONFIG_DISABLED => t('Disabled'), TPT_LOGGING_CONFIG_INFO => t('Info'), TPT_LOGGING_CONFIG_DEBUG => t('Debug')),
   );
 
-  //$form['transperfect_adaptor_settings']['view_log'] = array('#type' => 'markup', '#markup' => l(' View Logs ', 'javascript:void(0)', array('external' => TRUE)) . "</br></br>");
+  //$form['transperfect_adaptor_settings']['view_log'] = array('#type' => 'markup', '#markup' => l(' View Logs ', 'javascript:void(0)', array('external' => TRUE)) . '</br></br>');
   $form['transperfect_adaptor_settings']['markup'] = array(
       '#type' => 'container',
       '#attributes' => array('class' => array('tpt-center')),
@@ -310,29 +309,29 @@ function transperfect_view_log_submit($form, &$form_state) {
 }
 
 function transperfect_get_log_data($from_date) {
-  $html = "<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>";
+  $html = '<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#00557F");background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>';
   $result = db_select('transperfect_log', 'tl')
           ->fields('tl')
           ->condition('timestamp', $from_date, '>=')
           ->execute();
 
-  $html .= "<div class=\"datagrid\"><table>";
-  $html .= "<thead><tr><th>Date Time</th><th>Log Severity</th><th>Type</th><th>Message</th></tr></thead><tbody>";
+  $html .= '<div class="datagrid"><table>';
+  $html .= '<thead><tr><th>Date Time</th><th>Log Severity</th><th>Type</th><th>Message</th></tr></thead><tbody>';
 
   $i = 0;
   foreach ($result as $row) {
     $mod = $i % 2;
     if ($mod == 0) {
-      $html .= "<tr><td style='width:10%;'>" . date('Y-m-d H:i:s', $row->timestamp) . "</td><td style='width:10%;'>$row->severity</td><td style='width:10%;'>$row->type</td><td style='width:70%; text-style:justify;'>$row->message</td></tr>";
+      $html .= '<tr><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     else {
-      $html .= "<tr class=\"alt\"><td style='width:10%;'>" . date('Y-m-d H:i:s', $row->timestamp) . "</td><td style='width:10%;'>$row->severity</td><td style='width:10%;'>$row->type</td><td style='width:70%; text-style:justify;'>$row->message</td></tr>";
+      $html .= '<tr class="alt"><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     $i++;
   }
 
-  $html .= "</tbody></table></div>";
-  $html .= "</body></html>";
+  $html .= '</tbody></table></div>';
+  $html .= '</body></html>';
 
   return $html;
 }
@@ -383,18 +382,18 @@ function transperfect_adaptor_settings_submit($form, &$form_state) {
 
 function transperfect_get_project_director_details() {
   $pd4 = new ProjectDirector();
-  $url = strrev(variable_get('transperfect_pd_url', ""));
+  $url = strrev(variable_get('transperfect_pd_url', ''));
   if (ord($url) == 47) {
     $url = substr($url, 1);
   }
   $r_url = strrev($url);
   $pd4->url = $r_url;
-  $pd4->username = variable_get('transperfect_pd_username', "");
-  $pd4->password = variable_get('transperfect_pd_password', "");
-  $pd4->projectShortCode = variable_get('transperfect_pd_projectid', "");
-  $pd4->submissionPrefix = variable_get('transperfect_pd_submissionprefix', "");
-  $pd4->classifier = variable_get('transperfect_pd_classifier', "XML");
-  $pd4->maxTargetCount = variable_get('transperfect_pd_max_target', "99999");
+  $pd4->username = variable_get('transperfect_pd_username', '');
+  $pd4->password = variable_get('transperfect_pd_password', '');
+  $pd4->projectShortCode = variable_get('transperfect_pd_projectid', '');
+  $pd4->submissionPrefix = variable_get('transperfect_pd_submissionprefix', '');
+  $pd4->classifier = variable_get('transperfect_pd_classifier', 'XML');
+  $pd4->maxTargetCount = variable_get('transperfect_pd_max_target', '99999');
 
   return $pd4;
 }
@@ -416,27 +415,27 @@ function transperfect_save_project_names() {
 }
 
 function transperfect_validate_project_director_details($pd4) {
-  if ($pd4->url == "") {
+  if (empty($pd4->url)) {
     form_set_error('', t('GlobalLink URL is undefined.'));
     return FALSE;
   }
-  elseif ($pd4->username == "") {
+  elseif (empty($pd4->username)) {
     form_set_error('', t('GlobalLink User Id is undefined.'));
     return FALSE;
   }
-  elseif ($pd4->password == "") {
+  elseif (empty($pd4->password)) {
     form_set_error('', t('GlobalLink Password is undefined.'));
     return FALSE;
   }
-  elseif ($pd4->projectShortCode == "") {
+  elseif (empty($pd4->projectShortCode)) {
     form_set_error('', t('GlobalLink Project Code is undefined.'));
     return FALSE;
   }
-  elseif ($pd4->classifier == "") {
+  elseif (empty($pd4->classifier)) {
     form_set_error('', t('GlobalLink Classifier is undefined.'));
     return FALSE;
   }
-  elseif ($pd4->maxTargetCount == "") {
+  elseif (empty($pd4->maxTargetCount)) {
     form_set_error('', t('GlobalLink Max Target Count is undefined.'));
     return FALSE;
   }

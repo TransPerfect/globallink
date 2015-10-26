@@ -565,8 +565,7 @@ function transperfect_node_type_insert($info) {
                 'field_type' => 'text_with_summary',
                 'field_label' => 'Body',
                 'translatable' => 1))->execute();
-    $metatag_module_exists = module_exists("metatag");
-    if ($metatag_module_exists) {
+    if (module_exists('metatag')) {
       db_insert('transperfect_field_config')
               ->fields(array('content_type' => $info->type,
                   'entity_type' => 'node',

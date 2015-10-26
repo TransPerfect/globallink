@@ -36,7 +36,7 @@ function send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, 
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
     $globallink->otherObjectId = $bid;
-    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
     $globallink_arr[] = $globallink;
   }
 

@@ -22,7 +22,6 @@ function transperfect_get_root_menu($menu_item) {
  *   Array of filter parameters.
  */
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
-  $revisioning_module_exists = module_exists("revisioning");
   $filters = transperfect_build_filters(TRUE);
   $count = 0;
   foreach ($filter_array as $filter) {
@@ -43,7 +42,7 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
 
         break;
       case 'status':
-        if ($revisioning_module_exists) {
+        if (module_exists('revisioning')) {
           continue 2;
         }
 
@@ -110,8 +109,7 @@ function transperfect_build_filters($content_translation) {
           '&nbsp;&nbsp;' . t('Everything') . '&nbsp;&nbsp;'),
   );
 
-  $revisioning_module_exists = module_exists("revisioning");
-  if ($revisioning_module_exists) {
+  if (module_exists('revisioning')) {
     $filters['status'] = array(
         'title' => TPT_LABEL_STATUS,
         'options' => array(
@@ -541,7 +539,7 @@ function transperfect_pager_array_splice($data, $limit = 9, $element = 0) {
  */
 function transperfect_format_display_string($string) {
   if (mb_strlen($string) > 25) {
-    return mb_substr($string, 0, 25) . "...";
+    return mb_substr($string, 0, 25) . '...';
   }
   return $string;
 }
@@ -557,8 +555,8 @@ function transperfect_format_display_string($string) {
  */
 function transperfect_format_file_name($string) {
   $bad = array_merge(
-          array_map('chr', range(0, 31)), array("<", ">", ":", '"', "/", "\\", "|", "?", "*", ";", "&", " ", "."));
-  $name = str_replace($bad, "_", utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
+          array_map('chr', range(0, 31)), array('<', '>', ':', '"', '/', '\\', '|', '?', '*', ';', '&', ' ', '.'));
+  $name = str_replace($bad, '_', utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
   if (strlen($name) > 50) {
     $name = substr($name, 0, 50);
   }
@@ -891,7 +889,7 @@ function transperfect_drupal_search_query() {
  * @todo Document this function.
  */
 function transperfect_get_source($group) {
-  $result = db_query("SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup", array(':textgroup' => $group));
+  $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(':textgroup' => $group));
   $strings = array();
   foreach ($result as $child) {
     $string = array(
@@ -958,7 +956,7 @@ function transperfect_get_other_row($row_id, $type) {
 function transperfect_get_PD_projects() {
   $proj_arr = variable_get('transperfect_pd_projects', array());
   if (count($proj_arr) > 0) {
-    $projects = variable_get('transperfect_pd_projectid', "");
+    $projects = variable_get('transperfect_pd_projectid', '');
     if ($projects != '') {
       $arr = explode(',', $projects);
       foreach ($arr as $value) {
