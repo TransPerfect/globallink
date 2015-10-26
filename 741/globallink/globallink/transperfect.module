@@ -138,50 +138,57 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
   if ($entity_type && $entity_type == 'node') {
     // Request coming from Manage Fields of Content Type
     $field_info = field_info_field($field_name);
-    if ($field_info['type'] != 'list_boolean'
-            && $field_info['type'] != 'image'
-            && $field_info['type'] != 'file'
-            && $field_info['type'] != 'taxonomy_term_reference'
-            && $field_info['type'] != 'field_collection') {
-      // Regular field, just delete from the config
-      db_delete('transperfect_field_config')
-              ->condition('content_type', $bundle_name, ' = ')
-              ->condition('entity_type', $entity_type, ' = ')
-              ->condition('bundle', $bundle_name, ' = ')
-              ->condition('field_name', $field_name, ' = ')
-              ->execute();
-    }
-    elseif ($field_info['type'] == 'field_collection') {
-      // field-collection being deleted, delete all fields recursively for this content type only
-      transperfect_delete_fc($bundle_name, $field_name, $entity_type, $bundle_name);
+
+    switch ($field_info['type']) {
+      case 'list_boolean':
+      case 'image':
+      case 'file':
+      case 'taxonomy_term_reference':
+        break;
+      case 'field_collection':
+        // field-collection being deleted, delete all fields recursively for this content type only
+        transperfect_delete_fc($bundle_name, $field_name, $entity_type, $bundle_name);
+      default:
+        // Regular field, just delete from the config
+        db_delete('transperfect_field_config')
+        ->condition('content_type', $bundle_name, ' = ')
+        ->condition('entity_type', $entity_type, ' = ')
+        ->condition('bundle', $bundle_name, ' = ')
+        ->condition('field_name', $field_name, ' = ')
+        ->execute();
     }
   }
   elseif ($entity_type && $entity_type == 'field_collection_item') {
     // Request coming from Manage Fields of field-collections
     // Entity type for all the fields here will be field_collection_item
     $field_info = field_info_field($field_name);
-    if ($field_info['type'] != 'list_boolean'
-            && $field_info['type'] != 'image'
-            && $field_info['type'] != 'file'
-            && $field_info['type'] != 'taxonomy_term_reference'
-            && $field_info['type'] != 'field_collection') {
-      // Regular field-collection field, just delete from the config for all content types
-      $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
-      foreach ($content_types as $content_type) {
-        db_delete('transperfect_field_config')
-                ->condition('content_type', $content_type, ' = ')
-                ->condition('entity_type', $entity_type, ' = ')
-                ->condition('bundle', $bundle_name, ' = ')
-                ->condition('field_name', $field_name, ' = ')
-                ->execute();
-      }
+
+    switch ($field_info['type']) {
+      case 'list_boolean':
+      case 'image':
+      case 'file':
+      case 'taxonomy_term_reference':
+      case 'field_collection':
+        break;
+      default:
+        // Regular field-collection field, just delete from the config for all content types
+        $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
+
+        foreach ($content_types as $content_type) {
+          db_delete('transperfect_field_config')
+          ->condition('content_type', $content_type, ' = ')
+          ->condition('entity_type', $entity_type, ' = ')
+          ->condition('bundle', $bundle_name, ' = ')
+          ->condition('field_name', $field_name, ' = ')
+          ->execute();
+        }
     }
-    elseif ($field_info['type'] == 'field_collection') {
-      // Field-collection being deleted, delete all fields recursively for all the content types
-      $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
-      foreach ($content_types as $content_type) {
-        transperfect_delete_fc($content_type, $field_name, $entity_type, $bundle_name);
-      }
+  }
+  elseif ($field_info['type'] == 'field_collection') {
+    // Field-collection being deleted, delete all fields recursively for all the content types
+    $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
+    foreach ($content_types as $content_type) {
+      transperfect_delete_fc($content_type, $field_name, $entity_type, $bundle_name);
     }
   }
 }
