@@ -58,86 +58,81 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
         $default = '[Any]';
         switch ($filter['form-type']) {
           case 'select':
-            switch ($key) {
-              case 'language_name':
-                $default_language = language_default();
-                $default = $default_language->language;
-                if (isset($_SESSION['transperfect_entity_source_locale']) && $_SESSION['transperfect_entity_source_locale'] != '') {
-                  $default = $_SESSION['transperfect_entity_source_locale'];
-                }
-                $selected_source_lang = $default;
+            if ($key == 'language_name') {
+              $default_language = language_default();
+              $default = $default_language->language;
+              if (isset($_SESSION['transperfect_entity_source_locale']) && $_SESSION['transperfect_entity_source_locale'] != '') {
+                $default = $_SESSION['transperfect_entity_source_locale'];
+              }
+              $selected_source_lang = $default;
+              $form['filters']['status']['filters'][$key] = array(
+                  '#type' => $filter['form-type'],
+                  '#options' => $filter['options'],
+                  '#title' => check_plain($filter['title']),
+                  '#default_value' => $default,
+                  '#disabled' => $disabled,
+                  '#attributes' => array('style' => array('padding:5px;')),
+                  '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+                  '#field_prefix' => '</td><td>',
+                  '#ajax' => array(
+                      'event' => 'change',
+                      'callback' => 'transperfect_dashboard_entity_filter_target',
+                      'wrapper' => 'replace-target',
+                  ),
+              );
+              $form['filters']['status']['filters']['node_parent'] = array(
+                  '#type' => 'checkbox',
+                  '#return_value' => 1,
+                  '#default_value' => 1,
+                  '#prefix' => '<span style="display:block;padding-top:10px;">',
+                  '#suffix' => '</span></td></tr>',
+                  '#field_suffix' => 'Show Source Language Only</td>',
+              );
+            }
+            elseif ($key == 'target_language') {
+              if (isset($form_state['values']['language_name'])) {
                 $form['filters']['status']['filters'][$key] = array(
                     '#type' => $filter['form-type'],
-                    '#options' => $filter['options'],
-                    '#title' => check_plain($filter['title']),
-                    '#default_value' => $default,
+                    '#options' => transperfect_entity_get_target_options($form_state['values']['language_name']),
                     '#disabled' => $disabled,
-                    '#attributes' => array('style' => array('padding:5px;')),
-                    '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
-                    '#field_prefix' => '</td><td>',
-                    '#ajax' => array(
-                        'event' => 'change',
-                        'callback' => 'transperfect_dashboard_entity_filter_target',
-                        'wrapper' => 'replace-target',
-                    ),
+                    '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
+                    '#attributes' => array('style' => array('padding:0px;')),
+                    '#field_prefix' => '<td><div id="replace-target">',
+                    '#field_suffix' => '</div></td>',
                 );
-                $form['filters']['status']['filters']['node_parent'] = array(
-                    '#type' => 'checkbox',
-                    '#return_value' => 1,
-                    '#default_value' => 1,
-                    '#prefix' => '<span style="display:block;padding-top:10px;">',
-                    '#suffix' => '</span></td></tr>',
-                    '#field_suffix' => 'Show Source Language Only</td>',
-                );
-                
-                break;
-              case 'target_language':
-                if (isset($form_state['values']['language_name'])) {
-                  $form['filters']['status']['filters'][$key] = array(
-                      '#type' => $filter['form-type'],
-                      '#options' => transperfect_entity_get_target_options($form_state['values']['language_name']),
-                      '#disabled' => $disabled,
-                      '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
-                      '#attributes' => array('style' => array('padding:0px;')),
-                      '#field_prefix' => '<td><div id="replace-target">',
-                      '#field_suffix' => '</div></td>',
-                  );
-                }
-                else {
-                  $form['filters']['status']['filters'][$key] = array(
-                      '#type' => $filter['form-type'],
-                      '#options' => transperfect_entity_get_target_options($selected_source_lang),
-                      '#title' => check_plain($filter['title']),
-                      '#disabled' => $disabled,
-                      '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
-                      '#attributes' => array('style' => array('padding:0px;')),
-                      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
-                      '#suffix' => '</tr>',
-                      '#field_prefix' => '</td><td><div id="replace-target">',
-                      '#field_suffix' => '</div></td>',
-                  );
-                }
-
-                break;
-              default :
-                if ($key == 'status' && module_exists('revisioning')) {
-                  $default = 'status-1';
-                }
+              }
+              else {
                 $form['filters']['status']['filters'][$key] = array(
                     '#type' => $filter['form-type'],
-                    '#options' => $filter['options'],
+                    '#options' => transperfect_entity_get_target_options($selected_source_lang),
                     '#title' => check_plain($filter['title']),
                     '#disabled' => $disabled,
-                    '#default_value' => isset($selected_arr[$key]) ? $selected_arr[$key] : $default,
+                    '#default_value' => isset($form_state['values']['target_language']) ? $form_state['values']['target_language'] : '',
                     '#attributes' => array('style' => array('padding:0px;')),
                     '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                     '#suffix' => '</tr>',
-                    '#field_suffix' => '</td>',
-                    '#field_prefix' => '</td><td>',
+                    '#field_prefix' => '</td><td><div id="replace-target">',
+                    '#field_suffix' => '</div></td>',
                 );
-
-                break;
               }
+            }
+            else {
+              if ($key == 'status' && module_exists('revisioning')) {
+                $default = 'status-1';
+              }
+              $form['filters']['status']['filters'][$key] = array(
+                  '#type' => $filter['form-type'],
+                  '#options' => $filter['options'],
+                  '#title' => check_plain($filter['title']),
+                  '#disabled' => $disabled,
+                  '#default_value' => isset($selected_arr[$key]) ? $selected_arr[$key] : $default,
+                  '#attributes' => array('style' => array('padding:0px;')),
+                  '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+                  '#suffix' => '</tr>',
+                  '#field_suffix' => '</td>',
+                  '#field_prefix' => '</td><td>',
+              );
+            }
 
             break;
           case 'modified-after':
@@ -157,7 +152,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#title' => check_plain($filter['title']),
                 '#disabled' => $disabled,
                 '#attributes' => array('class' => array('pickadate'),
-                    'style' => array('padding:0px;')),
+                'style' => array('padding:0px;')),
                 '#default_value' => isset($selected_arr[$key]) ? date('m/d/Y', $selected_arr[$key]) : '',
                 '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
                 '#suffix' => '</tr></table></div>',
