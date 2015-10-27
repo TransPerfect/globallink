@@ -777,44 +777,64 @@ function transperfect_update_7200() {
 
       foreach ($keys as $field_name) {
         $field = field_info_field($field_name);
-        if ($field['type'] != 'list_boolean' && $field['type'] != 'image' && $field['type'] != 'file' && $field['type'] != 'taxonomy_term_reference' && $field['type'] != 'field_collection') {
-          db_insert('transperfect_field_config')
-                  ->fields(array('content_type' => $node_type->type,
-                      'entity_type' => 'node',
-                      'bundle' => $node_type->type,
-                      'field_name' => $field_name,
-                      'field_type' => $field['type'],
-                      'field_label' => $field_arr[$field_name]['label'],
-                      'translatable' => 1))->execute();
-        }
-        elseif ($field['type'] == 'field_collection') {
-          if (module_exists('field_collection')) {
-            db_insert('transperfect_field_config')
-                    ->fields(array('content_type' => $node_type->type,
-                        'entity_type' => 'node',
-                        'bundle' => $node_type->type,
-                        'field_name' => $field_name,
-                        'field_type' => $field['type'],
-                        'field_label' => $field_arr[$field_name]['label'],
-                        'translatable' => 1))->execute();
-            $field_info = field_info_instances('field_collection_item');
-            if (isset($field_info) && isset($field_info[$field_name])) {
-              $fc_item = $field_info[$field_name];
-              foreach ($fc_item as $fc_name => $fc) {
-                $fc_info = field_info_field($fc_name);
-                if ($fc_info['type'] != 'list_boolean' && $fc_info['type'] != 'image' && $fc_info['type'] != 'file' && $fc_info['type'] != 'taxonomy_term_reference' && $fc_info['type'] != 'field_collection') {
-                  db_insert('transperfect_field_config')
-                          ->fields(array('content_type' => $node_type->type,
-                              'entity_type' => 'field_collection_item',
-                              'bundle' => $fc['bundle'],
-                              'field_name' => $fc_name,
-                              'field_type' => $fc_info['type'],
-                              'field_label' => $fc['label'],
-                              'translatable' => 1))->execute();
+
+        switch ($field) {
+          case 'list_boolean':
+          case 'image':
+          case 'file':
+          case 'taxonomy_term_reference':
+            break;
+          case 'field_collection':
+            if (module_exists('field_collection')) {
+              db_insert('transperfect_field_config')
+              ->fields(array(
+                'content_type' => $node_type->type,
+                'entity_type' => 'node',
+                'bundle' => $node_type->type,
+                'field_name' => $field_name,
+                'field_type' => $field['type'],
+                'field_label' => $field_arr[$field_name]['label'],
+                'translatable' => 1,
+              ))->execute();
+
+              $field_info = field_info_instances('field_collection_item');
+
+              if (isset($field_info) && isset($field_info[$field_name])) {
+                $fc_item = $field_info[$field_name];
+
+                foreach ($fc_item as $fc_name => $fc) {
+                  $fc_info = field_info_field($fc_name);
+
+                  if ($fc_info['type'] != 'list_boolean' && $fc_info['type'] != 'image' && $fc_info['type'] != 'file' && $fc_info['type'] != 'taxonomy_term_reference' && $fc_info['type'] != 'field_collection') {
+                    db_insert('transperfect_field_config')
+                    ->fields(array(
+                      'content_type' => $node_type->type,
+                      'entity_type' => 'field_collection_item',
+                      'bundle' => $fc['bundle'],
+                      'field_name' => $fc_name,
+                      'field_type' => $fc_info['type'],
+                      'field_label' => $fc['label'],
+                      'translatable' => 1,
+                    ))->execute();
+                  }
                 }
               }
             }
-          }
+
+            break;
+          default:
+            db_insert('transperfect_field_config')
+            ->fields(array(
+              'content_type' => $node_type->type,
+              'entity_type' => 'node',
+              'bundle' => $node_type->type,
+              'field_name' => $field_name,
+              'field_type' => $field['type'],
+              'field_label' => $field_arr[$field_name]['label'],
+              'translatable' => 1,
+            ))->execute();
+
+            break;
         }
       }
     }

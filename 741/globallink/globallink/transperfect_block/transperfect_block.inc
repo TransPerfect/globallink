@@ -36,7 +36,7 @@ function send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, 
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
     $globallink->otherObjectId = $bid;
-    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
     $globallink_arr[] = $globallink;
   }
 
@@ -270,20 +270,30 @@ function get_translated_blocks($pd4, &$globallink_arr) {
               continue;
             }
             $source = '';
-            if ($attribute == 'title') {
-              $title_string_arr = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
-              if (!$title_string_arr) {
-                continue;
-              }
-              $source = $title_string_arr['source'];
+
+            switch ($attribute) {
+              case 'title':
+                $title_string_arr = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
+
+                if (!$title_string_arr) {
+                  continue;
+                }
+
+                $source = $title_string_arr['source'];
+
+                break;
+              case 'body':
+                $body_string_arr = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
+
+                if (!$body_string_arr) {
+                  throw new Exception('Source string not found for block id ' . $bid . ' and field name ' . $attribute);
+                }
+
+                $source = $body_string_arr['source'];
+
+                break;
             }
-            elseif ($attribute == 'body') {
-              $body_string_arr = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
-              if (!$body_string_arr) {
-                throw new Exception('Source string not found for block id ' . $bid . ' and field name ' . $attribute);
-              }
-              $source = $body_string_arr['source'];
-            }
+
             $report = &drupal_static(__FUNCTION__, array('additions' => 0, 'updates' => 0, 'deletes' => 0, 'skips' => 0));
             _locale_import_one_string_db($report, $language, $translations['context'], $source, $translations['translation'], 'blocks', $translations['location'], LOCALE_IMPORT_OVERWRITE);
           }

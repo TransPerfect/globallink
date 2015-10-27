@@ -69,7 +69,7 @@ function send_entity_for_translations($nids, $pd4, $submission_name, $due_date, 
     $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
     $globallink_arr[] = $globallink;
   }
-  
+
   if (!empty($globallink_arr)) {
     send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
@@ -321,51 +321,59 @@ function get_transperfect_entity_row($row_id) {
 }
 
 function update_tpt_entity_status(&$globallink) {
-  if ($globallink->status != TPT_STATUS_SOURCE_DELETED && $globallink->status != TPT_STATUS_ERROR) {
-    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    $node = node_load($row->nid);
-    if ($node->vid != $row->vid) {
+  switch ($globallink->status) {
+    case TPT_STATUS_SOURCE_DELETED:
+    case TPT_STATUS_ERROR:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      $node = node_load($row->nid);
+
+      if ($node->vid != $row->vid) {
+        db_update('transperfect_core_entity')
+        ->fields(array(
+          'vid' => $node->vid,
+          'title' => $node->title,
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
+      else {
+        db_update('transperfect_core_entity')
+        ->fields(array(
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
+
+      break;
+    case TPT_STATUS_SOURCE_DELETED:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+
       db_update('transperfect_core_entity')
-              ->fields(array(
-                  'vid' => $node->vid,
-                  'title' => $node->title,
-                  'status' => TPT_STATUS_PENDING_TRANSLATIONS,
-                  'timestamp' => REQUEST_TIME
-                      )
-              )
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-    else {
+      ->fields(array(
+        'status' => TPT_STATUS_SOURCE_DELETED,
+        'document_ticket' => '',
+        'submission_ticket' => '',
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
+    case TPT_STATUS_ERROR:
+      $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       db_update('transperfect_core_entity')
-              ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-  }
-  elseif ($globallink->status == TPT_STATUS_SOURCE_DELETED) {
-    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core_entity')
-            ->fields(array(
-                'status' => TPT_STATUS_SOURCE_DELETED,
-                'document_ticket' => '',
-                'submission_ticket' => '',
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
-  }
-  elseif ($globallink->status == TPT_STATUS_ERROR) {
-    $row = get_transperfect_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core_entity')
-            ->fields(array(
-                'status' => TPT_STATUS_ERROR,
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
+      ->fields(array(
+        'status' => TPT_STATUS_ERROR,
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
   }
 }
 
@@ -378,7 +386,7 @@ function update_entity(&$globallink, $t_arr = NULL) {
     else {
       $translated_arr = get_translated_entity_array($globallink->targetXML, $target_lang);
     }
-    
+
     $target_nid = $translated_arr['nid'];
     $target_vid = $translated_arr['vid'];
     $globallink->nid = $target_nid;
@@ -475,14 +483,19 @@ function get_translated_entity_array($xml, $target_lang = LANGUAGE_NONE) {
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
       foreach ($content->attributes as $attr_name => $attr_node) {
-        if ($attr_name == 'rid') {
-          $arr['rid'] = $attr_node->value;
-        }
-        if ($attr_name == 'nid') {
-          $arr['nid'] = $attr_node->value;
-        }
-        elseif ($attr_name == 'vid') {
-          $arr['vid'] = $attr_node->value;
+        switch ($attr_name) {
+          case 'rid':
+            $arr['rid'] = $attr_node->value;
+
+            break;
+          case 'nid':
+            $arr['nid'] = $attr_node->value;
+
+            break;
+          case 'vid':
+            $arr['vid'] = $attr_node->value;
+
+            break;
         }
       }
     }
@@ -705,7 +718,6 @@ function transperfect_entity_save(&$node) {
 }
 
 function save_translated_entity_with_fields(&$node, $translation_arr, $target_lang) {
-  
   $config_fields = transperfect_get_config_fields($node->type);
   foreach ($config_fields as $field_name => $field_info) {
     if ($field_info->field_type == 'image' && $field_info->translatable == 1) {
@@ -713,8 +725,7 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
       $node->{$field_name}[$target_lang] = $node->{$field_name}[$source_lang];
     }
   }
-  
-  
+
   foreach ($translation_arr as $field => $values) {
     if (!is_array($values)) {
       continue;
@@ -802,36 +813,40 @@ function save_entity_field_collections_recursively($entity_type, $host_entity, $
     // Check if this key exists; If true then read this.
     $fc_field_def = field_read_field($key);
     if (!empty($fc_field_def) && isset($fc_field_def['type'])) {
-      if ($fc_field_def['type'] != 'list_boolean'
-              && $fc_field_def['type'] != 'file'
-              && $fc_field_def['type'] != 'taxonomy_term_reference'
-              && $fc_field_def['type'] != 'field_collection') {
+      switch ($fc_field_def['type']) {
+        case 'list_boolean':
+        case 'file':
+        case 'taxonomy_term_reference':
+          continue 2;
 
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
-          $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
-          foreach ($field_data_arr as $delta => $field_data) {
-            if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
-              $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
-              if (is_object($gl_obj)) {
-                $translated_content = $gl_obj->translatedContent;
-              }
-              else {
-                $translated_content = $gl_obj;
-              }
+          break;
+        case 'field_collection':
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][$target_lang])) {
+            $field_data_arr = $field_collection_item_array[$key][$target_lang];
+            $new_field_collection_arr[$key][$target_lang] = $field_data_arr;
+          }
 
-              $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
-              if (isset($field_data['format'])) {
-                $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
+          break;
+        default:
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
+            $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
+            foreach ($field_data_arr as $delta => $field_data) {
+              if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
+                $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
+                if (is_object($gl_obj)) {
+                  $translated_content = $gl_obj->translatedContent;
+                }
+                else {
+                  $translated_content = $gl_obj;
+                }
+
+                $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
+                if (isset($field_data['format'])) {
+                  $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
+                }
               }
             }
           }
-        }
-      }
-      elseif ($fc_field_def['type'] != 'field_collection') {
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][$target_lang])) {
-          $field_data_arr = $field_collection_item_array[$key][$target_lang];
-          $new_field_collection_arr[$key][$target_lang] = $field_data_arr;
-        }
       }
     }
   }
@@ -1090,11 +1105,16 @@ function get_entity_title(&$globallink) {
     $globallink->vid = $item->vid;
     $globallink->tptRowId = $item->rid;
     $globallink->title = $item->title;
-    if ($item->status == TPT_STATUS_SENT_FOR_TRANSLATIONS) {
-      $globallink->status = TPT_STATUS_COMPLETED;
-    }
-    elseif ($item->status == TPT_STATUS_ERROR) {
-      $globallink->status = TPT_STATUS_ERROR;
+
+    switch ($item->status) {
+      case TPT_STATUS_SENT_FOR_TRANSLATIONS:
+        $globallink->status = TPT_STATUS_COMPLETED;
+
+        break;
+      case TPT_STATUS_ERROR:
+        $globallink->status = TPT_STATUS_ERROR;
+
+        break;
     }
 
     return l(transperfect_format_display_string($globallink->title), 'node/' . $item->nid);

@@ -65,45 +65,53 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
           else {
             $source_type = $target->document->documentInfo->metadata->value;
           }
-          if ($type == 'entity') {
-            if ($source_type != 'Entity') {
-              continue;
-            }
-          }
-          elseif ($type == 'menu') {
-            if ($source_type != 'Menu') {
-              continue;
-            }
-          }
-          elseif ($type == 'block') {
-            if ($source_type != 'Block') {
-              continue;
-            }
-          }
-          elseif ($type == 'taxonomy') {
-            if ($source_type != 'Taxonomy') {
-              continue;
-            }
-          }
-          elseif ($type == 'interface') {
-            if ($source_type != 'Interface') {
-              continue;
-            }
-          }
-          elseif ($type == 'webform') {
-            if ($source_type != 'Webform') {
-              continue;
-            }
-          }
-          elseif ($type == 'fieldable_panels') {
-            if ($source_type != 'Fieldable_Panels_Panes') {
-              continue;
-            }
-          }
-          else {
-            if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
-              continue;
-            }
+          switch ($type) {
+            case 'entity':
+              if ($source_type != 'Entity') {
+                continue;
+              }
+
+              break;
+            case 'menu':
+              if ($source_type != 'Menu') {
+                continue;
+              }
+
+              break;
+            case 'block':
+              if ($source_type != 'Block') {
+                continue;
+              }
+
+              break;
+            case 'taxonomy':
+              if ($source_type != 'Taxonomy') {
+                continue;
+              }
+
+              break;
+            case 'interface':
+              if ($source_type != 'Interface') {
+                continue;
+              }
+
+              break;
+            case 'webform':
+              if ($source_type != 'Webform') {
+                continue;
+              }
+
+              break;
+            case 'fieldable_panels':
+              if ($source_type != 'Fieldable_Panels_Panes') {
+                continue;
+              }
+
+              break;
+            default:
+              if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
+                continue;
+              }
           }
 
           $globallink = new GlobalLink();
@@ -146,45 +154,53 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
         else {
           $source_type = $target->document->documentInfo->metadata->value;
         }
-        if ($type == 'entity') {
-          if ($source_type != 'Entity') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'menu') {
-          if ($source_type != 'Menu') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'block') {
-          if ($source_type != 'Block') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'taxonomy') {
-          if ($source_type != 'Taxonomy') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'interface') {
-          if ($source_type != 'Interface') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'webform') {
-          if ($source_type != 'Webform') {
-            return $globallink_arr;
-          }
-        }
-        elseif ($type == 'fieldable_panels') {
-          if ($source_type != 'Fieldable_Panels_Panes') {
-            return $globallink_arr;
-          }
-        }
-        else {
-          if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
-            return $globallink_arr;
-          }
+        switch ($type) {
+          case 'entity':
+            if ($source_type != 'Entity') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'menu':
+            if ($source_type != 'Menu') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'block':
+            if ($source_type != 'Block') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'taxonomy':
+            if ($source_type != 'Taxonomy') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'interface':
+            if ($source_type != 'Interface') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'webform':
+            if ($source_type != 'Webform') {
+              return $globallink_arr;
+            }
+
+            break;
+          case 'fieldable_panels':
+            if ($source_type != 'Fieldable_Panels_Panes') {
+              return $globallink_arr;
+            }
+
+            break;
+          default:
+            if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
+              return $globallink_arr;
+            }
         }
 
         $globallink = new GlobalLink();
