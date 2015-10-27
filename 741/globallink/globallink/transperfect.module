@@ -516,39 +516,50 @@ function transperfect_insert_fc_items($content_type, $parent_field_name, $field_
   // Everything added here will have entity type as field_collection_item
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);
-  if ($fc_field_info['type'] != 'list_boolean'
-          && $fc_field_info['type'] != 'image'
-          && $fc_field_info['type'] != 'file'
-          && $fc_field_info['type'] != 'taxonomy_term_reference'
-          && $fc_field_info['type'] != 'field_collection') {
-    $translatable = 1;
-    db_insert('transperfect_field_config')
-            ->fields(array('content_type' => $content_type,
-                'entity_type' => 'field_collection_item',
-                'bundle' => $parent_field_name,
-                'field_name' => $field_name,
-                'field_type' => $fc_field_info['type'],
-                'field_label' => $fc_field_instance['label'],
-                'translatable' => $translatable))->execute();
-  }
-  elseif ($fc_field_info['type'] == 'field_collection') {
-    // Field-collection in a field-collection, first add this field-collection to the config
-    db_insert('transperfect_field_config')
-            ->fields(array('content_type' => $content_type,
-                'entity_type' => 'field_collection_item',
-                'bundle' => $parent_field_name,
-                'field_name' => $field_name,
-                'field_type' => $fc_field_info['type'],
-                'field_label' => $fc_field_instance['label'],
-                'translatable' => 0))->execute();
-    $fc_field_infos = field_info_instances('field_collection_item');
-    if (isset($fc_field_infos) && isset($fc_field_infos[$field_name]) && is_array($fc_field_infos[$field_name])) {
-      $fc_items = array_keys($fc_field_infos[$field_name]);
-      foreach ($fc_items as $fc_item) {
-        // Now add the child fields for this field-collection recursively
-        transperfect_insert_fc_items($content_type, $field_name, $fc_item);
+
+  switch ($fc_field_info['type']) {
+    case 'image':
+    case 'file':
+    case 'taxonomy_term_reference':
+      break;
+    case 'field_collection':
+      // Field-collection in a field-collection, first add this field-collection to the config
+      db_insert('transperfect_field_config')
+      ->fields(array(
+        'content_type' => $content_type,
+        'entity_type' => 'field_collection_item',
+        'bundle' => $parent_field_name,
+        'field_name' => $field_name,
+        'field_type' => $fc_field_info['type'],
+        'field_label' => $fc_field_instance['label'],
+        'translatable' => 0,
+      ))->execute();
+
+      $fc_field_infos = field_info_instances('field_collection_item');
+
+      if (isset($fc_field_infos) && isset($fc_field_infos[$field_name]) && is_array($fc_field_infos[$field_name])) {
+        $fc_items = array_keys($fc_field_infos[$field_name]);
+
+        foreach ($fc_items as $fc_item) {
+          // Now add the child fields for this field-collection recursively
+          transperfect_insert_fc_items($content_type, $field_name, $fc_item);
+        }
       }
-    }
+
+      break;
+    default:
+      $translatable = 1;
+
+      db_insert('transperfect_field_config')
+      ->fields(array(
+        'content_type' => $content_type,
+        'entity_type' => 'field_collection_item',
+        'bundle' => $parent_field_name,
+        'field_name' => $field_name,
+        'field_type' => $fc_field_info['type'],
+        'field_label' => $fc_field_instance['label'],
+        'translatable' => $translatable,
+      ))->execute();
   }
 }
 
@@ -789,14 +800,20 @@ function transperfect_node_presave($node) {
     }
 
     $field_name = $field->field_name;
-    if ($field_name == 'title') {
-      if ($orig->title != $node->title) {
-        transperfect_update_change_detection($node, $lang);
-        break;
-      }
-    }
-    elseif ($field_name == 'metatags') {
-      continue;
+
+    switch ($field_name) {
+      case 'title':
+        if ($orig->title != $node->title) {
+          transperfect_update_change_detection($node, $lang);
+
+          break 2;
+        }
+
+        break 1;
+      case 'metatags':
+        continue 2;
+
+        break 1;
     }
 
     $field_info = field_info_field($field_name);
