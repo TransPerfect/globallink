@@ -93,7 +93,7 @@ function transperfect_permission() {
   return array(
     TPT_ROLE_MANAGE_TRANSLATIONS => array('title' => TPT_ROLE_MANAGE_TRANSLATIONS),
     TPT_ROLE_DO_TRANSALTIONS => array('title' => TPT_ROLE_DO_TRANSALTIONS),
-    TPT_ROLE_VIEW_TRANSLATIONS => array('title' => TPT_ROLE_VIEW_TRANSLATIONS),
+    TPT_ROLE_VIEW_TRANSLATIONS => array('title' => TPT_ROLE_VIEW_TRANSLATIONS)
   );
 }
 
@@ -1013,8 +1013,7 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
-  ->condition('source', transperfect_get_tpt_locale_code($source), '=');
-
+          ->condition('source', transperfect_get_locale_code($source), '=');
   $result = $query->execute();
 
   foreach ($result as $row) {
@@ -1033,8 +1032,7 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
  *   The locale of the node.
  */
 function transperfect_update_change_detection($node, $lang) {
-  $tpt_locale_code = get_tpt_locale_code($lang);
-
+  $tpt_locale_code = transperfect_get_locale_code($lang);
   db_update('transperfect_core')
   ->fields(array('last_modified' => REQUEST_TIME, 'changed' => 1))
   ->condition('nid', $node->nid, '=')
@@ -1118,7 +1116,7 @@ function transperfect_menu() {
     'title' => 'GlobalLink',
     'description' => 'Allows users to manage and translate content using Translations.com translation services',
     'page callback' => 'transperfect_dashboard_page',
-    'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
     'file' => 'transperfect_send_translations.inc',
     'page arguments' => array('node'),
   );
@@ -1141,7 +1139,7 @@ function transperfect_menu() {
     'title' => 'Active Submissions',
     'description' => 'Presents a Dashboard interface to view active submissions',
     'page callback' => 'transperfect_dashboard_active_submissions_page',
-    'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
     'file' => 'transperfect_active_submissions.inc',
     'weight' => -1,
     'type' => MENU_LOCAL_TASK,
@@ -1152,14 +1150,14 @@ function transperfect_menu() {
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
-    'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
   );
 
   $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation')] = array(
     'title' => 'Receive Translation',
     'description' => 'Presents a Dashboard interface to receive and publish translations',
     'page callback' => 'transperfect_dashboard_receive_page',
-    'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_receive_translations.inc',
     'weight' => -1,
@@ -1168,7 +1166,7 @@ function transperfect_menu() {
 
   $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/node')] = array(
     'title' => ' Content ',
-    'access callback' => 'transperfect_tpt_access_callback_any',
+      'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
   );
@@ -1177,7 +1175,7 @@ function transperfect_menu() {
     'title' => 'Settings',
     'description' => 'Manage settings for GlobalLink',
     'page callback' => 'transperfect_settings_page',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_settings.inc',
   );
@@ -1186,7 +1184,7 @@ function transperfect_menu() {
     'title' => 'Locale Mapping',
     'description' => 'Manage locale mappings for GlobalLink',
     'page callback' => 'transperfect_locale_page',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_locale_mapping.inc',
   );
@@ -1194,29 +1192,29 @@ function transperfect_menu() {
     'title' => 'Field Configuration',
     'description' => 'Manage translatable fields for content types',
     'page callback' => 'transperfect_field_page',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_field_configuration.inc',
   );
   $items[transperfect_get_root_menu('transperfect-translations/cron')] = array(
     'title' => 'Receive Translations Cron',
-    'page callback' => 'receive_translated_contents_automatically',
+      'page callback' => 'transperfect_receive_translated_contents_automatically',
     'file' => 'transperfect_receive_translations.inc',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
   $items[transperfect_get_root_menu('transperfect-translations/preview')] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'preview_translated_content',
+      'page callback' => 'transperfect_preview_translated_content',
     'file' => 'transperfect_receive_translations.inc',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
   $items[transperfect_get_root_menu('transperfect-translations/view_log')] = array(
     'title' => 'View Log',
-    'page callback' => 'view_log',
+      'page callback' => 'transperfect_view_log',
     'file' => 'transperfect_settings.inc',
-    'access callback' => 'transperfect_tpt_access_callback_admin',
+      'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
 
@@ -1226,15 +1224,8 @@ function transperfect_menu() {
 /**
  * @todo Document this function.
  */
-function transperfect_tpt_access_callback_any() {
+function transperfect_access_callback_any() {
   return user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_VIEW_TRANSLATIONS);
-}
-
-/**
- * @todo Document this function.
- */
-function transperfect_tpt_access_callback_admin() {
-  return user_access(TPT_ROLE_MANAGE_TRANSLATIONS);
 }
 
 /**
