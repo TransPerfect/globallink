@@ -485,14 +485,19 @@ function transperfect_get_content_attributes_from_xml($xml) {
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
       foreach ($content->attributes as $attrName => $attrNode) {
-        if ('rid' == $attrName) {
-          $arr['rid'] = $attrNode->value;
-        }
-        if ('nid' == $attrName) {
-          $arr['nid'] = $attrNode->value;
-        }
-        elseif ('vid' == $attrName) {
-          $arr['vid'] = $attrNode->value;
+        switch ($attrName) {
+          case 'rid':
+            $arr['rid'] = $attrNode->value;
+
+            break;
+          case 'nid':
+            $arr['nid'] = $attrNode->value;
+
+            break;
+          case 'vid':
+            $arr['vid'] = $attrNode->value;
+
+            break;
         }
       }
     }
