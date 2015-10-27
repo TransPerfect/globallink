@@ -817,6 +817,8 @@ function save_entity_field_collections_recursively($entity_type, $host_entity, $
         case 'list_boolean':
         case 'file':
         case 'taxonomy_term_reference':
+          continue 2;
+
           break;
         case 'field_collection':
           if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][$target_lang])) {
