@@ -265,7 +265,7 @@ function transperfect_dashboard_block_form() {
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
           $projects = variable_get('transperfect_pd_projectid');
-          if (empty($projects)) {
+          if (!empty($projects)) {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
               if (isset($proj_arr[$value])) {
