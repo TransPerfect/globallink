@@ -311,37 +311,46 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
     if (transperfect_translation_supported($bundle)) {
       // Request coming from Manage Fields of Content Type
       if ($new_field && isset($new_field['type']['#value'])) {
-        if ($new_field['type']['#value'] != 'list_boolean'
-                && $new_field['type']['#value'] != 'image'
-                && $new_field['type']['#value'] != 'file'
-                && $new_field['type']['#value'] != 'taxonomy_term_reference'
-                && $new_field['type']['#value'] != 'field_collection') {
-          // Regular New field, just add to config
-          $new_field_name = $new_field['field_name']['#value'];
-          if ($new_field_name != '') {
-            db_insert('transperfect_field_config')
-                    ->fields(array('content_type' => $bundle,
-                        'entity_type' => $entity_type,
-                        'bundle' => $bundle,
-                        'field_name' => 'field_' . $new_field_name,
-                        'field_type' => $new_field['type']['#value'],
-                        'field_label' => $new_field['label']['#value'],
-                        'translatable' => 1))->execute();
-          }
-        }
-        elseif ($new_field['type']['#value'] == 'field_collection') {
-          // new field-collection added, just add the empty field-collection to config
-          $new_field_name = $new_field['field_name']['#value'];
-          if ($new_field_name != '') {
-            db_insert('transperfect_field_config')
-                    ->fields(array('content_type' => $bundle,
-                        'entity_type' => $entity_type,
-                        'bundle' => $bundle,
-                        'field_name' => 'field_' . $new_field_name,
-                        'field_type' => $new_field['type']['#value'],
-                        'field_label' => $new_field['label']['#value'],
-                        'translatable' => 1))->execute();
-          }
+        switch ($new_field['type']['#value']) {
+          case 'list_boolean':
+          case 'image':
+          case 'file':
+          case 'taxonomy_term_reference':
+            break;
+          case 'field_collection':
+            // New field-collection added, just add the empty field-collection to config
+            $new_field_name = $new_field['field_name']['#value'];
+
+            if ($new_field_name != '') {
+              db_insert('transperfect_field_config')
+              ->fields(array(
+                'content_type' => $bundle,
+                'entity_type' => $entity_type,
+                'bundle' => $bundle,
+                'field_name' => 'field_' . $new_field_name,
+                'field_type' => $new_field['type']['#value'],
+                'field_label' => $new_field['label']['#value'],
+                'translatable' => 1,
+              ))->execute();
+            }
+
+            break;
+          default:
+            // Regular New field, just add to config
+            $new_field_name = $new_field['field_name']['#value'];
+
+            if ($new_field_name != '') {
+              db_insert('transperfect_field_config')
+              ->fields(array(
+                'content_type' => $bundle,
+                'entity_type' => $entity_type,
+                'bundle' => $bundle,
+                'field_name' => 'field_' . $new_field_name,
+                'field_type' => $new_field['type']['#value'],
+                'field_label' => $new_field['label']['#value'],
+                'translatable' => 1,
+              ))->execute();
+            }
         }
       }
       if ($existing_field && isset($existing_field['field_name']['#value'])) {
