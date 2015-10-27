@@ -91,11 +91,16 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 
 function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_selected_fieldable_panels_language'] = $form_state['values']['language'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_selected_fieldable_panels_language'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_selected_fieldable_panels_language'] = $form_state['values']['language'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_selected_fieldable_panels_language'] = '';
+
+      break;
   }
 }
 

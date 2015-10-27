@@ -85,11 +85,16 @@ function transperfect_dashboard_block_filter_form() {
 
 function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_selected_block_info'] = $form_state['values']['info'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_selected_block_info'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_selected_block_info'] = $form_state['values']['info'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_selected_block_info'] = '';
+
+      break;
   }
 }
 

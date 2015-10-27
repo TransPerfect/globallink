@@ -44,14 +44,19 @@ function transperfect_entity_presave($node) {
     }
 
     $field_name = $field->field_name;
-    if ($field_name == 'title') {
-      if ($orig->title != $node->title) {
-        transperfect_update_change_detection_entity($node, $lang);
-        break;
-      }
-    }
-    elseif ($field_name == 'metatags') {
-      continue;
+
+    switch ($field_name) {
+      case 'title':
+        if ($orig->title != $node->title) {
+          transperfect_update_change_detection_entity($node, $lang);
+          break 2;
+        }
+
+        break 1;
+      case 'metatags':
+        continue 2;
+
+        break 1;
     }
 
     $field_info = field_info_field($field_name);
@@ -195,7 +200,7 @@ function get_tpt_entity_sent_rows($nid, $source) {
           ->fields('tc')
           ->condition('nid', $nid, '=')
           ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
-          ->condition('source', transperfect_get_tpt_locale_code($source), '=');
+          ->condition('source', transperfect_get_locale_code($source), '=');
   $result = $query->execute();
   foreach ($result as $row) {
     $arr[] = transperfect_get_drupal_locale_code($row->target);

@@ -22,29 +22,44 @@ function transperfect_get_root_menu($menu_item) {
  *   Array of filter parameters.
  */
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
-  $revisioning_module_exists = module_exists("revisioning");
   $filters = transperfect_build_filters(TRUE);
   $count = 0;
   foreach ($filter_array as $filter) {
     list($key, $value) = $filter;
-    if ($key == 'modified-after') {
-      $query->condition($filters[$key]['field'], $value, '>=');
+
+    switch ($key) {
+      case 'modified':
+      case 'target_language':
+        continue 2;
+
+        break;
+      case 'modified-after':
+        $query->condition($filters[$key]['field'], $value, '>=');
+
+        break;
+      case 'title':
+        $query->condition($filters[$key]['field'], '%' . $value . '%', 'LIKE');
+
+        break;
+      case 'status':
+        if (module_exists('revisioning')) {
+          continue 2;
+        }
+
+        list($key, $value) = explode('-', $value, 2);
+        $query->condition($key, $value, '=');
+
+        break;
+      case 'node_parent':
+        if ($value == 1) {
+          $query->where('tnid = nid OR tnid = 0');
+        }
+
+        break;
+      default:
+        $query->condition($filters[$key]['field'], $value);
     }
-    elseif ($key != 'modified' && $key != 'title' && $key != 'target_language' && $key != 'status' && $key != 'node_parent') {
-      $query->condition($filters[$key]['field'], $value);
-    }
-    elseif ($key == 'title') {
-      $query->condition($filters[$key]['field'], '%' . $value . '%', 'LIKE');
-    }
-    elseif ($key == 'status' && !$revisioning_module_exists) {
-      list($key, $value) = explode('-', $value, 2);
-      $query->condition($key, $value, '=');
-    }
-    elseif ($key == 'node_parent') {
-      if ($value == 1) {
-        $query->where('tnid = nid OR tnid = 0');
-      }
-    }
+
     $count++;
   }
 }
@@ -96,8 +111,7 @@ function transperfect_build_filters($content_translation) {
           '&nbsp;&nbsp;' . t('Everything') . '&nbsp;&nbsp;'),
   );
 
-  $revisioning_module_exists = module_exists("revisioning");
-  if ($revisioning_module_exists) {
+  if (module_exists('revisioning')) {
     $filters['status'] = array(
         'title' => TPT_LABEL_STATUS,
         'options' => array(
@@ -368,7 +382,7 @@ function transperfect_get_node_source_languages($nid) {
  * @return string
  *   The Transperfect locale code.
  */
-function transperfect_get_tpt_locale_code($drupal_locale) {
+function transperfect_get_locale_code($drupal_locale) {
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
           ->condition('drupal_locale_code', $drupal_locale, '=')
@@ -433,17 +447,17 @@ function transperfect_convert_date_to_timestamp($date) {
 /**
  * Checks for existence of node id from GlobalLink object.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   The GlobalLink object.
  *
  * @return
  *   True if the node exists.
  */
-function transperfect_get_nid(&$globalLink) {
-  $translated_arr = transperfect_get_content_attributes_from_xml($globalLink->targetXML);
+function transperfect_get_nid(&$globallink) {
+  $translated_arr = transperfect_get_content_attributes_from_xml($globallink->targetXML);
   if (count($translated_arr) > 0) {
-    $globalLink->nid = isset($translated_arr['nid']) ? $translated_arr['nid'] : 0;
-    $globalLink->tptRowId = isset($translated_arr['rid']) ? $translated_arr['rid'] : 0;
+    $globallink->nid = isset($translated_arr['nid']) ? $translated_arr['nid'] : 0;
+    $globallink->tptRowId = isset($translated_arr['rid']) ? $translated_arr['rid'] : 0;
     return TRUE;
   }
   return FALSE;
@@ -473,14 +487,19 @@ function transperfect_get_content_attributes_from_xml($xml) {
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
       foreach ($content->attributes as $attrName => $attrNode) {
-        if ('rid' == $attrName) {
-          $arr['rid'] = $attrNode->value;
-        }
-        if ('nid' == $attrName) {
-          $arr['nid'] = $attrNode->value;
-        }
-        elseif ('vid' == $attrName) {
-          $arr['vid'] = $attrNode->value;
+        switch ($attrName) {
+          case 'rid':
+            $arr['rid'] = $attrNode->value;
+
+            break;
+          case 'nid':
+            $arr['nid'] = $attrNode->value;
+
+            break;
+          case 'vid':
+            $arr['vid'] = $attrNode->value;
+
+            break;
         }
       }
     }
@@ -527,7 +546,7 @@ function transperfect_pager_array_splice($data, $limit = 9, $element = 0) {
  */
 function transperfect_format_display_string($string) {
   if (mb_strlen($string) > 25) {
-    return mb_substr($string, 0, 25) . "...";
+    return mb_substr($string, 0, 25) . '...';
   }
   return $string;
 }
@@ -543,8 +562,8 @@ function transperfect_format_display_string($string) {
  */
 function transperfect_format_file_name($string) {
   $bad = array_merge(
-          array_map('chr', range(0, 31)), array("<", ">", ":", '"', "/", "\\", "|", "?", "*", ";", "&", " ", "."));
-  $name = str_replace($bad, "_", utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
+          array_map('chr', range(0, 31)), array('<', '>', ':', '"', '/', '\\', '|', '?', '*', ';', '&', ' ', '.'));
+  $name = str_replace($bad, '_', utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
   if (strlen($name) > 50) {
     $name = substr($name, 0, 50);
   }
@@ -823,7 +842,7 @@ function transperfect_get_drupal_locales() {
 /**
  * @todo Document this function.
  */
-function transperfect_get_mapped_tpt_locales_with_drupal_desc($remove_default = TRUE) {
+function transperfect_get_mapped_locales_with_drupal_desc($remove_default = TRUE) {
   $languages = array();
   $result = db_select('transperfect_locale', 'tl')
           ->fields('tl')
@@ -877,7 +896,7 @@ function transperfect_drupal_search_query() {
  * @todo Document this function.
  */
 function transperfect_get_source($group) {
-  $result = db_query("SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup", array(':textgroup' => $group));
+  $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(':textgroup' => $group));
   $strings = array();
   foreach ($result as $child) {
     $string = array(
@@ -944,7 +963,7 @@ function transperfect_get_other_row($row_id, $type) {
 function transperfect_get_PD_projects() {
   $proj_arr = variable_get('transperfect_pd_projects', array());
   if (count($proj_arr) > 0) {
-    $projects = variable_get('transperfect_pd_projectid', "");
+    $projects = variable_get('transperfect_pd_projectid', '');
     if ($projects != '') {
       $arr = explode(',', $projects);
       foreach ($arr as $value) {
@@ -971,7 +990,7 @@ function transperfect_get_PD_projects() {
  * @param string $message
  *   The log message.
  */
-function transperfect_gl_log($type, $severity, $message) {
+function transperfect_log($type, $severity, $message) {
   //Always log anything with severity error and warning
   if ($severity == TPT_LOGGING_SEVERITY_ERROR || $severity == TPT_LOGGING_SEVERITY_WARNING) {
     db_insert('transperfect_log')
