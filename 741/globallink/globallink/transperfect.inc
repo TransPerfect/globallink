@@ -48,6 +48,8 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
 
         list($key, $value) = explode('-', $value, 2);
         $query->condition($key, $value, '=');
+
+        break;
       case 'node_parent':
         if ($value == 1) {
           $query->where('tnid = nid OR tnid = 0');
