@@ -141,19 +141,24 @@ function transperfect_entity_receive_filter_form() {
 
 function transperfect_entity_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_entity_receive_filter_language'] = $form_state['values']['language'];
-    $_SESSION['transperfect_entity_receive_filter_status'] = $form_state['values']['status'];
-    $_SESSION['transperfect_entity_receive_filter_submission'] = $form_state['values']['submission'];
-    $_SESSION['transperfect_globalLink_entity_arr'] = array();
-    unset($_SESSION['transperfect_globalLink_entity_arr_last_refreshed']);
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_entity_receive_filter_language'] = '';
-    $_SESSION['transperfect_entity_receive_filter_status'] = '';
-    $_SESSION['transperfect_entity_receive_filter_submission'] = '';
-    $_SESSION['transperfect_globalLink_entity_arr'] = array();
-    unset($_SESSION['transperfect_globalLink_entity_arr_last_refreshed']);
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_entity_receive_filter_language'] = $form_state['values']['language'];
+      $_SESSION['transperfect_entity_receive_filter_status'] = $form_state['values']['status'];
+      $_SESSION['transperfect_entity_receive_filter_submission'] = $form_state['values']['submission'];
+      $_SESSION['transperfect_globalLink_entity_arr'] = array();
+      unset($_SESSION['transperfect_globalLink_entity_arr_last_refreshed']);
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_entity_receive_filter_language'] = '';
+      $_SESSION['transperfect_entity_receive_filter_status'] = '';
+      $_SESSION['transperfect_entity_receive_filter_submission'] = '';
+      $_SESSION['transperfect_globalLink_entity_arr'] = array();
+      unset($_SESSION['transperfect_globalLink_entity_arr_last_refreshed']);
+
+      break;
   }
 }
 

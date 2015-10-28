@@ -103,13 +103,18 @@ function transperfect_dashboard_taxonomy_filter_form() {
 
 function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
-    $_SESSION['transperfect_selected_taxonomy_info'] = $form_state['values']['info'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_selected_taxonomy_info'] = '';
-    $_SESSION['transperfect_selected_taxonomy_vocab'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
+      $_SESSION['transperfect_selected_taxonomy_info'] = $form_state['values']['info'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_selected_taxonomy_info'] = '';
+      $_SESSION['transperfect_selected_taxonomy_vocab'] = '';
+
+      break;
   }
 }
 
@@ -299,8 +304,8 @@ function transperfect_dashboard_taxonomy_form() {
       if ($count > 0) {
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid', '');
-          if ($projects != '') {
+          $projects = variable_get('transperfect_pd_projectid');
+          if (!empty($projects)) {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
               if (isset($proj_arr[$value])) {

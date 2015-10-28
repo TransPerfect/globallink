@@ -81,30 +81,30 @@ function transperfect_dashboard_interface_filter_form() {
       );
 
       foreach ($_SESSION['transperfect_interface_filter'] as $key => $value) {
-				if (empty($value)) {
-					continue;
-				}
+        if (empty($value)) {
+          continue;
+        }
 
-				switch ($key) {
-	        case 'string':
-	          $form['filter-search']['filter-markup'][] = array(
-	              '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'String contains' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $value . '</td></tr>',
-	          );
+        switch ($key) {
+          case 'string':
+            $form['filter-search']['filter-markup'][] = array(
+                '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'String contains' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $value . '</td></tr>',
+            );
 
-						break;
-	        case 'language':
-	          $form['filter-search']['filter-markup'][] = array(
-	              '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Language' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['language']['options'][$value] . '</td></tr>',
-	          );
+            break;
+          case 'language':
+            $form['filter-search']['filter-markup'][] = array(
+                '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Language' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['language']['options'][$value] . '</td></tr>',
+            );
 
-						break;
-	        case 'translation':
-	          $form['filter-search']['filter-markup'][] = array(
-	              '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Filter in' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['translation']['options'][$value] . '</td></tr>',
-	          );
+            break;
+          case 'translation':
+            $form['filter-search']['filter-markup'][] = array(
+                '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . 'Filter in' . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $results['translation']['options'][$value] . '</td></tr>',
+            );
 
-						break;
-	      }
+            break;
+        }
       }
 
       $form['filter-search']['filter-markup'][] = array(
@@ -130,15 +130,20 @@ function transperfect_dashboard_interface_filter_form() {
 
 function transperfect_dashboard_interface_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_interface_filter']['string'] = $form_state['values']['string'];
-    $_SESSION['transperfect_interface_filter']['language'] = $form_state['values']['language'];
-    $_SESSION['transperfect_interface_filter']['translation'] = $form_state['values']['translation'];
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_interface_filter']['string'] = '';
-    $_SESSION['transperfect_interface_filter']['language'] = '';
-    $_SESSION['transperfect_interface_filter']['translation'] = '';
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_interface_filter']['string'] = $form_state['values']['string'];
+      $_SESSION['transperfect_interface_filter']['language'] = $form_state['values']['language'];
+      $_SESSION['transperfect_interface_filter']['translation'] = $form_state['values']['translation'];
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_interface_filter']['string'] = '';
+      $_SESSION['transperfect_interface_filter']['language'] = '';
+      $_SESSION['transperfect_interface_filter']['translation'] = '';
+
+      break;
   }
 }
 
@@ -348,8 +353,8 @@ function transperfect_dashboard_interface_form() {
         drupal_add_css($module_path . '/css/transperfect.css');
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid', '');
-          if ($projects != '') {
+          $projects = variable_get('transperfect_pd_projectid');
+          if (!empty($projects)) {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
               if (isset($proj_arr[$value])) {

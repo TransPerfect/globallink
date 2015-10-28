@@ -8,8 +8,8 @@ function transperfect_interface_receive_submissions($type) {
   $_SESSION['transpefect_interface_receive_type'] = $type;
   $arr = array();
   $arr[] = drupal_get_form('transperfect_interface_receive_filter_form');
-  $arr[] = drupal_get_form("transperfect_interface_receive_pager_form");
-  $arr[] = drupal_get_form("transperfect_interface_receive_form");
+  $arr[] = drupal_get_form('transperfect_interface_receive_pager_form');
+  $arr[] = drupal_get_form('transperfect_interface_receive_form');
   return $arr;
 }
 
@@ -62,14 +62,14 @@ function transperfect_interface_receive_filter_form() {
       '#attributes' => array('class' => array('container-inline')),
   );
 
-  $form['interface_receive_filter']['filters'][] = array('#markup' => "<table>");
+  $form['interface_receive_filter']['filters'][] = array('#markup' => '<table>');
 
   $form['interface_receive_filter']['filters']['language'] = array(
       '#type' => 'select', '#title' => TPT_LABEL_TARGET_LANG . ':&nbsp;&nbsp;',
       '#options' => $languages,
       '#default_value' => $default,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
@@ -80,7 +80,7 @@ function transperfect_interface_receive_filter_form() {
       '#options' => $status_arr,
       '#default_value' => $default_status,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
@@ -91,13 +91,13 @@ function transperfect_interface_receive_filter_form() {
       '#options' => $submission_options,
       '#default_value' => $default_submission,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
       '#suffix' => '</tr>',
       '#field_suffix' => '</td>',
       '#field_prefix' => '</td><td>',
   );
 
-  $form['interface_receive_filter']['filters'][] = array('#markup' => "</table>");
+  $form['interface_receive_filter']['filters'][] = array('#markup' => '</table>');
 
   $disable_submit = $filter ? TRUE : FALSE;
   $form['interface_receive_filter']['filters']['filter'] = array(
@@ -115,11 +115,11 @@ function transperfect_interface_receive_filter_form() {
     $form['filter-search']['filter-markup'] = array(
         '#type' => 'container',
     );
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<table>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_TARGET_LANG . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $languages[$default] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_STATUS . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $status_arr[$default_status] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'><b>" . TPT_LABEL_SUBMISSION . "</b>:&nbsp;</td><td style='text-align: left;width: 85%;vertical-align: middle;border: none;'>" . $submission_options[$default_submission] . "</td></tr>");
-    $form['filter-search']['filter-markup'][] = array('#markup' => "</table>");
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>');
+    $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
     $form['filter-search']['status']['actions'] = array(
         '#type' => 'actions',
         '#attributes' => array('class' => array('container-inline')),
@@ -136,19 +136,24 @@ function transperfect_interface_receive_filter_form() {
 
 function transperfect_interface_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_FILTER) {
-    $_SESSION['transperfect_interface_receive_filter_language'] = $form_state['values']['language'];
-    $_SESSION['transperfect_interface_receive_filter_status'] = $form_state['values']['status'];
-    $_SESSION['transperfect_interface_receive_filter_submission'] = $form_state['values']['submission'];
-    $_SESSION['transperfect_interface_globalLink_arr'] = array();
-    unset($_SESSION['transperfect_interface_globalLink_arr_last_refreshed']);
-  }
-  elseif ($op == TPT_BTN_DASHBOARD_RESET) {
-    $_SESSION['transperfect_interface_receive_filter_language'] = '';
-    $_SESSION['transperfect_interface_receive_filter_status'] = '';
-    $_SESSION['transperfect_interface_receive_filter_submission'] = '';
-    $_SESSION['transperfect_interface_globalLink_arr'] = array();
-    unset($_SESSION['transperfect_interface_globalLink_arr_last_refreshed']);
+
+  switch ($op) {
+    case TPT_BTN_DASHBOARD_FILTER:
+      $_SESSION['transperfect_interface_receive_filter_language'] = $form_state['values']['language'];
+      $_SESSION['transperfect_interface_receive_filter_status'] = $form_state['values']['status'];
+      $_SESSION['transperfect_interface_receive_filter_submission'] = $form_state['values']['submission'];
+      $_SESSION['transperfect_interface_globalLink_arr'] = array();
+      unset($_SESSION['transperfect_interface_globalLink_arr_last_refreshed']);
+
+      break;
+    case TPT_BTN_DASHBOARD_RESET:
+      $_SESSION['transperfect_interface_receive_filter_language'] = '';
+      $_SESSION['transperfect_interface_receive_filter_status'] = '';
+      $_SESSION['transperfect_interface_receive_filter_submission'] = '';
+      $_SESSION['transperfect_interface_globalLink_arr'] = array();
+      unset($_SESSION['transperfect_interface_globalLink_arr_last_refreshed']);
+
+      break;
   }
 }
 
@@ -206,7 +211,7 @@ function transperfect_interface_receive_form() {
     try {
       $pd4 = transperfect_get_project_director_details();
       if (transperfect_validate_project_director_details($pd4)) {
-        $_SESSION['transperfect_interface_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
+        $_SESSION['transperfect_interface_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
         $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
         if (sizeof($globallink_arr) > 0) {
           $_SESSION['transperfect_interface_globalLink_arr'] = serialize($globallink_arr);
@@ -214,11 +219,11 @@ function transperfect_interface_receive_form() {
       }
     }
     catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - transperfect_interface_receive_form - Code[$se->faultcode], Message[$se->faultstring]");
+      transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - transperfect_interface_receive_form - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - transperfect_interface_receive_form - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+      transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - transperfect_interface_receive_form - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -262,7 +267,7 @@ function transperfect_interface_receive_form() {
     $count = 1;
     $rid_arr = array();
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != "Interface") {
+      if ($globallink->type != 'Interface') {
         continue;
       }
 
@@ -367,7 +372,7 @@ function transperfect_interface_receive_form() {
       $_SESSION['transperfect_interface_globalLink_arr'] = serialize($globallink_arr);
     }
 
-    $last_refreshed = "";
+    $last_refreshed = '';
     if (isset($_SESSION['transperfect_interface_globalLink_arr_last_refreshed'])) {
       $last_refreshed = $_SESSION['transperfect_interface_globalLink_arr_last_refreshed'];
     }
@@ -431,7 +436,7 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update All - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update All - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -466,7 +471,7 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Deleted Records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Deleted Records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -501,7 +506,7 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Selected - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Selected - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -517,17 +522,17 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
         $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
-        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Receive Translations - Refresh - Code[$se->faultcode], Message[$se->faultstring]");
+        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Refresh - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+        transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Refresh - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
       if (sizeof($globallink_arr) > 0) {
         $_SESSION['transperfect_interface_globalLink_arr'] = serialize($globallink_arr);
-        $_SESSION['transperfect_interface_globalLink_arr_last_refreshed'] = date("D M j G:i:s T Y", REQUEST_TIME);
+        $_SESSION['transperfect_interface_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
       }
       else {
         $_SESSION['transperfect_interface_globalLink_arr'] = array();

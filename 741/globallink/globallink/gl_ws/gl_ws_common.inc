@@ -6,7 +6,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/DocumentService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/SubmissionService2.php');
 global $base_url;
 
-$proxy_server = variable_get('transperfect_proxy_url', '');
+$proxy_server = variable_get('transperfect_proxy_url');
 if (!empty($proxy_server)) {
   define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
 }
@@ -150,7 +150,7 @@ function cancel_select_documents($pd_obj, &$globallink_arr) {
     $cancel_target_submission = new cancelTargetByDocumentId();
     $document_ticket = new DocumentTicket();
     $document_ticket->submissionTicket = $globallink->submissionTicket;
-    $document_ticket->ticketId = $globallink->document_ticket;
+    $document_ticket->ticketId = $globallink->documentTicket;
     $cancel_target_submission->documentId = $document_ticket;
     $cancel_target_submission->targetLocale = $globallink->targetLocale;
     $cancel_target_submission->userId = $token;

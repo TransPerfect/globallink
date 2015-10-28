@@ -32,7 +32,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
   $globallink_arr = array();
   foreach ($nids as $nid) {
     list($nid, $vid) = explode('-', $nid, 2);
-    $rows = transperfect_get_sent_rows_by_nid($nid);
+    $rows = transperfect_get_sent_tpt_rows_by_nid($nid);
     $target_arr = $target_locale_arr;
     foreach ($rows as $row) {
       if (array_search($row->target, $target_locale_arr)) {
@@ -41,7 +41,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     }
 
     if (empty($target_arr)) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, "Target languages already sent. Skipping nid - [" . $nid . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, 'Target languages already sent. Skipping nid - [' . $nid . ']');
       continue;
     }
 
@@ -56,7 +56,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     }
 
     if (empty($target_arr)) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, "No target languages. Skipping nid - [" . $nid . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, 'No target languages. Skipping nid - [' . $nid . ']');
       continue;
     }
 
@@ -71,7 +71,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     $name = '.xml';
     $xml = transperfect_get_xml($node, $drupal_target_arr, $tnid, $tvid, $name);
     if (!$xml) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, "Cannot create XML. Skipping nid - [" . $nid . "]");
+      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_WARNING, 'Cannot create XML. Skipping nid - [' . $nid . ']');
       continue;
     }
 
@@ -145,7 +145,7 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
  *   Array of transperfect locale codes.
  */
 function transperfect_update_node_change_flag($nids, $source, $tgts) {
-  transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "CHANGED Status Cleared for Node Ids - [" . implode(",", $nids) . "]");
+  transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, 'CHANGED Status Cleared for Node Ids - [' . implode(',', $nids) . ']');
 
   $insert_arr = array();
   $tgt_arr = array_keys($tgts);
@@ -209,7 +209,7 @@ function transperfect_cancel_select_records($rowids, $pd4) {
   }
 
   cancel_select_documents($pd4, $globallink_arr);
-  transperfect_update_by_row_id($globallink_arr);
+  transperfect_update_row_document($globallink_arr);
 }
 
 /**
@@ -226,7 +226,7 @@ function transperfect_cancel_submission($selected_submission) {
   $globallink->submissionTicket = $selected_submission;
 
   cancel_pd_submission($pd4, $globallink);
-  transperfect_update_row_by_submission($globallink);
+  transperfect_update_row_submission($globallink);
 }
 
 /**
@@ -253,14 +253,14 @@ function transperfect_get_submission_name($submission_ticket) {
 /**
  * Updates a row document on GlobalLink.
  *
- * @param array $globalLink_arr
+ * @param array $globallink_arr
  *   Array of GlobalLink objects.
  */
-function transperfect_update_row_document(&$globalLink_arr) {
-  foreach ($globalLink_arr as $globalLink) {
-    if ($globalLink->cancelled) {
+function transperfect_update_row_document(&$globallink_arr) {
+  foreach ($globallink_arr as $globallink) {
+    if ($globallink->cancelled) {
       db_update('transperfect_core')
-              ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
+              ->fields(array('status' => TPT_STATUS_CANCELLED, 'timestamp' => REQUEST_TIME, 'changed' => 1))
               ->condition('rid', $globallink->tptRowId, '=')
               ->execute();
     }
@@ -270,12 +270,12 @@ function transperfect_update_row_document(&$globalLink_arr) {
 /**
  * Updates a submission on GlobalLink.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  */
-function transperfect_update_row_submission(&$globalLink) {
+function transperfect_update_row_submission(&$globallink) {
   db_update('transperfect_core')
-          ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME, 'changed' => 1))
+          ->fields(array('status' => TPT_STATUS_CANCELLED, 'timestamp' => REQUEST_TIME, 'changed' => 1))
           ->condition('submission_ticket', $globallink->submissionTicket, '=')
           ->condition('submission', $globallink->submissionName, '=')
           ->execute();
@@ -335,7 +335,7 @@ function transperfect_get_submission_from_nid($nid) {
  * @return int
  *   The id of the row.
  */
-function transperfect_get_tpt_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+function transperfect_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
@@ -353,24 +353,24 @@ function transperfect_get_tpt_row_id_from_submission($submission_ticket, $docume
  *
  * @param string $pd4
  *   The project director details.
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  *
  * @return bool
  *   True if the update is successful.
  */
-function transperfect_update_deleted_records($pd4, $globalLink) {
+function transperfect_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = TPT_STATUS_SOURCE_DELETED;
     send_download_confirmation($globallink->targetTicket, $pd4);
     transperfect_update_status($globallink);
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - update_deleted_records - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in update_deleted_records - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in update_deleted_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -382,13 +382,13 @@ function transperfect_update_deleted_records($pd4, $globalLink) {
  *
  * @param string $pd4
  *   The project director details.
- * @param array $globalLink_arr
+ * @param array $globallink_arr
  *   Array of GlobalLink objects.
  *
  * @return int
  *   Number of rows translated.
  */
-function transperfect_get_translated_content($pd4, &$globalLink_arr) {
+function transperfect_get_translated_content($pd4, &$globallink_arr) {
   try {
     $count = 0;
     foreach ($globallink_arr as $globallink) {
@@ -409,11 +409,11 @@ function transperfect_get_translated_content($pd4, &$globalLink_arr) {
     }
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "SOAP Exception in Sending Download Confirmation - get_translated_content - Code[$se->faultcode], Message[$se->faultstring]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - get_translated_content - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in get_translated_content - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in get_translated_content - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -423,67 +423,73 @@ function transperfect_get_translated_content($pd4, &$globalLink_arr) {
 /**
  * Updates the translation status.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   The GlobalLink translation data.
  */
-function transperfect_update_tpt_status(&$globalLink) {
-  if ($globalLink->status != TPT_STATUS_SOURCE_DELETED && $globalLink->status != TPT_STATUS_ERROR) {
-    $row = transperfect_get_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
-    $node = node_load($row->nid);
-    if ($node->vid != $row->vid) {
+function transperfect_update_status(&$globallink) {
+  switch ($globallink->status) {
+    case TPT_STATUS_SOURCE_DELETED:
+      $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+
       db_update('transperfect_core')
-              ->fields(array(
-                  'vid' => $node->vid,
-                  'title' => $node->title,
-                  'status' => TPT_STATUS_PENDING_TRANSLATIONS,
-                  'timestamp' => REQUEST_TIME
-                      )
-              )
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-    else {
+      ->fields(array(
+        'status' => TPT_STATUS_SOURCE_DELETED,
+        'document_ticket' => '',
+        'submission_ticket' => '',
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
+    case TPT_STATUS_ERROR:
+      $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+
       db_update('transperfect_core')
-              ->fields(array('status' => TPT_STATUS_PENDING_TRANSLATIONS, 'timestamp' => REQUEST_TIME))
-              ->condition('rid', $row->rid, '=')
-              ->execute();
-    }
-  }
-  elseif ($globallink->status == TPT_STATUS_SOURCE_DELETED) {
-    $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core')
-            ->fields(array(
-                'status' => TPT_STATUS_SOURCE_DELETED,
-                'document_ticket' => '',
-                'submission_ticket' => '',
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
-  }
-  elseif ($globallink->status == TPT_STATUS_ERROR) {
-    $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
-    db_update('transperfect_core')
-            ->fields(array(
-                'status' => TPT_STATUS_ERROR,
-                'timestamp' => REQUEST_TIME,
-                    )
-            )
-            ->condition('rid', $row->rid, '=')
-            ->execute();
+      ->fields(array(
+        'status' => TPT_STATUS_ERROR,
+        'timestamp' => REQUEST_TIME,
+      ))
+      ->condition('rid', $row->rid, '=')
+      ->execute();
+
+      break;
+    default:
+      $row = transperfect_get_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
+      $node = node_load($row->nid);
+
+      if ($node->vid != $row->vid) {
+        db_update('transperfect_core')
+        ->fields(array(
+          'vid' => $node->vid,
+          'title' => $node->title,
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
+      else {
+        db_update('transperfect_core')
+        ->fields(array(
+          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'timestamp' => REQUEST_TIME,
+        ))
+        ->condition('rid', $row->rid, '=')
+        ->execute();
+      }
   }
 }
 
 /**
  * Updates node.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  * @param array $t_arr
  *   The translated array. Defaults to null.
  */
-function transperfect_update_node(&$globalLink, $t_arr = NULL) {
+function transperfect_update_node(&$globallink, $t_arr = NULL) {
   $success = FALSE;
   try {
     $default_language = language_default();
@@ -557,9 +563,9 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
         // Fix for menu link issue
         // node_object_prepare($new_node);
 
-        $nodepath = drupal_lookup_path('alias', "node/" . $node->nid);
+        $nodepath = drupal_lookup_path('alias', 'node/' . $node->nid);
         // Get the path object of the tnode, so that we can get the pid
-        $path = path_load("node/" . $_tnode->nid);
+        $path = path_load('node/' . $_tnode->nid);
         if ($nodepath === FALSE) {
           // Just leave empty for now
         }
@@ -584,11 +590,8 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
           }
         }
 
-        if ($publish_node == 0) {
-          $new_node->status = 0;
-        }
-        elseif ($publish_node == 1) {
-          $new_node->status = 1;
+        if ($publish_node == 0 || $publish_node == 1) {
+          $new_node->status = $publish_node;
         }
         else {
           $new_node->status = $node->status;
@@ -704,7 +707,7 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
         $new_node->tnid = $tnid;
       }
 
-      $nodepath = drupal_lookup_path('alias', "node/" . $node->nid);
+      $nodepath = drupal_lookup_path('alias', 'node/' . $node->nid);
 
       if ($nodepath === FALSE) {
         // Just leave empty for now
@@ -718,11 +721,8 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
         }
       }
 
-      if ($publish_node == 0) {
-        $new_node->status = 0;
-      }
-      elseif ($publish_node == 1) {
-        $new_node->status = 1;
+      if ($publish_node == 0 || $publish_node == 1) {
+        $new_node->status = $publish_node;
       }
       else {
         $new_node->status = $node->status;
@@ -735,7 +735,7 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
 
       $lang = transperfect_get_drupal_locale_code($globallink->targetLocale);
       if ($lang == '') {
-        throw new Exception("Locale Mapping not found.");
+        throw new Exception('Locale Mapping not found.');
       }
       $new_node->language = $lang;
 
@@ -824,7 +824,7 @@ function transperfect_update_node(&$globalLink, $t_arr = NULL) {
   }
   catch (Exception $e) {
     $globallink->status = TPT_STATUS_ERROR;
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in Receive Translations - Update Node - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations - Update Node - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
   }
 }
 
@@ -852,14 +852,19 @@ function transperfect_get_translated_array($xml) {
   foreach ($contents as $content) {
     if (!is_null($content->attributes)) {
       foreach ($content->attributes as $attr_name => $attr_node) {
-        if ($attr_name == 'rid') {
-          $arr['rid'] = $attr_node->value;
-        }
-        if ($attr_name == 'nid') {
-          $arr['nid'] = $attr_node->value;
-        }
-        elseif ($attr_name == 'vid') {
-          $arr['vid'] = $attr_node->value;
+        switch ($attr_name) {
+          case 'rid':
+            $arr['rid'] = $attr_node->value;
+
+            break;
+          case 'nid':
+            $arr['nid'] = $attr_node->value;
+
+            break;
+          case 'vid':
+            $arr['vid'] = $attr_node->value;
+
+            break;
         }
       }
     }
@@ -1110,7 +1115,7 @@ function transperfect_node_save(&$node) {
     return TRUE;
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Error in creating a translated node - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Error in creating a translated node - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     return FALSE;
   }
 }
@@ -1209,7 +1214,7 @@ function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
 
   $success = transperfect_node_save($tnode);
   if ($success) {
-    if (module_exists("field_collection") && isset($t_arr['field_collection'])) {
+    if (module_exists('field_collection') && isset($t_arr['field_collection'])) {
       transperfect_save_field_collections($node, $tnode, $t_arr);
     }
   }
@@ -1274,37 +1279,45 @@ function transperfect_save_field_collections_recursively($entity_type, $host_ent
     // Check if this key exists; If true then read this.
     $fc_field_def = field_read_field($key);
     if ($fc_field_def && !empty($fc_field_def) && isset($fc_field_def['type'])) {
-      if ($fc_field_def['type'] != 'list_boolean' && $fc_field_def['type'] != 'file' && $fc_field_def['type'] != 'taxonomy_term_reference' && $fc_field_def['type'] != 'field_collection') {
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
-          $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
-          foreach ($field_data_arr as $delta => $field_data) {
-            if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][LANGUAGE_NONE][$delta])) {
-              $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][LANGUAGE_NONE][$delta];
-              if (is_object($gl_obj)) {
-                $translated_content = $gl_obj->translatedContent;
+      switch ($fc_field_def['type']) {
+        case 'list_boolean':
+        case 'file':
+        case 'taxonomy_term_reference':
+          continue 2;
+
+          break;
+        case 'field_collection':
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
+            $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
+            $new_field_collection_arr[$key][LANGUAGE_NONE] = $field_data_arr;
+          }
+
+          break;
+        default:
+          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
+            $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
+            foreach ($field_data_arr as $delta => $field_data) {
+              if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][LANGUAGE_NONE][$delta])) {
+                $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][LANGUAGE_NONE][$delta];
+                if (is_object($gl_obj)) {
+                  $translated_content = $gl_obj->translatedContent;
+                }
+                else {
+                  $translated_content = $gl_obj;
+                }
+                if (isset($field_data['format'])) {
+                  $format = $field_data['format'];
+                  $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array('value' => $translated_content, 'format' => $format);
+                }
+                else {
+                  $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array('value' => $translated_content);
+                }
               }
               else {
-                $translated_content = $gl_obj;
+                $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = $field_data;
               }
-              if (isset($field_data['format'])) {
-                $format = $field_data['format'];
-                $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array('value' => $translated_content, 'format' => $format);
-              }
-              else {
-                $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array('value' => $translated_content);
-              }
-            }
-            else {
-              $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = $field_data;
             }
           }
-        }
-      }
-      elseif ($fc_field_def['type'] != 'field_collection') {
-        if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
-          $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
-          $new_field_collection_arr[$key][LANGUAGE_NONE] = $field_data_arr;
-        }
       }
     }
   }
@@ -1406,7 +1419,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
     $dom = new DOMDocument('1.0', 'UTF-8');
     $dom->formatOutput = TRUE;
 
-    $root = $dom->createElement("content");
+    $root = $dom->createElement('content');
     $nid = $dom->createAttribute('nid');
     if ($tnid != NULL) {
       $nid->value = $tnid;
@@ -1437,20 +1450,20 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
     $dom->appendChild($root);
 
     if ($for_display) {
-      transperfect_insert_child_element($dom, $root, "title", $node->title);
+      transperfect_insert_child_element($dom, $root, 'title', $node->title);
     }
     elseif (transperfect_is_field_configured_for_translation('node', $node->type, 'title', $node->type) && $is_hook_enabled == 0) {
-      transperfect_insert_child_element($dom, $root, "title", $node->title);
+      transperfect_insert_child_element($dom, $root, 'title', $node->title);
     }
     elseif ($is_hook_enabled == 1) {
-      if (transperfect_is_field_translatable($node, 'title', $target_arr)) {
-        transperfect_insert_child_element($dom, $root, "title", $node->title);
+      if (transperfect_tpt_is_field_translatable($node, 'title', $target_arr)) {
+        transperfect_insert_child_element($dom, $root, 'title', $node->title);
       }
     }
 
     $path = path_load('node/' . $node->nid);
     if (!empty($path)) {
-      transperfect_insert_child_element($dom, $root, "path", $path['alias']);
+      transperfect_insert_child_element($dom, $root, 'path', $path['alias']);
     }
 
     $field_arr = field_info_instances('node', $node->type);
@@ -1471,14 +1484,14 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       }
     }
 
-    if (module_exists("metatag")) {
+    if (module_exists('metatag')) {
       if (isset($node->metatags)) {
         if ($for_display) {
           if (!empty($node->metatags[$node->language])) {
             $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
             foreach ($metatags as $name => $value) {
               if (isset($value['value'])) {
-                transperfect_insert_child_element($dom, $root, "metatag", $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+                transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
               }
             }
           }
@@ -1488,7 +1501,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
             $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
             foreach ($metatags as $name => $value) {
               if (isset($value['value'])) {
-                transperfect_insert_child_element($dom, $root, "metatag", $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+                transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
               }
             }
           }
@@ -1497,7 +1510,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
     }
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, "Exception in creating XML - File[" . $e->getFile() . "], Line[" . $e->getLine() . "], Code[" . $e->getCode() . "], Message[" . $e->getMessage() . "]");
+    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in creating XML - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     throw $e;
   }
 
@@ -1554,7 +1567,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               $f_label = field_info_instance($entity_type, $field, $bundle);
               $f_value = $item['value'];
               $f_format = (isset($item['format']) && !is_null($item['format'])) ? $item['format'] : '';
-              transperfect_insert_child_element($dom, $root, "field", $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
+              transperfect_insert_child_element($dom, $root, 'field', $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
                   'parent_fc' => $parent_fc, 'bundle' => $bundle, 'entity_id' => $entity_id, 'field_name' => $field,
                   'label' => $f_label['label'], 'delta' => $delta, 'format' => $f_format, 'langcode' => $langcode));
             }
@@ -1562,7 +1575,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               $f_label = field_info_instance($entity_type, $field, $bundle);
               $f_value = $item['title'];
               $f_format = (isset($item['format']) && !is_null($item['format'])) ? $item['format'] : '';
-              transperfect_insert_child_element($dom, $root, "field", $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
+              transperfect_insert_child_element($dom, $root, 'field', $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
                   'parent_fc' => $parent_fc, 'bundle' => $bundle, 'entity_id' => $entity_id, 'field_name' => $field,
                   'label' => $f_label['label'], 'delta' => $delta, 'format' => $f_format, 'langcode' => $langcode));
             }
@@ -1570,11 +1583,11 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               $f_label = field_info_instance($entity_type, $field, $bundle);
               if (isset($item['alt'])) {
                 $f_value = $item['alt'];
-                transperfect_insert_child_element($dom, $root, "field_image", $f_value, array('field_name' => $field, 'type' => 'alt', 'delta' => $delta));
+                transperfect_insert_child_element($dom, $root, 'field_image', $f_value, array('field_name' => $field, 'type' => 'alt', 'delta' => $delta));
               }
               if (isset($item['title'])) {
                 $f_value = $item['title'];
-                transperfect_insert_child_element($dom, $root, "field_image", $f_value, array('field_name' => $field, 'type' => 'title', 'delta' => $delta));
+                transperfect_insert_child_element($dom, $root, 'field_image', $f_value, array('field_name' => $field, 'type' => 'title', 'delta' => $delta));
               }
             }
           }
@@ -1588,7 +1601,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               $f_label = field_info_instance($entity_type, $field, $bundle);
               $f_value = $item['value'];
               $f_format = (isset($item['format']) && !is_null($item['format'])) ? $item['format'] : '';
-              transperfect_insert_child_element($dom, $root, "field", $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
+              transperfect_insert_child_element($dom, $root, 'field', $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
                   'parent_fc' => $parent_fc, 'bundle' => $bundle, 'entity_id' => $entity_id, 'field_name' => $field,
                   'label' => $f_label['label'], 'delta' => $delta, 'format' => $f_format, 'langcode' => $langcode));
             }
@@ -1596,7 +1609,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               $f_label = field_info_instance($entity_type, $field, $bundle);
               $f_value = $item['title'];
               $f_format = (isset($item['format']) && !is_null($item['format'])) ? $item['format'] : '';
-              transperfect_insert_child_element($dom, $root, "field", $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
+              transperfect_insert_child_element($dom, $root, 'field', $f_value, array('entity_type' => $entity_type, 'content_type' => $content_type,
                   'parent_fc' => $parent_fc, 'bundle' => $bundle, 'entity_id' => $entity_id, 'field_name' => $field,
                   'label' => $f_label['label'], 'delta' => $delta, 'format' => $f_format, 'langcode' => $langcode));
             }
@@ -1604,7 +1617,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
         }
       }
     }
-    elseif (module_exists("field_collection")) {
+    elseif (module_exists('field_collection')) {
       // Field Collection field, read the entity id from item and load
       // Entity object and then do recursion for nested field collections.
       foreach ($items as $entity_id_arr) {
@@ -1645,13 +1658,13 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
 /**
  * Gets node title.
  *
- * @param object $globalLink
+ * @param object $globallink
  *   A GlobalLink object.
  *
  * @return string
  *   The title of the node.
  */
-function transperfect_get_node_title(&$globalLink) {
+function transperfect_get_node_title(&$globallink) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
           ->condition('document_ticket', $globallink->documentTicket, '=')
@@ -1664,10 +1677,18 @@ function transperfect_get_node_title(&$globalLink) {
     $globallink->vid = $item->vid;
     $globallink->tptRowId = $item->rid;
     $globallink->title = $item->title;
-    if ($item->status == TPT_STATUS_SENT_FOR_TRANSLATIONS)
-      $globallink->status = TPT_STATUS_COMPLETED;
-    elseif ($item->status == TPT_STATUS_ERROR)
-      $globallink->status = TPT_STATUS_ERROR;
+
+    switch ($item->status) {
+      case TPT_STATUS_SENT_FOR_TRANSLATIONS:
+        $globallink->status = TPT_STATUS_COMPLETED;
+
+        break;
+      case TPT_STATUS_ERROR:
+        $globallink->status = TPT_STATUS_ERROR;
+
+        break;
+    }
+
     if (!$node || is_null($node) || !is_object($node)) {
       return FALSE;
     }
@@ -1735,7 +1756,7 @@ function transperfect_get_submission_status() {
  * @return array
  *   An array of row ids.
  */
-function transperfect_check_tpt_status($rids_arr) {
+function transperfect_check_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core', 'tc')
           ->fields('tc', array('rid'))
