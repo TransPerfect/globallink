@@ -1456,7 +1456,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       transperfect_insert_child_element($dom, $root, 'title', $node->title);
     }
     elseif ($is_hook_enabled == 1) {
-      if (transperfect_is_field_translatable($node, 'title', $target_arr)) {
+      if (transperfect_tpt_is_field_translatable($node, 'title', $target_arr)) {
         transperfect_insert_child_element($dom, $root, 'title', $node->title);
       }
     }
@@ -1484,27 +1484,25 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       }
     }
 
-    if (!module_exists('metatag')) {
-      return;
-    }
-
-    if (isset($node->metatags)) {
-      if ($for_display) {
-        if (!empty($node->metatags[$node->language])) {
-          $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
-          foreach ($metatags as $name => $value) {
-            if (isset($value['value'])) {
-              transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+    if (module_exists('metatag')) {
+      if (isset($node->metatags)) {
+        if ($for_display) {
+          if (!empty($node->metatags[$node->language])) {
+            $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
+            foreach ($metatags as $name => $value) {
+              if (isset($value['value'])) {
+                transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+              }
             }
           }
         }
-      }
-      elseif (transperfect_is_field_configured_for_translation('node', $node->type, 'metatags', $node->type)) {
-        if (!empty($node->metatags[$node->language])) {
-          $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
-          foreach ($metatags as $name => $value) {
-            if (isset($value['value'])) {
-              transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+        elseif (transperfect_is_field_configured_for_translation('node', $node->type, 'metatags', $node->type)) {
+          if (!empty($node->metatags[$node->language])) {
+            $metatags = $node->metatags[$node->language]; // langage of the node to access the metatags
+            foreach ($metatags as $name => $value) {
+              if (isset($value['value'])) {
+                transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array('entity_type' => 'node', 'name' => $name, 'label' => 'Metatag - ' . ucwords($name)));
+              }
             }
           }
         }
