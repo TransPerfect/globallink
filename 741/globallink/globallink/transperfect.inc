@@ -292,7 +292,7 @@ function transperfect_get_drupal_locale_name($tpt_locale_code) {
  * @return array
  *   Array of TPT rows.
  */
-function transperfect_get_sent_tpt_rows_by_nid($nid) {
+function transperfect_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
           ->condition('nid', $nid, '=')

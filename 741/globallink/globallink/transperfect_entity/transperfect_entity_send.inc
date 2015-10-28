@@ -226,8 +226,9 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
           list($type, $value) = $filter;
           $selected_arr[$type] = $value;
           $label = '';
-          if ($type == 'node_parent')
+          if ($type == 'node_parent') {
             continue;
+          }
 
           if (isset($filters[$type]['options'])) {
             $label = $filters[$type]['options'][$value];
