@@ -546,10 +546,16 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   }
 }
 
-function transperfect_receive_translated_contents_automatically($cron_type) {
-  drupal_set_time_limit(0); // set it so your cron wont time out if it takes a long time to process
-  transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, 'Cron Started by ' . $cron_type);
-
+/**
+ * Automatically receives the translated contents.
+ *
+ * @param string $cron_type
+ *   The type of cron job.
+ */
+function transperfect_auto_receive($cron_type) {
+  drupal_set_time_limit(0); //set it so your cron wont time out if it takes a long time to process
+  transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
+  
   try {
     $pd4 = transperfect_get_project_director_details();
     $all_target_arr = get_all_ready_translations_details_from_pd($pd4);
