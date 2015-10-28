@@ -34,7 +34,7 @@ function send_interface_for_translations($lids, $pd4, $submission_name, $due_dat
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
     $globallink->otherObjectId = $lid;
-    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
     $globallink_arr[] = $globallink;
   }
 

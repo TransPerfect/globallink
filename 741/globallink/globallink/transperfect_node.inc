@@ -89,7 +89,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     $globallink->sourceFileName = $name;
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
-    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
     $globallink_arr[] = $globallink;
   }
 
@@ -1456,7 +1456,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       transperfect_insert_child_element($dom, $root, 'title', $node->title);
     }
     elseif ($is_hook_enabled == 1) {
-      if (transperfect_is_field_translatable($node, 'title', $target_arr)) {
+      if (transperfect_tpt_is_field_translatable($node, 'title', $target_arr)) {
         transperfect_insert_child_element($dom, $root, 'title', $node->title);
       }
     }

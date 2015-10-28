@@ -59,7 +59,7 @@ function transperfect_entity_active_select_form() {
 function transperfect_entity_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
-  };
+  }
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 

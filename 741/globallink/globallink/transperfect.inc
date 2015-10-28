@@ -292,7 +292,7 @@ function transperfect_get_drupal_locale_name($tpt_locale_code) {
  * @return array
  *   Array of TPT rows.
  */
-function transperfect_get_sent_tpt_rows_by_nid($nid) {
+function transperfect_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core', 'tc')
           ->fields('tc')
           ->condition('nid', $nid, '=')
@@ -963,8 +963,8 @@ function transperfect_get_other_row($row_id, $type) {
 function transperfect_get_PD_projects() {
   $proj_arr = variable_get('transperfect_pd_projects', array());
   if (count($proj_arr) > 0) {
-    $projects = variable_get('transperfect_pd_projectid', '');
-    if ($projects != '') {
+    $projects = variable_get('transperfect_pd_projectid');
+    if (!empty($projects)) {
       $arr = explode(',', $projects);
       foreach ($arr as $value) {
         if (isset($proj_arr[$value])) {

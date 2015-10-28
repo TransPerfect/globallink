@@ -6,7 +6,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/DocumentService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/SubmissionService2.php');
 global $base_url;
 
-$proxy_server = variable_get('transperfect_proxy_url', '');
+$proxy_server = variable_get('transperfect_proxy_url');
 if (!empty($proxy_server)) {
   define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
 }
