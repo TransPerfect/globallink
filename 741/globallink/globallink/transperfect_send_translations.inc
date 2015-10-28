@@ -997,7 +997,7 @@ function transperfect_dashboard_node_form_validate($form, &$form_state) {
             if ($node->tnid != 0 && $node->tnid != $node->nid) {
               $nid = $node->tnid;
             }
-            $rows = transperfect_get_sent_tpt_rows_by_nid($nid);
+            $rows = transperfect_get_sent_rows_by_nid($nid);
             foreach ($rows as $row) {
               if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
                 $message = TRUE;
