@@ -32,7 +32,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
   $globallink_arr = array();
   foreach ($nids as $nid) {
     list($nid, $vid) = explode('-', $nid, 2);
-    $rows = transperfect_get_sent_tpt_rows_by_nid($nid);
+    $rows = transperfect_get_sent_rows_by_nid($nid);
     $target_arr = $target_locale_arr;
     foreach ($rows as $row) {
       if (array_search($row->target, $target_locale_arr)) {
