@@ -688,7 +688,7 @@ function transperfect_node_type_update($info) {
  *   The node content type.
  */
 function transperfect_insert_all_fields($content_type) {
-  $p_arr = get_pending_fields($content_type);
+  $p_arr = transperfect_get_pending_fields($content_type);
   $f_keys = array_keys($p_arr);
 
   foreach ($f_keys as $f_key) {
