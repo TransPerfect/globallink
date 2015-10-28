@@ -763,7 +763,7 @@ function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
 
     if ($entity_type != 'field_collection_item') {
       if (transperfect_translation_supported($bundle_name)) {
-        $translatable = is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
+        $translatable = transperfect_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
         $label = t('GlobalLink Translation');
         $title = t('This field can be translated using Translations.com translation services.');
 
