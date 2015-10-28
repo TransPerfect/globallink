@@ -89,7 +89,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     $globallink->sourceFileName = $name;
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
-    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
     $globallink_arr[] = $globallink;
   }
 

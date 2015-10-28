@@ -359,8 +359,8 @@ function transperfect_dashboard_webform_form() {
         drupal_add_css($module_path . '/css/transperfect.css');
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid', '');
-          if ($projects != '') {
+          $projects = variable_get('transperfect_pd_projectid');
+          if (!empty($projects)) {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
               if (isset($proj_arr[$value])) {
