@@ -978,70 +978,76 @@ function transperfect_node_presave($node) {
 function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
   $node_check = variable_get('transperfect_implementation_type', 0);
 
-  if ($root_path == 'node/%/translate') {
-    if ((preg_match("!^node/(\d+)(/.+|)$!", $router_item['href'], $matches)) && ($node = node_load((int) $matches[1]))) {
-      $nid = $node->tnid;
+  if ($root_path != 'node/%/translate') {
+    return;
+  }
 
-      if ($node->tnid == 0) {
-        $nid = $node->nid;
-      }
+  if (!preg_match("!^node/(\d+)(/.+|)$!", $router_item['href'], $matches)) {
+    return;
+  }
 
-      if (translation_supported_type($node->type)) {
-        $send_link = transperfect_get_root_menu('transperfect-translations/dashboard');
-        $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions');
-      }
-      elseif (entity_translation_node_supported_type($node->type)) {
-        $send_link = transperfect_get_root_menu('transperfect-translations/dashboard/entity');
-        $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
-      }
-      else {
+  if ($node = node_load((int) $matches[1])) {
+    $nid = $node->tnid;
+
+    if ($node->tnid == 0) {
+      $nid = $node->nid;
+    }
+
+    if (translation_supported_type($node->type)) {
+      $send_link = transperfect_get_root_menu('transperfect-translations/dashboard');
+      $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions');
+    }
+    elseif (entity_translation_node_supported_type($node->type)) {
+      $send_link = transperfect_get_root_menu('transperfect-translations/dashboard/entity');
+      $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
+    }
+    else {
+      return;
+    }
+
+    if ($node_check == 1) {
+      if (!transperfect_tpt_is_node_translatable(node_load($nid))) {
         return;
       }
+    }
 
-      if ($node_check == 1) {
-        if (!transperfect_tpt_is_node_translatable(node_load($nid))) {
-          return;
-        }
-      }
+    $pending = TRUE;
+    $source = language_default()->language;
+    $t_nodes = translation_node_get_translations($nid);
 
-      $pending = TRUE;
-      $source = language_default()->language;
-      $t_nodes = translation_node_get_translations($nid);
+    if (count($t_nodes) > 0) {
+      if (isset($t_nodes[$source])) {
+        unset($t_nodes[$source]);
+        $langs = language_list();
+        unset($langs[$source]);
 
-      if (count($t_nodes) > 0) {
-        if (isset($t_nodes[$source])) {
-          unset($t_nodes[$source]);
-          $langs = language_list();
-          unset($langs[$source]);
+        if (count($langs) > 0) {
+          $tgt_arr = transperfect_get_tpt_sent_rows($nid, $source);
+          $tpt_count = count($tgt_arr);
 
-          if (count($langs) > 0) {
-            $tgt_arr = transperfect_get_tpt_sent_rows($nid, $source);
-            $tpt_count = count($tgt_arr);
-
-            if ($tpt_count > 0 && $tpt_count == count($langs)) {
-              $pending = FALSE;
-            }
+          if ($tpt_count > 0 && $tpt_count == count($langs)) {
+            $pending = FALSE;
           }
         }
       }
+    }
 
-      $data['actions']['output']['transperfect'] = array(
-        '#theme' => 'menu_local_action',
-        '#link' => array(),
-      );
+    $data['actions']['output']['transperfect'] = array(
+      '#theme' => 'menu_local_action',
+      '#link' => array(),
+    );
 
-      if ($pending) {
-        if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSALTIONS)) {
-          $data['actions']['output']['transperfect']['#link']['title'] = t('Send for translation');
-          $data['actions']['output']['transperfect']['#link']['href'] = $send_link;
-          $data['actions']['output']['transperfect']['#link']['localized_options'] = array('query' => array('rnid' => $nid));
-        }
-      }
-      else {
-        $data['actions']['output']['transperfect']['#link']['title'] = t('This content has been sent out for translation.');
-        $data['actions']['output']['transperfect']['#link']['href'] = $active_link;
+    if ($pending) {
+      if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSALTIONS)) {
+        $data['actions']['output']['transperfect']['#link']['title'] = t('Send for translation');
+        $data['actions']['output']['transperfect']['#link']['href'] = $send_link;
         $data['actions']['output']['transperfect']['#link']['localized_options'] = array('query' => array('rnid' => $nid));
       }
+    }
+    else {
+      $data['actions']['output']['transperfect']['#link']['title'] = t('This content has been sent out for translation.');
+      $data['actions']['output']['transperfect']['#link']['href'] = $active_link;
+      $data['actions']['output']['transperfect']['#link']['localized_options'] = array('query' => array('rnid' => $nid));
     }
   }
 }
