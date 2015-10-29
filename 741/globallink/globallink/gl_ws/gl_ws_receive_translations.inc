@@ -43,7 +43,7 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = @getCompletedTargetsByProjects($target_service, $proj_ticket_arr, $token, $pd_obj);
+    $targets = @get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
     $count = 1;
     if (is_array($targets)) {
       foreach ($targets as $target) {
