@@ -685,31 +685,32 @@ function transperfect_node_type_update($info) {
     return;
   }
 
-  if (count(transperfect_get_translatable_fields($info->old_type)) > 0) {
-    if (transperfect_translation_supported($info->type)) {
-      db_update('transperfect_field_config')
-      ->fields(array('content_type' => $info->orig_type))
-      ->condition('content_type', $info->old_type, '=')
-      ->execute();
-
-      db_update('transperfect_field_config')
-      ->fields(array('bundle' => $info->orig_type))
-      ->condition('bundle', $info->old_type, '=')
-      ->execute();
-
-      db_update('transperfect_core')
-      ->fields(array('type' => $info->orig_type))
-      ->condition('type', $info->old_type, '=')
-      ->execute();
-    }
-    else {
-      delete_field_configs($info->type);
-    }
-  }
-  else {
+  if (count(transperfect_get_translatable_fields($info->old_type)) <= 0) {
     if (transperfect_translation_supported($info->type)) {
       transperfect_insert_all_fields($info->type);
     }
+
+    return;
+  }
+
+  if (transperfect_translation_supported($info->type)) {
+    db_update('transperfect_field_config')
+    ->fields(array('content_type' => $info->orig_type))
+    ->condition('content_type', $info->old_type, '=')
+    ->execute();
+
+    db_update('transperfect_field_config')
+    ->fields(array('bundle' => $info->orig_type))
+    ->condition('bundle', $info->old_type, '=')
+    ->execute();
+
+    db_update('transperfect_core')
+    ->fields(array('type' => $info->orig_type))
+    ->condition('type', $info->old_type, '=')
+    ->execute();
+  }
+  else {
+    delete_field_configs($info->type);
   }
 }
 

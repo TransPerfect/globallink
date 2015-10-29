@@ -850,13 +850,12 @@ function save_entity_field_collections_recursively($entity_type, $host_entity, $
               }
 
               $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
-              
+
               if (isset($field_data['format'])) {
                 $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
               }
             }
           }
-        }
       }
     }
   }
