@@ -693,25 +693,26 @@ function transperfect_node_type_update($info) {
     return;
   }
 
-  if (transperfect_translation_supported($info->type)) {
-    db_update('transperfect_field_config')
-    ->fields(array('content_type' => $info->orig_type))
-    ->condition('content_type', $info->old_type, '=')
-    ->execute();
-
-    db_update('transperfect_field_config')
-    ->fields(array('bundle' => $info->orig_type))
-    ->condition('bundle', $info->old_type, '=')
-    ->execute();
-
-    db_update('transperfect_core')
-    ->fields(array('type' => $info->orig_type))
-    ->condition('type', $info->old_type, '=')
-    ->execute();
-  }
-  else {
+  if (!transperfect_translation_supported($info->type)) {
     delete_field_configs($info->type);
+
+    return;
   }
+
+  db_update('transperfect_field_config')
+  ->fields(array('content_type' => $info->orig_type))
+  ->condition('content_type', $info->old_type, '=')
+  ->execute();
+
+  db_update('transperfect_field_config')
+  ->fields(array('bundle' => $info->orig_type))
+  ->condition('bundle', $info->old_type, '=')
+  ->execute();
+
+  db_update('transperfect_core')
+  ->fields(array('type' => $info->orig_type))
+  ->condition('type', $info->old_type, '=')
+  ->execute();
 }
 
 /**
@@ -909,66 +910,62 @@ function transperfect_node_presave($node) {
       continue;
     }
 
-    if (isset($node->$field_name) && isset($orig->$field_name)) {
-      $o_arr = $orig->$field_name;
-      $n_arr = $node->$field_name;
+    if (!isset($node->$field_name) || !isset($orig->$field_name)) {
+      transperfect_update_change_detection($node, $lang);
 
-      if (isset($o_arr) && isset($n_arr) && count($o_arr) == count($n_arr)) {
-        if (is_array($o_arr) && is_array($n_arr)) {
-          if (isset($o_arr) && isset($o_arr[$lang]) && count($o_arr[$lang]) == count($n_arr)) {
-            if (isset($o_arr[$lang]) && isset($n_arr[$lang])) {
-              if (count($o_arr[$lang]) == count($n_arr[$lang])) {
-                foreach ($o_arr[$lang] as $delta => $n_field) {
-                  if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
-                    if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
-                      transperfect_update_change_detection($node, $lang);
+      break;
+    }
 
-                      break 2;
-                    }
-                  }
-                  else {
-                    transperfect_update_change_detection($node, $lang);
+    $o_arr = $orig->$field_name;
+    $n_arr = $node->$field_name;
 
-                    break 2;
-                  }
-                }
-              }
-              else {
-                transperfect_update_change_detection($node, $lang);
+    if (!isset($o_arr) || !isset($n_arr) || count($o_arr) != count($n_arr)) {
+      transperfect_update_change_detection($node, $lang);
 
-                break;
-              }
-            }
-            else {
-              transperfect_update_change_detection($node, $lang);
+      break;
+    }
 
-              break;
-            }
-          }
-          else {
-            transperfect_update_change_detection($node, $lang);
+    if (!is_array($o_arr) || !is_array($n_arr)) {
+      if ($o_arr != $n_arr) {
+        transperfect_update_change_detection($node, $lang);
 
-            break;
-          }
-        }
-        else {
-          if ($o_arr != $n_arr) {
-            transperfect_update_change_detection($node, $lang);
+        break;
+      }
 
-            break;
-          }
+      continue;
+    }
+
+    if (!isset($o_arr) || !isset($o_arr[$lang]) || count($o_arr[$lang]) != count($n_arr)) {
+      transperfect_update_change_detection($node, $lang);
+
+      break;
+    }
+
+    if (!isset($o_arr[$lang]) || !isset($n_arr[$lang])) {
+      transperfect_update_change_detection($node, $lang);
+
+      break;
+    }
+
+    if (count($o_arr[$lang]) != count($n_arr[$lang])) {
+      transperfect_update_change_detection($node, $lang);
+
+      break;
+    }
+
+    foreach ($o_arr[$lang] as $delta => $n_field) {
+      if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
+        if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
+          transperfect_update_change_detection($node, $lang);
+
+          break 2;
         }
       }
       else {
         transperfect_update_change_detection($node, $lang);
 
-        break;
+        break 2;
       }
-    }
-    else {
-      transperfect_update_change_detection($node, $lang);
-
-      break;
     }
   }
 }
