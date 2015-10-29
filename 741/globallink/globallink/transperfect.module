@@ -685,7 +685,7 @@ function transperfect_node_type_update($info) {
     return;
   }
 
-  if (count(transperfect_get_translatable_fields($info->old_type)) <= 0) {
+  if (count(transperfect_get_translatable_fields($info->old_type)) == 0) {
     if (transperfect_translation_supported($info->type)) {
       transperfect_insert_all_fields($info->type);
     }
@@ -1068,7 +1068,8 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
-          ->condition('source', transperfect_get_locale_code($source), '=');
+  ->condition('source', transperfect_get_locale_code($source), '=');
+
   $result = $query->execute();
 
   foreach ($result as $row) {
@@ -1088,6 +1089,7 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
  */
 function transperfect_update_change_detection($node, $lang) {
   $tpt_locale_code = transperfect_get_locale_code($lang);
+
   db_update('transperfect_core')
   ->fields(array('last_modified' => REQUEST_TIME, 'changed' => 1))
   ->condition('nid', $node->nid, '=')
@@ -1243,6 +1245,7 @@ function transperfect_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_locale_mapping.inc',
   );
+
   $items [transperfect_get_root_menu('transperfect-translations/fieldConfig')] = array(
     'title' => 'Field Configuration',
     'description' => 'Manage translatable fields for content types',
@@ -1251,6 +1254,7 @@ function transperfect_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_field_configuration.inc',
   );
+
   $items[transperfect_get_root_menu('transperfect-translations/cron')] = array(
     'title' => 'Receive Translations Cron',
       'page callback' => 'transperfect_receive_translated_contents_automatically',
@@ -1258,6 +1262,7 @@ function transperfect_menu() {
       'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
+
   $items[transperfect_get_root_menu('transperfect-translations/preview')] = array(
     'title' => 'Preview Translation',
       'page callback' => 'transperfect_preview_translated_content',
@@ -1265,6 +1270,7 @@ function transperfect_menu() {
       'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
+  
   $items[transperfect_get_root_menu('transperfect-translations/view_log')] = array(
     'title' => 'View Log',
       'page callback' => 'transperfect_view_log',
