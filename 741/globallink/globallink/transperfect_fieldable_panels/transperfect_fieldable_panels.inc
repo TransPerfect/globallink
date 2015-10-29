@@ -33,7 +33,7 @@ function send_fieldable_panels_pane_for_translations($fpids, $pd4, $submission_n
     $globallink->submissionName = $submission_name;
     $globallink->dueDate = $due_date;
     $globallink->otherObjectId = $fpid;
-    $globallink->submissionInstructions = $submission_details['instructions'] . '\nSubmitter: ' . $submitter;
+    $globallink->submissionInstructions = $submission_details['instructions'] . "\nSubmitter: " . $submitter;
     $globallink_arr[] = $globallink;
   }
 

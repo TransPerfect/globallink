@@ -26,9 +26,11 @@ function transperfect_entity_presave($node) {
   if (isset($node->tpt_skip) && $node->tpt_skip == TRUE || !isset($node->type)) {
     return;
   }
+
   if (!entity_translation_node_supported_type($node->type)) {
     return;
   }
+
   if (!isset($node->original)) {
     return;
   }
@@ -60,67 +62,74 @@ function transperfect_entity_presave($node) {
     }
 
     $field_info = field_info_field($field_name);
-    if ($field_info['type'] == 'list_boolean'
-            && $field_info['type'] == 'image'
-            && $field_info['type'] == 'file'
-            && $field_info['type'] == 'taxonomy_term_reference'
-            && $field_info['type'] == 'field_collection') {
+
+    switch ($field_info['type']) {
+      case 'list_boolean':
+      case 'image':
+      case 'file':
+      case 'taxonomy_term_reference':
+      case 'field_collection':
+        continue 2;
+
+        break;
+    }
+
+    if (!isset($node->$field_name) || !isset($orig->$field_name)) {
+      transperfect_update_change_detection_entity($node, $lang);
+
+      break;
+    }
+
+    $o_arr = $orig->$field_name;
+    $n_arr = $node->$field_name;
+
+    if (!isset($o_arr) || !isset($n_arr) || count($o_arr) != count($n_arr)) {
+      transperfect_update_change_detection_entity($node, $lang);
+
+      break;
+    }
+
+    if (!is_array($o_arr) || !is_array($n_arr)) {
+      if ($o_arr != $n_arr) {
+        transperfect_update_change_detection($node, $lang);
+        break;
+      }
+
       continue;
     }
 
-    if (isset($node->$field_name) && isset($orig->$field_name)) {
-      $o_arr = $orig->$field_name;
-      $n_arr = $node->$field_name;
-      if (isset($o_arr) && isset($n_arr) && count($o_arr) == count($n_arr)) {
-        if (is_array($o_arr) && is_array($n_arr)) {
-          if (isset($o_arr) && isset($o_arr[$lang]) && count($o_arr[$lang]) == count($n_arr)) {
-            if (!empty($o_arr[$lang]) && !empty($n_arr[$lang])) {
-              if (count($o_arr[$lang]) == count($n_arr[$lang])) {
-                foreach ($o_arr[$lang] as $delta => $n_field) {
-                  if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
-                    if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
-                      transperfect_update_change_detection_entity($node, $lang);
-                      break 2;
-                    }
-                  }
-                  else {
-                    transperfect_update_change_detection_entity($node, $lang);
-                    break 2;
-                  }
-                }
-              }
-              else {
-                transperfect_update_change_detection_entity($node, $lang);
-                break;
-              }
-            }
-            else {
-              if ($o_arr != $n_arr) {
-                transperfect_update_change_detection_entity($node, $lang);
-                break;
-              }
-            }
-          }
-          else {
-            transperfect_update_change_detection_entity($node, $lang);
-            break;
-          }
-        }
-        else {
-          if ($o_arr != $n_arr) {
-            transperfect_update_change_detection($node, $lang);
-            break;
-          }
+    if (!isset($o_arr) || !isset($o_arr[$lang]) || count($o_arr[$lang]) != count($n_arr)) {
+      transperfect_update_change_detection_entity($node, $lang);
+
+      break;
+    }
+
+    if (empty($o_arr[$lang]) || empty($n_arr[$lang])) {
+      if ($o_arr != $n_arr) {
+        transperfect_update_change_detection_entity($node, $lang);
+        break;
+      }
+
+      continue;
+    }
+
+    if (count($o_arr[$lang]) != count($n_arr[$lang])) {
+      transperfect_update_change_detection_entity($node, $lang);
+
+      break;
+    }
+
+    foreach ($o_arr[$lang] as $delta => $n_field) {
+      if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
+        if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
+          transperfect_update_change_detection_entity($node, $lang);
+          break 2;
         }
       }
       else {
         transperfect_update_change_detection_entity($node, $lang);
-        break;
+        break 2;
       }
-    }
-    else {
-      transperfect_update_change_detection_entity($node, $lang);
-      break;
     }
   }
 }

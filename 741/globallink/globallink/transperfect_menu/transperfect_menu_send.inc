@@ -194,15 +194,20 @@ function transperfect_dashboard_menu_pager_form() {
 
 function menu_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
-  if ($op == TPT_BTN_DASHBOARD_GO) {
-    $page_count = $form_state['input']['p_count'];
-    if (!is_numeric($page_count) || $page_count < 1) {
-      form_set_error('', t('Invalid Page Count.'));
-    }
-    else {
-      $_SESSION['transperfect_menu_page_count'] = array($page_count);
-      return;
-    }
+
+  if ($op != TPT_BTN_DASHBOARD_GO) {
+    return;
+  }
+
+  $page_count = $form_state['input']['p_count'];
+
+  if (!is_numeric($page_count) || $page_count < 1) {
+    form_set_error('', t('Invalid Page Count.'));
+  }
+  else {
+    $_SESSION['transperfect_menu_page_count'] = array($page_count);
+
+    return;
   }
 }
 
@@ -351,8 +356,8 @@ function transperfect_dashboard_menu_form() {
         drupal_add_css($module_path . '/css/transperfect.css');
         $proj_arr = variable_get('transperfect_pd_projects', array());
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid', '');
-          if ($projects != '') {
+          $projects = variable_get('transperfect_pd_projectid');
+          if (!empty($projects)) {
             $arr = explode(',', $projects);
             foreach ($arr as $value) {
               if (isset($proj_arr[$value])) {
