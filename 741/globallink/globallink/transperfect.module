@@ -821,26 +821,34 @@ function transperfect_form_field_ui_field_edit_form_submit($form, &$form_state) 
   $entity_type = $form['#instance']['entity_type'];
   $bundle_name = $form['#instance']['bundle'];
 
-  if (transperfect_check_field_configured($bundle_name, $entity_type, $bundle_name, $field_name)) {
-    if ($entity_type == 'node') {
-      if (transperfect_translation_supported($bundle_name)) {
-        if (isset($form['instance']['transperfect_translate_field'])) {
-          $translatable = $form['instance']['transperfect_translate_field']['#value'];
-
-          db_update('transperfect_field_config')
-          ->fields(array(
-            'field_label' => $form['instance']['label']['#value'],
-            'translatable' => $translatable,
-          ))
-          ->condition('content_type', $bundle_name, '=')
-          ->condition('entity_type', $entity_type, '=')
-          ->condition('bundle', $bundle_name, '=')
-          ->condition('field_name', $field_name, '=')
-          ->execute();
-        }
-      }
-    }
+  if (!transperfect_check_field_configured($bundle_name, $entity_type, $bundle_name, $field_name)) {
+    return;
   }
+
+  if ($entity_type != 'node') {
+    return;
+  }
+
+  if (!transperfect_translation_supported($bundle_name)) {
+    return;
+  }
+
+  if (!isset($form['instance']['transperfect_translate_field'])) {
+    return;
+  }
+
+  $translatable = $form['instance']['transperfect_translate_field']['#value'];
+
+  db_update('transperfect_field_config')
+  ->fields(array(
+    'field_label' => $form['instance']['label']['#value'],
+    'translatable' => $translatable,
+  ))
+  ->condition('content_type', $bundle_name, '=')
+  ->condition('entity_type', $entity_type, '=')
+  ->condition('bundle', $bundle_name, '=')
+  ->condition('field_name', $field_name, '=')
+  ->execute();
 }
 
 /**
