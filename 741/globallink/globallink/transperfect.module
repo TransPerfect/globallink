@@ -625,43 +625,45 @@ function transperfect_get_all_content_types_for_field($field_name, $type) {
  * Implements hook_node_type_insert().
  */
 function transperfect_node_type_insert($info) {
-  if (transperfect_translation_supported($info->type)) {
+  if (!transperfect_translation_supported($info->type)) {
+    return;
+  }
+
+  db_insert('transperfect_field_config')
+  ->fields(array(
+    'content_type' => $info->type,
+    'entity_type' => 'node',
+    'bundle' => $info->type,
+    'field_name' => 'title',
+    'field_type' => 'text',
+    'field_label' => 'Title',
+    'translatable' => 1,
+  ))->execute();
+
+  db_insert('transperfect_field_config')
+  ->fields(array(
+    'content_type' => $info->type,
+    'entity_type' => 'node',
+    'bundle' => $info->type,
+    'field_name' => 'body',
+    'field_type' => 'text_with_summary',
+    'field_label' => 'Body',
+    'translatable' => 1,
+  ))->execute();
+
+  $metatag_module_exists = module_exists("metatag");
+
+  if ($metatag_module_exists) {
     db_insert('transperfect_field_config')
     ->fields(array(
       'content_type' => $info->type,
       'entity_type' => 'node',
       'bundle' => $info->type,
-      'field_name' => 'title',
+      'field_name' => 'metatags',
       'field_type' => 'text',
-      'field_label' => 'Title',
+      'field_label' => 'Meta tags',
       'translatable' => 1,
     ))->execute();
-
-    db_insert('transperfect_field_config')
-    ->fields(array(
-      'content_type' => $info->type,
-      'entity_type' => 'node',
-      'bundle' => $info->type,
-      'field_name' => 'body',
-      'field_type' => 'text_with_summary',
-      'field_label' => 'Body',
-      'translatable' => 1,
-    ))->execute();
-
-    $metatag_module_exists = module_exists("metatag");
-
-    if ($metatag_module_exists) {
-      db_insert('transperfect_field_config')
-      ->fields(array(
-        'content_type' => $info->type,
-        'entity_type' => 'node',
-        'bundle' => $info->type,
-        'field_name' => 'metatags',
-        'field_type' => 'text',
-        'field_label' => 'Meta tags',
-        'translatable' => 1,
-      ))->execute();
-    }
   }
 }
 
@@ -669,32 +671,34 @@ function transperfect_node_type_insert($info) {
  * Implements hook_node_type_update().
  */
 function transperfect_node_type_update($info) {
-  if ($info->modified) {
-    if (count(transperfect_get_translatable_fields($info->old_type)) > 0) {
-      if (transperfect_translation_supported($info->type)) {
-        db_update('transperfect_field_config')
-        ->fields(array('content_type' => $info->orig_type))
-        ->condition('content_type', $info->old_type, '=')
-        ->execute();
+  if (!$info->modified) {
+    return;
+  }
 
-        db_update('transperfect_field_config')
-        ->fields(array('bundle' => $info->orig_type))
-        ->condition('bundle', $info->old_type, '=')
-        ->execute();
+  if (count(transperfect_get_translatable_fields($info->old_type)) > 0) {
+    if (transperfect_translation_supported($info->type)) {
+      db_update('transperfect_field_config')
+      ->fields(array('content_type' => $info->orig_type))
+      ->condition('content_type', $info->old_type, '=')
+      ->execute();
 
-        db_update('transperfect_core')
-        ->fields(array('type' => $info->orig_type))
-        ->condition('type', $info->old_type, '=')
-        ->execute();
-      }
-      else {
-        delete_field_configs($info->type);
-      }
+      db_update('transperfect_field_config')
+      ->fields(array('bundle' => $info->orig_type))
+      ->condition('bundle', $info->old_type, '=')
+      ->execute();
+
+      db_update('transperfect_core')
+      ->fields(array('type' => $info->orig_type))
+      ->condition('type', $info->old_type, '=')
+      ->execute();
     }
     else {
-      if (transperfect_translation_supported($info->type)) {
-        transperfect_insert_all_fields($info->type);
-      }
+      delete_field_configs($info->type);
+    }
+  }
+  else {
+    if (transperfect_translation_supported($info->type)) {
+      transperfect_insert_all_fields($info->type);
     }
   }
 }
@@ -774,25 +778,36 @@ function transperfect_node_type_delete($info) {
 function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   $field_type = $form['#field']['type'];
 
-  if ($field_type != 'list_boolean' && $field_type != 'image' && $field_type != 'file' && $field_type != 'taxonomy_term_reference' && $field_type != 'field_collection') {
-    $field_name = $form['#field']['field_name'];
-    $entity_type = $form['#instance']['entity_type'];
-    $bundle_name = $form['#instance']['bundle'];
+  switch ($field_type) {
+    case 'list_boolean':
+    case 'image':
+    case 'file':
+    case 'taxonomy_term_reference':
+    case 'field_collection':
+      break;
+    default:
+      $field_name = $form['#field']['field_name'];
+      $entity_type = $form['#instance']['entity_type'];
+      $bundle_name = $form['#instance']['bundle'];
 
-    if ($entity_type != 'field_collection_item') {
-      if (transperfect_translation_supported($bundle_name)) {
-        $translatable = transperfect_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
-        $label = t('GlobalLink Translation');
-        $title = t('This field can be translated using Translations.com translation services.');
-
-        $form['instance']['transperfect_translate_field'] = array(
-          '#prefix' => '<label>' . $label . '</label>',
-          '#type' => 'checkbox',
-          '#title' => $title,
-          '#default_value' => $translatable ? 1 : 0,
-        );
+      if ($entity_type == 'field_collection_item') {
+        break;
       }
-    }
+
+      if (!transperfect_translation_supported($bundle_name)) {
+        break;
+      }
+
+      $translatable = transperfect_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
+      $label = t('GlobalLink Translation');
+      $title = t('This field can be translated using Translations.com translation services.');
+
+      $form['instance']['transperfect_translate_field'] = array(
+        '#prefix' => '<label>' . $label . '</label>',
+        '#type' => 'checkbox',
+        '#title' => $title,
+        '#default_value' => $translatable ? 1 : 0,
+      );
   }
 
   $form['#submit'][] = 'transperfect_form_field_ui_field_edit_form_submit';
