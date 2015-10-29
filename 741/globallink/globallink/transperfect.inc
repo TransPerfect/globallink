@@ -669,10 +669,37 @@ function transperfect_get_mapped_drupal_locales($remove_default = TRUE) {
  */
 function transperfect_get_config_fields($content_type) {
   $arr = array();
+
   $result = db_select('transperfect_field_config', 'tf')
-          ->fields('tf')
-          ->condition('content_type', $content_type, '=')
-          ->execute();
+  ->fields('tf')
+  ->condition('content_type', $content_type, '=')
+  ->execute();
+
+  foreach ($result as $row) {
+    $arr[$row->field_name] = $row;
+  }
+
+  return $arr;
+}
+
+/**
+ * Gets non-translatable config fields from GlobalLink by content type.
+ *
+ * @param string $content_type
+ *   The desired content type.
+ *
+ * @return array
+ *   Array of non-translatable config fields.
+ */
+function transperfect_get_non_translatable_config_fields($content_type) {
+  $arr = array();
+
+  $result = db_select('transperfect_field_config', 'tf')
+  ->fields('tf')
+  ->condition('content_type', $content_type, '=')
+  ->condition('translatable', 0, '=')
+  ->execute();
+
   foreach ($result as $row) {
     $arr[$row->field_name] = $row;
   }

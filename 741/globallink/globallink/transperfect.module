@@ -1267,6 +1267,8 @@ function transperfect_cron_queue_info() {
   $queues['auto_receive'] = array(
     'worker callback' => 'transperfect_auto_receive',
   );
+
+  return $queues;
 }
 
 /*
