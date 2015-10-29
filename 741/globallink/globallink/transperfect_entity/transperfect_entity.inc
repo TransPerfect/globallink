@@ -828,25 +828,35 @@ function save_entity_field_collections_recursively($entity_type, $host_entity, $
 
           break;
         default:
-          if (isset($field_collection_item_array[$key]) && isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
-            $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
-            foreach ($field_data_arr as $delta => $field_data) {
-              if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
-                $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
-                if (is_object($gl_obj)) {
-                  $translated_content = $gl_obj->translatedContent;
-                }
-                else {
-                  $translated_content = $gl_obj;
-                }
+          if (!isset($field_collection_item_array[$key])) {
+            break;
+          }
 
-                $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
-                if (isset($field_data['format'])) {
-                  $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
-                }
+          if (!isset($field_collection_item_array[$key][LANGUAGE_NONE])) {
+            break;
+          }
+
+          $field_data_arr = $field_collection_item_array[$key][LANGUAGE_NONE];
+
+          foreach ($field_data_arr as $delta => $field_data) {
+            if (isset($translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta])) {
+              $gl_obj = $translated_fc_arr[$field_collection_name][$fc_entity_id][$key][$target_lang][$delta];
+
+              if (is_object($gl_obj)) {
+                $translated_content = $gl_obj->translatedContent;
+              }
+              else {
+                $translated_content = $gl_obj;
+              }
+
+              $new_field_collection_arr[$key][$target_lang][$delta] = array('value' => $translated_content);
+              
+              if (isset($field_data['format'])) {
+                $new_field_collection_arr[$key][$target_lang][$delta]['format'] = $field_data['format'];
               }
             }
           }
+        }
       }
     }
   }
