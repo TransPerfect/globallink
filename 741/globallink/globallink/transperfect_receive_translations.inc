@@ -195,15 +195,20 @@ function transperfect_node_receive_pager_form() {
 
 function transperfect_node_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
-  if ($op == TPT_BTN_DASHBOARD_GO) {
-    $page_count = $form_state['input']['p_count'];
-    if (!is_numeric($page_count) || $page_count < 1) {
-      form_set_error('', t('Invalid Page Count.'));
-    }
-    else {
-      $_SESSION['transperfect_receive_page_count'] = array($page_count);
-      return;
-    }
+
+  if ($op != TPT_BTN_DASHBOARD_GO) {
+    return;
+  }
+
+  $page_count = $form_state['input']['p_count'];
+
+  if (!is_numeric($page_count) || $page_count < 1) {
+    form_set_error('', t('Invalid Page Count.'));
+  }
+  else {
+    $_SESSION['transperfect_receive_page_count'] = array($page_count);
+
+    return;
   }
 }
 
@@ -553,82 +558,101 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
  *   The type of cron job.
  */
 function transperfect_auto_receive($cron_type) {
-  drupal_set_time_limit(0); //set it so your cron wont time out if it takes a long time to process
-  transperfect_gl_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, "Cron Started by $cron_type");
-  
+  watchdog(TPT_OBJECT_TYPE_CONTENT, t('Cron Started by @cron_type', array('@cron_type' => $cron_type)), array(), WATCHDOG_INFO);
+
   try {
     $pd4 = transperfect_get_project_director_details();
     $all_target_arr = get_all_ready_translations_details_from_pd($pd4);
     $count = 0;
+
     foreach ($all_target_arr as $globallink) {
       $type = $globallink->type;
       $globallink_arr = array($globallink);
+
       switch ($type) {
         case 'Node':
           $count = transperfect_get_translated_content($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Node');
+          watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Node'), array(), WATCHDOG_INFO);
+
           if ($globallink->status == TPT_STATUS_ERROR) {
             transperfect_update_status($globallink);
           }
+
           $_SESSION['transperfect_globalLink_arr'] = array();
           $_SESSION['transperfect_selected_submission'] = array();
+
           break;
         case 'Entity':
           $count = get_translated_entity($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Entity');
+          watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Entity'), array(), WATCHDOG_INFO);
+
           if ($globallink->status == TPT_STATUS_ERROR) {
             update_tpt_entity_status($globallink);
           }
+
           $_SESSION['transperfect_entity_globalLink_arr'] = array();
           $_SESSION['transperfect_entity_selected_submission'] = array();
+
           break;
         case 'Block':
           $count += get_translated_blocks($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Block');
+          watchdog(TPT_OBJECT_TYPE_BlOCK, t('Imported Block'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
+
           break;
         case 'Interface':
           $count += get_translated_interfaces($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_INTERFACE, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Interface');
+          watchdog(TPT_OBJECT_TYPE_INTERFACE, t('Imported Interface'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_interface_globalLink_arr'] = array();
           $_SESSION['transperfect_interface_selected_submission'] = array();
+
           break;
         case 'Menu':
           $count += get_translated_menus($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Menu');
+          watchdog(TPT_OBJECT_TYPE_MENU, t('Imported Menu'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_menu_globalLink_arr'] = array();
           $_SESSION['transperfect_menu_selected_submission'] = array();
+
           break;
         case 'Taxonomy':
           $count += get_translated_taxonomies($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Taxonomy');
+          watchdog(TPT_OBJECT_TYPE_TAXONOMY, t('Imported Taxonomy'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
+
           break;
         case 'Webform':
           $count += get_translated_webforms($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Webform');
+          watchdog(TPT_OBJECT_TYPE_WEBFORM, t('Imported Webform'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_webform_globalLink_arr'] = array();
           $_SESSION['transperfect_webform_selected_submission'] = array();
+
           break;
         case 'Fieldable_Panels_Panes':
           $count += get_translated_fieldable_panels($pd4, $globallink_arr);
-          transperfect_log(TPT_OBJECT_TYPE_FIELDABLE_PANELS, TPT_LOGGING_SEVERITY_DEBUG, 'Imported Fieldable Panels Panes');
+          watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('Imported Fieldable Panels Panes'), array(), WATCHDOG_INFO);
+
           $_SESSION['transperfect_fieldable_panels_panes_globalLink_arr'] = array();
           $_SESSION['transperfect_fieldable_panels_panes_selected_submission'] = array();
+
           break;
       }
     }
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations Cron - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+    watchdog(TPT_OBJECT_TYPE_CONTENT, t('SOAP Exception in Receive Translations Cron - Code[@faultcode], Message[@faultstring]', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)), array(), WATCHDOG_ERROR);
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Receive Translations Cron - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+    watchdog(TPT_OBJECT_TYPE_CONTENT, t('Exception in Receive Translations Cron - File[@file], Line[@line], Code[@code], Message[@message]', array('@file' => $e->getFile(), '@line' => $e->getLine(), '@code' => $e->getCode(), '@message' => $e->getMessage())), array(), WATCHDOG_ERROR);
   }
 
-  transperfect_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_INFO, 'Cron Completed - ' . $count . 'Records Updated.');
+  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Cron Completed - @count Records Updated.', array('@count' => $count)), array(), WATCHDOG_INFO);
 }
 
 function transperfect_preview_translated_content() {
