@@ -49,12 +49,12 @@ function transperfect_send_documents_for_translation_to_pd(&$globallink_arr, $pd
       $document_info->submissionTicket = $GLOBALS['g_submissionTicket'];
     }
     //Submit a document for the given project
-    @transperfect_submit_document_with_binary_resource($document_service, $resource_info, $document_info, $globallink, $token);
+    transperfect_submit_document_with_binary_resource($document_service, $resource_info, $document_info, $globallink, $token);
     $GLOBALS['g_submissionTicket'] = $globallink->submissionTicket;
     $GLOBALS['g_document_count'] = $count;
   }
 
-  @transperfect_start_submission($submission_service, $submission_info, $token);
+  transperfect_start_submission($submission_service, $submission_info, $token);
 }
 
 function transperfect_submit_document_with_binary_resource($document_service, $resource_info, $document_info, &$globallink, $token) {
