@@ -103,7 +103,7 @@ function transperfect_update_block_ticket_id($arr, $project_code) {
       $bid = $globallink->otherObjectId;
       $block = transperfect_load_block_data($bid);
       foreach ($target_locale_arr as $target_locale) {
-        $row = transperfect_get_transperfect_block_row($bid, $type, $globallink->sourceLocale, $target_locale);
+        $row = transperfect_get_block_row($bid, $type, $globallink->sourceLocale, $target_locale);
         if ($row) {
           db_update('transperfect_core_block')
                   ->fields(array('title' => $block[0]->info, 'document_ticket' => $globallink->documentTicket,
@@ -125,7 +125,7 @@ function transperfect_update_block_ticket_id($arr, $project_code) {
   }
 }
 
-function transperfect_get_transperfect_block_row($object_id, $object_type, $source, $target) {
+function transperfect_get_block_row($object_id, $object_type, $source, $target) {
   $result = db_select('transperfect_core_block', 'tco')
           ->fields('tco')
           ->condition('object_id', $object_id, '=')
