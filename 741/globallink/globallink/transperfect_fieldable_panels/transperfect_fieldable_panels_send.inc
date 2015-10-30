@@ -416,7 +416,7 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
         $message = FALSE;
         if (count($target_locale_arr) > 0) {
           foreach ($fpids as $fpid) {
-            $rows = transperfect_transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
+            $rows = transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
             foreach ($rows as $row) {
               if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
                 $message = TRUE;

@@ -9,7 +9,7 @@ function transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, 
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
   foreach ($fpids as $fpid) {
-    $rows = transperfect_transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
+    $rows = transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
     $target_arr = $target_locale_arr;
     foreach ($rows as $row) {
       if (array_search($row->target, $target_locale_arr)) {
@@ -321,7 +321,7 @@ function transperfect_get_fieldable_panels_row_id_from_submission($submission_ti
   return FALSE;
 }
 
-function transperfect_transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid) {
+function transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid) {
   $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
           ->fields('tcfp')
           ->condition('fpid', $fpid, '=')
