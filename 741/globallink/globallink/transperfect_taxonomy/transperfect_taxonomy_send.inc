@@ -30,7 +30,7 @@ function transperfect_dashboard_taxonomy_filter_form() {
       $default_vocab = $_SESSION['transperfect_selected_taxonomy_vocab'];
       $filter = TRUE;
     }
-    $vocab_arr = get_vocabulary_list();
+    $vocab_arr = transperfect_get_vocabulary_list();
 
     $form['taxonomy_info_filter'] = array(
         '#type' => 'fieldset',
@@ -260,7 +260,7 @@ function transperfect_dashboard_taxonomy_form() {
       $count = 0;
       foreach ($result as $item) {
         $active = '';
-        $active_subs = get_active_taxonomy_submission_rows($item->tid);
+        $active_subs = transperfect_get_active_taxonomy_submission_rows($item->tid);
         if ($active_subs && array_key_exists($item->tid, $active_subs)) {
           $sub_arr = $active_subs[$item->tid];
           $sub_name = '';
@@ -450,7 +450,7 @@ function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
         $message = FALSE;
         if (count($target_locale_arr) > 0) {
           foreach ($bids as $bid) {
-            $rows = get_sent_tpt_taxonomy_rows_by_bid($bid);
+            $rows = transperfect_get_sent_taxonomy_rows_by_bid($bid);
             foreach ($rows as $row) {
               if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
                 $message = TRUE;
@@ -485,9 +485,9 @@ function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
       }
       $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
       $project_code = $form_state['values']['submission_pd_project'];
-      $updated_globalLink_arr = send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+      $updated_globalLink_arr = transperfect_send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
       if (count($updated_globalLink_arr) > 0) {
-        update_taxonomy_ticket_id($updated_globalLink_arr, $project_code);
+        transperfect_update_taxonomy_ticket_id($updated_globalLink_arr, $project_code);
         drupal_set_message(t('Content has been successfully sent for translations.'));
       }
     }
