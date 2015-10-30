@@ -5,10 +5,6 @@
         return;
       }
 
-      if (context != '#document') {
-        return;
-      }
-
       $('#edit-submission', context).change(function() {
         $('#transperfect-node-active-select-form').submit();
       });
