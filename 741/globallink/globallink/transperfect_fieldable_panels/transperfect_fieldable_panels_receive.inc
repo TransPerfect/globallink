@@ -6,10 +6,13 @@ require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
 function transperfect_fieldable_panels_receive_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_receive_type'] = $type;
+
   $arr = array();
+
   $arr[] = drupal_get_form('transperfect_fieldable_panels_receive_filter_form');
   $arr[] = drupal_get_form('transperfect_fieldable_panels_receive_pager_form');
   $arr[] = drupal_get_form('transperfect_fieldable_panels_receive_form');
+
   return $arr;
 }
 
@@ -20,11 +23,15 @@ function transperfect_fieldable_panels_receive_filter_form() {
   $submission_options = get_distinct_active_fieldable_panels_submission_names();
   $default_submission = '[any]';
 
-  if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_submission']) && !in_array($_SESSION['transperfect_fieldable_panels_receive_filter_submission'], $submission_options)) {
-    $_SESSION['transperfect_fieldable_panels_receive_filter_submission'] = '';
-    $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
-    unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
+  if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_submission'])) {
+    if (!in_array($_SESSION['transperfect_fieldable_panels_receive_filter_submission'], $submission_options)) {
+      $_SESSION['transperfect_fieldable_panels_receive_filter_submission'] = '';
+      $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+
+      unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
+    }
   }
+
   if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_submission'])) {
     $default_submission = $_SESSION['transperfect_fieldable_panels_receive_filter_submission'];
     $filter = TRUE;
@@ -34,101 +41,121 @@ function transperfect_fieldable_panels_receive_filter_form() {
   $t_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
-  $status_arr = array('[any]' => t('Any'),
-      TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
-      TPT_STATUS_ERROR => TPT_STATUS_ERROR,
-      TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED);
+  $status_arr = array(
+    '[any]' => t('Any'),
+    TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
+    TPT_STATUS_ERROR => TPT_STATUS_ERROR,
+    TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED,
+  );
 
   $default = '[any]';
+
   if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_language'])) {
     $default = $_SESSION['transperfect_fieldable_panels_receive_filter_language'];
     $filter = TRUE;
   }
+
   $default_status = '[any]';
+
   if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_status'])) {
     $default_status = $_SESSION['transperfect_fieldable_panels_receive_filter_status'];
     $filter = TRUE;
   }
 
   $form['fieldable_panels_receive_filter'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('FILTER RECORDS'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+    '#type' => 'fieldset',
+    '#title' => t('FILTER RECORDS'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
 
   $form['fieldable_panels_receive_filter']['filters'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('container-inline')),
+    '#type' => 'container',
+    '#attributes' => array('class' => array('container-inline')),
   );
 
   $form['fieldable_panels_receive_filter']['filters'][] = array('#markup' => '<table>');
 
   $form['fieldable_panels_receive_filter']['filters']['language'] = array(
-      '#type' => 'select', '#title' => TPT_LABEL_TARGET_LANG . ':&nbsp;&nbsp;',
-      '#options' => $languages,
-      '#default_value' => $default,
-      '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
-      '#suffix' => '</tr>',
-      '#field_suffix' => '</td>',
-      '#field_prefix' => '</td><td>',
+    '#type' => 'select',
+    '#title' => TPT_LABEL_TARGET_LANG . ':&nbsp;&nbsp;',
+    '#options' => $languages,
+    '#default_value' => $default,
+    '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
+    '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+    '#suffix' => '</tr>',
+    '#field_suffix' => '</td>',
+    '#field_prefix' => '</td><td>',
   );
 
   $form['fieldable_panels_receive_filter']['filters']['status'] = array(
-      '#type' => 'select', '#title' => TPT_LABEL_STATUS . ':&nbsp;&nbsp;',
-      '#options' => $status_arr,
-      '#default_value' => $default_status,
-      '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
-      '#suffix' => '</tr>',
-      '#field_suffix' => '</td>',
-      '#field_prefix' => '</td><td>',
+    '#type' => 'select',
+    '#title' => TPT_LABEL_STATUS . ':&nbsp;&nbsp;',
+    '#options' => $status_arr,
+    '#default_value' => $default_status,
+    '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
+    '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+    '#suffix' => '</tr>',
+    '#field_suffix' => '</td>',
+    '#field_prefix' => '</td><td>',
   );
 
   $form['fieldable_panels_receive_filter']['filters']['submission'] = array(
-      '#type' => 'select', '#title' => TPT_LABEL_SUBMISSION . ':&nbsp;&nbsp;',
-      '#options' => $submission_options,
-      '#default_value' => $default_submission,
-      '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
-      '#suffix' => '</tr>',
-      '#field_suffix' => '</td>',
-      '#field_prefix' => '</td><td>',
+    '#type' => 'select',
+    '#title' => TPT_LABEL_SUBMISSION . ':&nbsp;&nbsp;',
+    '#options' => $submission_options,
+    '#default_value' => $default_submission,
+    '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
+    '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+    '#suffix' => '</tr>',
+    '#field_suffix' => '</td>',
+    '#field_prefix' => '</td><td>',
   );
 
   $form['fieldable_panels_receive_filter']['filters'][] = array('#markup' => '</table>');
 
   $disable_submit = $filter ? TRUE : FALSE;
+
   $form['fieldable_panels_receive_filter']['filters']['filter'] = array(
-      '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
-      '#disabled' => $disable_submit
+    '#type' => 'submit',
+    '#value' => TPT_BTN_DASHBOARD_FILTER,
+    '#disabled' => $disable_submit,
   );
 
   if ($filter) {
-
     $form['filter-search'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('FILTER CRITERIA'),
+      '#type' => 'fieldset',
+      '#title' => t('FILTER CRITERIA'),
     );
 
     $form['filter-search']['filter-markup'] = array(
-        '#type' => 'container',
+      '#type' => 'container',
     );
+
     $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>');
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>',
+    );
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>',
+    );
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>',
+    );
+
     $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
+
     $form['filter-search']['status']['actions'] = array(
-        '#type' => 'actions',
-        '#attributes' => array('class' => array('container-inline')),
+      '#type' => 'actions',
+      '#attributes' => array('class' => array('container-inline')),
     );
 
     $form['filter-search']['status']['actions']['reset'] = array(
-        '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_RESET,
+      '#type' => 'submit',
+      '#value' => TPT_BTN_DASHBOARD_RESET,
     );
   }
 
@@ -144,6 +171,7 @@ function transperfect_fieldable_panels_receive_filter_form_submit($form, &$form_
       $_SESSION['transperfect_fieldable_panels_receive_filter_status'] = $form_state['values']['status'];
       $_SESSION['transperfect_fieldable_panels_receive_filter_submission'] = $form_state['values']['submission'];
       $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+
       unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
 
       break;
@@ -152,6 +180,7 @@ function transperfect_fieldable_panels_receive_filter_form_submit($form, &$form_
       $_SESSION['transperfect_fieldable_panels_receive_filter_status'] = '';
       $_SESSION['transperfect_fieldable_panels_receive_filter_submission'] = '';
       $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+
       unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
 
       break;
@@ -161,27 +190,32 @@ function transperfect_fieldable_panels_receive_filter_form_submit($form, &$form_
 function transperfect_fieldable_panels_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
+
   $form = array();
+
   $form['page_counter']['markup'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('tpt-center')),
+    '#type' => 'container',
+    '#attributes' => array('class' => array('tpt-center')),
   );
+
   $form['page_counter']['markup']['p_count'] = array(
-      '#type' => 'textfield',
-      '#size' => 5,
-      '#default_value' => isset($_SESSION['transperfect_fieldable_panels_receive_page_count']) ? $_SESSION['transperfect_fieldable_panels_receive_page_count'][0] : TPT_PAGER_LIMIT,
-      '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
-      '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => '<div class="container-inline">',
+    '#type' => 'textfield',
+    '#size' => 5,
+    '#default_value' => isset($_SESSION['transperfect_fieldable_panels_receive_page_count']) ? $_SESSION['transperfect_fieldable_panels_receive_page_count'][0] : TPT_PAGER_LIMIT,
+    '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
+    '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
+    '#prefix' => '<div class="container-inline">',
   );
+
   $form['page_counter']['markup']['action'] = array(
-      '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
-      '#suffix' => '</div>',
-      '#limit_validation_errors' => array(),
-      '#submit' => array('transperfect_fieldable_panels_receive_pager_form_submit'),
-      '#access' => TRUE,
+    '#type' => 'submit',
+    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#suffix' => '</div>',
+    '#limit_validation_errors' => array(),
+    '#submit' => array('transperfect_fieldable_panels_receive_pager_form_submit'),
+    '#access' => TRUE,
   );
+
   return $form;
 }
 
@@ -199,23 +233,28 @@ function transperfect_fieldable_panels_receive_pager_form_submit($form, &$form_s
   }
   else {
     $_SESSION['transperfect_fieldable_panels_receive_page_count'] = array($page_count);
+
     return;
   }
 }
 
 function transperfect_fieldable_panels_receive_form() {
   $form = array();
+
   if (!empty($_SESSION['transpefect_fieldable_panels_receive_type'])) {
     $type = $_SESSION['transpefect_fieldable_panels_receive_type'];
   }
+
   $globallink_arr = array();
 
   if (empty($_SESSION['transperfect_fieldable_panels_globalLink_arr'])) {
     try {
       $pd4 = transperfect_get_project_director_details();
+
       if (transperfect_validate_project_director_details($pd4)) {
         $_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
         $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+
         if (sizeof($globallink_arr) > 0) {
           $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = serialize($globallink_arr);
         }
@@ -239,6 +278,7 @@ function transperfect_fieldable_panels_receive_form() {
   $rows = array();
 
   $filter_lang = '[any]';
+
   if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_language'])) {
     $filter_lang = $_SESSION['transperfect_fieldable_panels_receive_filter_language'];
   }
@@ -253,15 +293,18 @@ function transperfect_fieldable_panels_receive_form() {
 
   if (isset($globallink_arr) && is_array($globallink_arr)) {
     $filter_status = '[any]';
+
     if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_status'])) {
       $filter_status = $_SESSION['transperfect_fieldable_panels_receive_filter_status'];
     }
 
-    $header = array('submissionName' => TPT_LABEL_SUBMISSION,
-        'sourceLocale' => TPT_LABEL_SOURCE_LANG,
-        'targetLocale' => TPT_LABEL_TARGET_LANG,
-        'title' => TPT_LABEL_TITLE,
-        'status' => TPT_LABEL_STATUS);
+    $header = array(
+      'submissionName' => TPT_LABEL_SUBMISSION,
+      'sourceLocale' => TPT_LABEL_SOURCE_LANG,
+      'targetLocale' => TPT_LABEL_TARGET_LANG,
+      'title' => TPT_LABEL_TITLE,
+      'status' => TPT_LABEL_STATUS,
+    );
 
     if (variable_get('transperfect_enable_preview', 1)) {
       $header['preview'] = '';
@@ -269,6 +312,7 @@ function transperfect_fieldable_panels_receive_form() {
 
     $count = 1;
     $rid_arr = array();
+
     foreach ($globallink_arr as $key => &$globallink) {
       if ($globallink->type != 'Fieldable_Panels_Panes') {
         continue;
@@ -277,6 +321,7 @@ function transperfect_fieldable_panels_receive_form() {
       $tpt_fieldable_panels_arr = get_sent_tpt_fieldable_panels_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
       $title = '';
+
       if ($tpt_fieldable_panels_arr) {
         $fpid = $tpt_fieldable_panels_arr->fpid;
         $status = get_fieldable_panels_translation_status($fpid, $globallink->targetLocale, $title);
@@ -285,26 +330,32 @@ function transperfect_fieldable_panels_receive_form() {
         $status = TPT_STATUS_SOURCE_DELETED;
         $title = 'Link Deleted';
       }
-      if ($status == TPT_STATUS_SOURCE_DELETED)
+
+      if ($status == TPT_STATUS_SOURCE_DELETED) {
         $globallink->sourceDeleted = TRUE;
+      }
 
       if ($filter_status != '[any]' && $status != $filter_status) {
         unset($globallink_arr[$key]);
+
         continue;
       }
 
       $filter_submission = '[any]';
+
       if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_submission'])) {
         $filter_submission = $_SESSION['transperfect_fieldable_panels_receive_filter_submission'];
       }
 
       if ($filter_submission != '[any]' && $globallink->submissionName != $filter_submission) {
         unset($globallink_arr[$key]);
+
         continue;
       }
 
       if (variable_get('transperfect_enable_preview', 1)) {
         $tpt_row_id = get_tpt_fieldable_panels_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+
         if ($status != TPT_STATUS_SOURCE_DELETED) {
           $fpid_tpt_arr = array();
           $fpid_tpt_arr['fpid'] = $fpid;
@@ -317,25 +368,29 @@ function transperfect_fieldable_panels_receive_form() {
       $target_name = transperfect_get_drupal_locale_name($globallink->targetLocale);
 
       $rows[$key] = array(
-          'submissionName' => $globallink->submissionName,
-          'sourceLocale' => $source_name,
-          'targetLocale' => $target_name,
-          'title' => $title,
-          'status' => $status
+        'submissionName' => $globallink->submissionName,
+        'sourceLocale' => $source_name,
+        'targetLocale' => $target_name,
+        'title' => $title,
+        'status' => $status,
       );
 
       if (variable_get('transperfect_enable_preview', 1)) {
-        $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('id' => 'tpt_content_link_' . $key))) : '';
+        $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array(
+          'fragment' => '',
+          'external' => TRUE,
+          'attributes' => array('id' => 'tpt_content_link_' . $key),
+        )) : '';
       }
 
       $count++;
     }
 
     $form['table'] = array(
-        '#type' => 'tableselect',
-        '#header' => $header,
-        '#options' => transperfect_pager_array_splice($rows, $page_count),
-        '#empty' => t('No items available'),
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#options' => transperfect_pager_array_splice($rows, $page_count),
+      '#empty' => t('No items available'),
     );
 
     $form['pager'] = array('#markup' => theme('pager'));
@@ -343,27 +398,57 @@ function transperfect_fieldable_panels_receive_form() {
     if (variable_get('transperfect_enable_preview', 1)) {
       $lcount = 1;
       $div_arr = array();
+
       foreach ($rid_arr as $key => $rid) {
-        if (isset($rid)) {
-          $lcount = str_replace('tpt_content_div_', '', $key);
-          $form['tpt_content_div_' . $lcount] = array('#type' => 'markup', '#markup' => '', '#prefix' => '<div id="tpt_content_div_' . $lcount . '" style="display: none;">', '#suffix' => '</div>');
-          $div_arr['tpt_content_link_' . $lcount] = 'tpt_content_div_' . $lcount;
+        if (!isset($rid)) {
+          continue;
         }
+
+        $lcount = str_replace('tpt_content_div_', '', $key);
+
+        $form['tpt_content_div_' . $lcount] = array(
+          '#type' => 'markup',
+          '#markup' => '',
+          '#prefix' => '<div id="tpt_content_div_' . $lcount . '" style="display: none;">',
+          '#suffix' => '</div>',
+        );
+
+        $div_arr['tpt_content_link_' . $lcount] = 'tpt_content_div_' . $lcount;
       }
 
       drupal_add_js(array(
-          'transperfect' => array(
-              'popup' => $div_arr,
-              'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels/preview'),
-              'rids' => $rid_arr,
-              )), 'setting');
+        'transperfect' => array(
+          'popup' => $div_arr,
+          'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels/preview'),
+          'rids' => $rid_arr,
+        ),
+      ), 'setting');
     }
 
     if ($count > 1) {
-      $form['submit_update_selected'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_UPDATE_SELECTED);
-      $form['submit_update_all'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_UPDATE_ALL);
-      $form['submit_clear_deleted_hidden'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS, '#attributes' => array('style' => 'display:none;', 'disabled' => 'true'));
-      $form['submit_clear_deleted'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS);
+      $form['submit_update_selected'] = array(
+        '#type' => 'submit',
+        '#value' => TPT_BTN_DASHBOARD_UPDATE_SELECTED,
+      );
+
+      $form['submit_update_all'] = array(
+        '#type' => 'submit',
+        '#value' => TPT_BTN_DASHBOARD_UPDATE_ALL,
+      );
+
+      $form['submit_clear_deleted_hidden'] = array(
+        '#type' => 'submit',
+        '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS,
+        '#attributes' => array(
+          'style' => 'display:none;',
+          'disabled' => 'true',
+        ),
+      );
+
+      $form['submit_clear_deleted'] = array(
+        '#type' => 'submit',
+        '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS,
+      );
     }
 
     if (sizeof($globallink_arr) > 0) {
@@ -371,32 +456,52 @@ function transperfect_fieldable_panels_receive_form() {
     }
 
     $last_refreshed = '';
+
     if (isset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed'])) {
       $last_refreshed = $_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed'];
     }
-    $form['submit_refresh_hidden'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_REFRESH, '#prefix' => '<BR/>', '#attributes' => array('style' => 'display:none;', 'disabled' => 'true'));
-    $form['submit_refresh'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_REFRESH);
+
+    $form['submit_refresh_hidden'] = array(
+      '#type' => 'submit',
+      '#value' => TPT_BTN_DASHBOARD_REFRESH,
+      '#prefix' => '<BR/>',
+      '#attributes' => array(
+        'style' => 'display:none;',
+        'disabled' => 'true',
+      ),
+    );
+
+    $form['submit_refresh'] = array(
+      '#type' => 'submit',
+      '#value' => TPT_BTN_DASHBOARD_REFRESH,
+    );
+
     $form['markup'] = array(
-        '#type' => 'markup',
-        '#markup' => 'Last refreshed : ' . $last_refreshed);
+      '#type' => 'markup',
+      '#markup' => 'Last refreshed : ' . $last_refreshed,
+    );
   }
 
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-clear-deleted").click(function(){jQuery("#edit-submit-clear-deleted").hide();jQuery("#edit-submit-clear-deleted-hidden").css("display","inline");});});', 'inline');
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-refresh").click(function(){jQuery("#edit-submit-refresh").hide();jQuery("#edit-submit-refresh-hidden").css("display","inline");});});', 'inline');
   drupal_add_library('system', 'ui.dialog');
+
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
   drupal_add_js($module_path . '/transperfect_fieldable_panels/js/transperfect_fieldable_panels.js');
+
   return $form;
 }
 
 function transperfect_fieldable_panels_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
+
   transperfect_validate_project_director_details($pd4);
 
   if ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
     $rids = array_filter($form_state['values']['table']);
+
     if (count($rids) == 0) {
       form_set_error('', t('No items selected.'));
     }
@@ -415,20 +520,26 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
         $count = get_translated_fieldable_panels($pd4, $globallink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
+
         foreach ($globallink_arr as $updated) {
           if ($updated->sourceDeleted == TRUE) {
             $delete_records_selected = TRUE;
           }
+
           if ($updated->status == TPT_STATUS_ERROR) {
             $error = TRUE;
           }
         }
+
         $status = 'status';
+
         if ($error) {
           drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
           $status = 'warning';
         }
+
         drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
+
         if ($delete_records_selected) {
           drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
         }
@@ -448,6 +559,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
         $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
         $success = FALSE;
         $count = 0;
+
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
             $success = update_deleted_fieldable_panels_records($pd4, $globallink);
@@ -461,6 +573,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
         else {
           $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
           $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
+
           unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
         }
 
@@ -479,26 +592,34 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
         $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
         $updated_globalLink_arr = array();
         $rids = array_filter($form_state['values']['table']);
+
         foreach ($rids as $rid) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
+
         $count = get_translated_fieldable_panels($pd4, $updated_globalLink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
+
         foreach ($globallink_arr as $updated) {
           if ($updated->sourceDeleted == TRUE) {
             $delete_records_selected = TRUE;
           }
+
           if ($updated->status == TPT_STATUS_ERROR) {
             $error = TRUE;
           }
         }
+
         $status = 'status';
+
         if ($error) {
           drupal_set_message(t('There was some error while updating the records. Please check logs for more details.'), 'warning', NULL);
           $status = 'warning';
         }
+
         drupal_set_message(check_plain($count . ' record(s) updated successfully.'), $status, NULL);
+
         if ($delete_records_selected) {
           drupal_set_message(t('Source Deleted record(s) cannot be updated.'), 'warning', NULL);
         }
@@ -510,12 +631,15 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
 
       $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
       $_SESSION['transperfect_fieldable_panels_selected_submission'] = array();
+
       unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
 
       break;
     case TPT_BTN_DASHBOARD_REFRESH:
       sleep(2);
+
       $pd4 = transperfect_get_project_director_details();
+
       try {
         $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
       }
@@ -534,6 +658,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
       }
       else {
         $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
+
         unset($_SESSION['transperfect_fieldable_panels_globalLink_arr_last_refreshed']);
       }
 
@@ -544,6 +669,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
 function preview_translated_fieldable_panels_content() {
   $row_id = $_POST['rid'];
   $arr = get_fieldable_panels_translations_for_row_id($row_id);
+
   drupal_json_output($arr);
 }
 
@@ -566,6 +692,7 @@ function get_fieldable_panels_translations_for_row_id($row_id) {
   $translation = array();
 
   $error = FALSE;
+
   try {
     $pd4 = transperfect_get_project_director_details();
     $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
@@ -575,33 +702,37 @@ function get_fieldable_panels_translations_for_row_id($row_id) {
     }
 
     foreach ($targets as $target) {
-      if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
-        if (empty($target->ticket)) {
-          continue;
-        }
+      if (str_replace('-', '_', $target->targetLanguage->locale) != $globallink->targetLocale) {
+        continue;
+      }
 
-        $globallink->targetTicket = $target->ticket;
-        $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
-        if (empty($globallink->targetXML)) {
-          continue;
-        }
+      if (empty($target->ticket)) {
+        continue;
+      }
 
-        $translation = get_translated_fieldable_panels_array($globallink->targetXML);
-        $fpid = $translation['fpid'];
+      $globallink->targetTicket = $target->ticket;
+      $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
 
-        $entity = fieldable_panels_panes_load($fpid);
+      if (empty($globallink->targetXML)) {
+        continue;
+      }
 
-        if (!empty($entity)) {
-          $source_xml = get_fieldable_panels_pane_xml($fpid);
-          $source_arr = array();
-          if ($source_xml) {
-            $source_arr = get_translated_fieldable_panels_array($source_xml);
-          }
+      $translation = get_translated_fieldable_panels_array($globallink->targetXML);
+      $fpid = $translation['fpid'];
+
+      $entity = fieldable_panels_panes_load($fpid);
+
+      if (!empty($entity)) {
+        $source_xml = get_fieldable_panels_pane_xml($fpid);
+        $source_arr = array();
+
+        if ($source_xml) {
+          $source_arr = get_translated_fieldable_panels_array($source_xml);
         }
-        else {
-          $source_xml = TPT_STATUS_SOURCE_DELETED;
-          $globallink->sourceDeleted = TRUE;
-        }
+      }
+      else {
+        $source_xml = TPT_STATUS_SOURCE_DELETED;
+        $globallink->sourceDeleted = TRUE;
       }
     }
   }
@@ -614,6 +745,7 @@ function get_fieldable_panels_translations_for_row_id($row_id) {
 
   $arr = array();
   $arr['target_ticket'] = $globallink->targetTicket;
+  
   if ($globallink->sourceDeleted) {
     $arr = array(TPT_STATUS_SOURCE_DELETED);
   }
