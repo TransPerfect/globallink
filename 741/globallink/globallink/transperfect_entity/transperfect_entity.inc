@@ -1251,7 +1251,11 @@ function traverse_entity_fields_and_field_collections($entity_type, $content_typ
       }
     }
   }
-  elseif (module_exists('field_collection')) {
+  else {
+    if (!module_exists('field_collection')) {
+      return;
+    }
+
     // Field Collection field, read the entity id from item and load
     // Entity object and then do recursion for nested field collections.
     foreach ($items as $entity_id_arr) {
@@ -1410,7 +1414,7 @@ function clear_cancelled_entity_documents() {
 
   foreach ($results as $item) {
     update_submission_entity_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
-    
+
     $count++;
   }
 
