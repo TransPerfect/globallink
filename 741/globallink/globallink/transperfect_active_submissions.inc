@@ -27,6 +27,8 @@ function transperfect_node_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
+  $form['#attributes'] = array('class' => array('transperfect-node-select-submission-form'));
+
   $form['select_submission'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('container-inline')),
@@ -36,12 +38,14 @@ function transperfect_node_active_select_form() {
     '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
     '#options' => $options,
     '#default_value' => $selected_value,
+    '#attributes' => array('class' => array('transperfect-node-select-submission-edit')),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
     '#value' => TPT_BTN_DASHBOARD_GO,
-    '#attributes' => array('style' => 'display: none;'));
+    '#attributes' => array('style' => 'display: none;'),
+  );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
