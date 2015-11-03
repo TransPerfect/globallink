@@ -68,8 +68,6 @@ function ajax_completed(data) {
       case 'rid':
       case 'nid':
       case 'vid':
-        continue 2;
-        
         break;
       case 'field_collection':
         jQuery.each(f_object, function(t_parent_fc, t_fc_obj) {

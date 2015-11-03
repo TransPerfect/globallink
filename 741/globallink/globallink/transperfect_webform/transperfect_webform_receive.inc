@@ -17,7 +17,7 @@ function transperfect_webform_receive_filter_form() {
   $form = array();
   $filter = FALSE;
 
-  $submission_options = get_distinct_active_webform_submission_names();
+  $submission_options = transperfect_get_distinct_active_webform_submission_names();
   $default_submission = '[any]';
   if (!empty($_SESSION['transperfect_webform_receive_filter_submission'])
           && !in_array($_SESSION['transperfect_webform_receive_filter_submission'], $submission_options)) {
@@ -218,9 +218,9 @@ function transperfect_webform_receive_form() {
       $pd4 = transperfect_get_project_director_details();
       if (transperfect_validate_project_director_details($pd4)) {
         $_SESSION['transperfect_webform_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
-        $globallink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
-        if (sizeof($get_ready_translations_details_from_pd_arr) > 0) {
-          $_SESSION['transperfect_webform_globalLink_arr'] = serialize($get_ready_translations_details_from_pd_arr);
+        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
+        if (sizeof($globallink_arr) > 0) {
+          $_SESSION['transperfect_webform_globalLink_arr'] = serialize($globallink_arr);
         }
       }
     }
@@ -280,19 +280,19 @@ function transperfect_webform_receive_form() {
       $pd4 = transperfect_get_project_director_details();
 
       try {
-        $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+        $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
       }
       catch (Exception $e) {
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
-      $webform_arr = get_translated_webform_items($target_xml);
+      $webform_arr = transperfect_get_translated_webform_items($target_xml);
 
       if (count($webform_arr) > 0) {
         $lid = $webform_arr['lid'];
         $title = '';
 
-        $status = get_webform_translation_status($lid, $globallink->targetLocale, $title);
+        $status = transperfect_get_webform_translation_status($lid, $globallink->targetLocale, $title);
         if ($status == TPT_STATUS_SOURCE_DELETED)
           $globallink->sourceDeleted = TRUE;
 
@@ -313,7 +313,7 @@ function transperfect_webform_receive_form() {
 
         if (variable_get('transperfect_enable_preview', 1)) {
           if ($status != TPT_STATUS_SOURCE_DELETED) {
-            $tpt_row_id = get_tpt_webform_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+            $tpt_row_id = transperfect_get_webform_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
             if ($tpt_row_id) {
               $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
             }
@@ -421,7 +421,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
     case TPT_BTN_DASHBOARD_UPDATE_ALL:
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_webform_globalLink_arr']);
-        $count = get_translated_webforms($pd4, $globallink_arr);
+        $count = transperfect_get_translated_webforms($pd4, $globallink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
         foreach ($globallink_arr as $updated) {
@@ -459,7 +459,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
         $count = 0;
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = update_deleted_webform_records($pd4, $globallink);
+            $success = transperfect_update_deleted_webform_records($pd4, $globallink);
             $count++;
           }
         }
@@ -491,7 +491,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
         foreach ($rids as $rid) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
-        $count = get_translated_webforms($pd4, $updated_globalLink_arr);
+        $count = transperfect_get_translated_webforms($pd4, $updated_globalLink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
         foreach ($globallink_arr as $updated) {
@@ -526,7 +526,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
       sleep(2);
       $pd4 = transperfect_get_project_director_details();
       try {
-        $globallink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
+        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
         transperfect_log(TPT_OBJECT_TYPE_WEBFORM, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
@@ -576,25 +576,25 @@ function get_webform_translations_for_row_id($row_id) {
   $error = FALSE;
   try {
     $pd4 = transperfect_get_project_director_details();
-    $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
+    $targets = transperfect_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
     if (is_array($targets)) {
       foreach ($targets as $target) {
         if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
           if (!is_null($target->ticket) && $target->ticket != '') {
             $globallink->targetTicket = $target->ticket;
-            $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+            $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
             if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-              $translation = get_translated_webform_items($globallink->targetXML);
+              $translation = transperfect_get_translated_webform_items($globallink->targetXML);
               $lid = $translation['lid'];
               $webform = transperfect_load_source_data($lid);
               if ($webform && is_array($webform) && !is_null($webform)) {
                 $source = transperfect_load_source_data($lid);
                 $source_arr_temp['source'] = $source[0]->source;
                 $source_arr_temp['location'] = $source[0]->location;
-                $source_xml = get_webform_xml($lid, $source_arr_temp);
+                $source_xml = transperfect_get_webform_xml($lid, $source_arr_temp);
                 $source_arr = array();
                 if ($source_xml) {
-                  $source_arr = get_translated_webform_items($source_xml);
+                  $source_arr = transperfect_get_translated_webform_items($source_xml);
                 }
               }
               else {
@@ -611,19 +611,19 @@ function get_webform_translations_for_row_id($row_id) {
       if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
         if (!is_null($target->ticket) && $target->ticket != '') {
           $globallink->targetTicket = $target->ticket;
-          $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+          $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
           if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-            $translation = get_translated_webform_items($globallink->targetXML);
+            $translation = transperfect_get_translated_webform_items($globallink->targetXML);
             $lid = $translation['lid'];
             $webform = transperfect_load_source_data($lid);
             if ($webform && is_array($webform) && !is_null($webform)) {
               $source = transperfect_load_source_data($lid);
               $source_arr_temp['source'] = $source[0]->source;
               $source_arr_temp['location'] = $source[0]->location;
-              $source_xml = get_webform_xml($lid, $source_arr_temp);
+              $source_xml = transperfect_get_webform_xml($lid, $source_arr_temp);
               $source_arr = array();
               if ($source_xml) {
-                $source_arr = get_translated_webform_items($source_xml);
+                $source_arr = transperfect_get_translated_webform_items($source_xml);
               }
             }
             else {
