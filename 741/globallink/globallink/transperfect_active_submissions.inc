@@ -27,7 +27,7 @@ function transperfect_node_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes'] = array('class' => array('transperfect-node-select-submission-form'));
+  $form['#attributes']['class'][] = 'transperfect-node-select-submission-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
