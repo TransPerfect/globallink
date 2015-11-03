@@ -138,7 +138,7 @@ function transperfect_entity_presave($node) {
 }
 
 function transperfect_update_change_detection_entity($node, $lang) {
-  $tpt_locale_code = get_tpt_locale_code($lang);
+  $tpt_locale_code = transperfect_get_locale_code($lang);
 
   db_update('transperfect_core_entity')
   ->fields(array(

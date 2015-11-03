@@ -660,7 +660,7 @@ function transperfect_dashboard_entity_form() {
             }
 
             $results = $d_query->execute();
-            $active_subs = get_active_entity_submission_rows_by_nid($include_node_arr);
+            $active_subs = transperfect_get_active_entity_submission_rows_by_nid($include_node_arr);
 
             $rows = array();
 
@@ -746,7 +746,7 @@ function transperfect_dashboard_entity_form() {
 
           foreach ($results as $item) {
             $count++;
-            $active_arr = get_active_entity_submission_by_nid($item->nid);
+            $active_arr = transperfect_get_active_entity_submission_by_nid($item->nid);
 
             $vid = $item->vid;
 
@@ -852,7 +852,7 @@ function transperfect_dashboard_entity_form() {
           foreach ($results as $item) {
             $count++;
 
-            $active_arr = get_active_entity_submission_by_nid($item->nid);
+            $active_arr = transperfect_get_active_entity_submission_by_nid($item->nid);
 
             $vid = $item->vid;
 
@@ -1130,7 +1130,7 @@ function transperfect_entity_form_clear_submit($form, &$form_state) {
       array_push($nid_arr, $nid);
     }
 
-    update_entity_change_flag($nid_arr, $source, $tgt_arr);
+    transperfect_update_entity_change_flag($nid_arr, $source, $tgt_arr);
     drupal_set_message(t('Status has been cleared successfully for selected record(s).'));
   }
 }
@@ -1191,7 +1191,7 @@ function transperfect_dashboard_entity_form_validate($form, &$form_state) {
       $nid = $node->tnid;
     }
 
-    $rows = get_sent_tpt_entity_rows_by_nid($nid);
+    $rows = transperfect_get_sent_entity_rows_by_nid($nid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -1231,12 +1231,20 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
 
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, 'Sending submission - [' . $submission_name . ']');
-
-    $updated_globalLink_arr = send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      update_entity_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_update_entity_ticket_id($updated_globalLink_arr, $project_code);
+      drupal_set_message(t('Content has been successfully sent for translations.'));
+    }
+    else {
+      if (empty($_SESSION['messages']['warning'])) {
+        drupal_set_message(t('Content is empty and has not been sent for translations.'), 'warning');
+      }
+    }
+
+    if (count($updated_globalLink_arr) > 0) {
+      transperfect_update_entity_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
     else {

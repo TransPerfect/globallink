@@ -5,7 +5,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/TargetService2.php');
 
-function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
+function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -30,8 +30,8 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
 
   $globallink_arr = array();
 
-  $token = @login($session_service, $username, $password);
-  $projects = get_user_projects($project_service, $token);
+  $token = transperfect_login($session_service, $username, $password);
+  $projects = transperfect_get_user_projects($project_service, $token);
   $proj_ticket_arr = array();
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
@@ -43,7 +43,7 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = @getCompletedTargetsByProjects($target_service, $proj_ticket_arr, $token, $pd_obj);
+    $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
     $count = 1;
     if (is_array($targets)) {
       foreach ($targets as $target) {
@@ -225,7 +225,7 @@ function get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
   return $globallink_arr;
 }
 
-function get_all_ready_translations_details_from_pd($pd_obj) {
+function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -250,8 +250,8 @@ function get_all_ready_translations_details_from_pd($pd_obj) {
 
   $globallink_arr = array();
 
-  $token = @login($session_service, $username, $password);
-  $projects = get_user_projects($project_service, $token);
+  $token = transperfect_login($session_service, $username, $password);
+  $projects = transperfect_get_user_projects($project_service, $token);
   $proj_ticket_arr = array();
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
@@ -263,7 +263,7 @@ function get_all_ready_translations_details_from_pd($pd_obj) {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = @get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
+    $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
     $count = 1;
     if (is_array($targets)) {
       foreach ($targets as $target) {
@@ -351,7 +351,7 @@ function get_all_ready_translations_details_from_pd($pd_obj) {
   return $globallink_arr;
 }
 
-function get_completed_targets_by_projects($target_service, $project_tickets, $token, $pd_obj) {
+function transperfect_get_completed_targets_by_projects($target_service, $project_tickets, $token, $pd_obj) {
   $get_completed_targets_by_projects_request = new getCompletedTargetsByProjects();
 
   $get_completed_targets_by_projects_request->projectTickets = $project_tickets;
@@ -363,7 +363,7 @@ function get_completed_targets_by_projects($target_service, $project_tickets, $t
   return $get_completed_targets_by_projects_response->return;
 }
 
-function get_completed_targets_by_doc($pd_obj, $ticket) {
+function transperfect_get_completed_targets_by_doc($pd_obj, $ticket) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -376,7 +376,7 @@ function get_completed_targets_by_doc($pd_obj, $ticket) {
               'location' => $url . '/services/TargetService2'
           ));
 
-  $token = login($session_service, $username, $password);
+  $token = transperfect_login($session_service, $username, $password);
 
   $get_completed_targets_by_documents_request = new getCompletedTargetsByDocuments();
 
@@ -389,7 +389,7 @@ function get_completed_targets_by_doc($pd_obj, $ticket) {
   return $get_completed_targets_by_documents_response->return;
 }
 
-function download_target_resource($pd_obj, $target_ticket) {
+function transperfect_download_target_resource($pd_obj, $target_ticket) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -400,20 +400,20 @@ function download_target_resource($pd_obj, $target_ticket) {
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
               'location' => $url . '/services/TargetService2'
           ));
-  $token = @login($session_service, $username, $password);
-  $download_target_resource_request = new downloadTargetResource();
+  $token = transperfect_login($session_service, $username, $password);
+  $transperfect_download_target_resource_request = new downloadTargetResource();
 
-  $download_target_resource_request->targetId = $target_ticket;
-  $download_target_resource_request->userId = $token;
+  $transperfect_download_target_resource_request->targetId = $target_ticket;
+  $transperfect_download_target_resource_request->userId = $token;
 
-  $download_target_resource_response = $target_service->downloadTargetResource($download_target_resource_request);
-  $repository_item = $download_target_resource_response->return;
+  $transperfect_download_target_resource_response = $target_service->downloadTargetResource($transperfect_download_target_resource_request);
+  $repository_item = $transperfect_download_target_resource_response->return;
   $target_content = $repository_item->data->_;
 
   return $target_content;
 }
 
-function send_download_confirmation($target_ticket, $pd_obj) {
+function transperfect_send_download_confirmation($target_ticket, $pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -424,13 +424,13 @@ function send_download_confirmation($target_ticket, $pd_obj) {
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
               'location' => $url . '/services/TargetService2'
           ));
-  $token = login($session_service, $username, $password);
-  $send_download_confirmation_request = new sendDownloadConfirmation();
+  $token = transperfect_login($session_service, $username, $password);
+  $transperfect_send_download_confirmation_request = new sendDownloadConfirmation();
 
-  $send_download_confirmation_request->targetId = $target_ticket;
-  $send_download_confirmation_request->userId = $token;
+  $transperfect_send_download_confirmation_request->targetId = $target_ticket;
+  $transperfect_send_download_confirmation_request->userId = $token;
 
-  $send_download_confirmation_response = $target_service->sendDownloadConfirmation($send_download_confirmation_request);
+  $transperfect_send_download_confirmation_response = $target_service->sendDownloadConfirmation($transperfect_send_download_confirmation_request);
 
-  return $send_download_confirmation_response->return;
+  return $transperfect_send_download_confirmation_response->return;
 }

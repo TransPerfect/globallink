@@ -52,11 +52,13 @@ function module_transperfect_is_field_translatable($node, $field, $target_arr = 
       return TRUE;
     }
   }
-  elseif ($target_arr != NULL) {
-    foreach ($target_arr as $language) {
-      if ($language == 'fr') {
-        if ($field == 'title') {
-          return TRUE;
+  else {
+    if ($target_arr != NULL) {
+      foreach ($target_arr as $language) {
+        if ($language == 'fr') {
+          if ($field == 'title') {
+            return TRUE;
+          }
         }
       }
     }

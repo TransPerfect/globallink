@@ -23,6 +23,7 @@ function transperfect_get_root_menu($menu_item) {
  */
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
   $filters = transperfect_build_filters(TRUE);
+
   $count = 0;
 
   foreach ($filter_array as $filter) {
@@ -48,6 +49,7 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
         }
 
         list($key, $value) = explode('-', $value, 2);
+
         $query->condition($key, $value, '=');
 
         break;
@@ -108,40 +110,42 @@ function transperfect_build_filters($content_translation) {
   $filters = array();
 
   $filters['modified'] = array(
-      'title' => 'Show',
-      'field' => 'changed',
-      'form-type' => 'radios',
-      'options' => array('&nbsp;&nbsp;' . t('Modified Content') . '&nbsp;&nbsp;&nbsp;&nbsp;',
-          '&nbsp;&nbsp;' . t('Everything') . '&nbsp;&nbsp;'),
+    'title' => 'Show',
+    'field' => 'changed',
+    'form-type' => 'radios',
+    'options' => array(
+      '&nbsp;&nbsp;' . t('Modified Content') . '&nbsp;&nbsp;&nbsp;&nbsp;',
+      '&nbsp;&nbsp;' . t('Everything') . '&nbsp;&nbsp;',
+    ),
   );
 
   if (module_exists('revisioning')) {
     $filters['status'] = array(
-        'title' => TPT_LABEL_STATUS,
-        'options' => array(
-            'status-1' => t('Latest Published Revision'),
-            'status-0' => t('Latest Modified Revision'),
-            'promote-1' => t('Promoted'),
-            'promote-0' => t('Not Promoted'),
-            'sticky-1' => t('Sticky'),
-            'sticky-0' => t('Not Sticky'),
-        ),
-        'form-type' => 'select',
+      'title' => TPT_LABEL_STATUS,
+      'options' => array(
+        'status-1' => t('Latest Published Revision'),
+        'status-0' => t('Latest Modified Revision'),
+        'promote-1' => t('Promoted'),
+        'promote-0' => t('Not Promoted'),
+        'sticky-1' => t('Sticky'),
+        'sticky-0' => t('Not Sticky'),
+      ),
+      'form-type' => 'select',
     );
   }
   else {
     $filters['status'] = array(
-        'title' => TPT_LABEL_STATUS,
-        'options' => array(
-            '[any]' => t('Any'),
-            'status-1' => t('Published'),
-            'status-0' => t('Not Published'),
-            'promote-1' => t('Promoted'),
-            'promote-0' => t('Not Promoted'),
-            'sticky-1' => t('Sticky'),
-            'sticky-0' => t('Not Sticky'),
-        ),
-        'form-type' => 'select',
+      'title' => TPT_LABEL_STATUS,
+      'options' => array(
+        '[any]' => t('Any'),
+        'status-1' => t('Published'),
+        'status-0' => t('Not Published'),
+        'promote-1' => t('Promoted'),
+        'promote-0' => t('Not Promoted'),
+        'sticky-1' => t('Sticky'),
+        'sticky-0' => t('Not Sticky'),
+      ),
+      'form-type' => 'select',
     );
   }
 
@@ -152,46 +156,47 @@ function transperfect_build_filters($content_translation) {
   }
 
   $filters['language_name'] = array(
-      'title' => TPT_LABEL_SOURCE_LANG,
-      'field' => 'language',
-      'options' => $lang_filter,
-      'form-type' => 'select',
+    'title' => TPT_LABEL_SOURCE_LANG,
+    'field' => 'language',
+    'options' => $lang_filter,
+    'form-type' => 'select',
   );
 
   $filters['node_parent'] = array(
-      'title' => t('Parent Node'),
-      'field' => 'node_parent',
-      'form-type' => 'checkbox',
+    'title' => t('Parent Node'),
+    'field' => 'node_parent',
+    'form-type' => 'checkbox',
   );
 
   $filters['target_language'] = array(
-      'title' => TPT_LABEL_TARGET_LANG,
-      'field' => 'language',
-      'options' => $lang_filter,
-      'form-type' => 'select',
+    'title' => TPT_LABEL_TARGET_LANG,
+    'field' => 'language',
+    'options' => $lang_filter,
+    'form-type' => 'select',
   );
 
   $n_arr = array('[any]' => t('Any'));
   $t_arr = transperfect_get_translatable_node_types_and_names($content_translation);
+
   $node_types_filter = $n_arr + $t_arr;
 
   $filters['type'] = array(
-      'title' => TPT_LABEL_CONTENT_TYPE,
-      'field' => 'type',
-      'options' => $node_types_filter,
-      'form-type' => 'select',
+    'title' => TPT_LABEL_CONTENT_TYPE,
+    'field' => 'type',
+    'options' => $node_types_filter,
+    'form-type' => 'select',
   );
 
   $filters['title'] = array(
-      'title' => 'Title',
-      'field' => 'title',
-      'form-type' => 'textfield',
+    'title' => 'Title',
+    'field' => 'title',
+    'form-type' => 'textfield',
   );
 
   $filters['modified-after'] = array(
-      'title' => 'Modified After',
-      'field' => 'changed',
-      'form-type' => 'textfield',
+    'title' => 'Modified After',
+    'field' => 'changed',
+    'form-type' => 'textfield',
   );
 
   return $filters;
@@ -205,11 +210,11 @@ function transperfect_build_filters($content_translation) {
  */
 function transperfect_get_all_translatable_node_types_and_names() {
   $arr = array();
+
   $node_types = node_type_get_types();
 
   foreach ($node_types as $node_type) {
-    if (translation_supported_type($node_type->type) || (module_exists('entity_translation')
-            && entity_translation_node_supported_type($node_type->type))) {
+    if (translation_supported_type($node_type->type) || (module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type))) {
       $arr[$node_type->type] = $node_type->name;
     }
   }
@@ -230,6 +235,7 @@ function transperfect_get_all_translatable_node_types_and_names() {
  */
 function transperfect_get_translatable_node_types_and_names($content_translation) {
   $arr = array();
+
   $node_types = node_type_get_types();
 
   foreach ($node_types as $node_type) {
@@ -452,7 +458,10 @@ function transperfect_get_drupal_locale_code($locale_code) {
  *   The node tid.
  */
 function transperfect_update_node_tnid($nid, $tnid) {
-  db_update('node')->fields(array('tnid' => $tnid))->condition('nid', $nid, '=')->execute();
+  db_update('node')
+  ->fields(array('tnid' => $tnid))
+  ->condition('nid', $nid, '=')
+  ->execute();
 }
 
 /**
@@ -761,6 +770,7 @@ function transperfect_get_non_translatable_config_fields($content_type) {
  */
 function transperfect_get_pending_fields($content_type) {
   $config_fields = transperfect_get_config_fields($content_type);
+
   $field_info_arr = field_info_instances('node', $content_type);
   $field_info_arr[] = array('field_name' => 'title', 'label' => 'Title');
 
@@ -775,6 +785,7 @@ function transperfect_get_pending_fields($content_type) {
 
     if ($field_name != 'metatag' && $field_name != 'title') {
       $field = field_info_field($field_name);
+
       if ($field['type'] != 'list_boolean' && $field['type'] != 'file' && $field['type'] != 'taxonomy_term_reference') {
         if (!isset($config_fields[$field_name])) {
           $field_arr[$field_name] = $field_info['label'];
@@ -804,6 +815,7 @@ function transperfect_get_pending_fields($content_type) {
  */
 function transperfect_get_translatable_node_types($content_translation) {
   $arr = array();
+
   $node_types = node_type_get_types();
 
   foreach ($node_types as $node_type) {
@@ -957,6 +969,7 @@ function transperfect_drupal_search_query() {
 
   drupal_static_reset('language_list');
   $languages = locale_language_list('name');
+
   unset($languages['en']);
 
   $filters['string'] = array(
@@ -966,12 +979,19 @@ function transperfect_drupal_search_query() {
 
   $filters['language'] = array(
     'title' => t('Language'),
-    'options' => array_merge(array('all' => t('All languages'), 'en' => t('English (provided by Drupal)')), $languages),
+    'options' => array_merge(array(
+      'all' => t('All languages'),
+      'en' => t('English (provided by Drupal)'),
+    ), $languages),
   );
 
   $filters['translation'] = array(
     'title' => t('Filter in'),
-    'options' => array('all' => t('Both translated and untranslated strings'), 'translated' => t('Only translated strings'), 'untranslated' => t('Only untranslated strings')),
+    'options' => array(
+      'all' => t('Both translated and untranslated strings'),
+      'translated' => t('Only translated strings'),
+      'untranslated' => t('Only untranslated strings'),
+    ),
   );
 
   return $filters;
@@ -981,7 +1001,10 @@ function transperfect_drupal_search_query() {
  * @todo Document this function.
  */
 function transperfect_get_source($group) {
-  $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(':textgroup' => $group));
+  $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(
+    ':textgroup' => $group,
+  ));
+
   $strings = array();
 
   foreach ($result as $child) {
@@ -1091,7 +1114,12 @@ function transperfect_log($type, $severity, $message) {
   //Always log anything with severity error and warning
   if ($severity == TPT_LOGGING_SEVERITY_ERROR || $severity == TPT_LOGGING_SEVERITY_WARNING) {
     db_insert('transperfect_log')
-    ->fields(array('severity' => $severity, 'type' => $type, 'message' => $message, 'timestamp' => REQUEST_TIME))
+    ->fields(array(
+      'severity' => $severity,
+      'type' => $type,
+      'message' => $message,
+      'timestamp' => REQUEST_TIME,
+    ))
     ->execute();
 
     return;
@@ -1108,7 +1136,12 @@ function transperfect_log($type, $severity, $message) {
   }
 
   db_insert('transperfect_log')
-  ->fields(array('severity' => $severity, 'type' => $type, 'message' => $message, 'timestamp' => REQUEST_TIME))
+  ->fields(array(
+    'severity' => $severity,
+    'type' => $type,
+    'message' => $message,
+    'timestamp' => REQUEST_TIME,
+  ))
   ->execute();
 }
 

@@ -20,7 +20,7 @@ function transperfect_entity_active_select_form() {
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = get_distinct_entity_active_submission_names();
+  $options = transperfect_get_distinct_entity_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_entity_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_entity_selected_submission'];
@@ -81,7 +81,7 @@ function transperfect_entity_active_select_form_submit($form, &$form_state) {
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_entity_selected_submission'] = '';
 
-        cancel_entity_submission($selected_submission, $pd4);
+        transperfect_cancel_entity_submission($selected_submission, $pd4);
 
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
 
@@ -165,7 +165,7 @@ function transperfect_entity_active_form() {
     $selected_value = $_SESSION['transperfect_entity_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = get_distinct_entity_active_submission_names();
+    $options = transperfect_get_distinct_entity_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -305,7 +305,8 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
         sleep(5);
 
         $rids_arr = array_filter($form_state['values']['table']);
-        $rids = check_tpt_entity_status($rids_arr);
+
+        $rids = transperfect_check_entity_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -314,7 +315,8 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
         }
 
         $_SESSION['transperfect_entity_selected_submission'] = '';
-        cancel_select_entity_records($rids, $pd4);
+
+        transperfect_cancel_select_entity_records($rids, $pd4);
 
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
@@ -335,10 +337,10 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
       break;
     case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
       try {
-        $count = clear_cancelled_entity_documents();
+        $count = transperfect_clear_cancelled_entity_documents();
         $_SESSION['transperfect_entity_selected_submission'] = '';
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
-        
+
         if ($count > 0) {
           drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
         }
