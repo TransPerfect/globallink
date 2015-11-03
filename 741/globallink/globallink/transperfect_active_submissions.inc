@@ -35,22 +35,33 @@ function transperfect_node_active_select_form() {
   );
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => t('Active Submission Name') . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name') . ':',
     '#options' => $options,
     '#default_value' => $selected_value,
-    '#attributes' => array('class' => array('transperfect-node-select-submission-edit')),
+    '#attributes' => array(
+      'class' => array(
+        'transperfect-node-select-submission-edit',
+      ),
+    ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => t(' Go '),
-    '#attributes' => array('style' => 'display: none;'),
+    '#value' => t('Go'),
+    '#attributes' => array(
+      'class' => array('transperfect-edit-submit-go'),
+    ),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => t(' Cancel Submission '),
+      '#value' => t('Cancel Submission'),
+      '#attributes' => array(
+        'class' => array(
+          'transperfect-edit-submit-cancel-submission',
+        ),
+      ),
     );
   }
   else {
