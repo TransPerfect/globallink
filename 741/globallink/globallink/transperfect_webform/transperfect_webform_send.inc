@@ -284,7 +284,7 @@ function transperfect_dashboard_webform_form() {
 
     if ($query['language'] != 'en' && $query['language'] != 'all') {
       $sql_query->leftJoin('locales_target', 't', 't.lid = s.lid AND t.language = :langcode', array(
-        ':langcode' => $query['language']),
+        ':langcode' => $query['language'])
       );
 
       $limit_language = $query['language'];

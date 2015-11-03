@@ -125,6 +125,6 @@ function transperfect_menu_update_7260() {
       'not null' => TRUE,
       'default' => '',
       'length' => 255,
-    ),
+    )
   );
 }
