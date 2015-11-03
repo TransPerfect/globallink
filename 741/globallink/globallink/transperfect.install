@@ -2030,7 +2030,6 @@ function transperfect_install() {
             'field_label' => $field_arr[$field_name]['label'],
             'translatable' => $translatable,
           ))->execute();
-        }
       }
     }
 
@@ -2259,7 +2258,6 @@ function transperfect_update_7200() {
                   'field_label' => $fc['label'],
                   'translatable' => 1,
                 ))->execute();
-              }
             }
           }
 
@@ -2360,10 +2358,9 @@ function transperfect_update_7201() {
             'field_label' => $field_arr[$field_name]['label'],
             'translatable' => $translatable,
           ))->execute();
-        }
       }
     }
-
+    
     if (module_exists('field_collection')) {
       insert_field_collections($node_type->type);
     }
