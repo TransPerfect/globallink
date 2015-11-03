@@ -1254,7 +1254,11 @@ function transperfect_traverse_entity_fields_and_field_collections($entity_type,
       }
     }
   }
-  elseif (module_exists('field_collection')) {
+  else {
+    if (!module_exists('field_collection')) {
+      return;
+    }
+
     // Field Collection field, read the entity id from item and load
     // Entity object and then do recursion for nested field collections.
     foreach ($items as $entity_id_arr) {
