@@ -40,7 +40,7 @@ function transperfect_fieldable_panels_menu() {
     'title' => 'Preview Translation',
     'page callback' => 'preview_translated_fieldable_panels_content',
     'file' => 'transperfect_fieldable_panels_receive.inc',
-    'access callback' => 'transperfect_access_callback_admin',
+    'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
 

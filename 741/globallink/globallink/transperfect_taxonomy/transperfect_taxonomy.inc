@@ -4,12 +4,12 @@ require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
-function send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+function transperfect_send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
 
   foreach ($lids as $lid) {
-    $rows = get_sent_tpt_taxonomy_rows_by_bid($lid);
+    $rows = transperfect_get_sent_taxonomy_rows_by_bid($lid);
     $target_arr = $target_locale_arr;
 
     foreach ($rows as $row) {
@@ -29,7 +29,7 @@ function send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_da
       continue;
     }
 
-    $xml = get_taxonomy_xml($term, $path);
+    $xml = transperfect_get_taxonomy_xml($term, $path);
 
     $name = 'Taxonomy_' . $lid . '.xml';
 
@@ -48,13 +48,13 @@ function send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_da
   }
 
   if (!empty($globallink_arr)) {
-    send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
+    transperfect_send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
 
   return $globallink_arr;
 }
 
-function get_taxonomy_xml($term, $path) {
+function transperfect_get_taxonomy_xml($term, $path) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
@@ -111,7 +111,7 @@ function transperfect_get_taxonomy_strings($language = NULL, $group = 'taxonomy'
   return $strings;
 }
 
-function update_taxonomy_ticket_id($arr, $project_code) {
+function transperfect_update_taxonomy_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;
     $type = $globallink->type;
@@ -124,7 +124,7 @@ function update_taxonomy_ticket_id($arr, $project_code) {
     $taxonomy = taxonomy_term_load($bid);
 
     foreach ($target_locale_arr as $target_locale) {
-      $row = get_transperfect_taxonomy_row($bid, $type, $globallink->sourceLocale, $target_locale);
+      $row = transperfect_get_taxonomy_row($bid, $type, $globallink->sourceLocale, $target_locale);
 
       if ($row) {
         db_update('transperfect_core_taxonomy')
@@ -163,7 +163,7 @@ function update_taxonomy_ticket_id($arr, $project_code) {
   }
 }
 
-function get_transperfect_taxonomy_row($object_id, $object_type, $source, $target) {
+function transperfect_get_taxonomy_row($object_id, $object_type, $source, $target) {
   $result = db_select('transperfect_core_taxonomy', 'tco')
   ->fields('tco')
   ->condition('object_id', $object_id, '=')
@@ -179,21 +179,21 @@ function get_transperfect_taxonomy_row($object_id, $object_type, $source, $targe
   return FALSE;
 }
 
-function update_deleted_taxonomy_records($pd4, $globallink) {
+function transperfect_update_deleted_taxonomy_records($pd4, $globallink) {
   try {
     $globallink->status = TPT_STATUS_SOURCE_DELETED;
 
-    send_download_confirmation($globallink->targetTicket, $pd4);
-    update_tpt_taxonomy_status($globallink, TPT_STATUS_SOURCE_DELETED);
+    transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
+    transperfect_update_taxonomy_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+    transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - transperfect_update_deleted_taxonomy_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
 
     return FALSE;
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in update_deleted_taxonomy_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+    transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in transperfect_update_deleted_taxonomy_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
 
     return FALSE;
@@ -202,7 +202,7 @@ function update_deleted_taxonomy_records($pd4, $globallink) {
   return TRUE;
 }
 
-function get_taxonomy_translation_status($bid, $tgt_locale, &$title) {
+function transperfect_get_taxonomy_translation_status($bid, $tgt_locale, &$title) {
   $query = db_select('transperfect_core_taxonomy', 'tco');
   $query->condition('object_id', $bid, '=');
   $query->condition('target', $tgt_locale, '=');
@@ -228,7 +228,7 @@ function get_taxonomy_translation_status($bid, $tgt_locale, &$title) {
   return TPT_STATUS_SENT_FOR_TRANSLATIONS;
 }
 
-function get_taxonomy_active_submission_names() {
+function transperfect_get_taxonomy_active_submission_names() {
   $query = db_select('transperfect_core_taxonomy', 'tco');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->distinct();
@@ -244,7 +244,7 @@ function get_taxonomy_active_submission_names() {
   return $arr;
 }
 
-function cancel_taxonomy_records($rowids, $pd4) {
+function transperfect_cancel_taxonomy_records($rowids, $pd4) {
   $globallink_arr = array();
 
   foreach ($rowids as $rid) {
@@ -258,11 +258,11 @@ function cancel_taxonomy_records($rowids, $pd4) {
     $globallink_arr[$rid] = $globallink;
   }
 
-  cancel_select_documents($pd4, $globallink_arr);
-  update_taxonomy_row_document($globallink_arr);
+  transperfect_cancel_select_documents($pd4, $globallink_arr);
+  transperfect_update_taxonomy_row_document($globallink_arr);
 }
 
-function update_taxonomy_row_document(&$globallink_arr) {
+function transperfect_update_taxonomy_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_taxonomy')
@@ -276,20 +276,20 @@ function update_taxonomy_row_document(&$globallink_arr) {
   }
 }
 
-function cancel_taxonomy_submission($selected_submission) {
+function transperfect_cancel_taxonomy_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
 
   $globallink = new GlobalLink();
 
-  $submission_name = get_taxonomy_submission_name($selected_submission);
+  $submission_name = transperfect_get_taxonomy_submission_name($selected_submission);
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
-  cancel_pd_submission($pd4, $globallink);
-  update_transperfect_taxonomy_submission($globallink);
+  transperfect_cancel_pd_submission($pd4, $globallink);
+  transperfect_update_taxonomy_submission($globallink);
 }
 
-function get_taxonomy_submission_name($submission_ticket) {
+function transperfect_get_taxonomy_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_taxonomy', 'tc');
   $query->fields('tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -302,7 +302,7 @@ function get_taxonomy_submission_name($submission_ticket) {
   }
 }
 
-function update_transperfect_taxonomy_submission(&$globallink) {
+function transperfect_update_taxonomy_submission(&$globallink) {
   db_update('transperfect_core_taxonomy')
   ->fields(array(
     'status' => TPT_STATUS_PENDING_TRANSLATIONS,
@@ -313,7 +313,7 @@ function update_transperfect_taxonomy_submission(&$globallink) {
   ->execute();
 }
 
-function get_translated_taxonomies($pd4, &$globallink_arr) {
+function transperfect_get_translated_taxonomies($pd4, &$globallink_arr) {
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {
@@ -321,7 +321,7 @@ function get_translated_taxonomies($pd4, &$globallink_arr) {
       continue;
     }
 
-    $target_xml = download_target_resource($pd4, $globallink->targetTicket);
+    $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
 
     if (!isset($target_xml)) {
       continue;
@@ -330,7 +330,7 @@ function get_translated_taxonomies($pd4, &$globallink_arr) {
     $count++;
 
     $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
-    $translated_arr = get_translated_taxonomy_items($target_xml);
+    $translated_arr = transperfect_get_translated_taxonomy_items($target_xml);
 
     try {
       $bid = $translated_arr['bid'];
@@ -376,20 +376,20 @@ function get_translated_taxonomies($pd4, &$globallink_arr) {
       }
 
       taxonomy_term_save($term);
-      update_tpt_taxonomy_status($globallink);
-      send_download_confirmation($globallink->targetTicket, $pd4);
+      transperfect_update_taxonomy_status($globallink);
+      transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
     }
     catch (SoapFault $se) {
       $count--;
 
-      update_tpt_taxonomy_status($globallink, TPT_STATUS_ERROR);
+      transperfect_update_taxonomy_status($globallink, TPT_STATUS_ERROR);
       transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - update_deleted_taxonomy_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $count--;
 
-      update_tpt_taxonomy_status($globallink, TPT_STATUS_ERROR);
+      transperfect_update_taxonomy_status($globallink, TPT_STATUS_ERROR);
       transperfect_log(TPT_OBJECT_TYPE_TAXONOMY, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Saving taxonomy Objects - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
@@ -398,7 +398,7 @@ function get_translated_taxonomies($pd4, &$globallink_arr) {
   return $count;
 }
 
-function get_translated_taxonomy_items($xml) {
+function transperfect_get_translated_taxonomy_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -446,7 +446,7 @@ function get_translated_taxonomy_items($xml) {
   return $taxonomy_arr;
 }
 
-function update_tpt_taxonomy_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function transperfect_update_taxonomy_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
   db_update('transperfect_core_taxonomy')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
   ->condition('submission', $globallink->submissionName, '=')
@@ -456,7 +456,7 @@ function update_tpt_taxonomy_status(&$globallink, $status = TPT_STATUS_PENDING_T
   ->execute();
 }
 
-function get_active_taxonomy_submission_rows($object_id) {
+function transperfect_get_active_taxonomy_submission_rows($object_id) {
   $query = db_select('transperfect_core_taxonomy', 'tc');
   $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
   $query->condition('object_id', $object_id, '=');
@@ -500,7 +500,7 @@ function get_active_taxonomy_submission_rows($object_id) {
   return FALSE;
 }
 
-function get_sent_tpt_taxonomy_rows_by_bid($bid) {
+function transperfect_get_sent_taxonomy_rows_by_bid($bid) {
   $result = db_select('transperfect_core_taxonomy', 'tc')
   ->fields('tc')
   ->condition('object_id', $bid, '=')
@@ -516,7 +516,7 @@ function get_sent_tpt_taxonomy_rows_by_bid($bid) {
   return $rows;
 }
 
-function get_tpt_taxonomy_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+function transperfect_get_taxonomy_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $result = db_select('transperfect_core_taxonomy', 'tc')
   ->condition('submission_ticket', $submission_ticket, '=')
   ->condition('document_ticket', $document_ticket, '=')
@@ -529,7 +529,7 @@ function get_tpt_taxonomy_row_id_from_submission($submission_ticket, $document_t
   }
 }
 
-function get_arr_taxonomy_items($xml) {
+function transperfect_get_arr_taxonomy_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -574,7 +574,7 @@ function get_arr_taxonomy_items($xml) {
   return $block_arr;
 }
 
-function get_vocabulary_list() {
+function transperfect_get_vocabulary_list() {
   $v_arr = array('[any]' => 'Any');
   $arr = array();
 
@@ -591,7 +591,7 @@ function get_vocabulary_list() {
   return $v_arr + $arr;
 }
 
-function get_distinct_active_taxonomy_submission_names() {
+function transperfect_get_distinct_active_taxonomy_submission_names() {
   $query = db_select('transperfect_core_taxonomy', 'tc');
   $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
   $query->distinct();
@@ -607,7 +607,7 @@ function get_distinct_active_taxonomy_submission_names() {
   return $arr;
 }
 
-function update_taxonomy_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_taxonomy_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
   db_update('transperfect_core_taxonomy')
   ->fields(array(
     'status' => $status,
@@ -617,7 +617,7 @@ function update_taxonomy_submission_status($submission_ticket, $status = TPT_STA
   ->execute();
 }
 
-function get_taxonomy_submission_status() {
+function transperfect_get_taxonomy_submission_status() {
   $query = db_select('transperfect_core_taxonomy', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
@@ -628,23 +628,24 @@ function get_taxonomy_submission_status() {
     if ($row->submission_ticket) {
       try {
         $pd4 = transperfect_get_project_director_details();
-        $doc_status = get_status($pd4, $row->submission_ticket);
+
+        $doc_status = transperfect_get_status($pd4, $row->submission_ticket);
 
         if (!$doc_status || $doc_status == PD_STATUS_CANCELLED) {
-          update_taxonomy_submission_status($row->submission_ticket);
+          transperfect_update_taxonomy_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        update_taxonomy_submission_status($row->submission_ticket);
+        transperfect_update_taxonomy_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        update_taxonomy_submission_status($row->submission_ticket);
+        transperfect_update_taxonomy_submission_status($row->submission_ticket);
       }
     }
   }
 }
 
-function check_tpt_taxonomy_status($rids_arr) {
+function transperfect_check_taxonomy_status($rids_arr) {
   $status = TRUE;
 
   $query = db_select('transperfect_core_taxonomy', 'tc')
@@ -673,7 +674,7 @@ function check_tpt_taxonomy_status($rids_arr) {
   return $rids_arr;
 }
 
-function clear_cancelled_taxonomy_documents() {
+function transperfect_clear_cancelled_taxonomy_documents() {
   $count = 0;
 
   $query = db_select('transperfect_core_taxonomy', 'tc')
@@ -684,8 +685,8 @@ function clear_cancelled_taxonomy_documents() {
   $results = $query->execute();
 
   foreach ($results as $item) {
-    update_taxonomy_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
-    
+    transperfect_update_taxonomy_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+
     $count++;
   }
 

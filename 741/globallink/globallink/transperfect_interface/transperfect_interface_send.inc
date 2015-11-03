@@ -259,7 +259,7 @@ function transperfect_dashboard_interface_form() {
       }
     }
 
-    if (!($query = get_interface_translate_filter_query())) {
+    if (!($query = transperfect_get_interface_translate_filter_query())) {
       $query = array(
         'translation' => 'all',
         'language' => 'all',
@@ -337,7 +337,7 @@ function transperfect_dashboard_interface_form() {
       array_push($lids, $item->lid);
     }
 
-    $active_subs = get_active_submission_rows_by_lid($lids);
+    $active_subs = transperfect_get_active_submission_rows_by_lid($lids);
     $locales = transperfect_get_mapped_drupal_locales(FALSE);
 
     $interface_results = $sql_query->execute();
@@ -604,7 +604,7 @@ function transperfect_dashboard_interface_form_validate($form, &$form_state) {
   }
 
   foreach ($lids as $lid) {
-    $rows = get_sent_tpt_interface_rows_by_lid($lid);
+    $rows = transperfect_get_sent_interface_rows_by_lid($lid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {

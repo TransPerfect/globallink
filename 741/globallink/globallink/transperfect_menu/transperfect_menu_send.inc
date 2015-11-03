@@ -363,7 +363,7 @@ function transperfect_dashboard_menu_form() {
       $count++;
 
       $active = '';
-      $active_subs = get_active_menu_submission_rows($item->mlid);
+      $active_subs = transperfect_get_active_menu_submission_rows($item->mlid);
 
       if ($active_subs && array_key_exists($item->mlid, $active_subs)) {
         $sub_arr = $active_subs[$item->mlid];
@@ -616,7 +616,7 @@ function transperfect_dashboard_menu_form_validate($form, &$form_state) {
   }
 
   foreach ($mids as $mlid) {
-    $rows = get_sent_tpt_menu_rows_by_mlid($mlid);
+    $rows = transperfect_get_sent_menu_rows_by_mlid($mlid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -660,7 +660,7 @@ function transperfect_dashboard_menu_form_submit($form, &$form_state) {
     $updated_globalLink_arr = send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      update_menu_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_update_menu_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

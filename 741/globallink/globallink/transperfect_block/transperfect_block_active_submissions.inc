@@ -19,7 +19,7 @@ function transperfect_block_active_select_form() {
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = get_block_active_submission_names();
+  $options = transperfect_get_block_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_block_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_block_selected_submission'];
@@ -83,7 +83,7 @@ function transperfect_block_active_select_form_submit($form, &$form_state) {
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_block_selected_submission'] = '';
 
-        cancel_block_submission($selected_submission);
+        transperfect_cancel_block_submission($selected_submission);
 
         $_SESSION['transperfect_block_globalLink_arr'] = array();
 
@@ -162,7 +162,7 @@ function transperfect_block_active_form() {
     $selected_value = $_SESSION['transperfect_block_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = get_block_active_submission_names();
+    $options = transperfect_get_block_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -228,7 +228,8 @@ function transperfect_block_active_form() {
 
   foreach ($results as $item) {
     $count++;
-    $block_info = load_block_data($item->object_id);
+
+    $block_info = transperfect_load_block_data($item->object_id);
 
     $rows[$item->rid] = array(
       'submission' => $item->submission,
@@ -293,7 +294,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
     case TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT:
       try {
         $rids_arr = array_filter($form_state['values']['table']);
-        $rids = check_tpt_block_status($rids_arr);
+        $rids = transperfect_check_block_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -317,7 +318,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
       break;
     case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
       try {
-        $count = clear_cancelled_block_documents();
+        $count = transperfect_clear_cancelled_block_documents();
 
         $_SESSION['transperfect_block_selected_submission'] = '';
         $_SESSION['transperfect_block_globalLink_arr'] = array();
