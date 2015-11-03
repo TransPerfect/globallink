@@ -15,3 +15,4 @@ files[] = gl_ws/client/ProjectService2.php
 files[] = gl_ws/client/SessionService2.php
 files[] = gl_ws/client/SubmissionService2.php
 files[] = gl_ws/client/TargetService2.php
+scripts[] = js/transperfect.js

@@ -401,13 +401,13 @@ function transperfect_download_target_resource($pd_obj, $target_ticket) {
               'location' => $url . '/services/TargetService2'
           ));
   $token = transperfect_login($session_service, $username, $password);
-  $download_target_resource_request = new downloadTargetResource();
+  $transperfect_download_target_resource_request = new downloadTargetResource();
 
-  $download_target_resource_request->targetId = $target_ticket;
-  $download_target_resource_request->userId = $token;
+  $transperfect_download_target_resource_request->targetId = $target_ticket;
+  $transperfect_download_target_resource_request->userId = $token;
 
-  $download_target_resource_response = $target_service->downloadTargetResource($download_target_resource_request);
-  $repository_item = $download_target_resource_response->return;
+  $transperfect_download_target_resource_response = $target_service->downloadTargetResource($transperfect_download_target_resource_request);
+  $repository_item = $transperfect_download_target_resource_response->return;
   $target_content = $repository_item->data->_;
 
   return $target_content;
@@ -425,12 +425,12 @@ function transperfect_send_download_confirmation($target_ticket, $pd_obj) {
               'location' => $url . '/services/TargetService2'
           ));
   $token = transperfect_login($session_service, $username, $password);
-  $send_download_confirmation_request = new sendDownloadConfirmation();
+  $transperfect_send_download_confirmation_request = new sendDownloadConfirmation();
 
-  $send_download_confirmation_request->targetId = $target_ticket;
-  $send_download_confirmation_request->userId = $token;
+  $transperfect_send_download_confirmation_request->targetId = $target_ticket;
+  $transperfect_send_download_confirmation_request->userId = $token;
 
-  $send_download_confirmation_response = $target_service->sendDownloadConfirmation($send_download_confirmation_request);
+  $transperfect_send_download_confirmation_response = $target_service->sendDownloadConfirmation($transperfect_send_download_confirmation_request);
 
-  return $send_download_confirmation_response->return;
+  return $transperfect_send_download_confirmation_response->return;
 }
