@@ -31,7 +31,7 @@ function transperfect_send_webform_for_translations($lids, $pd4, $submission_nam
 
     $globallink = new GlobalLink();
     $globallink->type = 'webform';
-    $globallink->metadata = 'Webform';
+    $globallink->metadata = 'webform';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

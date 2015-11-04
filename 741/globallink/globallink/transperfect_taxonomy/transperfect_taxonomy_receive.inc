@@ -319,7 +319,7 @@ function transperfect_taxonomy_receive_form() {
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != 'Taxonomy') {
+      if ($globallink->type != 'taxonomy') {
         continue;
       }
 
