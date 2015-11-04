@@ -247,7 +247,7 @@ function transperfect_webform_active_form() {
       'source_name' => $item->source_name,
       'target_name' => $item->target_name,
       'status' => $item->status,
-      'timestamp' => date('Y-m-d H:i:s', $item->timestamp),
+      'timestamp' => format_date($item->timestamp, 'custom', 'Y-m-d H:i:s'),
     );
   }
 

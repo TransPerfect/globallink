@@ -254,7 +254,9 @@ function transperfect_adaptor_settings() {
       '#type' => 'container',
       '#attributes' => array('class' => array('tpt-center')),
   );
-  $default_date = date('m/d/Y', REQUEST_TIME - (7 * 24 * 60 * 60));
+
+  $default_date = format_date(REQUEST_TIME - (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
+
   drupal_add_library('system', 'ui.datepicker');
   drupal_add_js('jQuery(document).ready(function(){
           jQuery( ".pickadate1" ).datepicker({
@@ -320,12 +322,13 @@ function transperfect_get_log_data($from_date) {
 
   $i = 0;
   foreach ($result as $row) {
+    $date = format_date($row->timestamp, 'custom', 'Y-m-d H:i:s');
     $mod = $i % 2;
     if ($mod == 0) {
-      $html .= '<tr><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+      $html .= '<tr><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     else {
-      $html .= '<tr class="alt"><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+      $html .= '<tr class="alt"><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     $i++;
   }
