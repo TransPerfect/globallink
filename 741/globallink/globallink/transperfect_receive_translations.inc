@@ -224,7 +224,7 @@ function transperfect_dashboard_receive() {
       try {
         $pd4 = transperfect_get_project_director_details();
         if (transperfect_validate_project_director_details($pd4)) {
-          $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+          $_SESSION['transperfect_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
           $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
           if (sizeof($globallink_arr) > 0) {
             $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
@@ -540,7 +540,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
 
       if (sizeof($globallink_arr) > 0) {
         $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
-        $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+        $_SESSION['transperfect_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
       }
       else {
         $_SESSION['transperfect_globalLink_arr'] = array();

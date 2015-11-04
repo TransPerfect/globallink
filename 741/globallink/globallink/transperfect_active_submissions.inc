@@ -217,7 +217,7 @@ function transperfect_dashboard_active() {
           'project_code' => isset($projects[$item->project_code]) ? $projects[$item->project_code] : '',
           'type' => isset($content_types[$item->type]) ? $content_types[$item->type] : '',
           'status' => $item->status,
-          'timestamp' => date('Y-m-d H:i:s', $item->timestamp),
+          'timestamp' => format_date($item->timestamp, 'custom', 'Y-m-d H:i:s'),
           'source_name' => $item->source_name,
           'target_name' => $item->target_name,
       );

@@ -452,7 +452,7 @@ function transperfect_dashboard_interface_form() {
           '#field_prefix' => '<BR/><div class="description">' . t('Name for this new Submission.') . '</div></td><td>',
         );
 
-        $default_date = date('m/d/Y', REQUEST_TIME + (7 * 24 * 60 * 60));
+        $default_date = format_date(REQUEST_TIME + (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
 
         drupal_add_library('system', 'ui.datepicker');
         drupal_add_js('jQuery(document).ready(function(){

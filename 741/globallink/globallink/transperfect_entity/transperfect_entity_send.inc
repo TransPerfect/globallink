@@ -166,7 +166,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
               '#disabled' => $disabled,
               '#attributes' => array('class' => array('pickadate'),
               'style' => array('padding:0px;')),
-              '#default_value' => isset($selected_arr[$key]) ? date('m/d/Y', $selected_arr[$key]) : '',
+              '#default_value' => isset($selected_arr[$key]) ? format_date($selected_arr[$key], 'custom', 'm/d/Y') : '',
               '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
               '#suffix' => '</tr></table></div>',
               '#field_suffix' => '</td>',
@@ -252,7 +252,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
             $label = $filters[$type]['options'][$value];
           }
           elseif ($filters[$type]['field'] == 'changed') {
-            $label = date('m/d/Y', $value);
+            $label = format_date($value, 'custom', 'm/d/Y');
           }
           else {
             $label = $value;
@@ -707,7 +707,7 @@ function transperfect_dashboard_entity_form() {
                 'title' => $title,
                 'type' => $item->name,
                 'language' => $drupal_locale_desc,
-                'changed' => date('Y-m-d H:i:s', $item->changed),
+                'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
                 'active' => $active,
               );
             }
@@ -825,7 +825,7 @@ function transperfect_dashboard_entity_form() {
               'type' => 'TEST',
               'type' => $item->name,
               'language' => $drupal_locale_desc,
-              'changed' => date('Y-m-d H:i:s', $item->changed),
+              'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
               'active' => $active,
             );
           }
@@ -924,7 +924,7 @@ function transperfect_dashboard_entity_form() {
               'title' => $node_title,
               'type' => $item->name,
               'language' => $drupal_locale_desc,
-              'changed' => date('Y-m-d H:i:s', $item->changed),
+              'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
               'active' => $active,
             );
 
@@ -1003,7 +1003,8 @@ function transperfect_dashboard_entity_form() {
             '#field_prefix' => '<BR/><div class="description">' . t('Name for this new Submission.') . '</div></td><td>',
           );
 
-          $default_date = date('m/d/Y', REQUEST_TIME + (7 * 24 * 60 * 60));
+          $default_date = format_date(REQUEST_TIME + (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
+
           drupal_add_library('system', 'ui.datepicker');
           drupal_add_js('jQuery(document).ready(function(){
           jQuery( ".pickadate1" ).datepicker({
