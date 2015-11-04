@@ -300,7 +300,7 @@ function transperfect_block_receive_form() {
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != 'Block') {
+      if ($globallink->type != 'block') {
         continue;
       }
 

@@ -299,7 +299,7 @@ function transperfect_entity_receive_form() {
       $rid_arr = array();
 
       foreach ($globallink_arr as $key => &$globallink) {
-        if ($globallink->type != 'Entity') {
+        if ($globallink->type != 'entity') {
           continue;
         }
 

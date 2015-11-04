@@ -28,7 +28,7 @@ function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name
     $name = 'Block_' . $bid . '.xml';
     $globallink = new GlobalLink();
     $globallink->type = 'block';
-    $globallink->metadata = 'Block';
+    $globallink->metadata = 'block';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

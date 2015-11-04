@@ -106,7 +106,7 @@ function transperfect_create_document_info($project_ticket, &$globallink, $clien
 
   $metadata = new Metadata();
   $metadata->key = 'type_id';
-  if ($globallink->metadata != 'Node' && $globallink->metadata != 'Entity') {
+  if ($globallink->metadata != 'node' && $globallink->metadata != 'entity') {
     $metadata->value = $globallink->otherObjectId;
   }
   else {

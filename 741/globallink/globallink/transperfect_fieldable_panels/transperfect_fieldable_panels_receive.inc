@@ -315,7 +315,7 @@ function transperfect_fieldable_panels_receive_form() {
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != 'Fieldable_Panels_Panes') {
+      if ($globallink->type != 'fieldable_panels_panes') {
         continue;
       }
 

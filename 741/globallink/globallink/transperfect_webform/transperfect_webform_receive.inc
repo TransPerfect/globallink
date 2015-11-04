@@ -318,7 +318,7 @@ function transperfect_webform_receive_form() {
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != 'Webform') {
+      if ($globallink->type != 'webform') {
         continue;
       }
 

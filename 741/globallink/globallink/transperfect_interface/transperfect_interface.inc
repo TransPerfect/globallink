@@ -29,7 +29,7 @@ function transperfect_send_interface_for_translations($lids, $pd4, $submission_n
 
     $globallink = new GlobalLink();
     $globallink->type = 'interface';
-    $globallink->metadata = 'Interface';
+    $globallink->metadata = 'interface';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

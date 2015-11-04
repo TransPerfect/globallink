@@ -278,7 +278,7 @@ function transperfect_dashboard_receive() {
 
       $rid_arr = array();
       foreach ($globallink_arr as $key => &$globallink) {
-        if ($globallink->type != 'Node') {
+        if ($globallink->type != 'node') {
           continue;
         }
 
@@ -570,7 +570,7 @@ function transperfect_auto_receive($cron_type) {
       $globallink_arr = array($globallink);
 
       switch ($type) {
-        case 'Node':
+        case 'node':
           $count = transperfect_get_translated_content($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Node'), array(), WATCHDOG_INFO);
 
@@ -582,7 +582,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_selected_submission'] = array();
 
           break;
-        case 'Entity':
+        case 'entity':
           $count = transperfect_get_translated_entity($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Entity'), array(), WATCHDOG_INFO);
 
@@ -594,7 +594,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_entity_selected_submission'] = array();
 
           break;
-        case 'Block':
+        case 'block':
           $count += transperfect_get_translated_blocks($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_BlOCK, t('Imported Block'), array(), WATCHDOG_INFO);
 
@@ -602,7 +602,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_block_selected_submission'] = array();
 
           break;
-        case 'Interface':
+        case 'interface':
           $count += transperfect_get_translated_interfaces($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_INTERFACE, t('Imported Interface'), array(), WATCHDOG_INFO);
 
@@ -610,7 +610,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_interface_selected_submission'] = array();
 
           break;
-        case 'Menu':
+        case 'menu':
           $count += transperfect_get_translated_menus($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_MENU, t('Imported Menu'), array(), WATCHDOG_INFO);
 
@@ -618,7 +618,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_menu_selected_submission'] = array();
 
           break;
-        case 'Taxonomy':
+        case 'taxonomy':
           $count += transperfect_get_translated_taxonomies($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_TAXONOMY, t('Imported Taxonomy'), array(), WATCHDOG_INFO);
 
@@ -626,7 +626,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
 
           break;
-        case 'Webform':
+        case 'webform':
           $count += transperfect_get_translated_webforms($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_WEBFORM, t('Imported Webform'), array(), WATCHDOG_INFO);
 
@@ -634,7 +634,7 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_webform_selected_submission'] = array();
 
           break;
-        case 'Fieldable_Panels_Panes':
+        case 'fieldable_panels_panes':
           $count += transperfect_get_translated_fieldable_panels($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('Imported Fieldable Panels Panes'), array(), WATCHDOG_INFO);
 

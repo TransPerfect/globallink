@@ -70,7 +70,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     $globallink->vid = $node->vid;
     $globallink->title = $node->title;
     $globallink->type = $node->type;
-    $globallink->metadata = 'Entity';
+    $globallink->metadata = 'entity';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

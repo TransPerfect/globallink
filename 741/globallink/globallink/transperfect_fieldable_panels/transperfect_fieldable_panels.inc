@@ -27,7 +27,7 @@ function transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, 
     $name = 'Fieldable_Panels_Panes_' . $fpid . '.xml';
     $globallink = new GlobalLink();
     $globallink->type = 'fieldable_panels_panes';
-    $globallink->metadata = 'Fieldable_Panels_Panes';
+    $globallink->metadata = 'fieldable_panels_panes';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;
