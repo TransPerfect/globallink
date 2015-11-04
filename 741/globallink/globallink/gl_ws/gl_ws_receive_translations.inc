@@ -67,49 +67,49 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
           }
           switch ($type) {
             case 'entity':
-              if ($source_type != 'Entity') {
+              if ($source_type != 'entity') {
                 continue;
               }
 
               break;
             case 'menu':
-              if ($source_type != 'Menu') {
+              if ($source_type != 'menu') {
                 continue;
               }
 
               break;
             case 'block':
-              if ($source_type != 'Block') {
+              if ($source_type != 'block') {
                 continue;
               }
 
               break;
             case 'taxonomy':
-              if ($source_type != 'Taxonomy') {
+              if ($source_type != 'taxonomy') {
                 continue;
               }
 
               break;
             case 'interface':
-              if ($source_type != 'Interface') {
+              if ($source_type != 'interface') {
                 continue;
               }
 
               break;
             case 'webform':
-              if ($source_type != 'Webform') {
+              if ($source_type != 'webform') {
                 continue;
               }
 
               break;
             case 'fieldable_panels':
-              if ($source_type != 'Fieldable_Panels_Panes') {
+              if ($source_type != 'fieldable_panels_panes') {
                 continue;
               }
 
               break;
             default:
-              if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
+              if ($source_type == 'entity' || $source_type == 'menu' || $source_type == 'block' || $source_type == 'taxonomy' || $source_type == 'interface' || $source_type == 'webform' || $source_type == 'fieldable_panels_panes') {
                 continue;
               }
           }
@@ -123,7 +123,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
           $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
           $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
           $globallink->type = $source_type;
-          if ($source_type != 'Node' && $source_type != 'Entity') {
+          if ($source_type != 'node' && $source_type != 'entity') {
             $globallink->otherObjectId = $type_id;
           }
           else {
@@ -156,49 +156,49 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
         }
         switch ($type) {
           case 'entity':
-            if ($source_type != 'Entity') {
+            if ($source_type != 'entity') {
               return $globallink_arr;
             }
 
             break;
           case 'menu':
-            if ($source_type != 'Menu') {
+            if ($source_type != 'menu') {
               return $globallink_arr;
             }
 
             break;
           case 'block':
-            if ($source_type != 'Block') {
+            if ($source_type != 'block') {
               return $globallink_arr;
             }
 
             break;
           case 'taxonomy':
-            if ($source_type != 'Taxonomy') {
+            if ($source_type != 'taxonomy') {
               return $globallink_arr;
             }
 
             break;
           case 'interface':
-            if ($source_type != 'Interface') {
+            if ($source_type != 'interface') {
               return $globallink_arr;
             }
 
             break;
           case 'webform':
-            if ($source_type != 'Webform') {
+            if ($source_type != 'webform') {
               return $globallink_arr;
             }
 
             break;
           case 'fieldable_panels':
-            if ($source_type != 'Fieldable_Panels_Panes') {
+            if ($source_type != 'fieldable_panels_panes') {
               return $globallink_arr;
             }
 
             break;
           default:
-            if ($source_type == 'Entity' || $source_type == 'Menu' || $source_type == 'Block' || $source_type == 'Taxonomy' || $source_type == 'Interface' || $source_type == 'Webform' || $source_type == 'Fieldable_Panels_Panes') {
+            if ($source_type == 'entity' || $source_type == 'menu' || $source_type == 'block' || $source_type == 'taxonomy' || $source_type == 'interface' || $source_type == 'webform' || $source_type == 'fieldable_panels_panes') {
               return $globallink_arr;
             }
         }
@@ -212,7 +212,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
         $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
         $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
         $globallink->type = $source_type;
-        if ($source_type != 'Node' && $source_type != 'Entity') {
+        if ($source_type != 'node' && $source_type != 'entity') {
           $globallink->otherObjectId = $type_id;
         }
         else {
@@ -295,7 +295,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
           $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
           $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
           $globallink->type = $source_type;
-          if ($source_type != 'Node') {
+          if ($source_type != 'node') {
             $globallink->otherObjectId = $type_id;
           }
           else {
@@ -337,7 +337,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
         $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
         $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
         $globallink->type = $source_type;
-        if ($source_type != 'Node') {
+        if ($source_type != 'node') {
           $globallink->otherObjectId = $type_id;
         }
         else {

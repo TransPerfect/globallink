@@ -82,7 +82,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     $globallink->vid = $node->vid;
     $globallink->title = $node->title;
     $globallink->type = $node->type;
-    $globallink->metadata = 'Node';
+    $globallink->metadata = 'node';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

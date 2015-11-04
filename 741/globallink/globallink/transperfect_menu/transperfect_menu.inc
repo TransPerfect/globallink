@@ -27,7 +27,7 @@ function transperfect_send_menus_for_translations($mlids, $pd4, $submission_name
 
     $globallink = new GlobalLink();
     $globallink->type = 'menu';
-    $globallink->metadata = 'Menu';
+    $globallink->metadata = 'menu';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;

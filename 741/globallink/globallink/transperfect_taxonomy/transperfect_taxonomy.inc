@@ -35,7 +35,7 @@ function transperfect_send_taxonomies_for_translations($lids, $pd4, $submission_
 
     $globallink = new GlobalLink();
     $globallink->type = 'taxonomy';
-    $globallink->metadata = 'Taxonomy';
+    $globallink->metadata = 'taxonomy';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;
