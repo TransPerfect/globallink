@@ -21,7 +21,7 @@ function transperfect_menu_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = get_distinct_active_menu_submission_names();
+  $submission_options = transperfect_get_distinct_active_menu_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_menu_receive_filter_submission'])) {
@@ -255,9 +255,9 @@ function transperfect_menu_receive_form() {
       $pd4 = transperfect_get_project_director_details();
 
       if (transperfect_validate_project_director_details($pd4)) {
-        $_SESSION['transperfect_menu_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+        $_SESSION['transperfect_menu_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
 
-        $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
 
         if (sizeof($globallink_arr) > 0) {
           $_SESSION['transperfect_menu_globalLink_arr'] = serialize($globallink_arr);
@@ -318,17 +318,17 @@ function transperfect_menu_receive_form() {
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
-      if ($globallink->type != 'Menu') {
+      if ($globallink->type != 'menu') {
         continue;
       }
 
-      $tpt_menu_arr = get_sent_tpt_menu_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+      $tpt_menu_arr = transperfect_get_sent_menu_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
       $title = '';
 
       if ($tpt_menu_arr) {
         $mlid = $tpt_menu_arr->object_id;
-        $status = get_menu_translation_status($mlid, $globallink->targetLocale, $title);
+        $status = transperfect_get_menu_translation_status($mlid, $globallink->targetLocale, $title);
       }
       else {
         $status = TPT_STATUS_SOURCE_DELETED;
@@ -358,7 +358,7 @@ function transperfect_menu_receive_form() {
       }
 
       if (variable_get('transperfect_enable_preview', 1)) {
-        $tpt_row_id = get_tpt_menu_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+        $tpt_row_id = transperfect_get_menu_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
         if ($status != TPT_STATUS_SOURCE_DELETED) {
           $mlid_tpt_arr = array();
@@ -522,7 +522,8 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
     case TPT_BTN_DASHBOARD_UPDATE_ALL:
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_menu_globalLink_arr']);
-        $count = get_translated_menus($pd4, $globallink_arr);
+
+        $count = transperfect_get_translated_menus($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -570,7 +571,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = update_deleted_menu_records($pd4, $globallink);
+            $success = transperfect_update_deleted_menu_records($pd4, $globallink);
             $count++;
           }
         }
@@ -605,7 +606,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = get_translated_menus($pd4, $updated_globalLink_arr);
+        $count = transperfect_get_translated_menus($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -650,7 +651,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
       $pd4 = transperfect_get_project_director_details();
 
       try {
-        $globallink_arr = getReadyTranslationsDetailsFromPD($pd4, $type);
+        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
         transperfect_log(TPT_OBJECT_TYPE_MENU, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
@@ -663,7 +664,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
 
       if (sizeof($globallink_arr) > 0) {
         $_SESSION['transperfect_menu_globalLink_arr'] = serialize($globallink_arr);
-        $_SESSION['transperfect_menu_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+        $_SESSION['transperfect_menu_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
       }
       else {
         $_SESSION['transperfect_menu_globalLink_arr'] = array();
@@ -704,7 +705,8 @@ function get_menu_translations_for_row_id($row_id) {
 
   try {
     $pd4 = transperfect_get_project_director_details();
-    $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
+
+    $targets = transperfect_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
 
     if (is_array($targets)) {
       foreach ($targets as $target) {
@@ -717,13 +719,13 @@ function get_menu_translations_for_row_id($row_id) {
         }
 
         $globallink->targetTicket = $target->ticket;
-        $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+        $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
 
         if (is_null($globallink->targetXML) || $globallink->targetXML == '') {
           continue;
         }
 
-        $translation = get_translated_menu_items($globallink->targetXML);
+        $translation = transperfect_get_translated_menu_items($globallink->targetXML);
         $mlid = $translation['mlid'];
         $menu = load_menu_data($mlid);
 
@@ -732,7 +734,7 @@ function get_menu_translations_for_row_id($row_id) {
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = get_translated_menu_items($source_xml);
+            $source_arr = transperfect_get_translated_menu_items($source_xml);
           }
         }
         else {
@@ -748,19 +750,20 @@ function get_menu_translations_for_row_id($row_id) {
         if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
           if (!is_null($target->ticket) && $target->ticket != '') {
             $globallink->targetTicket = $target->ticket;
-            $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+            $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
 
             if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-              $translation = get_translated_menu_items($globallink->targetXML);
+              $translation = transperfect_get_translated_menu_items($globallink->targetXML);
               $mlid = $translation['mlid'];
-              $menu = load_menu_data($mlid);
+
+              $menu = transperfect_load_menu_data($mlid);
 
               if ($menu && is_array($menu) && !is_null($menu)) {
                 $source_xml = get_menu_xml($mlid);
                 $source_arr = array();
 
                 if ($source_xml) {
-                  $source_arr = get_translated_menu_items($source_xml);
+                  $source_arr = transperfect_get_translated_menu_items($source_xml);
                 }
               }
               else {

@@ -152,7 +152,7 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
               '#disabled' => $disabled,
               '#attributes' => array('class' => array('pickadate'),
                   'style' => array('padding:0px;')),
-              '#default_value' => isset($selected_arr[$key]) ? date('m/d/Y', $selected_arr[$key]) : '',
+              '#default_value' => isset($selected_arr[$key]) ? format_date($selected_arr[$key], 'custom', 'm/d/Y') : '',
               '#prefix' => "<tr><td style='text-align: left;width: 15%;vertical-align: middle;border: none;'>",
               '#suffix' => '</tr></table></div>',
               '#field_suffix' => '</td>',
@@ -220,14 +220,15 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
           list($type, $value) = $filter;
           $selected_arr[$type] = $value;
           $label = '';
-          if ($type == 'node_parent')
+          if ($type == 'node_parent') {
             continue;
+          }
 
           if (isset($filters[$type]['options'])) {
             $label = $filters[$type]['options'][$value];
           }
           elseif ($filters[$type]['field'] == 'changed') {
-            $label = date('m/d/Y', $value);
+            $label = format_date($value, 'custom', 'm/d/Y');
           }
           else {
             $label = $value;
@@ -348,27 +349,30 @@ function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
 function transperfect_dashboard_pager_form() {
   $form = array();
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
+  $node_types = transperfect_get_translatable_node_types(TRUE);
   if (isset($locales) && count($locales) > 1) {
-    $form['page_counter']['markup'] = array(
-        '#type' => 'container',
-        '#attributes' => array('class' => array('tpt-center')),
-    );
-    $form['page_counter']['markup']['p_count'] = array(
-        '#type' => 'textfield',
-        '#size' => 5,
-        '#default_value' => isset($_SESSION['transperfect_send_page_count']) ? $_SESSION['transperfect_send_page_count'][0] : TPT_PAGER_LIMIT,
-        '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
-        '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
-        '#prefix' => '<div class="container-inline">',
-    );
-    $form['page_counter']['markup']['action'] = array(
-        '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_GO,
-        '#suffix' => '</div>',
-        '#limit_validation_errors' => array(),
-        '#submit' => array('transperfect_node_form_pager_submit'),
-        '#access' => TRUE,
-    );
+    if (isset($node_types) && count($node_types) > 0) {
+      $form['page_counter']['markup'] = array(
+          '#type' => 'container',
+          '#attributes' => array('class' => array('tpt-center')),
+      );
+      $form['page_counter']['markup']['p_count'] = array(
+          '#type' => 'textfield',
+          '#size' => 5,
+          '#default_value' => isset($_SESSION['transperfect_send_page_count']) ? $_SESSION['transperfect_send_page_count'][0] : TPT_PAGER_LIMIT,
+          '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
+          '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
+          '#prefix' => '<div class="container-inline">',
+      );
+      $form['page_counter']['markup']['action'] = array(
+          '#type' => 'submit',
+          '#value' => TPT_BTN_DASHBOARD_GO,
+          '#suffix' => '</div>',
+          '#limit_validation_errors' => array(),
+          '#submit' => array('transperfect_node_form_pager_submit'),
+          '#access' => TRUE,
+      );
+    }
   }
   return $form;
 }
@@ -605,7 +609,7 @@ function transperfect_dashboard_node_form() {
                   'title' => l(transperfect_format_display_string($item->title), 'node/' . $item->nid),
                   'type' => $item->t_name,
                   'language' => $item->name,
-                  'changed' => date('Y-m-d H:i:s', $item->changed),
+                  'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
                   'active' => $active,
               );
             }
@@ -710,7 +714,7 @@ function transperfect_dashboard_node_form() {
                 'title' => $title,
                 'type' => $item->t_name,
                 'language' => $item->name,
-                'changed' => date('Y-m-d H:i:s', $item->changed),
+                'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
                 'active' => $active,
             );
           }
@@ -795,7 +799,7 @@ function transperfect_dashboard_node_form() {
                 'title' => l(transperfect_format_display_string($item->title), 'node/' . $item->nid),
                 'type' => $item->t_name,
                 'language' => $item->name,
-                'changed' => date('Y-m-d H:i:s', $item->changed),
+                'changed' => format_date($item->changed, 'custom', 'Y-m-d H:i:s'),
                 'active' => $active,
             );
 
@@ -866,7 +870,9 @@ function transperfect_dashboard_node_form() {
               '#field_suffix' => '</td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Name for this new Submission.') . '</div></td><td>',
           );
-          $default_date = date('m/d/Y', REQUEST_TIME + (7 * 24 * 60 * 60));
+
+          $default_date = format_date(REQUEST_TIME + (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
+
           drupal_add_library('system', 'ui.datepicker');
           drupal_add_js('jQuery(document).ready(function(){
           jQuery( ".pickadate1" ).datepicker({

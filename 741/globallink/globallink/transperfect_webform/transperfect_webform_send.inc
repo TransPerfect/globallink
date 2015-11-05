@@ -284,7 +284,7 @@ function transperfect_dashboard_webform_form() {
 
     if ($query['language'] != 'en' && $query['language'] != 'all') {
       $sql_query->leftJoin('locales_target', 't', 't.lid = s.lid AND t.language = :langcode', array(
-        ':langcode' => $query['language']),
+        ':langcode' => $query['language'])
       );
 
       $limit_language = $query['language'];
@@ -349,7 +349,7 @@ function transperfect_dashboard_webform_form() {
     }
 
     if (!empty($lids)) {
-      $active_subs = get_webform_active_submission_rows_by_lid($lids);
+      $active_subs = transperfect_get_webform_active_submission_rows_by_lid($lids);
     }
 
     $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -466,7 +466,7 @@ function transperfect_dashboard_webform_form() {
           '#field_prefix' => '<BR/><div class="description">' . t('Name for this new Submission.') . '</div></td><td>',
         );
 
-        $default_date = date('m/d/Y', REQUEST_TIME + (7 * 24 * 60 * 60));
+        $default_date = format_date(REQUEST_TIME + (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
 
         drupal_add_library('system', 'ui.datepicker');
         drupal_add_js('jQuery(document).ready(function(){
@@ -618,7 +618,7 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   }
 
   foreach ($lids as $lid) {
-    $rows = get_sent_tpt_webform_rows_by_lid($lid);
+    $rows = transperfect_get_sent_tpt_webform_rows_by_lid($lid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -661,10 +661,10 @@ function transperfect_dashboard_webform_form_submit($form, &$form_state) {
 
     $project_code = $form_state['values']['submission_pd_project'];
 
-    $updated_globalLink_arr = send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      update_webform_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_update_webform_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

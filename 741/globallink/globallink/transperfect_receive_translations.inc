@@ -224,8 +224,8 @@ function transperfect_dashboard_receive() {
       try {
         $pd4 = transperfect_get_project_director_details();
         if (transperfect_validate_project_director_details($pd4)) {
-          $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
-          $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+          $_SESSION['transperfect_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
+          $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
           if (sizeof($globallink_arr) > 0) {
             $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
           }
@@ -278,7 +278,7 @@ function transperfect_dashboard_receive() {
 
       $rid_arr = array();
       foreach ($globallink_arr as $key => &$globallink) {
-        if ($globallink->type != 'Node') {
+        if ($globallink->type != 'node') {
           continue;
         }
 
@@ -527,7 +527,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       sleep(2);
       $pd4 = transperfect_get_project_director_details();
       try {
-        $globallink_arr = get_ready_translations_details_from_pd($pd4, $type);
+        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
         transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Receive Translations - Refresh - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
@@ -540,7 +540,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
 
       if (sizeof($globallink_arr) > 0) {
         $_SESSION['transperfect_globalLink_arr'] = serialize($globallink_arr);
-        $_SESSION['transperfect_globalLink_arr_last_refreshed'] = date('D M j G:i:s T Y', REQUEST_TIME);
+        $_SESSION['transperfect_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
       }
       else {
         $_SESSION['transperfect_globalLink_arr'] = array();
@@ -562,7 +562,7 @@ function transperfect_auto_receive($cron_type) {
 
   try {
     $pd4 = transperfect_get_project_director_details();
-    $all_target_arr = get_all_ready_translations_details_from_pd($pd4);
+    $all_target_arr = transperfect_get_all_ready_translations_details_from_pd($pd4);
     $count = 0;
 
     foreach ($all_target_arr as $globallink) {
@@ -570,7 +570,7 @@ function transperfect_auto_receive($cron_type) {
       $globallink_arr = array($globallink);
 
       switch ($type) {
-        case 'Node':
+        case 'node':
           $count = transperfect_get_translated_content($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Node'), array(), WATCHDOG_INFO);
 
@@ -582,60 +582,60 @@ function transperfect_auto_receive($cron_type) {
           $_SESSION['transperfect_selected_submission'] = array();
 
           break;
-        case 'Entity':
-          $count = get_translated_entity($pd4, $globallink_arr);
+        case 'entity':
+          $count = transperfect_get_translated_entity($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_CONTENT, t('Imported Entity'), array(), WATCHDOG_INFO);
 
           if ($globallink->status == TPT_STATUS_ERROR) {
-            update_tpt_entity_status($globallink);
+            transperfect_update_entity_status($globallink);
           }
 
           $_SESSION['transperfect_entity_globalLink_arr'] = array();
           $_SESSION['transperfect_entity_selected_submission'] = array();
 
           break;
-        case 'Block':
-          $count += get_translated_blocks($pd4, $globallink_arr);
+        case 'block':
+          $count += transperfect_get_translated_blocks($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_BlOCK, t('Imported Block'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
 
           break;
-        case 'Interface':
-          $count += get_translated_interfaces($pd4, $globallink_arr);
+        case 'interface':
+          $count += transperfect_get_translated_interfaces($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_INTERFACE, t('Imported Interface'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_interface_globalLink_arr'] = array();
           $_SESSION['transperfect_interface_selected_submission'] = array();
 
           break;
-        case 'Menu':
-          $count += get_translated_menus($pd4, $globallink_arr);
+        case 'menu':
+          $count += transperfect_get_translated_menus($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_MENU, t('Imported Menu'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_menu_globalLink_arr'] = array();
           $_SESSION['transperfect_menu_selected_submission'] = array();
 
           break;
-        case 'Taxonomy':
-          $count += get_translated_taxonomies($pd4, $globallink_arr);
+        case 'taxonomy':
+          $count += transperfect_get_translated_taxonomies($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_TAXONOMY, t('Imported Taxonomy'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
 
           break;
-        case 'Webform':
-          $count += get_translated_webforms($pd4, $globallink_arr);
+        case 'webform':
+          $count += transperfect_get_translated_webforms($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_WEBFORM, t('Imported Webform'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_webform_globalLink_arr'] = array();
           $_SESSION['transperfect_webform_selected_submission'] = array();
 
           break;
-        case 'Fieldable_Panels_Panes':
-          $count += get_translated_fieldable_panels($pd4, $globallink_arr);
+        case 'fieldable_panels_panes':
+          $count += transperfect_get_translated_fieldable_panels($pd4, $globallink_arr);
           watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('Imported Fieldable Panels Panes'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_fieldable_panels_panes_globalLink_arr'] = array();
@@ -683,7 +683,7 @@ function transperfect_get_translations_for_row_id($row_id) {
   $error = FALSE;
   try {
     $pd4 = transperfect_get_project_director_details();
-    $targets = get_completed_targets_by_doc($pd4, $globallink->documentTicket);
+    $targets = transperfect_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
 
     if (!is_array($targets)) {
       $targets = array($targets);
@@ -693,7 +693,7 @@ function transperfect_get_translations_for_row_id($row_id) {
       if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
         if (!is_null($target->ticket) && $target->ticket != '') {
           $globallink->targetTicket = $target->ticket;
-          $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+          $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
           if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
             $translation = transperfect_get_translated_array($globallink->targetXML);
             $nid = $translation['nid'];

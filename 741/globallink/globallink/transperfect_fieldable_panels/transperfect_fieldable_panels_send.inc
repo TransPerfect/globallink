@@ -264,7 +264,7 @@ function transperfect_dashboard_fieldable_panels_form() {
       $count++;
 
       $active = '';
-      $active_subs = get_active_fieldable_panels_submission_rows($item->fpid);
+      $active_subs = transperfect_get_active_fieldable_panels_submission_rows($item->fpid);
 
       if ($active_subs && array_key_exists($item->fpid, $active_subs)) {
         $sub_arr = $active_subs[$item->fpid];
@@ -364,7 +364,7 @@ function transperfect_dashboard_fieldable_panels_form() {
           '#field_prefix' => '<BR/><div class="description">' . t('Name for this new Submission.') . '</div></td><td>',
         );
 
-        $default_date = date('m/d/Y', REQUEST_TIME + (7 * 24 * 60 * 60));
+        $default_date = format_date(REQUEST_TIME + (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
 
         drupal_add_library('system', 'ui.datepicker');
         drupal_add_js('jQuery(document).ready(function(){
@@ -514,7 +514,7 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
   }
 
   foreach ($fpids as $fpid) {
-    $rows = get_sent_tpt_fieldable_panels_rows_by_fpid($fpid);
+    $rows = transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -555,10 +555,10 @@ function transperfect_dashboard_fieldable_panels_form_submit($form, &$form_state
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = send_fieldable_panels_pane_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      update_fieldable_panels_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_update_fieldable_panels_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

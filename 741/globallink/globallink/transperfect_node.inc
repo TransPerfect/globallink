@@ -82,7 +82,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
     $globallink->vid = $node->vid;
     $globallink->title = $node->title;
     $globallink->type = $node->type;
-    $globallink->metadata = 'Node';
+    $globallink->metadata = 'node';
     $globallink->sourceLocale = $source_locale;
     $globallink->targetLocale = $target_arr;
     $globallink->sourceXML = $xml;
@@ -94,7 +94,7 @@ function transperfect_send_for_translations($nids, $pd4, $submission_name, $due_
   }
 
   if (!empty($globallink_arr)) {
-    send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
+    transperfect_send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
   return $globallink_arr;
 }
@@ -208,7 +208,7 @@ function transperfect_cancel_select_records($rowids, $pd4) {
     $globallink_arr[$rid] = $globallink;
   }
 
-  cancel_select_documents($pd4, $globallink_arr);
+  transperfect_cancel_select_documents($pd4, $globallink_arr);
   transperfect_update_row_document($globallink_arr);
 }
 
@@ -225,7 +225,7 @@ function transperfect_cancel_submission($selected_submission) {
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
-  cancel_pd_submission($pd4, $globallink);
+  transperfect_cancel_pd_submission($pd4, $globallink);
   transperfect_update_row_submission($globallink);
 }
 
@@ -362,7 +362,7 @@ function transperfect_get_row_id_from_submission($submission_ticket, $document_t
 function transperfect_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = TPT_STATUS_SOURCE_DELETED;
-    send_download_confirmation($globallink->targetTicket, $pd4);
+    transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
     transperfect_update_status($globallink);
   }
   catch (SoapFault $se) {
@@ -393,12 +393,12 @@ function transperfect_get_translated_content($pd4, &$globallink_arr) {
     $count = 0;
     foreach ($globallink_arr as $globallink) {
       if (!$globallink->sourceDeleted) {
-        $globallink->targetXML = download_target_resource($pd4, $globallink->targetTicket);
+        $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
         if (isset($globallink->targetXML)) {
           $count++;
           transperfect_update_node($globallink);
           if ($globallink->status != TPT_STATUS_ERROR) {
-            send_download_confirmation($globallink->targetTicket, $pd4);
+            transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
             transperfect_update_status($globallink);
           }
           else {
@@ -1732,7 +1732,7 @@ function transperfect_get_submission_status() {
     if ($row->submission_ticket) {
       try {
         $pd4 = transperfect_get_project_director_details();
-        $status = get_status($pd4, $row->submission_ticket);
+        $status = transperfect_get_status($pd4, $row->submission_ticket);
         if (!$status || $status == PD_STATUS_CANCELLED) {
           transperfect_update_submission_status($row->submission_ticket);
         }

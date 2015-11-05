@@ -125,7 +125,7 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
       $pd_obj->classifier = $form_state['values']['transperfect_pd_classifier'];
       $pd_obj->maxTargetCount = $form_state['values']['transperfect_pd_max_target'];
 
-      $success = test_pd_connectivity($pd_obj);
+      $success = transperfect_test_pd_connectivity($pd_obj);
 
       if (!is_bool($success)) {
         form_set_error('', check_plain($success));
@@ -254,7 +254,9 @@ function transperfect_adaptor_settings() {
       '#type' => 'container',
       '#attributes' => array('class' => array('tpt-center')),
   );
-  $default_date = date('m/d/Y', REQUEST_TIME - (7 * 24 * 60 * 60));
+
+  $default_date = format_date(REQUEST_TIME - (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
+
   drupal_add_library('system', 'ui.datepicker');
   drupal_add_js('jQuery(document).ready(function(){
           jQuery( ".pickadate1" ).datepicker({
@@ -320,12 +322,13 @@ function transperfect_get_log_data($from_date) {
 
   $i = 0;
   foreach ($result as $row) {
+    $date = format_date($row->timestamp, 'custom', 'Y-m-d H:i:s');
     $mod = $i % 2;
     if ($mod == 0) {
-      $html .= '<tr><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+      $html .= '<tr><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     else {
-      $html .= '<tr class="alt"><td style="width:10%;">' . date('Y-m-d H:i:s', $row->timestamp) . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+      $html .= '<tr class="alt"><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
     }
     $i++;
   }
@@ -400,7 +403,7 @@ function transperfect_get_project_director_details() {
 
 function transperfect_save_project_names() {
   $pd4 = transperfect_get_project_director_details();
-  $projects_arr = get_user_PD_projects($pd4);
+  $projects_arr = transperfect_get_user_pd_projects($pd4);
   $project_short_code = $pd4->projectShortCode;
   $var_arr = array();
   if ($project_short_code != '') {
