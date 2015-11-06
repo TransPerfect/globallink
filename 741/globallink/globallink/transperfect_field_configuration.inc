@@ -150,8 +150,8 @@ function transperfect_field() {
           $new_value = array(
             $mod_key => t('Current: @state', array(
               '@state' => $states_value,
-            ),
-          ));
+            )),
+          );
 
           $states = array_merge($new_value, $states);
         }
