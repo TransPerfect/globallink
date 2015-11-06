@@ -870,17 +870,22 @@ function transperfect_node_presave($node) {
   if (isset($node->tpt_skip) && $node->tpt_skip == TRUE) {
     return;
   }
-  if (!transperfect_translation_supported($node->type)) {
+
+  dpm('test 1 - pre');
+
+  if (!translation_supported_type($node->type)) {
     return;
   }
   if (!isset($node->original)) {
     return;
   }
+  
+  dpm('test 1 - post');
 
   $handler = entity_translation_get_handler("node", $node);
   $config_fields = transperfect_get_translatable_fields($node->type, $node->type);
   $orig = $node->original;
-  $lang = $handler->getFormLanguage(); // language of the node
+  $lang = $handler->getFormLanguage();
 
   foreach ($config_fields as $field) {
     if ($field->translatable != 1) {
@@ -888,7 +893,6 @@ function transperfect_node_presave($node) {
     }
 
     $field_name = $field->field_name;
-
     switch ($field_name) {
       case 'title':
         if ($orig->title != $node->title) {
@@ -900,8 +904,6 @@ function transperfect_node_presave($node) {
         break 1;
       case 'metatags':
         continue 2;
-
-        break 1;
     }
 
     $field_info = field_info_field($field_name);
@@ -916,13 +918,13 @@ function transperfect_node_presave($node) {
       break;
     }
 
-    $o_arr = $orig->$field_name;
-    $n_arr = $node->$field_name;
+    $o_arr = isset($orig->$field_name) ? $orig->$field_name : array();
+    $n_arr = isset($node->$field_name) ? $node->$field_name : array();
 
-    if (!isset($o_arr) || !isset($n_arr) || count($o_arr) != count($n_arr)) {
+    if (empty($o_arr) || empty($n_arr) || count($o_arr) != count($n_arr)) {
       transperfect_update_change_detection($node, $lang);
 
-      break;
+      continue;
     }
 
     if (!is_array($o_arr) || !is_array($n_arr)) {
@@ -935,13 +937,17 @@ function transperfect_node_presave($node) {
       continue;
     }
 
-    if (!isset($o_arr) || !isset($o_arr[$lang]) || count($o_arr[$lang]) != count($n_arr)) {
+    if (empty($o_arr[$lang]) && empty($n_arr[$lang]) && isset($o_arr['und']) && isset($n_arr['und'])) {
+      $lang = 'und';
+    }
+
+    if (isset($o_arr[$lang]) && isset($n_arr[$lang]) && count($o_arr[$lang]) != count($n_arr[$lang])) {
       transperfect_update_change_detection($node, $lang);
 
       break;
     }
 
-    if (!isset($o_arr[$lang]) || !isset($n_arr[$lang])) {
+    if ((isset($o_arr[$lang]) && empty($n_arr[$lang])) || (empty($o_arr[$lang]) && isset($n_arr[$lang]))) {
       transperfect_update_change_detection($node, $lang);
 
       break;
@@ -1270,7 +1276,7 @@ function transperfect_menu() {
       'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
-  
+
   $items[transperfect_get_root_menu('transperfect-translations/view_log')] = array(
     'title' => 'View Log',
       'page callback' => 'transperfect_view_log',
@@ -1314,7 +1320,7 @@ function transperfect_cron_queue_info() {
   return $queues;
 }
 
-/*
+/**
  * Implements hook_transperfect_is_node_translatable().
  */
 function transperfect_tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
@@ -1340,7 +1346,7 @@ function transperfect_tpt_is_field_translatable($node, $field, $drupal_target_lo
   return FALSE;
 }
 
-/*
+/**
  * Implements hook_transperfect_translate_node_for_language().
  */
 function transperfect_tpt_translate_node_for_language($node, $drupal_target_locale) {
@@ -1353,7 +1359,7 @@ function transperfect_tpt_translate_node_for_language($node, $drupal_target_loca
   return FALSE;
 }
 
-/*
+/**
  * Implements hook_transperfect_import_translation().
  */
 function transperfect_tpt_update_node($source_node, $target_node) {
