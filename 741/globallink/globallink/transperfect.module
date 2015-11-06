@@ -51,7 +51,6 @@ define('TPT_BTN_DASHBOARD_FILTER', ' ' . t('Filter') . ' ');
 define('TPT_BTN_DASHBOARD_RESET', ' ' . t('Reset') . ' ');
 define('TPT_BTN_DASHBOARD_ARCHIVE', ' ' . t('Archive Records') . ' ');
 define('TPT_BTN_ADD', ' ' . t('Add') . ' ');
-define('TPT_BTN_LOCALE_DELETE', ' ' . t('Delete') . ' ');
 define('TPT_BTN_SETTINGS_PD', ' ' . t('Save PD Settings') . ' ');
 define('TPT_BTN_SETTINGS_TEST_PD', ' ' . t('Test PD Connectivity') . ' ');
 define('TPT_BTN_SETTINGS_SAVE_TEST_PD', ' ' . t('Save and Test Settings') . ' ');
