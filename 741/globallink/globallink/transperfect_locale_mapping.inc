@@ -46,10 +46,10 @@ function transperfect_locale() {
   $query = db_select('transperfect_locale', 'tl')
   ->isNotNull('drupal_locale_code')
   ->fields('tl')
-  ->extend('PagerDefault') // Pager Extender
-  ->limit(TPT_PAGER_LIMIT) // 10 results per page
-  ->extend('TableSort') // Sorting Extender
-  ->orderByHeader($header) // Field to sort on is picked from $header
+  ->extend('PagerDefault')
+  ->limit(TPT_PAGER_LIMIT)
+  ->extend('TableSort')
+  ->orderByHeader($header)
   ;
 
   $results = $query->execute();
@@ -267,7 +267,7 @@ function transperfect_get_mapped_tpt_locales($remove_default = TRUE) {
         continue;
       }
     }
-    
+
     $languages[$row->locale_code] = $row->locale_desc;
   }
 
