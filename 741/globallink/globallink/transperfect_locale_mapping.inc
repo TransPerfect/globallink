@@ -107,6 +107,7 @@ function transperfect_locale() {
 
     $form['locale_mapping']['submit_locale_add'] = array(
       '#type' => 'submit',
+      '#name' => 'transperfect_locale_mapping_submit',
       '#value' => TPT_BTN_ADD,
     );
   }
@@ -125,12 +126,14 @@ function transperfect_locale() {
 function transperfect_locale_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == t('Delete')) {
-    $rids = array_filter($form_state['values']['table']);
+  if ($form_state['triggering_element'] != 'transperfect_locale_mapping_submit') {
+    return;
+  }
 
-    if (count($rids) == 0) {
-      form_set_error('', t('No items selected.'));
-    }
+  $rids = array_filter($form_state['values']['table']);
+
+  if (count($rids) == 0) {
+    form_set_error('', t('No items selected.'));
   }
 }
 
