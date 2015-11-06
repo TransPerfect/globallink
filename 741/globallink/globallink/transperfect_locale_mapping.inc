@@ -113,7 +113,9 @@ function transperfect_locale() {
   else {
     $form['locale_mapping']['no_mapping'] = array(
       '#type' => 'markup',
-      '#markup' => t('<br/><b><i>Nothing to Map</i></b>'),
+      '#prefix' => '<br/><b><i>',
+      '#markup' => t('Nothing to Map'),
+      '#suffix' => '</i></b>';
     );
   }
 
