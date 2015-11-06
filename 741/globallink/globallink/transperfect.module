@@ -962,8 +962,8 @@ function transperfect_node_presave($node) {
       continue;
     }
 
-    if (empty($o_arr[$lang]) && empty($n_arr[$lang]) && isset($o_arr['und']) && isset($n_arr['und'])) {
-      $lang = 'und';
+    if (empty($o_arr[$lang]) && empty($n_arr[$lang]) && isset($o_arr[LANGUAGE_NONE]) && isset($n_arr[LANGUAGE_NONE])) {
+      $lang = LANGUAGE_NONE;
     }
 
     if (isset($o_arr[$lang]) && isset($n_arr[$lang]) && count($o_arr[$lang]) != count($n_arr[$lang])) {
