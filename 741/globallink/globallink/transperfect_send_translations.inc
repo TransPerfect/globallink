@@ -1044,7 +1044,7 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
       $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
       $project_code = $form_state['values']['submission_pd_project'];
 
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_INFO, 'Sending submission - [' . $submission_name . ']');
+      watchdog(TPT_OBJECT_TYPE_CONTENT, t('Sending submission - %submission_name', array('%submission_name' => $submission_name), array(), WATCHDOG_INFO);
 
       $updated_globalLink_arr = transperfect_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
@@ -1063,11 +1063,11 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+      watchdog(TPT_OBJECT_TYPE_CONTENT, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), array(), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+      watchdog(TPT_OBJECT_TYPE_CONTENT, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), array(), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
