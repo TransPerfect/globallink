@@ -219,49 +219,6 @@ function transperfect_schema() {
     ),
   );
 
-  $schema ['transperfect_log'] = array(
-    'description' => 'GlobalLink Logs Table',
-    'fields' => array(
-      'lid' => array(
-        'description' => 'Unique Log ID',
-        'type' => 'serial',
-        'unsigned' => FALSE,
-        'not null' => TRUE,
-      ),
-      'severity' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => 'Info',
-        'description' => 'The severity level of the event.',
-      ),
-      'type' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Type of Content - Content, Blocks, Menus etc.',
-      ),
-      'message' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'big',
-        'description' => 'Text of log message.',
-      ),
-      'timestamp' => array(
-        'description' => 'The timestamp',
-        'type' => 'int',
-        'length' => 14,
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('lid'),
-    'indexes' => array(
-      'severity' => array('severity'),
-    ),
-  );
-
   return $schema;
 }
 
@@ -3146,51 +3103,6 @@ function transperfect_update_7230() {
  * Version 2.6.0 updates
  */
 function transperfect_update_7260() {
-  $schema ['transperfect_log'] = array(
-    'description' => 'GlobalLink Logs Table',
-    'fields' => array(
-      'lid' => array(
-        'description' => 'Unique Log ID',
-        'type' => 'serial',
-        'unsigned' => FALSE,
-        'not null' => TRUE,
-      ),
-      'severity' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => 'Info',
-        'description' => 'The severity level of the event.',
-      ),
-      'type' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => 'Type of Content - Content, Blocks, Menus etc.',
-      ),
-      'message' => array(
-        'type' => 'text',
-        'not null' => TRUE,
-        'size' => 'big',
-        'description' => 'Text of log message.',
-      ),
-      'timestamp' => array(
-        'description' => 'The timestamp',
-        'type' => 'int',
-        'length' => 14,
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-    ),
-    'primary key' => array('lid'),
-    'indexes' => array(
-      'severity' => array('severity'),
-    ),
-  );
-
-  db_create_table('transperfect_log', $schema['transperfect_log']);
-
   db_add_field('transperfect_core', 'project_code', array(
     'description' => 'PD Project Code.',
     'type' => 'varchar',

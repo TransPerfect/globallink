@@ -25,6 +25,8 @@ function transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, 
 
     $xml = transperfect_get_fieldable_panels_pane_xml($fpid);
     $name = 'Fieldable_Panels_Panes_' . $fpid . '.xml';
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('XML - %xml'), array('%xml' => $xml), WATCHDOG_DEBUG);
+
     $globallink = new GlobalLink();
     $globallink->type = 'fieldable_panels_panes';
     $globallink->metadata = 'fieldable_panels_panes';
@@ -580,14 +582,14 @@ function transperfect_get_translated_fieldable_panels($pd4, &$globallink_arr) {
       $count--;
 
       transperfect_update_fieldable_panels_status($globallink, TPT_STATUS_ERROR);
-      watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), array(), WATCHDOG_ERROR);
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]'), array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $count--;
 
       transperfect_update_fieldable_panels_status($globallink, TPT_STATUS_ERROR);
-      watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), array(), WATCHDOG_ERROR);
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -616,13 +618,13 @@ function transperfect_update_deleted_fieldable_panels_records($pd4, $globallink)
     transperfect_update_fieldable_panels_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), array(), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]'), array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
 
     return FALSE;
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_FIELDABLE_PANELS, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), array(), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
 
     return FALSE;
