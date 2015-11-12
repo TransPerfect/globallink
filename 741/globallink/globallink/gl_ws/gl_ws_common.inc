@@ -70,11 +70,11 @@ function transperfect_test_pd_connectivity($pd_obj) {
       $project = transperfect_find_project_by_short_code($project_service, $proj_code, $token);
     }
     catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Test Connection - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
     catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_GLOBALLINK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Test Connection - transperfect_get_ready_translations_details_from_pd - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
 
