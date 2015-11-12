@@ -23,7 +23,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     }
 
     if (empty($target_arr)) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Target languages already sent. Skipping nid - %nid'), array('%nid' => $nid), WATCHDOG_WARNING);
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Target languages already sent. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_WARNING);
 
       continue;
     }
@@ -39,7 +39,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     }
 
     if (empty($target_arr)) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('No target languages. Skipping nid - %nid'), array('%nid' => $nid), WATCHDOG_CRITICAL);
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'No target languages. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
 
       continue;
     }
@@ -58,12 +58,12 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     $xml = transperfect_get_entity_xml($node, $drupal_target_arr, $tnid, $tvid, $name, FALSE, $drupal_locale_code);
 
     if (!$xml) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Cannot create XML. Skipping nid - %nid'), array('%nid' => $nid), WATCHDOG_CRITICAL);
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Cannot create XML. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
 
       continue;
     }
 
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('XML - %xml'), array('%xml' => $xml), WATCHDOG_INFO);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'XML - %xml', array('%xml' => $xml), WATCHDOG_INFO);
 
     $globallink = new GlobalLink();
     $globallink->nid = $node->nid;
@@ -172,7 +172,7 @@ function transperfect_get_sent_entity_rows_by_nid($nid) {
 }
 
 function transperfect_update_entity_change_flag($nids, $source, $tgts) {
-  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('CHANGED Status Cleared for Node Ids - [%nids]'), array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
+  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'CHANGED Status Cleared for Node Ids - [%nids]', array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
 
   $insert_arr = array();
   $tgt_arr = array_keys($tgts);
@@ -345,11 +345,11 @@ function transperfect_update_deleted_entity_records($pd4, $globallink) {
     transperfect_update_entity_status($globallink);
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]'), array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -380,11 +380,11 @@ function transperfect_get_translated_entity($pd4, &$globallink_arr) {
     }
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('SOAP Exception - %function - Code[%faultcode], Message[%faultstring]'), array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -556,7 +556,7 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
   }
   catch (Exception $e) {
     $globallink->status = TPT_STATUS_ERROR;
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
   }
 }
 
@@ -850,7 +850,7 @@ function transperfect_entity_save(&$node) {
     return TRUE;
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
 
     return FALSE;
   }
@@ -1168,7 +1168,7 @@ function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = N
     }
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, t('Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]'), array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     throw $e;
   }
 
