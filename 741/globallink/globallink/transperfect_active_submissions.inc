@@ -2,6 +2,8 @@
 
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 function transperfect_dashboard_active_submissions_page($type) {
   $_SESSION['transpefect_dashboard_active_type'] = $type;
 

@@ -10,6 +10,8 @@ require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc'
 require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 function transperfect_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;
   $array = array();

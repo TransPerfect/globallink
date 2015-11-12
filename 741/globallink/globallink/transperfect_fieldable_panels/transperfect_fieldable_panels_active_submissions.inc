@@ -2,6 +2,8 @@
 
 require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 function transperfect_fieldable_panels_active_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_active_type'] = $type;
 

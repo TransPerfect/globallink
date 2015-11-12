@@ -1073,7 +1073,7 @@ function transperfect_get_other_row($row_id, $type) {
  * @return array
  *   Array of project director projects.
  */
-function transperfect_get_PD_projects() {
+function transperfect_get_pd_projects() {
   $proj_arr = variable_get('transperfect_pd_projects', array());
 
   if (count($proj_arr) == 0) {
