@@ -4,6 +4,8 @@ require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 function transperfect_dashboard_webform_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -268,7 +270,7 @@ function transperfect_dashboard_webform_form() {
       }
     }
 
-    if (!($query = get_webform_translate_filter_query())) {
+    if (!($query = transperfect_get_webform_translate_filter_query())) {
       $query = array(
         'translation' => 'all',
         'language' => 'all',

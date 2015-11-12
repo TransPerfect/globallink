@@ -4,6 +4,8 @@ require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 $default_language = language_default();
 $GLOBALS['transperfect_source_locale'] = $default_language->language;
 

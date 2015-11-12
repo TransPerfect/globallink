@@ -4,6 +4,8 @@ require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
 
+module_load_include('inc', 'transperfect', 'transperfect');
+
 function transperfect_dashboard_interface_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
