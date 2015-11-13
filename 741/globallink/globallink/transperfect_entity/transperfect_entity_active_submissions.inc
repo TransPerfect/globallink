@@ -1,7 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
 
 function transperfect_entity_active_submissions($type) {

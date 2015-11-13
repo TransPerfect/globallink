@@ -1,6 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity_receive.inc');
+module_load_include('inc', 'transperfect_entity', 'transperfect_entity_receive');
 
 /*
  * Adds a validation handler to check for change in multilingual options

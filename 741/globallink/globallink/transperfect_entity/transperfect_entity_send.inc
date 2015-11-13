@@ -1,9 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
 
 $default_language = language_default();
