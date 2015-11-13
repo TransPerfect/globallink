@@ -1,8 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
 
 function transperfect_interface_active_submissions($type) {
   $_SESSION['transpefect_interface_active_type'] = $type;

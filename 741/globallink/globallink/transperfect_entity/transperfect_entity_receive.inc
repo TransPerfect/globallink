@@ -1,6 +1,7 @@
 <?php
 
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect', 'transperfect_settings');
 module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
 module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
