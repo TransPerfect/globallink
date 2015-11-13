@@ -1209,7 +1209,7 @@ function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
 
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
   if ($is_hook_enabled == 1) {
-    transperfect_update_node_hook($node, $tnode);
+    transperfect_update_node($node, $tnode);
   }
 
   $success = transperfect_node_save($tnode);
