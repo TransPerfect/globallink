@@ -1,8 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
+module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
 function transperfect_block_receive_submissions($type) {
   $_SESSION['transpefect_block_receive_type'] = $type;

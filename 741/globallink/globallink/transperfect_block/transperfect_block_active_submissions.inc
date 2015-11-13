@@ -1,8 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
 function transperfect_block_active_submissions($type) {
   $_SESSION['transpefect_block_active_type'] = $type;

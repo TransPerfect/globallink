@@ -1,8 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
+module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
 
 function transperfect_fieldable_panels_receive_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_receive_type'] = $type;

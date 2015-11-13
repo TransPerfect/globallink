@@ -1,10 +1,8 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
+module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
 function transperfect_entity_receive_submissions($type) {
   $_SESSION['transpefect_entity_receive_type'] = $type;
