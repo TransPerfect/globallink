@@ -1,8 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
 function transperfect_webform_active_submissions($type) {
   $_SESSION['transpefect_webform_active_type'] = $type;
