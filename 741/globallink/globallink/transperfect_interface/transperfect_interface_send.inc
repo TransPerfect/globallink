@@ -644,10 +644,10 @@ function transperfect_dashboard_interface_form_submit($form, &$form_state) {
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      update_interface_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_update_interface_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

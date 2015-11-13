@@ -732,7 +732,7 @@ function get_webform_translations_for_row_id($row_id) {
           continue;
         }
 
-        $translation = get_translated_webform_items($globallink->targetXML);
+        $translation = transperfect_get_translated_webform_items($globallink->targetXML);
         $lid = $translation['lid'];
         $webform = transperfect_load_source_data($lid);
 
@@ -740,12 +740,12 @@ function get_webform_translations_for_row_id($row_id) {
           $source = transperfect_load_source_data($lid);
           $source_arr_temp['source'] = $source[0]->source;
           $source_arr_temp['location'] = $source[0]->location;
-          $source_xml = get_webform_xml($lid, $source_arr_temp);
+          $source_xml = transperfect_get_webform_xml($lid, $source_arr_temp);
 
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = get_translated_webform_items($source_xml);
+            $source_arr = transperfect_get_translated_webform_items($source_xml);
           }
         }
         else {
