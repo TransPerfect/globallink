@@ -1035,7 +1035,7 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
 
     if ($node_check == 1) {
-      if (!transperfect_tpt_is_node_translatable(node_load($nid))) {
+      if (!transperfect_is_node_translatable(node_load($nid))) {
         return;
       }
     }
