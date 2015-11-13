@@ -1,8 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
-
 /**
  * Sends content to GlobalLink for translation.
  *

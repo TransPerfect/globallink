@@ -1,16 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_node.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
-require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
-require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect', 'transperfect_node');
 
 function transperfect_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;

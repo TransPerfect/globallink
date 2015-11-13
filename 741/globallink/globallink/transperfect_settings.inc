@@ -1,7 +1,5 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
-
 function transperfect_settings_page() {
   $array = array();
   $array[] = drupal_get_form('transperfect_pd_settings');
