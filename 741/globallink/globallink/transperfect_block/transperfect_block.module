@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect block translation module.
+ *
+ * This module adds block translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_block_menu() {

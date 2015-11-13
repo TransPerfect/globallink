@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect menu translation module.
+ *
+ * This module adds menu translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_menu_menu() {

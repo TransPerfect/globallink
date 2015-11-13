@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect interface translation module.
+ *
+ * This module adds interface translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_interface_menu() {

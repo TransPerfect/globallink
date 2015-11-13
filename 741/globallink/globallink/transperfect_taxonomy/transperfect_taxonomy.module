@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect taxonomy translation module.
+ *
+ * This module adds taxonomy translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_taxonomy_menu() {

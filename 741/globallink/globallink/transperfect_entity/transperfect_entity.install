@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect entity translation install file.
+ */
+
+/**
  * Implements hook_schema().
  */
 function transperfect_entity_schema() {

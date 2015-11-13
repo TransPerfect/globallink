@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect webform translation module.
+ *
+ * This module adds webform translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_webform_menu() {

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @file
+ * TransPerfect fieldable panels translation install file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
 function transperfect_fieldable_panels_schema() {
   $schema = array();
   

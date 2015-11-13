@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ * TransPerfect translation module.
+ *
+ * This module adds node translation (i18n) support with configuration options.
+ */
+
 define('TPT_ROOT', dirname(__FILE__));
 
 require_once TPT_ROOT . '/' . ('transperfect.inc');
