@@ -1,8 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
 
 function transperfect_taxonomy_active_submissions($type) {
   $_SESSION['transpefect_taxonomy_active_type'] = $type;

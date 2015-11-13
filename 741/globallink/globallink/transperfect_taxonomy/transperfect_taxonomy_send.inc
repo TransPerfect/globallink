@@ -1,10 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
 
 function transperfect_dashboard_taxonomy($type) {
   $_SESSION['transperfect_selected_type'] = $type;
