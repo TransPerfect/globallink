@@ -1,8 +1,6 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_core_constants.inc');
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_common.inc');
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
 
@@ -657,7 +655,7 @@ function transperfect_dashboard_menu_form_submit($form, &$form_state) {
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
       transperfect_update_menu_ticket_id($updated_globalLink_arr, $project_code);

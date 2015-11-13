@@ -267,7 +267,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
           'field_name' => $f_key,
           'field_type' => 'text',
           'field_label' => $p_arr[$f_key],
-          'translatable' => 1,
+          'translatable' => 1
         ))->execute();
       }
     }
