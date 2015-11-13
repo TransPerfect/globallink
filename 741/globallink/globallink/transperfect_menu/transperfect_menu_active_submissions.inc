@@ -1,8 +1,7 @@
 <?php
 
-require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
-
 module_load_include('inc', 'transperfect', 'transperfect');
+module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
 function transperfect_menu_active_submissions($type) {
   $_SESSION['transpefect_menu_active_type'] = $type;
