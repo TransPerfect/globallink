@@ -130,11 +130,11 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Test Connection - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Test Connection - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -168,11 +168,11 @@ function transperfect_pd_settings_submit($form, &$form_state) {
         drupal_set_message(t('Settings Saved and Connection Test Successful.'));
       }
       catch (SoapFault $se) {
-        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Test Connection - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Test Connection - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -219,20 +219,6 @@ function transperfect_adaptor_settings() {
       '#options' => array(t('No'), t('Yes'), t('Use Source Content Setting')),
   );
 
-//  $form['transperfect_adaptor_settings']['transperfect_donot_translate_tag'] = array(
-//      '#type' => 'textfield',
-//      '#title' => t('Do Not Translate Wrapper Tag'),
-//      '#default_value' => variable_get('transperfect_donot_translate_tag', ''),
-//      '#size' => 30,
-//  );
-//
-//  $form['transperfect_adaptor_settings']['transperfect_donot_translate_text'] = array(
-//      '#type' => 'textarea',
-//      '#title' => t('Do Not Translate Text'),
-//      '#default_value' => variable_get('transperfect_donot_translate_text', ''),
-//      '#description' => t('Enter each non-translatable text in a new line.'),
-//  );
-
   $form['transperfect_adaptor_settings']['transperfect_cron_type'] = array(
       '#type' => 'radios',
       '#title' => t('Automatic Update Status'),
@@ -240,51 +226,6 @@ function transperfect_adaptor_settings() {
       '#options' => array(t('Disabled'), t('Drupal Cron'), t('External Cron (transperfect_cron.php)')),
   );
 
-  $form['transperfect_adaptor_settings']['transperfect_debug_type'] = array(
-      '#type' => 'radios',
-      '#title' => t('Logging'),
-      '#default_value' => variable_get('transperfect_debug_type', 1),
-      '#options' => array(TPT_LOGGING_CONFIG_DISABLED => t('Disabled'), TPT_LOGGING_CONFIG_INFO => t('Info'), TPT_LOGGING_CONFIG_DEBUG => t('Debug')),
-  );
-
-  //$form['transperfect_adaptor_settings']['view_log'] = array('#type' => 'markup', '#markup' => l(' View Logs ', 'javascript:void(0)', array('external' => TRUE)) . '</br></br>');
-  $form['transperfect_adaptor_settings']['markup'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('tpt-center')),
-  );
-
-  $default_date = format_date(REQUEST_TIME - (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
-
-  drupal_add_library('system', 'ui.datepicker');
-  drupal_add_js('jQuery(document).ready(function(){
-          jQuery( ".pickadate1" ).datepicker({
-          dateFormat: "mm/dd/yy",
-          defaultDate: "' . $default_date . '",
-          maxDate: 0,
-          autoSize: true,
-          showOn: "button",
-          buttonImage: "' . $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'transperfect') . '/css/icon-calendar.png",
-          buttonImageOnly: true,
-          buttonText: "Click to select date"
-          });});', 'inline');
-  $form['transperfect_adaptor_settings']['markup']['log_view_date'] = array(
-      '#type' => 'textfield',
-      '#required' => TRUE,
-      '#attributes' => array('class' => array('pickadate1'),
-          'style' => array('text-align: left;vertical-align: middle;')),
-      '#default_value' => $default_date,
-      '#field_prefix' => t('View log since') . '&nbsp;&nbsp;',
-      '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-      '#prefix' => '<div class="container-inline">',
-  );
-  $form['transperfect_adaptor_settings']['markup']['action'] = array(
-      '#type' => 'submit',
-      '#value' => t('Download'),
-      '#suffix' => '</div></br>',
-      '#limit_validation_errors' => array(),
-      '#submit' => array('transperfect_view_log_submit'),
-      '#access' => TRUE,
-  );
   $form['transperfect_adaptor_settings']['transperfect_proxy_url'] = array(
       '#type' => 'textfield',
       '#title' => t('Proxy URL'),
@@ -296,45 +237,6 @@ function transperfect_adaptor_settings() {
   $form['transperfect_adaptor_settings']['submit_general_save'] = array('#type' => 'submit', '#value' => TPT_BTN_SETTINGS_GENERAL);
 
   return $form;
-}
-
-function transperfect_view_log_submit($form, &$form_state) {
-  $from_date = $form_state['input']['log_view_date'];
-  $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
-  $destination = 'temporary://' . 'globallink_log.html';
-  $my_file_obj = file_unmanaged_save_data(transperfect_get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
-  file_transfer($my_file_obj, array('Content-Type' => 'application/htm',
-      'Content-Disposition' => 'inline; filename="' . 'globallink_log.html' . '"',
-      'Content-Length' => filesize($my_file_obj)));
-}
-
-function transperfect_get_log_data($from_date) {
-  $html = '<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#00557F");background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>';
-  $result = db_select('transperfect_log', 'tl')
-          ->fields('tl')
-          ->condition('timestamp', $from_date, '>=')
-          ->execute();
-
-  $html .= '<div class="datagrid"><table>';
-  $html .= '<thead><tr><th>Date Time</th><th>Log Severity</th><th>Type</th><th>Message</th></tr></thead><tbody>';
-
-  $i = 0;
-  foreach ($result as $row) {
-    $date = format_date($row->timestamp, 'custom', 'Y-m-d H:i:s');
-    $mod = $i % 2;
-    if ($mod == 0) {
-      $html .= '<tr><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
-    }
-    else {
-      $html .= '<tr class="alt"><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
-    }
-    $i++;
-  }
-
-  $html .= '</tbody></table></div>';
-  $html .= '</body></html>';
-
-  return $html;
 }
 
 function transperfect_adaptor_settings_validate($form, &$form_state) {

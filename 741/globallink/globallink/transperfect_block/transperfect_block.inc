@@ -22,6 +22,8 @@ function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name
     }
     $xml = get_block_xml($bid, $title_string_arr, $body_string_arr);
     $name = 'Block_' . $bid . '.xml';
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'XML - %xml', array('%xml' => $xml), WATCHDOG_DEBUG);
+
     $globallink = new GlobalLink();
     $globallink->type = 'block';
     $globallink->metadata = 'block';
@@ -143,12 +145,12 @@ function transperfect_update_deleted_block_records($pd4, $globallink) {
     transperfect_update_block_status($globallink, TPT_STATUS_SOURCE_DELETED);
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - transperfect_update_deleted_block_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     return FALSE;
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in transperfect_update_deleted_block_records - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
     return FALSE;
   }
@@ -300,13 +302,13 @@ function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
         catch (SoapFault $se) {
           $count--;
           transperfect_update_block_status($globallink, TPT_STATUS_ERROR);
-          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Download Confirmation - transperfect_update_deleted_block_records - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
           form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
         }
         catch (Exception $e) {
           $count--;
           transperfect_update_block_status($globallink, TPT_STATUS_ERROR);
-          transperfect_log(TPT_OBJECT_TYPE_BLOCK, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Saving block Objects - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
           form_set_error('', check_plain('Error: ' . $e->getMessage()));
         }
       }

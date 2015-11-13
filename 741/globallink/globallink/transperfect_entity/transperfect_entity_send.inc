@@ -1242,26 +1242,16 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
       }
     }
 
-    if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_entity_ticket_id($updated_globalLink_arr, $project_code);
-      drupal_set_message(t('Content has been successfully sent for translations.'));
-    }
-    else {
-      if (empty($_SESSION['messages']['warning'])) {
-        drupal_set_message(t('Content is empty and has not been sent for translations.'), 'warning');
-      }
-    }
-
     if (isset($_GET['rnid'])) {
       unset($_GET['rnid']);
     }
   }
   catch (SoapFault $se) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'SOAP Exception in Sending Translations - transperfect_dashboard_node_form_submit - Code[' . $se->faultcode . '], Message[' . $se->faultstring . ']');
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    transperfect_log(TPT_OBJECT_TYPE_CONTENT, TPT_LOGGING_SEVERITY_ERROR, 'Exception in Sending Translations - transperfect_dashboard_node_form_submit - File[' . $e->getFile() . '], Line[' . $e->getLine() . '], Code[' . $e->getCode() . '], Message[' . $e->getMessage() . ']');
+    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 }
