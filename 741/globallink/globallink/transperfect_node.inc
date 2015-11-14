@@ -1209,7 +1209,7 @@ function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
 
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
   if ($is_hook_enabled == 1) {
-    transperfect_update_node_hook($node, $tnode);
+    transperfect_update_node($node, $tnode);
   }
 
   $success = transperfect_node_save($tnode);
@@ -1439,7 +1439,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
     $root->appendChild($vid);
 
     $url = $dom->createAttribute('pageUrl');
-    if (isset($node->path)) {
+    if (isset($node->path) && isset($node->path['source'])) {
       $url->value = url($node->path['source'], array('absolute' => TRUE));
     }
     else {
@@ -1456,7 +1456,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
       transperfect_insert_child_element($dom, $root, 'title', $node->title);
     }
     elseif ($is_hook_enabled == 1) {
-      if (transperfect_tpt_is_field_translatable($node, 'title', $target_arr)) {
+      if (transperfect_is_field_translatable($node, 'title', $target_arr)) {
         transperfect_insert_child_element($dom, $root, 'title', $node->title);
       }
     }
