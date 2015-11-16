@@ -79,7 +79,7 @@ function transperfect_locale() {
   if ($count > 0) {
     $form['submit_locale_delete'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_LOCALE_DELETE,
+      '#value' => t('Delete'),
     );
   }
 
@@ -113,7 +113,9 @@ function transperfect_locale() {
   else {
     $form['locale_mapping']['no_mapping'] = array(
       '#type' => 'markup',
-      '#markup' => t('<br/><b><i>Nothing to Map</i></b>'),
+      '#prefix' => '<br/><b><i>',
+      '#markup' => t('Nothing to Map'),
+      '#suffix' => '</i></b>';
     );
   }
 
@@ -123,12 +125,14 @@ function transperfect_locale() {
 function transperfect_locale_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_LOCALE_DELETE) {
-    $rids = array_filter($form_state['values']['table']);
+  if ($form_state['triggering_element'] != 'transperfect_locale_mapping_submit') {
+    return;
+  }
 
-    if (count($rids) == 0) {
-      form_set_error('', t('No items selected.'));
-    }
+  $rids = array_filter($form_state['values']['table']);
+
+  if (count($rids) == 0) {
+    form_set_error('', t('No items selected.'));
   }
 }
 
