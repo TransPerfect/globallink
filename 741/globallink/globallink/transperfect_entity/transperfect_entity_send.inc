@@ -384,7 +384,7 @@ function transperfect_dashboard_entity_filter_form_submit($form, &$form_state) {
       return;
   }
 
-  $form_state['redirect'] = transperfect_get_root_menu('transperfect-translations/dashboard/entity');
+  $form_state['redirect'] = 'admin/transperfect-translations/dashboard/entity';
 
   return;
 }
@@ -676,7 +676,7 @@ function transperfect_dashboard_entity_form() {
 
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = transperfect_format_display_string($sub_name);
-                  $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
+                  $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
                   $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                   $t_count = 0;
@@ -760,7 +760,7 @@ function transperfect_dashboard_entity_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
+                $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 
@@ -867,7 +867,7 @@ function transperfect_dashboard_entity_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
+                $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 

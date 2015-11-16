@@ -400,7 +400,7 @@ function transperfect_block_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/block/preview'),
+          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/block/preview',
           'rids' => $rid_arr,
         )
       ), 'setting');

@@ -342,7 +342,7 @@ function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
     case t('Update'):
       return;
   }
-  $form_state['redirect'] = transperfect_get_root_menu('transperfect-translations/dashboard');
+  $form_state['redirect'] = 'admin/transperfect-translations/dashboard';
   return;
 }
 
@@ -583,7 +583,7 @@ function transperfect_dashboard_node_form() {
                 $tgt_arr = array();
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = transperfect_format_display_string($sub_name);
-                  $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+                  $l_href = 'admin/transperfect-translations/activeSubmissions/node';
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
                   $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                   $t_count = 0;
@@ -658,7 +658,7 @@ function transperfect_dashboard_node_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                 if (count($tgt_arr) > 1) {
@@ -750,7 +750,7 @@ function transperfect_dashboard_node_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                 if (count($tgt_arr) > 1) {
