@@ -107,7 +107,6 @@ function transperfect_locale() {
 
     $form['locale_mapping']['submit_locale_add'] = array(
       '#type' => 'submit',
-      '#name' => 'transperfect_locale_mapping_submit',
       '#value' => TPT_BTN_ADD,
     );
   }
@@ -156,6 +155,7 @@ function transperfect_locale_submit($form, &$form_state) {
 
       if (transperfect_check_pending_submission($locale)) {
         transperfect_delete_locale_mapping($locale);
+
         drupal_set_message(t(check_plain($locale_name) . ' mapping deleted successfully.'));
       }
       else {
@@ -169,7 +169,8 @@ function transperfect_check_pending_submission($locale) {
   $query1 = db_select('transperfect_core', 'tc')
   ->fields('tc', array('rid'))
   ->condition('tc.status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
-  ->condition(db_or()
+  ->condition(
+    db_or()
     ->condition('tc.source', $locale)
     ->condition('tc.target', $locale)
   );
@@ -188,7 +189,8 @@ function transperfect_check_pending_submission($locale) {
       $query2 = db_select($table, $key)
       ->fields($key, array('rid'))
       ->condition($key . '.status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
-      ->condition(db_or()
+      ->condition(
+        db_or()
         ->condition($key . '.source', $locale)
         ->condition($key . '.target', $locale)
       );
@@ -272,7 +274,7 @@ function transperfect_get_mapped_tpt_locales($remove_default = TRUE) {
         continue;
       }
     }
-
+    
     $languages[$row->locale_code] = $row->locale_desc;
   }
 

@@ -253,7 +253,7 @@ function transperfect_adaptor_settings_validate($form, &$form_state) {
     }
     $value = $form_state['values']['transperfect_implementation_type'];
     if ($value != variable_get('transperfect_implementation_type')) {
-      if (transperfect_pending_submissions_exists()) {
+      if (transperfect_pending_submission_exists()) {
         form_set_error('', t('Active submission exists. Please make sure there are no active submissions before changing this value.'));
       }
     }
