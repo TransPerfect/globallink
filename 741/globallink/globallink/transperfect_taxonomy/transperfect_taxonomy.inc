@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Miscellaneous functions for TransPerfect taxonomy translations.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');

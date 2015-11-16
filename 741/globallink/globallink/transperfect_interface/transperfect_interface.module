@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect interface translation module.
+ * TransPerfect Interface translation module.
  *
- * This module adds interface translation support with configuration options.
+ * This module adds Built-in Interface translation support with configuration options.
  */
 
 /**

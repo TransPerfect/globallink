@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * File contains class for GLField.
+ */
+
 class GLField {
   public $type; // String for field/metatag/something else
 

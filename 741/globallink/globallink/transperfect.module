@@ -4,7 +4,7 @@
  * @file
  * TransPerfect translation module.
  *
- * This module adds node translation (i18n) support with configuration options.
+ * This module adds Node translation using the Internationalization module (i18n). Also, includes TransPerfect core settings UI and configuration.
  */
 
 define('TPT_ROOT', dirname(__FILE__));
@@ -1363,7 +1363,7 @@ function transperfect_cron_queue_info() {
 /**
  * Implements hook_transperfect_is_node_translatable().
  */
-function transperfect_tpt_is_node_translatable($node, $drupal_target_locale = NULL) {
+function transperfect_is_node_translatable($node, $drupal_target_locale = NULL) {
   $result = module_invoke_all('transperfect_is_node_translatable', $node, $drupal_target_locale);
 
   if (count($result) > 0) {
@@ -1376,7 +1376,7 @@ function transperfect_tpt_is_node_translatable($node, $drupal_target_locale = NU
 /**
  * Implements hook_transperfect_is_field_translatable().
  */
-function transperfect_tpt_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
+function transperfect_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
   $result = module_invoke_all('transperfect_is_field_translatable', $node, $field, $drupal_target_locale);
 
   if (count($result) > 0) {
@@ -1389,7 +1389,7 @@ function transperfect_tpt_is_field_translatable($node, $field, $drupal_target_lo
 /**
  * Implements hook_transperfect_translate_node_for_language().
  */
-function transperfect_tpt_translate_node_for_language($node, $drupal_target_locale) {
+function transperfect_translate_node_for_language($node, $drupal_target_locale) {
   $result = module_invoke_all('transperfect_translate_node_for_language', $node, $drupal_target_locale);
 
   if (count($result) > 0) {
@@ -1402,7 +1402,7 @@ function transperfect_tpt_translate_node_for_language($node, $drupal_target_loca
 /**
  * Implements hook_transperfect_import_translation().
  */
-function transperfect_tpt_update_node($source_node, $target_node) {
+function transperfect_update_node_hook($source_node, $target_node) {
   foreach (module_implements('transperfect_import_translation') as $module) {
     $function = $module . '_transperfect_import_translation';
     $function($source_node->nid, $target_node);

@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect block translation module.
+ * TransPerfect Block translation module.
  *
- * This module adds block translation support with configuration options.
+ * This module adds Block translation support with configuration options.
  */
 
 /**

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Content UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 
 function transperfect_dashboard_active_submissions_page($type) {

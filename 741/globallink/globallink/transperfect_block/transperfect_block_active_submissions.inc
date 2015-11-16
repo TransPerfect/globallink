@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_block_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Blocks UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
 
 function transperfect_block_active_submissions($type) {

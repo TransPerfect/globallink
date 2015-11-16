@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Miscellaneous TransPerfect functions.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 
@@ -140,7 +145,7 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
-          'project_code' => $project_code,
+          'project_code' => $project_code
         ))
         ->condition('rid', $row->rid, '=')
         ->execute();
@@ -161,7 +166,7 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
-          'project_code' => $project_code,
+          'project_code' => $project_code
         ))
         ->execute();
       }
@@ -237,7 +242,7 @@ function transperfect_update_node_change_flag($nids, $source, $tgts) {
         'status' => TPT_STATUS_PENDING_TRANSLATIONS,
         'timestamp' => REQUEST_TIME,
         'last_modified' => $node->changed,
-        'changed' => 2,
+        'changed' => 2
       ))
       ->execute();
     }
@@ -323,7 +328,7 @@ function transperfect_update_row_document(&$globallink_arr) {
       ->fields(array(
         'status' => TPT_STATUS_CANCELLED,
         'timestamp' => REQUEST_TIME,
-        'changed' => 1,
+        'changed' => 1
       ))
       ->condition('rid', $globallink->tptRowId, '=')
       ->execute();
@@ -342,7 +347,7 @@ function transperfect_update_row_submission(&$globallink) {
   ->fields(array(
     'status' => TPT_STATUS_CANCELLED,
     'timestamp' => REQUEST_TIME,
-    'changed' => 1,
+    'changed' => 1
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
   ->condition('submission', $globallink->submissionName, '=')
@@ -533,8 +538,7 @@ function transperfect_update_status(&$globallink) {
 
       break;
     default:
-      $row = transperfect_get_row_by_nid_and_locale($globalLink->nid, $globalLink->sourceLocale, $globalLink->targetLocale);
-
+      $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       $node = node_load($row->nid);
 
       if ($node->vid != $row->vid) {
@@ -667,14 +671,14 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
               $new_node->path = array(
                 'pid' => $path['pid'],
                 'alias' => $translated_arr['path'],
-                'pathauto' => FALSE,
+                'pathauto' => FALSE
               );
             }
             else {
               $new_node->path = array(
                 'pid' => $path['pid'],
                 'alias' => $nodepath,
-                'pathauto' => FALSE,
+                'pathauto' => FALSE
               );
             }
           }
@@ -685,13 +689,13 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
             if (!empty($translated_arr['path'])) {
               $new_node->path = array(
                 'alias' => $translated_arr['path'],
-                'pathauto' => FALSE,
+                'pathauto' => FALSE
               );
             }
             else {
               $new_node->path = array(
                 'alias' => $nodepath,
-                'pathauto' => FALSE,
+                'pathauto' => FALSE
               );
             }
           }
@@ -1418,7 +1422,7 @@ function transperfect_save_translated_node_with_fields($node, &$tnode, $t_arr) {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
   if ($is_hook_enabled == 1) {
-    transperfect_update_node($node, $tnode);
+    transperfect_update_node_hook($node, $tnode);
   }
 
   $success = transperfect_node_save($tnode);
@@ -1538,12 +1542,12 @@ function transperfect_save_field_collections_recursively($entity_type, $host_ent
 
               $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array(
                 'value' => $translated_content,
-                'format' => $format,
+                'format' => $format
               );
             }
             else {
               $new_field_collection_arr[$key][LANGUAGE_NONE][$delta] = array(
-                'value' => $translated_content,
+                'value' => $translated_content
               );
             }
           }
@@ -1728,7 +1732,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
 
           if (isset($items[0]['revision_id'])) {
             $field_collection_item_entity = entity_load('field_collection_item', array($items[0]['value']), array(
-              'revision_id' => $items[0]['revision_id'],
+              'revision_id' => $items[0]['revision_id']
             ));
           }
         }
@@ -1748,7 +1752,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
                 transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array(
                   'entity_type' => 'node',
                   'name' => $name,
-                  'label' => 'Metatag - ' . ucwords($name),
+                  'label' => 'Metatag - ' . ucwords($name)
                 ));
               }
             }
@@ -1763,7 +1767,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
                 transperfect_insert_child_element($dom, $root, 'metatag', $value['value'], array(
                   'entity_type' => 'node',
                   'name' => $name,
-                  'label' => 'Metatag - ' . ucwords($name),
+                  'label' => 'Metatag - ' . ucwords($name)
                 ));
               }
             }
@@ -1845,7 +1849,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
 
         if (isset($entity_id_arr['revision_id'])) {
           $field_collection_item_entity_arr = entity_load('field_collection_item', array($fc_entity_id), array(
-            'revision_id' => $entity_id_arr['revision_id'],
+            'revision_id' => $entity_id_arr['revision_id']
           ));
         }
         else {
@@ -1902,7 +1906,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               'label' => $f_label['label'],
               'delta' => $delta,
               'format' => $f_format,
-              'langcode' => $langcode,
+              'langcode' => $langcode
             ));
           }
           elseif ($field_def['type'] == 'link_field' && isset($item['title']) && is_string($item['title'])) {
@@ -1920,7 +1924,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               'label' => $f_label['label'],
               'delta' => $delta,
               'format' => $f_format,
-              'langcode' => $langcode,
+              'langcode' => $langcode
             ));
           }
           elseif ($field_def['type'] == 'image') {
@@ -1932,7 +1936,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               transperfect_insert_child_element($dom, $root, 'field_image', $f_value, array(
                 'field_name' => $field,
                 'type' => 'alt',
-                'delta' => $delta,
+                'delta' => $delta
               ));
             }
 
@@ -1942,7 +1946,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               transperfect_insert_child_element($dom, $root, 'field_image', $f_value, array(
                 'field_name' => $field,
                 'type' => 'title',
-                'delta' => $delta,
+                'delta' => $delta
               ));
             }
           }
@@ -1970,7 +1974,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               'label' => $f_label['label'],
               'delta' => $delta,
               'format' => $f_format,
-              'langcode' => $langcode,
+              'langcode' => $langcode
             ));
           }
           elseif ($field_def['type'] == 'link_field' && isset($item['title']) && is_string($item['title'])) {
@@ -1988,7 +1992,7 @@ function transperfect_traverse_fields_and_field_collections($entity_type, $conte
               'label' => $f_label['label'],
               'delta' => $delta,
               'format' => $f_format,
-              'langcode' => $langcode,
+              'langcode' => $langcode
             ));
           }
         }
@@ -2057,7 +2061,7 @@ function transperfect_update_submission_status($submission_ticket, $status = TPT
   db_update('transperfect_core')
   ->fields(array(
     'status' => $status,
-    'timestamp' => REQUEST_TIME,
+    'timestamp' => REQUEST_TIME
   ))
   ->condition('submission_ticket', $submission_ticket, '=')
   ->execute();

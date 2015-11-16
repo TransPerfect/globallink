@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect entity translation module.
+ * TransPerfect Entity translation module.
  *
- * This module adds entity translation support with configuration options.
+ * This module adds Entity translation support with configuration options.
  */
 
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity_receive.inc');
