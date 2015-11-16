@@ -6,7 +6,7 @@
 function transperfect_block_menu() {
   $items = array();
 
-  $items [transperfect_get_root_menu('transperfect-translations/dashboard/block')] = array(
+  $items ['admin/transperfect-translations/dashboard/block'] = array(
     'title' => ' Blocks ',
     'page callback' => 'transperfect_dashboard_block',
     'access callback' => 'transperfect_access_callback_any',
@@ -16,7 +16,7 @@ function transperfect_block_menu() {
     'page arguments' => array('block'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/block')] = array(
+  $items ['admin/transperfect-translations/activeSubmissions/block'] = array(
     'title' => ' Blocks ',
     'page callback' => 'transperfect_block_active_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -26,7 +26,7 @@ function transperfect_block_menu() {
     'page arguments' => array('block'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/block')] = array(
+  $items ['admin/transperfect-translations/receiveTranslation/block'] = array(
     'title' => ' Blocks ',
     'page callback' => 'transperfect_block_receive_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -36,7 +36,7 @@ function transperfect_block_menu() {
     'page arguments' => array('block'),
   );
 
-  $items[transperfect_get_root_menu('transperfect-translations/receiveTranslation/block/preview')] = array(
+  $items['admin/transperfect-translations/receiveTranslation/block/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'preview_translated_block_content',
     'file' => 'transperfect_block_receive.inc',

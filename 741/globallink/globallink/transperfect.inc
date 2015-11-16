@@ -1,19 +1,6 @@
 <?php
 
 /**
- * Returns GlobalLink modules root menu.
- *
- * @param string $menu_item
- *   The current menu item.
- *
- * @return string
- *   String that represents menu item path.
- */
-function transperfect_get_root_menu($menu_item) {
-  return 'admin/' . $menu_item;
-}
-
-/**
  * Builds a filter query.
  *
  * @param SelectQuery $query
@@ -203,28 +190,6 @@ function transperfect_build_filters($content_translation) {
 }
 
 /**
- * Gets all translatable node types and names.
- *
- * @return array
- *   Array of all translatable node types and names.
- */
-function transperfect_get_all_translatable_node_types_and_names() {
-  $arr = array();
-
-  $node_types = node_type_get_types();
-
-  foreach ($node_types as $node_type) {
-    if (translation_supported_type($node_type->type) || (module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type))) {
-      $arr[$node_type->type] = $node_type->name;
-    }
-  }
-
-  asort($arr);
-
-  return $arr;
-}
-
-/**
  * Gets translatable node types and names based on a content translation.
  *
  * @param string $content_translation
@@ -238,16 +203,11 @@ function transperfect_get_translatable_node_types_and_names($content_translation
 
   $node_types = node_type_get_types();
 
+  $entity_translation_enabled = module_exists('entity_translation');
+
   foreach ($node_types as $node_type) {
-    if ($content_translation) {
-      if (translation_supported_type($node_type->type)) {
-        $arr[$node_type->type] = $node_type->name;
-      }
-    }
-    else {
-      if (entity_translation_node_supported_type($node_type->type)) {
-        $arr[$node_type->type] = $node_type->name;
-      }
+    if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
+      $arr[$node_type->type] = $node_type->name;
     }
   }
 
@@ -818,16 +778,11 @@ function transperfect_get_translatable_node_types($content_translation) {
 
   $node_types = node_type_get_types();
 
+  $entity_translation_enabled = module_exists('entity_translation');
+
   foreach ($node_types as $node_type) {
-    if ($content_translation) {
-      if (translation_supported_type($node_type->type)) {
-        $arr[] = $node_type->type;
-      }
-    }
-    else {
-      if (entity_translation_node_supported_type($node_type->type)) {
-        $arr[] = $node_type->type;
-      }
+    if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
+      $arr[] = $node_type->type;
     }
   }
 

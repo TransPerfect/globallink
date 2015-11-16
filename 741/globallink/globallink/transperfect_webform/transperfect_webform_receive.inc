@@ -426,7 +426,7 @@ function transperfect_webform_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/webform/preview'),
+          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/webform/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
