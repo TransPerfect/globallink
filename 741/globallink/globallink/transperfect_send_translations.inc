@@ -401,7 +401,7 @@ function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
       return;
   }
 
-  $form_state['redirect'] = transperfect_get_root_menu('transperfect-translations/dashboard');
+  $form_state['redirect'] = 'admin/transperfect-translations/dashboard';
 
   return;
 }
@@ -509,10 +509,7 @@ function transperfect_dashboard_node_form() {
 
       $query = db_select('node', 'n');
 
-      if (empty($_SESSION['transperfect_dashboard_filter'])) {
-        $query->condition('language', $GLOBALS['transperfect_source_locale'], '=');
-      }
-      else {
+      if (!empty($_SESSION['transperfect_dashboard_filter'])) {
         $filter_arr = isset($_SESSION['transperfect_dashboard_filter']) ? $_SESSION['transperfect_dashboard_filter'] : array();
         transpefect_build_filter_query($query, $filter_arr);
       }
@@ -566,8 +563,6 @@ function transperfect_dashboard_node_form() {
           $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
         }
       }
-
-      unset($target_lang_arr[transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])]);
 
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $target_lang_arr_keys = array_keys($target_lang_arr);
@@ -705,7 +700,8 @@ function transperfect_dashboard_node_form() {
 
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = transperfect_format_display_string($sub_name);
-                  $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+
+                  $l_href = 'admin/transperfect-translations/activeSubmissions/node';
 
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
@@ -791,7 +787,8 @@ function transperfect_dashboard_node_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+
+                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
 
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
@@ -894,7 +891,8 @@ function transperfect_dashboard_node_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = transperfect_format_display_string($sub_name);
-                $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/node');
+
+                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
 
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
@@ -1079,7 +1077,6 @@ function transperfect_dashboard_node_form() {
             '#required' => TRUE,
             '#options' => $source_lang_arr,
             '#default_value' => transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale']),
-            '#disabled' => TRUE,
             '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',

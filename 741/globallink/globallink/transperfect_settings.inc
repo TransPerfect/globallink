@@ -137,6 +137,7 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
   if (isset($form_state['values']['transperfect_pd_password']) && $form_state['values']['transperfect_pd_password'] != '') {
     try {
       $pd_obj = new ProjectDirector();
+
       $url = strrev($form_state['values']['transperfect_pd_url']);
 
       if (ord($url) == 47) {
@@ -260,57 +261,6 @@ function transperfect_adaptor_settings() {
     '#options' => array(t('Disabled'), t('Drupal Cron'), t('External Cron (transperfect_cron.php)')),
   );
 
-  $form['transperfect_adaptor_settings']['transperfect_debug_type'] = array(
-    '#type' => 'radios',
-    '#title' => t('Logging'),
-    '#default_value' => variable_get('transperfect_debug_type', 1),
-    '#options' => array(
-      '0' => t('Disabled'),
-      '1' => t('Info'),
-      '2' => t('Debug'),
-    ),
-  );
-
-  $form['transperfect_adaptor_settings']['markup'] = array(
-    '#type' => 'container',
-    '#attributes' => array('class' => array('tpt-center')),
-  );
-
-  $default_date = format_date(REQUEST_TIME - (7 * 24 * 60 * 60), 'custom', 'm/d/Y');
-
-  drupal_add_library('system', 'ui.datepicker');
-  drupal_add_js('jQuery(document).ready(function(){
-          jQuery( ".pickadate1" ).datepicker({
-          dateFormat: "mm/dd/yy",
-          defaultDate: "' . $default_date . '",
-          maxDate: 0,
-          autoSize: true,
-          showOn: "button",
-          buttonImage: "' . $GLOBALS['base_url'] . '/' . drupal_get_path('module', 'transperfect') . '/css/icon-calendar.png",
-          buttonImageOnly: true,
-          buttonText: "Click to select date"
-          });});', 'inline');
-
-  $form['transperfect_adaptor_settings']['markup']['log_view_date'] = array(
-    '#type' => 'textfield',
-    '#required' => TRUE,
-    '#attributes' => array('class' => array('pickadate1'),
-    'style' => array('text-align: left;vertical-align: middle;')),
-    '#default_value' => $default_date,
-    '#field_prefix' => t('View log since') . '&nbsp;&nbsp;',
-    '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
-    '#prefix' => '<div class="container-inline">',
-  );
-
-  $form['transperfect_adaptor_settings']['markup']['action'] = array(
-    '#type' => 'submit',
-    '#value' => t('Download'),
-    '#suffix' => '</div></br>',
-    '#limit_validation_errors' => array(),
-    '#submit' => array('transperfect_view_log_submit'),
-    '#access' => TRUE,
-  );
-
   $form['transperfect_adaptor_settings']['transperfect_proxy_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Proxy URL'),
@@ -390,7 +340,7 @@ function transperfect_adaptor_settings_validate($form, &$form_state) {
     $value = $form_state['values']['transperfect_implementation_type'];
 
     if ($value != variable_get('transperfect_implementation_type')) {
-      if (transperfect_pending_submissions_exists()) {
+      if (transperfect_pending_submission_exists()) {
         form_set_error('', t('Active submission exists. Please make sure there are no active submissions before changing this value.'));
       }
     }
