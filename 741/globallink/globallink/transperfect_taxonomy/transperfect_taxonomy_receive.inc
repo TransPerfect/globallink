@@ -425,7 +425,7 @@ function transperfect_taxonomy_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/taxonomy/preview'),
+          'previewpath' => base_path() . TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/taxonomy/preview',
           'rids' => $rid_arr,
         )), 'setting');
     }

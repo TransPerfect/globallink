@@ -1,19 +1,6 @@
 <?php
 
 /**
- * Returns GlobalLink modules root menu.
- *
- * @param string $menu_item
- *   The current menu item.
- *
- * @return string
- *   String that represents menu item path.
- */
-function transperfect_get_root_menu($menu_item) {
-  return 'admin/' . $menu_item;
-}
-
-/**
  * Builds a filter query.
  *
  * @param SelectQuery $query

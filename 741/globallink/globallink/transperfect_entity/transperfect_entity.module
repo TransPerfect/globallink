@@ -189,7 +189,7 @@ function transperfect_entity_update_change_detection($node, $lang) {
 function transperfect_entity_menu() {
   $items = array();
 
-  $items [transperfect_get_root_menu('transperfect-translations/dashboard/entity')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'transperfect_dashboard_entity',
     'access callback' => 'transperfect_access_callback_any',
@@ -198,7 +198,7 @@ function transperfect_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'transperfect_entity_active_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -207,7 +207,7 @@ function transperfect_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/entity')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'transperfect_entity_receive_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -216,7 +216,7 @@ function transperfect_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items[transperfect_get_root_menu('transperfect-translations/receiveTranslation/entity/preview')] = array(
+  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/entity/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'transperfect_preview_translated_entity',
     'file' => 'transperfect_entity_receive.inc',

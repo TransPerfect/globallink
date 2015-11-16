@@ -355,7 +355,7 @@ function transperfect_dashboard_interface_form() {
 
         foreach ($sub_arr as $sub_name => $tgt_arr) {
           $l_title = transperfect_format_display_string($sub_name);
-          $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/interface');
+          $l_href = TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/interface';
           $l_options = array('query' => array('submission' => urlencode($sub_name)));
           $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 

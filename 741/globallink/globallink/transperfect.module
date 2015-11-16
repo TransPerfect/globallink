@@ -87,6 +87,8 @@ define('TPT_OBJECT_TYPE_WEBFORM', 'Webform');
 define('TPT_OBJECT_TYPE_INTERFACE', 'Interface');
 define('TPT_OBJECT_TYPE_GLOBALLINK', 'GlobalLink');
 
+define('TPT_BASE_MENU_PATH', 'admin/');
+
 /**
  * Implements hook_permission().
  */
@@ -1023,12 +1025,12 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
 
     if (translation_supported_type($node->type)) {
-      $send_link = transperfect_get_root_menu('transperfect-translations/dashboard');
-      $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions');
+      $send_link = TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard';
+      $active_link = TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions';
     }
     elseif (entity_translation_node_supported_type($node->type)) {
-      $send_link = transperfect_get_root_menu('transperfect-translations/dashboard/entity');
-      $active_link = transperfect_get_root_menu('transperfect-translations/activeSubmissions/entity');
+      $send_link = TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard/entity';
+      $active_link = TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/entity';
     }
     else {
       return;
@@ -1208,7 +1210,7 @@ function transperfect_check_field_configured($content_type, $entity_type, $bundl
 function transperfect_menu() {
   $items = array();
 
-  $items [transperfect_get_root_menu('transperfect-translations')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations'] = array(
     'title' => 'GlobalLink',
     'description' => 'Allows users to manage and translate content using Translations.com translation services',
     'page callback' => 'transperfect_dashboard_page',
@@ -1217,21 +1219,21 @@ function transperfect_menu() {
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/dashboard')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard'] = array(
     'title' => 'Send For Translation',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/dashboard/node')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard/node'] = array(
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -5,
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions'] = array(
     'title' => 'Active Submissions',
     'description' => 'Presents a Dashboard interface to view active submissions',
     'page callback' => 'transperfect_dashboard_active_submissions_page',
@@ -1242,14 +1244,14 @@ function transperfect_menu() {
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/activeSubmissions/node')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/node'] = array(
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
     'access callback' => 'transperfect_access_callback_any',
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation'] = array(
     'title' => 'Receive Translation',
     'description' => 'Presents a Dashboard interface to receive and publish translations',
     'page callback' => 'transperfect_dashboard_receive_page',
@@ -1260,14 +1262,14 @@ function transperfect_menu() {
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/receiveTranslation/node')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/node'] = array(
     'title' => ' Content ',
     'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/settings')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/settings'] = array(
     'title' => 'Settings',
     'description' => 'Manage settings for GlobalLink',
     'page callback' => 'transperfect_settings_page',
@@ -1276,7 +1278,7 @@ function transperfect_menu() {
     'file' => 'transperfect_settings.inc',
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/locale')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/locale'] = array(
     'title' => 'Locale Mapping',
     'description' => 'Manage locale mappings for GlobalLink',
     'page callback' => 'transperfect_locale_page',
@@ -1285,7 +1287,7 @@ function transperfect_menu() {
     'file' => 'transperfect_locale_mapping.inc',
   );
 
-  $items [transperfect_get_root_menu('transperfect-translations/fieldConfig')] = array(
+  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/fieldConfig'] = array(
     'title' => 'Field Configuration',
     'description' => 'Manage translatable fields for content types',
     'page callback' => 'transperfect_field_page',
@@ -1294,7 +1296,7 @@ function transperfect_menu() {
     'file' => 'transperfect_field_configuration.inc',
   );
 
-  $items[transperfect_get_root_menu('transperfect-translations/cron')] = array(
+  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/cron'] = array(
     'title' => 'Receive Translations Cron',
     'page callback' => 'transperfect_receive_translated_contents_automatically',
     'file' => 'transperfect_receive_translations.inc',
@@ -1302,7 +1304,7 @@ function transperfect_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items[transperfect_get_root_menu('transperfect-translations/preview')] = array(
+  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'transperfect_preview_translated_content',
     'file' => 'transperfect_receive_translations.inc',
@@ -1310,7 +1312,7 @@ function transperfect_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items[transperfect_get_root_menu('transperfect-translations/view_log')] = array(
+  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/view_log'] = array(
     'title' => 'View Log',
     'page callback' => 'transperfect_view_log',
     'file' => 'transperfect_settings.inc',

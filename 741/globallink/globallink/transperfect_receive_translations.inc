@@ -365,7 +365,7 @@ function transperfect_dashboard_receive() {
       drupal_add_js(array(
           'transperfect' => array(
               'popup' => $div_arr,
-              'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/preview'),
+              'previewpath' => base_path() . TPT_BASE_MENU_PATH . 'transperfect-translations/preview',
               'rids' => $rid_arr,
               )), 'setting');
     }
