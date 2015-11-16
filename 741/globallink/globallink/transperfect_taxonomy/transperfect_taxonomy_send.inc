@@ -273,11 +273,11 @@ function transperfect_dashboard_taxonomy_form() {
 
     if (count($taxonomy_ids) > 0) {
       $query = db_select('taxonomy_term_data', 't')
-      ->condition('tid', $taxonomy_ids, 'IN')
-      ->extend('PagerDefault') // Pager Extender
-      ->limit($page_count) // 10 results per page
-      ->extend('TableSort') // Sorting Extender
-      ->orderByHeader($header); // Field to sort on is picked from $header
+      ->condition('t.vid', $taxonomy_ids, 'IN')
+      ->extend('PagerDefault')
+      ->limit($page_count)
+      ->extend('TableSort')
+      ->orderByHeader($header);
 
       $query->join('taxonomy_vocabulary', 'v', 't.vid = v.vid');
       $query->fields('t', array('tid', 'name', 'vid', 'language'));
@@ -313,7 +313,7 @@ function transperfect_dashboard_taxonomy_form() {
 
           foreach ($sub_arr as $sub_name => $tgt_arr) {
             $l_title = transperfect_format_display_string($sub_name);
-            $l_href = transperfect_get_root_menu('transperfect-translations/activeSubmissions/taxonomy');
+            $l_href = 'admin/transperfect-translations/activeSubmissions/taxonomy';
             $l_options = array('query' => array('submission' => urlencode($sub_name)));
             $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 

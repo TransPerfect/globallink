@@ -420,7 +420,7 @@ function transperfect_fieldable_panels_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . transperfect_get_root_menu('transperfect-translations/receiveTranslation/fieldable_panels/preview'),
+          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/fieldable_panels/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
