@@ -221,6 +221,7 @@ function transperfect_get_translatable_node_types_and_names($content_translation
   foreach ($node_types as $node_type) {
     if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
       $arr[$node_type->type] = $node_type->name;
+    }
   }
 
   asort($arr);
