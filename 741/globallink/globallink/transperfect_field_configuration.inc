@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_field_configuration.inc is a file that contains most functions
+ * needed on the Field Configuration UI.
+ */
+
 function transperfect_field_page() {
   return drupal_get_form('transperfect_field');
 }

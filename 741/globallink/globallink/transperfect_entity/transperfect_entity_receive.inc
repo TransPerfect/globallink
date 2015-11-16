@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_entity_receive.inc is a file that contains most functions
+ * needed on the Receive Translation - Entity UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');

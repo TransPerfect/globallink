@@ -26,7 +26,7 @@ function transperfect_pd_settings() {
     '#title' => t('URL'),
     '#default_value' => variable_get('transperfect_pd_url', ''),
     '#required' => TRUE,
-    '#size' => 50,
+    '#size' => 50
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_username'] = array(
@@ -34,14 +34,14 @@ function transperfect_pd_settings() {
     '#title' => t('User Id'),
     '#default_value' => variable_get('transperfect_pd_username', ''),
     '#required' => TRUE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_password'] = array(
     '#type' => 'password',
     '#title' => t('Password'),
     '#required' => TRUE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_projectid'] = array(
@@ -50,7 +50,7 @@ function transperfect_pd_settings() {
     '#description' => t('Enter comma separated codes for multiple projects.'),
     '#default_value' => variable_get('transperfect_pd_projectid', ''),
     '#required' => TRUE,
-    '#size' => 50,
+    '#size' => 50
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_submissionprefix'] = array(
@@ -58,7 +58,7 @@ function transperfect_pd_settings() {
     '#title' => t('Submission Name Prefix'),
     '#default_value' => variable_get('transperfect_pd_submissionprefix', 'DRU_'),
     '#required' => FALSE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_classifier'] = array(
@@ -66,7 +66,7 @@ function transperfect_pd_settings() {
     '#title' => t('Classifier'),
     '#default_value' => variable_get('transperfect_pd_classifier', 'XML'),
     '#required' => TRUE,
-    '#size' => 10,
+    '#size' => 10
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_max_target'] = array(
@@ -74,13 +74,13 @@ function transperfect_pd_settings() {
     '#title' => t('Max Target Count'),
     '#default_value' => variable_get('transperfect_pd_max_target', '99999'),
     '#required' => TRUE,
-    '#size' => 10,
+    '#size' => 10
   );
 
   $form['transperfect_pd_settings']['submit_pd_test'] = array(
     '#type' => 'submit',
     '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD,
-    '#suffix' => '</div>',
+    '#suffix' => '</div>'
   );
 
   return $form;
@@ -271,7 +271,7 @@ function transperfect_adaptor_settings() {
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_GENERAL,
+    '#value' => TPT_BTN_SETTINGS_GENERAL
   );
 
   return $form;

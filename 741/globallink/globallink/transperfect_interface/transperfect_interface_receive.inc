@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_interface_receive.inc is a file that contains most functions
+ * needed on the Receive Translation - Interface UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_receive_translations.inc is a file that contains most functions
+ * needed on the Receive Translation - Content UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');

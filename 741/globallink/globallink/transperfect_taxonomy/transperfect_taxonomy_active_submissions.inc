@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_taxonomy_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Taxonomy UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
 
 function transperfect_taxonomy_active_submissions($type) {

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * File contains Web Service functions for retreiving translations.
+ */
+
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');

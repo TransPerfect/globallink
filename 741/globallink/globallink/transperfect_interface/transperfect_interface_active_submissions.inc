@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_interface_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Interface UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
 
 function transperfect_interface_active_submissions($type) {

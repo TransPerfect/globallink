@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_fieldable_panels_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Fieldable Panels Panes UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
 
 function transperfect_fieldable_panels_active_submissions($type) {

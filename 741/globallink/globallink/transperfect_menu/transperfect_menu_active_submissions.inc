@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_menu_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Menus UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 
 function transperfect_menu_active_submissions($type) {

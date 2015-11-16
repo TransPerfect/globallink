@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Installation file for TransPerfect module.
+ */
+
+/**
  * Implements hook_schema().
  */
 function transperfect_schema() {

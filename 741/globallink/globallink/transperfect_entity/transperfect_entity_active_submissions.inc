@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_entity_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Entity UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
 
 function transperfect_entity_active_submissions($type) {

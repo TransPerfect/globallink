@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_taxonomy_send.inc is a file that contains most functions
+ * needed on the Send for Translation - Taxonomy UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
