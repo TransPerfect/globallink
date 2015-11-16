@@ -14,7 +14,7 @@ function transperfect_field() {
   $form = array();
 
   $n_arr = array('' => t('--Select Content Type--'));
-  $t_arr = transperfect_get_all_translatable_node_types_and_names();
+  $t_arr = transperfect_get_translatable_node_types_and_names();
 
   $node_types = $n_arr + $t_arr;
 
