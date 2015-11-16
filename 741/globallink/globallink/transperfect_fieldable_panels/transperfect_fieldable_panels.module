@@ -6,7 +6,7 @@
 function transperfect_fieldable_panels_menu() {
   $items = array();
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard/fieldable_panels'] = array(
+  $items ['admin/transperfect-translations/dashboard/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes  ',
     'page callback' => 'transperfect_dashboard_fieldable_panels',
     'access callback' => 'transperfect_access_callback_any',
@@ -16,7 +16,7 @@ function transperfect_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/fieldable_panels'] = array(
+  $items ['admin/transperfect-translations/activeSubmissions/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
     'page callback' => 'transperfect_fieldable_panels_active_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -26,7 +26,7 @@ function transperfect_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/fieldable_panels'] = array(
+  $items ['admin/transperfect-translations/receiveTranslation/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
     'page callback' => 'transperfect_fieldable_panels_receive_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -36,7 +36,7 @@ function transperfect_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/fieldable_panels/preview'] = array(
+  $items['admin/transperfect-translations/receiveTranslation/fieldable_panels/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'preview_translated_fieldable_panels_content',
     'file' => 'transperfect_fieldable_panels_receive.inc',

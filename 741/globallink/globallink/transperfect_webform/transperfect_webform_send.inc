@@ -370,7 +370,7 @@ function transperfect_dashboard_webform_form() {
 
         foreach ($sub_arr as $sub_name => $tgt_arr) {
           $l_title = transperfect_format_display_string($sub_name);
-          $l_href = TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/webform';
+          $l_href = 'admin/transperfect-translations/activeSubmissions/webform';
 
           $l_options = array('query' => array('submission' => urlencode($sub_name)));
 

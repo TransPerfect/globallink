@@ -427,7 +427,7 @@ function transperfect_interface_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/interface/preview',
+          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/interface/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');

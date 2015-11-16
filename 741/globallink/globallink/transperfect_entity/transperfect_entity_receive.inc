@@ -407,7 +407,7 @@ function transperfect_entity_receive_form() {
       drupal_add_js(array(
         'transperfect' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/entity/preview',
+          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/entity/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');

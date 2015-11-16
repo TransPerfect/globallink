@@ -6,7 +6,7 @@
 function transperfect_taxonomy_menu() {
   $items = array();
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/dashboard/taxonomy'] = array(
+  $items ['admin/transperfect-translations/dashboard/taxonomy'] = array(
     'title' => ' Taxonomy ',
     'page callback' => 'transperfect_dashboard_taxonomy',
     'access callback' => 'transperfect_access_callback_any',
@@ -16,7 +16,7 @@ function transperfect_taxonomy_menu() {
     'page arguments' => array('taxonomy'),
   );
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/activeSubmissions/taxonomy'] = array(
+  $items ['admin/transperfect-translations/activeSubmissions/taxonomy'] = array(
     'title' => ' Taxonomy ',
     'page callback' => 'transperfect_taxonomy_active_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -26,7 +26,7 @@ function transperfect_taxonomy_menu() {
     'page arguments' => array('taxonomy'),
   );
 
-  $items [TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/taxonomy'] = array(
+  $items ['admin/transperfect-translations/receiveTranslation/taxonomy'] = array(
     'title' => ' Taxonomy ',
     'page callback' => 'transperfect_taxonomy_receive_submissions',
     'access callback' => 'transperfect_access_callback_any',
@@ -36,7 +36,7 @@ function transperfect_taxonomy_menu() {
     'page arguments' => array('taxonomy'),
   );
 
-  $items[TPT_BASE_MENU_PATH . 'transperfect-translations/receiveTranslation/taxonomy/preview'] = array(
+  $items['admin/transperfect-translations/receiveTranslation/taxonomy/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'preview_translated_taxonomy_content',
     'file' => 'transperfect_taxonomy_receive.inc',
