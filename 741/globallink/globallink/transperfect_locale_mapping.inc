@@ -152,10 +152,10 @@ function transperfect_locale_submit($form, &$form_state) {
       $locale_name = transperfect_get_drupal_locale_name($locale);
       if (transperfect_check_pending_submission($locale)) {
         transperfect_delete_locale_mapping($locale);
-        drupal_set_message(check_plain($locale_name) . ' mapping deleted successfully.');
+        drupal_set_message(t('@locale mapping deleted successfully.', array('@locale' => check_plain($locale_name))));
       }
       else {
-        form_set_error('', check_plain($locale_name) . ' mapping cannot be deleted because there is a pending submission.');
+        form_set_error('', t('@locale mapping cannot be deleted because there is a pending submission.', array('@locale' => check_plain($locale_name))));
       }
     }
   }
