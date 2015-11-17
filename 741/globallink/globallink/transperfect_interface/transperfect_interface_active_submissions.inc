@@ -36,6 +36,8 @@ function transperfect_interface_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
+  $form['#attributes']['class'][] = 'transperfect-interface-active-select-form';
+
   $form['select_submission'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('container-inline')),
@@ -43,28 +45,27 @@ function transperfect_interface_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
-      'onChange' => 'document.getElementById("transperfect-interface-active-select-form").submit();',
+      'class' => array(
+        'transperfect-interface-select-active-submission',
+      ),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
 
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
-      '#attributes' => array(
-        'onClick' => 'transperfect-interface-active-select-form.submit();',
-      ),
+      '#value' => t('Cancel Submission'),
     );
   }
   else {

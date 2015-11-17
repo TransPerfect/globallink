@@ -292,18 +292,12 @@ function transperfect_dashboard_active() {
       if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
         $form['submit_cancel_document'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
-          '#attributes' => array(
-            'onClick' => 'document.transperfect-dashboard-active.submit();',
-          ),
+          '#value' => t('Cancel Selected Documents'),
         );
 
         $form['submit_clear_cancelled_documents'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
-          '#attributes' => array(
-            'onClick' => 'document.transperfect-dashboard-active.submit();',
-          ),
+          '#value' => t('Clear Cancelled Documents'),
         );
       }
     }
