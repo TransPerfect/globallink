@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_webform_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Webforms UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
 
 function transperfect_webform_active_submissions($type) {
@@ -37,7 +43,7 @@ function transperfect_webform_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(

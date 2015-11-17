@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_menu_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Menus UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 
 function transperfect_menu_active_submissions($type) {
@@ -37,7 +43,7 @@ function transperfect_menu_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(

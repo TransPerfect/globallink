@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+ * TransPerfect Fieldable Panels Panes translation module.
+ *
+ * This module adds Fieldable Panels Panes translation support with configuration options.
+ */
+
+/**
  * Implements hook_menu().
  */
 function transperfect_fieldable_panels_menu() {

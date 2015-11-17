@@ -1,6 +1,24 @@
 <?php
 
 /**
+ * @file
+ * Miscellaneous TransPerfect functions for node translations (non-entity).
+ */
+
+/**
+ * Returns GlobalLink modules root menu.
+ *
+ * @param string $menu_item
+ *   The current menu item.
+ *
+ * @return string
+ *   String that represents menu item path.
+ */
+function transperfect_get_root_menu($menu_item) {
+  return 'admin/' . $menu_item;
+}
+
+/**
  * Builds a filter query.
  *
  * @param SelectQuery $query
@@ -190,7 +208,7 @@ function transperfect_build_filters($content_translation) {
 }
 
 /**
- * Gets translatable node types and names based on a content translation.
+ * Gets translatable node types and names based on a content or entity translation.
  *
  * @param string $content_translation
  *   The content translation type.
@@ -491,18 +509,18 @@ function transperfect_get_content_attributes_from_xml($xml) {
       continue;
     }
 
-    foreach ($content->attributes as $attrName => $attrNode) {
-      switch ($attrName) {
+    foreach ($content->attributes as $attr_name => $attr_node) {
+      switch ($attr_name) {
         case 'rid':
-          $arr['rid'] = $attrNode->value;
+          $arr['rid'] = $attr_node->value;
 
           break;
         case 'nid':
-          $arr['nid'] = $attrNode->value;
+          $arr['nid'] = $attr_node->value;
 
           break;
         case 'vid':
-          $arr['vid'] = $attrNode->value;
+          $arr['vid'] = $attr_node->value;
 
           break;
       }
@@ -1066,14 +1084,14 @@ function transperfect_get_PD_projects() {
  */
 function transperfect_content_type_workbench_enabled($type) {
   if (!module_exists('workbench_moderation')) {
-    return false;
+    return FALSE;
   }
-  elseif (!$variable = variable_get('node_options_' . $type, false)) {
-    return false;
+  elseif (!$variable = variable_get('node_options_' . $type, FALSE)) {
+    return FALSE;
   }
   elseif (!in_array('moderation', $variable)) {
-    return false;
+    return FALSE;
   }
 
-  return true;
+  return TRUE;
 }

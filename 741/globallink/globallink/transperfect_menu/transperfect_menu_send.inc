@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_menu_send.inc is a file that contains most functions
+ * needed on the Send for Translation - Menu UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * transperfect_send_translations.inc is a file that contains most functions
+ * needed on the Send for Translations - Content UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_block_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Blocks UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
 
 function transperfect_block_active_submissions($type) {
@@ -35,7 +41,7 @@ function transperfect_block_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array('onChange' => 'document.getElementById("transperfect-block-active-select-form").submit();'),

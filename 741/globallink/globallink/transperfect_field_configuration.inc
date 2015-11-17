@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_field_configuration.inc is a file that contains most functions
+ * needed on the Field Configuration UI.
+ */
+
 function transperfect_field_page() {
   return drupal_get_form('transperfect_field');
 }
@@ -25,7 +31,7 @@ function transperfect_field() {
 
   $form['select_field']['select_type'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_CONTENT_TYPE . ':&nbsp;&nbsp;',
+    '#title' => t('Content Type'),
     '#options' => $node_types,
     '#default_value' => $selected_value,
     '#attributes' => array('onchange' => 'form.submit("transperfect_field")'),

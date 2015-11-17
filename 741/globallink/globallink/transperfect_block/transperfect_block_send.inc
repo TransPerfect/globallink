@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_block_send.inc is a file that contains most functions
+ * needed on the Send for Translation - Blocks UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * File contains class for GlobalLink.
+ */
+
 class GlobalLink {
   public $documentTicket; // String
   public $submissionTicket; // String

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @file
+ * TransPerfect webform translation install file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
 function transperfect_webform_schema() {
   $schema = array();
 

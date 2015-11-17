@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @file
+ * TransPerfect taxonomy translation install file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
 function transperfect_taxonomy_schema() {
   $schema = array();
 

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_receive_translations.inc is a file that contains most functions
+ * needed on the Receive Translation - Content UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('transperfect_node.inc');
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
@@ -86,8 +92,7 @@ function transperfect_node_receive_filter_form() {
   $form['node_receive_filter']['filters'][] = array('#markup' => '<table>');
 
   $form['node_receive_filter']['filters']['language'] = array(
-    '#type' => 'select',
-    '#title' => t('Target Language'),
+    '#type' => 'select', '#title' => t('Target Language'),
     '#options' => $languages,
     '#default_value' => $default,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -98,8 +103,7 @@ function transperfect_node_receive_filter_form() {
   );
 
   $form['node_receive_filter']['filters']['status'] = array(
-    '#type' => 'select',
-    '#title' => t('Status'),
+    '#type' => 'select', '#title' => t('Status'),
     '#options' => $status_arr,
     '#default_value' => $default_status,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -110,8 +114,7 @@ function transperfect_node_receive_filter_form() {
   );
 
   $form['node_receive_filter']['filters']['submission'] = array(
-    '#type' => 'select',
-    '#title' => t('Submission'),
+    '#type' => 'select', '#title' => t('Submission'),
     '#options' => $submission_options,
     '#default_value' => $default_submission,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',

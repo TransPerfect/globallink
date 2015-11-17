@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Miscellaneous Web Service functions for TransPerfect.
+ */
+
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/DocumentService2.php');

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * Transperfect_entity_active_submissions.inc is a file that contains most functions
+ * needed on the Active Submissions - Entity UI.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
 
 function transperfect_entity_active_submissions($type) {
@@ -36,7 +42,7 @@ function transperfect_entity_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array('onChange' => 'document.getElementById("transperfect-entity-active-select-form").submit();'),

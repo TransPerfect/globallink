@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Miscellaneous TransPerfect functions for entity translations.
+ */
+
 require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
 require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
 
@@ -904,7 +909,7 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
   if ($is_hook_enabled == 1) {
-    transperfect_update_node($node, $node);
+    transperfect_update_node_hook($node, $node);
   }
 
   // Set new translation data
