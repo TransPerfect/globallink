@@ -47,7 +47,7 @@ function transperfect_node_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => t('Active Submission Name') . ':',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
