@@ -85,7 +85,7 @@ function transperfect_taxonomy_receive_filter_form() {
 
   $form['taxonomy_receive_filter']['filters']['language'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_TARGET_LANG . ':&nbsp;&nbsp;',
+    '#title' => t('Target Language'),
     '#options' => $languages,
     '#default_value' => $default,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -97,7 +97,7 @@ function transperfect_taxonomy_receive_filter_form() {
 
   $form['taxonomy_receive_filter']['filters']['status'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_STATUS . ':&nbsp;&nbsp;',
+    '#title' => t('Status'),
     '#options' => $status_arr,
     '#default_value' => $default_status,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -109,7 +109,7 @@ function transperfect_taxonomy_receive_filter_form() {
 
   $form['taxonomy_receive_filter']['filters']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Submission'),
     '#options' => $submission_options,
     '#default_value' => $default_submission,
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
