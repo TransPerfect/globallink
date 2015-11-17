@@ -274,7 +274,7 @@ function transperfect_dashboard_webform_form() {
       }
     }
 
-    if (!($query = get_webform_translate_filter_query())) {
+    if (!($query = transperfect_get_webform_translate_filter_query())) {
       $query = array(
         'translation' => 'all',
         'language' => 'all',
