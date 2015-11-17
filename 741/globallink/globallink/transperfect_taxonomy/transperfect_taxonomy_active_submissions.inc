@@ -43,7 +43,7 @@ function transperfect_taxonomy_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(

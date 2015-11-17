@@ -31,7 +31,7 @@ function transperfect_field() {
 
   $form['select_field']['select_type'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_CONTENT_TYPE . ':&nbsp;&nbsp;',
+    '#title' => t('Content Type'),
     '#options' => $node_types,
     '#default_value' => $selected_value,
     '#attributes' => array('onchange' => 'form.submit("transperfect_field")'),
