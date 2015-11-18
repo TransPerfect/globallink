@@ -1,5 +1,5 @@
 (function($) {
-  Drupal.behaviors.transperfect = {
+  Drupal.behaviors.transperfect_entity_send = {
     attach: function (context, settings) {
       if ($('.transperfect-entity-form-clear', context).length == 0) {
         return;
