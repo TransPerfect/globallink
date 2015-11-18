@@ -960,6 +960,9 @@ function transperfect_dashboard_entity_form() {
               '#type' => 'submit',
               '#value' => t('Clear "Changed" Status'),
               '#limit_validation_errors' => array(),
+              '#attributes' => array(
+                'class' => array('transperfect-entity-form-clear-submit'),
+              ),
               '#submit' => array('transperfect_entity_form_clear_submit'),
               '#access' => TRUE,
             );

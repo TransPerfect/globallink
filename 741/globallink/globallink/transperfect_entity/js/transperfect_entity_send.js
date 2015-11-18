@@ -5,9 +5,9 @@
         return;
       }
 
-      $('.transperfect-entity-form-clear', context).submit(function() {
+      $('.transperfect-entity-form-clear-submit', context).click(function(e) {
         if (!confirm('Are you sure you want to clear the changed status for the selected content(s)?')) {
-          return false;
+          e.preventDefault();
         }
       });
     }
