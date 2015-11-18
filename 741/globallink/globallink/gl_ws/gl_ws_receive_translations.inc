@@ -15,31 +15,39 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
   $password = $pd_obj->password;
   $url = $pd_obj->url;
   $project_short_code = $pd_obj->projectShortCode;
+
   $proj_arr = array();
+
   if ($project_short_code != '') {
     $arr = explode(',', $project_short_code);
+
     foreach ($arr as $value) {
       $proj_arr[$value] = $value;
     }
   }
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . '/services/ProjectService2'
-          ));
+    'location' => $url . '/services/ProjectService2',
+  ));
+
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
 
   $globallink_arr = array();
 
   $token = transperfect_login($session_service, $username, $password);
   $projects = transperfect_get_user_projects($project_service, $token);
+
   $proj_ticket_arr = array();
+
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
+
     foreach ($proj_arr as $conf_proj) {
       if ($conf_proj == $short_code) {
         $proj_ticket_arr[] = $project->ticket;
@@ -49,14 +57,18 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
 
   if (count($proj_ticket_arr) > 0) {
     $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
+
     $count = 1;
+
     if (is_array($targets)) {
       foreach ($targets as $target) {
         if (!is_null($target->ticket) && $target->ticket != '') {
           $source_file = $target->document->documentInfo->name;
           $m_arr = $target->document->documentInfo->metadata;
+
           $source_type = '';
           $type_id = '';
+
           if (is_array($m_arr)) {
             foreach ($m_arr as $m) {
               if ($m->key == 'type') {
@@ -70,6 +82,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
           else {
             $source_type = $target->document->documentInfo->metadata->value;
           }
+
           switch ($type) {
             case 'entity':
               if ($source_type != 'entity') {
@@ -128,24 +141,30 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
           $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
           $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
           $globallink->type = $source_type;
+
           if ($source_type != 'node' && $source_type != 'entity') {
             $globallink->otherObjectId = $type_id;
           }
           else {
             $globallink->nid = $type_id;
           }
+
           $globallink_arr[$count] = $globallink;
+
           $count++;
         }
       }
     }
     elseif (!is_null($targets)) {
       $target = $targets;
+
       if (!is_null($target->ticket) && $target->ticket != '') {
         $source_file = $target->document->documentInfo->name;
         $m_arr = $target->document->documentInfo->metadata;
+
         $source_type = '';
         $type_id = '';
+
         if (is_array($m_arr)) {
           foreach ($m_arr as $m) {
             if ($m->key == 'type') {
@@ -159,6 +178,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
         else {
           $source_type = $target->document->documentInfo->metadata->value;
         }
+
         switch ($type) {
           case 'entity':
             if ($source_type != 'entity') {
@@ -217,16 +237,19 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
         $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
         $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
         $globallink->type = $source_type;
+
         if ($source_type != 'node' && $source_type != 'entity') {
           $globallink->otherObjectId = $type_id;
         }
         else {
           $globallink->nid = $type_id;
         }
+
         $globallink_arr[$count] = $globallink;
       }
     }
   }
+
   return $globallink_arr;
 }
 
@@ -235,31 +258,39 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
   $password = $pd_obj->password;
   $url = $pd_obj->url;
   $project_short_code = $pd_obj->projectShortCode;
+
   $proj_arr = array();
+
   if ($project_short_code != '') {
     $arr = explode(',', $project_short_code);
+
     foreach ($arr as $value) {
       $proj_arr[$value] = $value;
     }
   }
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . '/services/ProjectService2'
-          ));
+    'location' => $url . '/services/ProjectService2',
+  ));
+
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
 
   $globallink_arr = array();
 
   $token = transperfect_login($session_service, $username, $password);
   $projects = transperfect_get_user_projects($project_service, $token);
+
   $proj_ticket_arr = array();
+
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
+
     foreach ($proj_arr as $conf_proj) {
       if ($conf_proj == $short_code) {
         $proj_ticket_arr[] = $project->ticket;
@@ -269,14 +300,18 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
 
   if (count($proj_ticket_arr) > 0) {
     $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
+
     $count = 1;
+
     if (is_array($targets)) {
       foreach ($targets as $target) {
         if (!is_null($target->ticket) && $target->ticket != '') {
           $source_file = $target->document->documentInfo->name;
           $m_arr = $target->document->documentInfo->metadata;
+
           $source_type = '';
           $type_id = '';
+
           if (is_array($m_arr)) {
             foreach ($m_arr as $m) {
               if ($m->key == 'type') {
@@ -300,6 +335,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
           $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
           $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
           $globallink->type = $source_type;
+
           if ($source_type != 'node') {
             $globallink->otherObjectId = $type_id;
           }
@@ -308,17 +344,21 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
           }
 
           $globallink_arr[$count] = $globallink;
+
           $count++;
         }
       }
     }
     elseif (!is_null($targets)) {
       $target = $targets;
+
       if (!is_null($target->ticket) && $target->ticket != '') {
         $source_file = $target->document->documentInfo->name;
         $m_arr = $target->document->documentInfo->metadata;
+
         $source_type = '';
         $type_id = '';
+
         if (is_array($m_arr)) {
           foreach ($m_arr as $m) {
             if ($m->key == 'type') {
@@ -342,6 +382,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
         $globallink->sourceLocale = str_replace('-', '_', $target->sourceLanguage->locale);
         $globallink->targetLocale = str_replace('-', '_', $target->targetLanguage->locale);
         $globallink->type = $source_type;
+
         if ($source_type != 'node') {
           $globallink->otherObjectId = $type_id;
         }
@@ -353,6 +394,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
       }
     }
   }
+
   return $globallink_arr;
 }
 
@@ -374,12 +416,12 @@ function transperfect_get_completed_targets_by_doc($pd_obj, $ticket) {
   $url = $pd_obj->url;
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
 
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
 
   $token = transperfect_login($session_service, $username, $password);
 
@@ -400,11 +442,13 @@ function transperfect_download_target_resource($pd_obj, $target_ticket) {
   $url = $pd_obj->url;
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
+
   $token = transperfect_login($session_service, $username, $password);
   $transperfect_download_target_resource_request = new downloadTargetResource();
 
@@ -424,11 +468,13 @@ function transperfect_send_download_confirmation($target_ticket, $pd_obj) {
   $url = $pd_obj->url;
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+  
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
+
   $token = transperfect_login($session_service, $username, $password);
   $transperfect_send_download_confirmation_request = new sendDownloadConfirmation();
 

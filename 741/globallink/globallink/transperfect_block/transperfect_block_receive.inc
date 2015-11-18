@@ -14,6 +14,7 @@ function transperfect_block_receive_submissions($type) {
   $_SESSION['transpefect_block_receive_type'] = $type;
 
   $arr = array();
+
   $arr[] = drupal_get_form('transperfect_block_receive_filter_form');
   $arr[] = drupal_get_form('transperfect_block_receive_pager_form');
   $arr[] = drupal_get_form('transperfect_block_receive_form');
@@ -23,6 +24,7 @@ function transperfect_block_receive_submissions($type) {
 
 function transperfect_block_receive_filter_form() {
   $form = array();
+
   $filter = FALSE;
 
   $submission_options = transperfect_get_distinct_active_block_submission_names();
@@ -42,6 +44,7 @@ function transperfect_block_receive_filter_form() {
 
   $n_arr = array('[any]' => t('Any'));
   $t_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
+
   $languages = $n_arr + $t_arr;
 
   $status_arr = array(
@@ -135,11 +138,21 @@ function transperfect_block_receive_filter_form() {
       '#type' => 'container',
     );
 
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<table>',
+    );
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>',
+    );
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>',
+    );
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>',
+    );
+    $form['filter-search']['filter-markup'][] = array(
+      '#markup' => '</table>',
+    );
 
     $form['filter-search']['status']['actions'] = array(
       '#type' => 'actions',
@@ -164,6 +177,7 @@ function transperfect_block_receive_filter_form_submit($form, &$form_state) {
       $_SESSION['transperfect_block_receive_filter_status'] = $form_state['values']['status'];
       $_SESSION['transperfect_block_receive_filter_submission'] = $form_state['values']['submission'];
       $_SESSION['transperfect_block_globalLink_arr'] = array();
+
       unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
 
       break;
@@ -172,6 +186,7 @@ function transperfect_block_receive_filter_form_submit($form, &$form_state) {
       $_SESSION['transperfect_block_receive_filter_status'] = '';
       $_SESSION['transperfect_block_receive_filter_submission'] = '';
       $_SESSION['transperfect_block_globalLink_arr'] = array();
+
       unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
 
       break;
@@ -241,6 +256,7 @@ function transperfect_block_receive_form() {
   if (empty($_SESSION['transperfect_block_globalLink_arr'])) {
     try {
       $pd4 = transperfect_get_project_director_details();
+
       if (transperfect_validate_project_director_details($pd4)) {
         $_SESSION['transperfect_block_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
 
@@ -303,6 +319,7 @@ function transperfect_block_receive_form() {
     }
 
     $count = 1;
+
     $rid_arr = array();
 
     foreach ($globallink_arr as $key => &$globallink) {
@@ -311,6 +328,7 @@ function transperfect_block_receive_form() {
       }
 
       $pd4 = transperfect_get_project_director_details();
+
       $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
       $block_arr = transperfect_get_translated_block_items($target_xml);
 
@@ -386,6 +404,7 @@ function transperfect_block_receive_form() {
 
     if (variable_get('transperfect_enable_preview', 1)) {
       $lcount = 1;
+
       $div_arr = array();
 
       foreach ($rid_arr as $key => $rid) {
@@ -499,6 +518,7 @@ function transperfect_block_receive_form_validate($form, &$form_state) {
 function transperfect_block_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_block_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
+
   $pd4 = transperfect_get_project_director_details();
 
   switch ($op) {
@@ -506,6 +526,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
         $count = transperfect_get_translated_blocks($pd4, $globallink_arr);
+
         $error = FALSE;
         $delete_records_selected = FALSE;
 
@@ -539,18 +560,22 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
 
       $_SESSION['transperfect_block_globalLink_arr'] = array();
       $_SESSION['transperfect_block_selected_submission'] = array();
+
       unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
 
       break;
     case TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS:
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
+
         $success = FALSE;
+
         $count = 0;
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
             $success = transperfect_update_deleted_block_records($pd4, $globallink);
+
             $count++;
           }
         }
@@ -561,6 +586,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
         else {
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
+
           unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
         }
 
@@ -619,11 +645,13 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
 
       $_SESSION['transperfect_block_globalLink_arr'] = array();
       $_SESSION['transperfect_block_selected_submission'] = array();
+
       unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
 
       break;
     case TPT_BTN_DASHBOARD_REFRESH:
       sleep(2);
+
       $pd4 = transperfect_get_project_director_details();
 
       try {
@@ -644,6 +672,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
       }
       else {
         $_SESSION['transperfect_block_globalLink_arr'] = array();
+
         unset($_SESSION['transperfect_block_globalLink_arr_last_refreshed']);
       }
 
@@ -707,6 +736,7 @@ function get_block_translations_for_row_id($row_id) {
           $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
           $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
           $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
+
           $source_xml = get_block_xml($bid, $title, $body);
           $source_arr = array();
 
@@ -746,6 +776,7 @@ function get_block_translations_for_row_id($row_id) {
         $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
         $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
         $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
+        
         $source_xml = get_block_xml($bid, $title, $body);
         $source_arr = array();
 

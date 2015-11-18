@@ -12,6 +12,7 @@ function transperfect_block_active_submissions($type) {
   $_SESSION['transpefect_block_active_type'] = $type;
 
   $array = array();
+
   $array[] = drupal_get_form('transperfect_block_active_select_form');
   $array[] = drupal_get_form('transperfect_block_active_pager_form');
   $array[] = drupal_get_form('transperfect_block_active_form');
@@ -21,6 +22,7 @@ function transperfect_block_active_submissions($type) {
 
 function transperfect_block_active_select_form() {
   $form = array();
+
   get_block_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
@@ -44,7 +46,9 @@ function transperfect_block_active_select_form() {
     '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
-    '#attributes' => array('onChange' => 'document.getElementById("transperfect-block-active-select-form").submit();'),
+    '#attributes' => array(
+      'onChange' => 'document.getElementById("transperfect-block-active-select-form").submit();',
+    ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
 
@@ -58,7 +62,9 @@ function transperfect_block_active_select_form() {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
       '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
-      '#attributes' => array('onClick' => 'transperfect-block-active-select-form.submit();'),
+      '#attributes' => array(
+        'onClick' => 'transperfect-block-active-select-form.submit();',
+      ),
     );
   }
   else {
@@ -86,6 +92,7 @@ function transperfect_block_active_select_form_submit($form, &$form_state) {
     case TPT_BTN_DASHBOARD_CANCEL_SUBMISSION:
       try {
         sleep(5);
+
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_block_selected_submission'] = '';
 
@@ -158,6 +165,7 @@ function block_active_pager_form_submit($form, &$form_state) {
 
 function transperfect_block_active_form() {
   $form = array();
+
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -211,12 +219,16 @@ function transperfect_block_active_form() {
     ),
   );
 
-  $query = db_select('transperfect_core_block', 'tc')->extend('PagerDefault') // Pager Extender
-  ->limit($page_count) // 10 results per page
-  ->extend('TableSort') // Sorting Extender
-  ->orderByHeader($header); // Field to sort on is picked from $header
+  $query = db_select('transperfect_core_block', 'tc')->extend('PagerDefault')
+  ->limit($page_count)
+  ->extend('TableSort')
+  ->orderByHeader($header);
 
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN');
+  $query->condition('status', array(
+    TPT_STATUS_SENT_FOR_TRANSLATIONS,
+    TPT_STATUS_ERROR,
+    TPT_STATUS_CANCELLED,
+  ), 'IN');
 
   if ($selected_value != '') {
     $query->condition('submission_ticket', $selected_value, '=');
@@ -230,6 +242,7 @@ function transperfect_block_active_form() {
 
   $results = $query->execute();
   $count = 0;
+
   $rows = array();
 
   foreach ($results as $item) {
@@ -262,13 +275,17 @@ function transperfect_block_active_form() {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
         '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
-        '#attributes' => array('onClick' => 'transperfect-block-active-form.submit();'),
+        '#attributes' => array(
+          'onClick' => 'transperfect-block-active-form.submit();',
+        ),
       );
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
         '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
-        '#attributes' => array('onClick' => 'document.transperfect-dashboard-active.submit();'),
+        '#attributes' => array(
+          'onClick' => 'document.transperfect-dashboard-active.submit();',
+        ),
       );
     }
   }
@@ -278,6 +295,7 @@ function transperfect_block_active_form() {
 
 function transperfect_block_active_form_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
+
   transperfect_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -293,6 +311,7 @@ function transperfect_block_active_form_validate($form, &$form_state) {
 
 function transperfect_block_active_form_submit($form, &$form_state) {
   sleep(5);
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -304,11 +323,13 @@ function transperfect_block_active_form_submit($form, &$form_state) {
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
+
           return;
         }
 
         $_SESSION['transperfect_block_selected_submission'] = '';
         cancel_block_records($rids, $pd4);
+        
         $_SESSION['transperfect_block_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
