@@ -939,6 +939,8 @@ function transperfect_dashboard_entity_form() {
         }
       }
 
+      $form['#attributes']['class'][] = 'transperfect-entity-form-clear';
+
       $form['table'] = array(
         '#type' => 'tableselect',
         '#header' => $header,
@@ -954,12 +956,15 @@ function transperfect_dashboard_entity_form() {
       if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
         if ($count > 0) {
           if ($modified == 0 && $redirect_nid == '') {
-            $form['clear_changed_flag'] = array('#type' => 'submit',
-              '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
+            $form['clear_changed_flag'] = array(
+              '#type' => 'submit',
+              '#value' => t('Clear "Changed" Status'),
               '#limit_validation_errors' => array(),
+              '#attributes' => array(
+                'class' => array('transperfect-entity-form-clear-submit'),
+              ),
               '#submit' => array('transperfect_entity_form_clear_submit'),
               '#access' => TRUE,
-              '#attributes' => array('onclick' => 'if(!confirm("Are you sure you want to clear the changed status for the selected content(s)?")){return false;}'),
             );
           }
 

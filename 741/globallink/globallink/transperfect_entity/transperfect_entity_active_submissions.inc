@@ -35,6 +35,8 @@ function transperfect_entity_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
+  $form['#attributes']['class'][] = 'transperfect-entity-active-select-form';
+
   $form['select_submission'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('container-inline')),
@@ -45,21 +47,24 @@ function transperfect_entity_active_select_form() {
     '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
-    '#attributes' => array('onChange' => 'document.getElementById("transperfect-entity-active-select-form").submit();'),
+    '#attributes' => array(
+      'class' => array(
+        'transperfect-entity-select-active-submission',
+      ),
+    ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
 
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
-      '#attributes' => array('onClick' => 'document.transperfect-entity-active-select-form.submit();'),
+      '#value' => t('Cancel Submission'),
     );
   }
   else {
@@ -270,14 +275,14 @@ function transperfect_entity_active_form() {
 
     if ($count > 0) {
       if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
-        $form['submit_cancel_document'] = array('#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
-          '#attributes' => array('onClick' => 'document.transperfect-entity-active-form.submit();'),
+        $form['submit_cancel_document'] = array(
+          '#type' => 'submit',
+          '#value' => t('Cancel Selected Documents'),
         );
 
-        $form['submit_clear_cancelled_documents'] = array('#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
-          '#attributes' => array('onClick' => 'document.transperfect-entity-active-form.submit();'),
+        $form['submit_clear_cancelled_documents'] = array(
+          '#type' => 'submit',
+          '#value' => t('Clear Cancelled Documents'),
         );
       }
     }
