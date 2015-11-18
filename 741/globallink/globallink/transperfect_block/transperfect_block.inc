@@ -29,9 +29,8 @@ function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name
       continue;
     }
 
-    $title_string_arr = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
-    $body_string_arr = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
-
+    $title_string_arr = isset($strings['blocks:block:' . $bid . ':title']) ? $strings['blocks:block:' . $bid . ':title'] : FALSE;
+    $body_string_arr = isset($strings['blocks:block:' . $bid . ':body']) ? $strings['blocks:block:' . $bid . ':body'] : FALSE;
     if (!$body_string_arr) {
       continue;
     }
