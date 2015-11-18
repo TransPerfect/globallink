@@ -124,7 +124,7 @@ function transperfect_fieldable_panels_receive_filter_form() {
 
   $form['fieldable_panels_receive_filter']['filters']['filter'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_FILTER,
+    '#value' => t('Filter'),
     '#disabled' => $disable_submit,
   );
 
@@ -161,7 +161,7 @@ function transperfect_fieldable_panels_receive_filter_form() {
 
     $form['filter-search']['status']['actions']['reset'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_RESET,
+      '#value' => t('Reset'),
     );
   }
 
@@ -215,7 +215,7 @@ function transperfect_fieldable_panels_receive_pager_form() {
 
   $form['page_counter']['markup']['action'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
     '#submit' => array('transperfect_fieldable_panels_receive_pager_form_submit'),
@@ -435,17 +435,17 @@ function transperfect_fieldable_panels_receive_form() {
     if ($count > 1) {
       $form['submit_update_selected'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_UPDATE_SELECTED,
+        '#value' => t('Update Selected'),
       );
 
       $form['submit_update_all'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_UPDATE_ALL,
+        '#value' => t('Update All'),
       );
 
       $form['submit_clear_deleted_hidden'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS,
+        '#value' => t('Clear Deleted Records'),
         '#attributes' => array(
           'style' => 'display:none;',
           'disabled' => 'true',
@@ -454,7 +454,7 @@ function transperfect_fieldable_panels_receive_form() {
 
       $form['submit_clear_deleted'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS,
+        '#value' => t('Clear Deleted Records'),
       );
     }
 
@@ -470,7 +470,7 @@ function transperfect_fieldable_panels_receive_form() {
 
     $form['submit_refresh_hidden'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_REFRESH,
+      '#value' => t('Refresh Page'),
       '#prefix' => '<BR/>',
       '#attributes' => array(
         'style' => 'display:none;',
@@ -480,7 +480,7 @@ function transperfect_fieldable_panels_receive_form() {
 
     $form['submit_refresh'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_REFRESH,
+      '#value' => t('Refresh Page'),
     );
 
     $form['markup'] = array(

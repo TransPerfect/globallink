@@ -40,7 +40,7 @@ function transperfect_field() {
 
   $form['select_field']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
@@ -66,7 +66,7 @@ function transperfect_field() {
 
     $form['select_field']['add_field'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_ADD,
+      '#value' => t('Add'),
       '#disabled' => $disabled,
     );
 
@@ -174,7 +174,7 @@ function transperfect_field() {
     if ($count > 0) {
       $form['submit_field_update'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_FIELD_UPDATE,
+        '#value' => t('Update'),
       );
     }
   }

@@ -136,7 +136,7 @@ function transperfect_interface_active_pager_form() {
 
   $form['page_counter']['markup']['action'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
     '#submit' => array('interface_active_pager_form_submit'),
@@ -270,7 +270,7 @@ function transperfect_interface_active_form() {
     if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
+        '#value' => t('Cancel Selected Documents'),
         '#attributes' => array(
           'onClick' => 'transperfect-interface-active-form.submit();',
         ),
@@ -278,7 +278,7 @@ function transperfect_interface_active_form() {
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
+        '#value' => t('Clear Cancelled Documents'),
         '#attributes' => array(
           'onClick' => 'document.transperfect-dashboard-active.submit();',
         ),

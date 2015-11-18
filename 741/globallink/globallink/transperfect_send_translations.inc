@@ -436,7 +436,7 @@ function transperfect_dashboard_pager_form() {
 
       $form['page_counter']['markup']['action'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_GO,
+        '#value' => t('Go'),
         '#suffix' => '</div>',
         '#limit_validation_errors' => array(),
         '#submit' => array('transperfect_node_form_pager_submit'),
@@ -976,7 +976,7 @@ function transperfect_dashboard_node_form() {
           if ($modified == 0 && $redirect_nid == '') {
             $form['clear_changed_flag'] = array(
               '#type' => 'submit',
-              '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
+              '#value' => t('Clear "Changed" Status'),
               '#limit_validation_errors' => array(),
               '#submit' => array('transperfect_node_form_clear_submit'),
               '#access' => TRUE,
@@ -1126,7 +1126,7 @@ function transperfect_dashboard_node_form() {
 
           $form['send_submission']['submit_pd_send'] = array(
             '#type' => 'submit',
-            '#value' => TPT_BTN_DASHBOARD_SEND,
+            '#value' => t('Send for Translation'),
           );
         }
       }

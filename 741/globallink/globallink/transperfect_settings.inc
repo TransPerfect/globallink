@@ -79,7 +79,7 @@ function transperfect_pd_settings() {
 
   $form['transperfect_pd_settings']['submit_pd_test'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD,
+    '#value' => t('Save and Test Settings'),
     '#suffix' => '</div>'
   );
 
@@ -271,7 +271,7 @@ function transperfect_adaptor_settings() {
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_GENERAL
+    '#value' => t('Save Adaptor Settings')
   );
 
   return $form;
