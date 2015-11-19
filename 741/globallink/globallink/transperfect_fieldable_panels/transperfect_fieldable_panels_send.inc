@@ -68,7 +68,7 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 
     $form['select_fieldable_panels_type']['filters']['filter'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
+      '#value' => t('Filter'),
       '#disabled' => $disable_submit,
     );
 
@@ -97,7 +97,7 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 
       $form['filter-search']['status']['actions']['reset'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_RESET,
+        '#value' => t('Reset'),
       );
     }
   }
@@ -151,7 +151,7 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
 
     $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('transperfect_dashboard_fieldable_panels_pager_form_submit'),
@@ -462,7 +462,7 @@ function transperfect_dashboard_fieldable_panels_form() {
 
         $form['send_submission']['submit_pd_send'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_SEND,
+          '#value' => t('Send for Translation'),
         );
       }
     }

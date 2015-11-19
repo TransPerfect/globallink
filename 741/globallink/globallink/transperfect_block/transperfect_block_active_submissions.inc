@@ -54,14 +54,14 @@ function transperfect_block_active_select_form() {
 
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
+      '#value' => t('Cancel Submission'),
       '#attributes' => array(
         'onClick' => 'transperfect-block-active-select-form.submit();',
       ),
@@ -134,7 +134,7 @@ function transperfect_block_active_pager_form() {
 
   $form['page_counter']['markup']['action'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
     '#submit' => array('block_active_pager_form_submit'),
@@ -274,7 +274,7 @@ function transperfect_block_active_form() {
     if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
+        '#value' => t('Cancel Selected Documents'),
         '#attributes' => array(
           'onClick' => 'transperfect-block-active-form.submit();',
         ),
@@ -282,7 +282,7 @@ function transperfect_block_active_form() {
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
+        '#value' => t('Clear Cancelled Documents'),
         '#attributes' => array(
           'onClick' => 'document.transperfect-dashboard-active.submit();',
         ),
@@ -329,7 +329,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
 
         $_SESSION['transperfect_block_selected_submission'] = '';
         cancel_block_records($rids, $pd4);
-        
+
         $_SESSION['transperfect_block_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }

@@ -108,7 +108,7 @@ function transperfect_locale() {
 
     $form['locale_mapping']['submit_locale_add'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_ADD
+      '#value' => t('Add')
     );
   }
   else {

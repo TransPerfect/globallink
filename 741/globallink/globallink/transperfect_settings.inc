@@ -79,7 +79,7 @@ function transperfect_pd_settings() {
 
   $form['transperfect_pd_settings']['submit_pd_test'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD,
+    '#value' => t('Save and Test Settings'),
     '#suffix' => '</div>'
   );
 
@@ -271,10 +271,57 @@ function transperfect_adaptor_settings() {
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_GENERAL
+    '#value' => t('Save Adaptor Settings')
   );
 
   return $form;
+}
+
+function transperfect_view_log_submit($form, &$form_state) {
+  $from_date = $form_state['input']['log_view_date'];
+  $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
+
+  $destination = 'temporary://' . 'globallink_log.html';
+  $my_file_obj = file_unmanaged_save_data(transperfect_get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
+
+  file_transfer($my_file_obj, array(
+    'Content-Type' => 'application/htm',
+    'Content-Disposition' => 'inline; filename="' . 'globallink_log.html' . '"',
+    'Content-Length' => filesize($my_file_obj),
+  ));
+}
+
+function transperfect_get_log_data($from_date) {
+  $html = '<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#00557F");background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>';
+
+  $result = db_select('transperfect_log', 'tl')
+  ->fields('tl')
+  ->condition('timestamp', $from_date, '>=')
+  ->execute();
+
+  $html .= '<div class="datagrid"><table>';
+  $html .= '<thead><tr><th>Date Time</th><th>Log Severity</th><th>Type</th><th>Message</th></tr></thead><tbody>';
+
+  $i = 0;
+
+  foreach ($result as $row) {
+    $date = format_date($row->timestamp, 'custom', 'Y-m-d H:i:s');
+    $mod = $i % 2;
+
+    if ($mod == 0) {
+      $html .= '<tr><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+    }
+    else {
+      $html .= '<tr class="alt"><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+    }
+
+    $i++;
+  }
+
+  $html .= '</tbody></table></div>';
+  $html .= '</body></html>';
+
+  return $html;
 }
 
 function transperfect_adaptor_settings_validate($form, &$form_state) {
