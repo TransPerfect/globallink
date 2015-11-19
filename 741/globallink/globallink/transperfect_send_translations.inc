@@ -967,6 +967,8 @@ function transperfect_dashboard_node_form() {
         '#default_value' => $default_checked_ids,
       );
 
+      $form['#attributes']['class'][] = 'transperfect-node-form-clear';
+
       if ($count > 0) {
         $form['pager'] = array('#markup' => theme('pager'));
       }
@@ -981,7 +983,7 @@ function transperfect_dashboard_node_form() {
               '#submit' => array('transperfect_node_form_clear_submit'),
               '#access' => TRUE,
               '#attributes' => array(
-                'onclick' => 'if(!confirm("Are you sure you want to clear the changed status for the selected content(s)?")){return false;}',
+                'class' => array('transperfect-node-form-clear-submit'),
               ),
             );
           }
