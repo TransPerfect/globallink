@@ -20,7 +20,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     }
 
     if (empty($target_arr)) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Target languages already sent. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_WARNING);
+      watchdog('GlobalLink', 'Target languages already sent. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_WARNING);
 
       continue;
     }
@@ -36,7 +36,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     }
 
     if (empty($target_arr)) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'No target languages. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
+      watchdog('GlobalLink', 'No target languages. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
 
       continue;
     }
@@ -55,12 +55,12 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
     $xml = transperfect_get_entity_xml($node, $drupal_target_arr, $tnid, $tvid, $name, FALSE, $drupal_locale_code);
 
     if (!$xml) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Cannot create XML. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
+      watchdog('GlobalLink', 'Cannot create XML. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
 
       continue;
     }
 
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'XML - %xml', array('%xml' => $xml), WATCHDOG_INFO);
+    watchdog('GlobalLink', 'XML - %xml', array('%xml' => $xml), WATCHDOG_INFO);
 
     $globallink = new GlobalLink();
     $globallink->nid = $node->nid;
@@ -104,7 +104,7 @@ function transperfect_update_entity_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
@@ -125,7 +125,7 @@ function transperfect_update_entity_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
@@ -156,7 +156,7 @@ function transperfect_get_sent_entity_rows_by_nid($nid) {
   $result = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -169,7 +169,7 @@ function transperfect_get_sent_entity_rows_by_nid($nid) {
 }
 
 function transperfect_update_entity_change_flag($nids, $source, $tgts) {
-  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'CHANGED Status Cleared for Node Ids - [%nids]', array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
+  watchdog('GlobalLink', 'CHANGED Status Cleared for Node Ids - [%nids]', array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
 
   $insert_arr = array();
   $tgt_arr = array_keys($tgts);
@@ -219,7 +219,7 @@ function transperfect_update_entity_change_flag($nids, $source, $tgts) {
             'document_ticket' => '',
             'submission' => '',
             'submission_ticket' => '',
-            'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+            'status' => 'Pending Translations',
             'timestamp' => REQUEST_TIME,
             'last_modified' => $node->changed,
             'changed' => 2,
@@ -281,7 +281,7 @@ function transperfect_update_entity_row_document(&$globallink_arr) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_entity')
       ->fields(array(
-        'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+        'status' => 'Pending Translations',
         'timestamp' => REQUEST_TIME,
         'changed' => 1,
       ))
@@ -294,7 +294,7 @@ function transperfect_update_entity_row_document(&$globallink_arr) {
 function transperfect_update_entity_row_submission(&$globallink) {
   db_update('transperfect_core_entity')
   ->fields(array(
-    'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+    'status' => 'Pending Translations',
     'timestamp' => REQUEST_TIME,
     'changed' => 1,
   ))
@@ -305,7 +305,7 @@ function transperfect_update_entity_row_submission(&$globallink) {
 
 function transperfect_get_distinct_entity_active_submission_names() {
   $query = db_select('transperfect_core_entity', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tc');
 
@@ -336,17 +336,17 @@ function transperfect_get_entity_row_id_from_submission($submission_ticket, $doc
 
 function transperfect_update_deleted_entity_records($pd4, $globallink) {
   try {
-    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
     transperfect_update_entity_status($globallink);
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -365,7 +365,7 @@ function transperfect_get_translated_entity($pd4, &$globallink_arr) {
           $count++;
           transperfect_update_entity($globallink);
 
-          if ($globallink->status != TPT_STATUS_ERROR) {
+          if ($globallink->status != 'Error') {
             transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
             transperfect_update_entity_status($globallink);
           }
@@ -377,11 +377,11 @@ function transperfect_get_translated_entity($pd4, &$globallink_arr) {
     }
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 
@@ -401,8 +401,8 @@ function transperfect_get_entity_row($row_id) {
 
 function transperfect_update_entity_status(&$globallink) {
   switch ($globallink->status) {
-    case TPT_STATUS_SOURCE_DELETED:
-    case TPT_STATUS_ERROR:
+    case 'Source Deleted':
+    case 'Error':
       $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       $node = node_load($row->nid);
 
@@ -411,7 +411,7 @@ function transperfect_update_entity_status(&$globallink) {
         ->fields(array(
           'vid' => $node->vid,
           'title' => $node->title,
-          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'status' => 'Pending Translations',
           'timestamp' => REQUEST_TIME,
         ))
         ->condition('rid', $row->rid, '=')
@@ -420,7 +420,7 @@ function transperfect_update_entity_status(&$globallink) {
       else {
         db_update('transperfect_core_entity')
         ->fields(array(
-          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'status' => 'Pending Translations',
           'timestamp' => REQUEST_TIME,
         ))
         ->condition('rid', $row->rid, '=')
@@ -428,12 +428,12 @@ function transperfect_update_entity_status(&$globallink) {
       }
 
       break;
-    case TPT_STATUS_SOURCE_DELETED:
+    case 'Source Deleted':
       $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
 
       db_update('transperfect_core_entity')
       ->fields(array(
-        'status' => TPT_STATUS_SOURCE_DELETED,
+        'status' => 'Source Deleted',
         'document_ticket' => '',
         'submission_ticket' => '',
         'timestamp' => REQUEST_TIME,
@@ -442,11 +442,11 @@ function transperfect_update_entity_status(&$globallink) {
       ->execute();
 
       break;
-    case TPT_STATUS_ERROR:
+    case 'Error':
       $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       db_update('transperfect_core_entity')
       ->fields(array(
-        'status' => TPT_STATUS_ERROR,
+        'status' => 'Error',
         'timestamp' => REQUEST_TIME,
       ))
       ->condition('rid', $row->rid, '=')
@@ -483,7 +483,7 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
     }
 
     if (!$node || is_null($node) || !is_object($node)) {
-      $globallink->status = TPT_STATUS_SOURCE_DELETED;
+      $globallink->status = 'Source Deleted';
 
       return;
     }
@@ -545,15 +545,15 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
 
     if ($success) {
       // todo Pathauto Module Support
-      $globallink->status = TPT_STATUS_PUBLISHED;
+      $globallink->status = 'Published';
     }
     else {
-      $globallink->status = TPT_STATUS_ERROR;
+      $globallink->status = 'Error';
     }
   }
   catch (Exception $e) {
-    $globallink->status = TPT_STATUS_ERROR;
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    $globallink->status = 'Error';
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
   }
 }
 
@@ -774,7 +774,7 @@ function transperfect_get_translated_entity_array($xml, $target_lang = LANGUAGE_
 
 function transperfect_get_active_entity_submission_by_nid($nid) {
   $query = db_select('transperfect_core_entity', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nid, '=');
   $query->fields('tc');
 
@@ -798,7 +798,7 @@ function transperfect_get_active_entity_submission_by_nid($nid) {
 
 function transperfect_get_active_entity_submission_rows_by_nid($nids) {
   $query = db_select('transperfect_core_entity', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nids, 'IN');
   $query->fields('tc');
 
@@ -847,7 +847,7 @@ function transperfect_entity_save(&$node) {
     return TRUE;
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
 
     return FALSE;
   }
@@ -901,7 +901,7 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
   if ($is_hook_enabled == 1) {
-    transperfect_update_node($node, $node);
+    transperfect_update_node_hook($node, $node);
   }
 
   // Set new translation data
@@ -1047,10 +1047,10 @@ function transperfect_save_entity_field_collections_recursively($entity_type, $h
 
 function transperfect_get_entity_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE, $source_lang = '') {
   if (is_null($node)) {
-    return TPT_STATUS_SOURCE_DELETED;
+    return 'Source Deleted';
   }
   elseif (!$node) {
-    return TPT_STATUS_SOURCE_DELETED;
+    return 'Source Deleted';
   }
 
   if ($node && is_object($node)) {
@@ -1066,7 +1066,7 @@ function transperfect_get_entity_xml($node, $target_arr, $tnid = NULL, $tvid = N
     return $xml;
   }
 
-  return TPT_STATUS_SOURCE_DELETED;
+  return 'Source Deleted';
 }
 
 function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE, $source_lang = '') {
@@ -1165,7 +1165,7 @@ function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = N
     }
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     throw $e;
   }
 
@@ -1322,12 +1322,12 @@ function transperfect_get_entity_title(&$globallink) {
     $globallink->title = $item->title;
 
     switch ($item->status) {
-      case TPT_STATUS_SENT_FOR_TRANSLATIONS:
-        $globallink->status = TPT_STATUS_COMPLETED;
+      case 'Sent for Translations':
+        $globallink->status = 'Translation Completed';
 
         break;
-      case TPT_STATUS_ERROR:
-        $globallink->status = TPT_STATUS_ERROR;
+      case 'Error':
+        $globallink->status = 'Error';
 
         break;
     }
@@ -1338,7 +1338,7 @@ function transperfect_get_entity_title(&$globallink) {
   return FALSE;
 }
 
-function transperfect_update_submission_entity_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_submission_entity_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_entity')
   ->fields(array(
     'status' => $status,
@@ -1352,7 +1352,7 @@ function get_entity_submission_status() {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
 
   $results = $query->execute();
 
@@ -1362,7 +1362,7 @@ function get_entity_submission_status() {
         $pd4 = transperfect_get_project_director_details();
         $status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$status || $status == PD_STATUS_CANCELLED) {
+        if (!$status || $status == 'CANCELLED') {
           transperfect_update_submission_entity_status($row->submission_ticket);
         }
       }
@@ -1380,7 +1380,7 @@ function transperfect_check_entity_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core_entity', 'tc')
   ->fields('tc', array('rid'))
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN');
 
   $results = $query->execute();
   $rows = array();
@@ -1408,12 +1408,12 @@ function transperfect_clear_cancelled_entity_documents() {
   $query = db_select('transperfect_core_entity', 'tc')
   ->fields('tc', array('submission_ticket'))
   ->distinct()
-  ->condition('status', TPT_STATUS_CANCELLED, '=');
+  ->condition('status', 'Cancelled', '=');
 
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_submission_entity_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+    transperfect_update_submission_entity_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }

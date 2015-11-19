@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * File contains class for ProjectDirector.
+ */
+
 class ProjectDirector {
   public $url; // String
   public $username; // String

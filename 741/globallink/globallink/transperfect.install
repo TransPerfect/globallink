@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Installation file for TransPerfect module.
+ */
+
+/**
  * Implements hook_schema().
  */
 function transperfect_schema() {
@@ -2423,8 +2428,8 @@ function transperfect_update_7210() {
   }
 
   db_update('transperfect_core')
-  ->fields(array('status' => TPT_STATUS_SOURCE_DELETED))
-  ->condition('status', TPT_STATUS_DELETED, '=')
+  ->fields(array('status' => 'Source Deleted'))
+  ->condition('status', 'Node Deleted', '=')
   ->execute();
 }
 

@@ -24,7 +24,7 @@ function transperfect_pd_settings() {
     '#title' => t('URL'),
     '#default_value' => variable_get('transperfect_pd_url', ''),
     '#required' => TRUE,
-    '#size' => 50,
+    '#size' => 50
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_username'] = array(
@@ -32,14 +32,14 @@ function transperfect_pd_settings() {
     '#title' => t('User Id'),
     '#default_value' => variable_get('transperfect_pd_username', ''),
     '#required' => TRUE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_password'] = array(
     '#type' => 'password',
     '#title' => t('Password'),
     '#required' => TRUE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_projectid'] = array(
@@ -48,7 +48,7 @@ function transperfect_pd_settings() {
     '#description' => t('Enter comma separated codes for multiple projects.'),
     '#default_value' => variable_get('transperfect_pd_projectid', ''),
     '#required' => TRUE,
-    '#size' => 50,
+    '#size' => 50
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_submissionprefix'] = array(
@@ -56,7 +56,7 @@ function transperfect_pd_settings() {
     '#title' => t('Submission Name Prefix'),
     '#default_value' => variable_get('transperfect_pd_submissionprefix', 'DRU_'),
     '#required' => FALSE,
-    '#size' => 20,
+    '#size' => 20
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_classifier'] = array(
@@ -64,7 +64,7 @@ function transperfect_pd_settings() {
     '#title' => t('Classifier'),
     '#default_value' => variable_get('transperfect_pd_classifier', 'XML'),
     '#required' => TRUE,
-    '#size' => 10,
+    '#size' => 10
   );
 
   $form['transperfect_pd_settings']['transperfect_pd_max_target'] = array(
@@ -72,13 +72,13 @@ function transperfect_pd_settings() {
     '#title' => t('Max Target Count'),
     '#default_value' => variable_get('transperfect_pd_max_target', '99999'),
     '#required' => TRUE,
-    '#size' => 10,
+    '#size' => 10
   );
 
   $form['transperfect_pd_settings']['submit_pd_test'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD,
-    '#suffix' => '</div>',
+    '#value' => t('Save and Test Settings'),
+    '#suffix' => '</div>'
   );
 
   return $form;
@@ -159,11 +159,11 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
       }
     }
     catch (SoapFault $se) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+      watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+      watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -173,7 +173,7 @@ function transperfect_pd_settings_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_SETTINGS_PD:
+    case t('Save PD Settings'):
       foreach ($form_state['values'] as $key => $value) {
         if (is_array($value) && isset($form_state['values']['array_filter'])) {
           $value = array_keys(array_filter($value));
@@ -186,7 +186,7 @@ function transperfect_pd_settings_submit($form, &$form_state) {
       drupal_set_message(t('The configuration options have been saved.'));
 
       break;
-    case TPT_BTN_SETTINGS_SAVE_TEST_PD:
+    case t('Save and Test Settings'):
       try {
         foreach ($form_state['values'] as $key => $value) {
           if (is_array($value) && isset($form_state['values']['array_filter'])) {
@@ -200,11 +200,11 @@ function transperfect_pd_settings_submit($form, &$form_state) {
         drupal_set_message(t('Settings Saved and Connection Test Successful.'));
       }
       catch (SoapFault $se) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -269,16 +269,63 @@ function transperfect_adaptor_settings() {
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_GENERAL,
+    '#value' => t('Save Adaptor Settings')
   );
 
   return $form;
 }
 
+function transperfect_view_log_submit($form, &$form_state) {
+  $from_date = $form_state['input']['log_view_date'];
+  $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
+
+  $destination = 'temporary://' . 'globallink_log.html';
+  $my_file_obj = file_unmanaged_save_data(transperfect_get_log_data($from_date), $destination, FILE_EXISTS_REPLACE);
+
+  file_transfer($my_file_obj, array(
+    'Content-Type' => 'application/htm',
+    'Content-Disposition' => 'inline; filename="' . 'globallink_log.html' . '"',
+    'Content-Length' => filesize($my_file_obj),
+  ));
+}
+
+function transperfect_get_log_data($from_date) {
+  $html = '<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#00557F");background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>';
+
+  $result = db_select('transperfect_log', 'tl')
+  ->fields('tl')
+  ->condition('timestamp', $from_date, '>=')
+  ->execute();
+
+  $html .= '<div class="datagrid"><table>';
+  $html .= '<thead><tr><th>Date Time</th><th>Log Severity</th><th>Type</th><th>Message</th></tr></thead><tbody>';
+
+  $i = 0;
+
+  foreach ($result as $row) {
+    $date = format_date($row->timestamp, 'custom', 'Y-m-d H:i:s');
+    $mod = $i % 2;
+
+    if ($mod == 0) {
+      $html .= '<tr><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+    }
+    else {
+      $html .= '<tr class="alt"><td style="width:10%;">' . $date . '</td><td style="width:10%;">' . $row->severity . '</td><td style="width:10%;">' . $row->type . '</td><td style="width:70%; text-style:justify;">' . $row->message . '</td></tr>';
+    }
+
+    $i++;
+  }
+
+  $html .= '</tbody></table></div>';
+  $html .= '</body></html>';
+
+  return $html;
+}
+
 function transperfect_adaptor_settings_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_SETTINGS_GENERAL) {
+  if ($op == t('Save Adaptor Settings')) {
     $value = $form_state['values']['transperfect_pager_limit'];
 
     if (!is_numeric($value)) {
@@ -304,7 +351,7 @@ function transperfect_adaptor_settings_submit($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_SETTINGS_GENERAL) {
+  if ($op == t('Save Adaptor Settings')) {
     foreach ($form_state['values'] as $key => $value) {
       if (is_array($value) && isset($form_state['values']['array_filter'])) {
         $value = array_keys(array_filter($value));

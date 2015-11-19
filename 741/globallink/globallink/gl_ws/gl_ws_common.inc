@@ -1,12 +1,19 @@
 <?php
 
+/**
+ * @file
+ * Miscellaneous Web Service functions for TransPerfect.
+ */
+
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/DocumentService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/SubmissionService2.php');
+
 global $base_url;
 
 $proxy_server = variable_get('transperfect_proxy_url');
+
 if (!empty($proxy_server)) {
   define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
 }
@@ -19,18 +26,19 @@ function transperfect_get_user_pd_projects($pd_obj) {
   $password = $pd_obj->password;
   $url = $pd_obj->url;
 
-  //Create instances for each ws service stub class
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . '/services/ProjectService2'
-          ));
+    'location' => $url . '/services/ProjectService2',
+  ));
 
   $token = transperfect_login($session_service, $username, $password);
   $projects = transperfect_get_user_projects($project_service, $token);
 
   $proj_arr = array();
+
   foreach ($projects as $project) {
     $short_code = $project->projectInfo->shortCode;
     $proj_arr[$short_code] = $project->projectInfo->name;
@@ -44,37 +52,41 @@ function transperfect_test_pd_connectivity($pd_obj) {
   $password = $pd_obj->password;
   $url = $pd_obj->url;
   $project_short_code = $pd_obj->projectShortCode;
+
   $proj_arr = array();
+
   if ($project_short_code != '') {
     $arr = explode(',', $project_short_code);
+
     foreach ($arr as $value) {
       $proj_arr[$value] = $value;
     }
   }
 
-  //Create instances for each ws service stub class
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
-  $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
-              'location' => $url . '/services/ProjectService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
 
+  $project_service = new ProjectService2(GL_WSDL_PATH . 'ProjectService2.wsdl', array(
+    'location' => $url . '/services/ProjectService2',
+  ));
 
   $success = FALSE;
-  //Open a session on the server
+
   $token = transperfect_login($session_service, $username, $password);
-  //Locate project by short code
+
   foreach ($proj_arr as $proj_code) {
     try {
       $project = transperfect_find_project_by_short_code($project_service, $proj_code, $token);
     }
     catch (SoapFault $se) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+      watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
     catch (Exception $e) {
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+      watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+
       return 'Connection Failed - Invalid Project Code: ' . $proj_code;
     }
 
@@ -83,6 +95,7 @@ function transperfect_test_pd_connectivity($pd_obj) {
         foreach ($project->fileFormatProfiles as $file_format) {
           if ($pd_obj->classifier == $file_format->profileName) {
             $success = TRUE;
+
             break;
           }
         }
@@ -110,13 +123,13 @@ function transperfect_cancel_pd_submission($pd_obj, &$globallink) {
   $password = $pd_obj->password;
   $url = $pd_obj->url;
 
-  //Create instances for each ws service stub class
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $submission_service = new SubmissionService2(GL_WSDL_PATH . 'SubmissionService2.wsdl', array(
-              'location' => $url . '/services/SubmissionService2'
-          ));
+    'location' => $url . '/services/SubmissionService2',
+  ));
 
   $token = transperfect_login($session_service, $username, $password);
 
@@ -136,18 +149,19 @@ function transperfect_cancel_select_documents($pd_obj, &$globallink_arr) {
   $password = $pd_obj->password;
   $url = $pd_obj->url;
 
-  //Create instances for each ws service stub class
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $target_service = new TargetService2(GL_WSDL_PATH . 'TargetService2.wsdl', array(
-              'location' => $url . '/services/TargetService2'
-          ));
+    'location' => $url . '/services/TargetService2',
+  ));
 
   $token = transperfect_login($session_service, $username, $password);
 
   foreach ($globallink_arr as $globallink) {
     $cancel_target_submission = new cancelTargetByDocumentId();
+
     $document_ticket = new DocumentTicket();
     $document_ticket->submissionTicket = $globallink->submissionTicket;
     $document_ticket->ticketId = $globallink->documentTicket;
@@ -171,6 +185,7 @@ function transperfect_get_user_projects($project_service, $token) {
 
   if (!is_array($projects)) {
     $arr = array($projects);
+
     return $arr;
   }
 
@@ -191,7 +206,6 @@ function transperfect_find_project_by_short_code($project_service, $project_shor
 }
 
 function transperfect_login($session_service, $username, $password) {
-
   $login = new login();
 
   $login->username = $username;
@@ -210,11 +224,12 @@ function transperfect_get_status($pd_obj, $submission_ticket) {
   $url = $pd_obj->url;
 
   $session_service = new SessionService2(GL_WSDL_PATH . 'SessionService2.wsdl', array(
-              'location' => $url . '/services/SessionService2'
-          ));
+    'location' => $url . '/services/SessionService2',
+  ));
+
   $submission_service = new SubmissionService2(GL_WSDL_PATH . 'SubmissionService2.wsdl', array(
-              'location' => $url . '/services/SubmissionService2'
-          ));
+    'location' => $url . '/services/SubmissionService2',
+  ));
 
   $token = transperfect_login($session_service, $username, $password);
 

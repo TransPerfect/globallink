@@ -1,6 +1,24 @@
 <?php
 
 /**
+ * @file
+ * Miscellaneous TransPerfect functions for node translations (non-entity).
+ */
+
+/**
+ * Returns GlobalLink modules root menu.
+ *
+ * @param string $menu_item
+ *   The current menu item.
+ *
+ * @return string
+ *   String that represents menu item path.
+ */
+function transperfect_get_root_menu($menu_item) {
+  return 'admin/' . $menu_item;
+}
+
+/**
  * Builds a filter query.
  *
  * @param SelectQuery $query
@@ -108,7 +126,7 @@ function transperfect_build_filters($content_translation) {
 
   if (module_exists('revisioning')) {
     $filters['status'] = array(
-      'title' => TPT_LABEL_STATUS,
+      'title' => t('Status'),
       'options' => array(
         'status-1' => t('Latest Published Revision'),
         'status-0' => t('Latest Modified Revision'),
@@ -122,7 +140,7 @@ function transperfect_build_filters($content_translation) {
   }
   else {
     $filters['status'] = array(
-      'title' => TPT_LABEL_STATUS,
+      'title' => t('Status'),
       'options' => array(
         '[any]' => t('Any'),
         'status-1' => t('Published'),
@@ -143,7 +161,7 @@ function transperfect_build_filters($content_translation) {
   }
 
   $filters['language_name'] = array(
-    'title' => TPT_LABEL_SOURCE_LANG,
+    'title' => t('Source Language'),
     'field' => 'language',
     'options' => $lang_filter,
     'form-type' => 'select',
@@ -156,7 +174,7 @@ function transperfect_build_filters($content_translation) {
   );
 
   $filters['target_language'] = array(
-    'title' => TPT_LABEL_TARGET_LANG,
+    'title' => t('Target Language'),
     'field' => 'language',
     'options' => $lang_filter,
     'form-type' => 'select',
@@ -168,7 +186,7 @@ function transperfect_build_filters($content_translation) {
   $node_types_filter = $n_arr + $t_arr;
 
   $filters['type'] = array(
-    'title' => TPT_LABEL_CONTENT_TYPE,
+    'title' => t('Content Type'),
     'field' => 'type',
     'options' => $node_types_filter,
     'form-type' => 'select',
@@ -190,7 +208,7 @@ function transperfect_build_filters($content_translation) {
 }
 
 /**
- * Gets translatable node types and names based on a content translation.
+ * Gets translatable node types and names based on a content or entity translation.
  *
  * @param string $content_translation
  *   The content translation type.
@@ -198,16 +216,29 @@ function transperfect_build_filters($content_translation) {
  * @return array
  *   Array of translatable node types and names.
  */
-function transperfect_get_translatable_node_types_and_names($content_translation) {
+function transperfect_get_translatable_node_types_and_names($content_translation = '') {
   $arr = array();
 
   $node_types = node_type_get_types();
 
-  $entity_translation_enabled = module_exists('entity_translation');
-
   foreach ($node_types as $node_type) {
-    if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
-      $arr[$node_type->type] = $node_type->name;
+    if ($content_translation) {
+      // Show only Node Translation (i18n) enabled content types.
+      if (translation_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
+    }
+    elseif ($content_translation === FALSE) {
+      // Show only Entity Translation enabled content types.
+      if (module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
+    }
+    else {
+      // Show all translation enabled content types.
+      if ((module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
     }
   }
 
@@ -277,7 +308,7 @@ function transperfect_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -491,18 +522,18 @@ function transperfect_get_content_attributes_from_xml($xml) {
       continue;
     }
 
-    foreach ($content->attributes as $attrName => $attrNode) {
-      switch ($attrName) {
+    foreach ($content->attributes as $attr_name => $attr_node) {
+      switch ($attr_name) {
         case 'rid':
-          $arr['rid'] = $attrNode->value;
+          $arr['rid'] = $attr_node->value;
 
           break;
         case 'nid':
-          $arr['nid'] = $attrNode->value;
+          $arr['nid'] = $attr_node->value;
 
           break;
         case 'vid':
-          $arr['vid'] = $attrNode->value;
+          $arr['vid'] = $attr_node->value;
 
           break;
       }
@@ -604,7 +635,7 @@ function transperfect_escape_json_string($value) { // list from www.json.org: (\
 function transperfect_pending_submission_exists() {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   foreach ($result as $row) {
@@ -628,7 +659,7 @@ function transperfect_pending_submission_exists() {
 function transperfect_pending_submission_exists_for_content_type($type) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->condition('type', $type, '=')
   ->execute();
 
@@ -1066,14 +1097,14 @@ function transperfect_get_pd_projects() {
  */
 function transperfect_content_type_workbench_enabled($type) {
   if (!module_exists('workbench_moderation')) {
-    return false;
+    return FALSE;
   }
-  elseif (!$variable = variable_get('node_options_' . $type, false)) {
-    return false;
+  elseif (!$variable = variable_get('node_options_' . $type, FALSE)) {
+    return FALSE;
   }
   elseif (!in_array('moderation', $variable)) {
-    return false;
+    return FALSE;
   }
 
-  return true;
+  return TRUE;
 }

@@ -69,7 +69,7 @@ function transperfect_dashboard_webform_filter_form() {
 
     $form['filter']['actions']['submit'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
+      '#value' => t('Filter'),
       '#disabled' => $disable_submit,
     );
 
@@ -133,7 +133,7 @@ function transperfect_dashboard_webform_filter_form() {
 
       $form['filter-search']['status']['actions']['reset'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_RESET,
+        '#value' => t('Reset'),
       );
 
       drupal_add_css(drupal_get_path('module', 'transperfect') . '/transperfect_webform/css/webform.css');
@@ -153,13 +153,13 @@ function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_webform_filter']['string'] = $form_state['values']['string'];
       $_SESSION['transperfect_webform_filter']['language'] = $form_state['values']['language'];
       $_SESSION['transperfect_webform_filter']['translation'] = $form_state['values']['translation'];
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_webform_filter']['string'] = '';
       $_SESSION['transperfect_webform_filter']['language'] = '';
       $_SESSION['transperfect_webform_filter']['translation'] = '';
@@ -190,7 +190,7 @@ function transperfect_dashboard_webform_pager_form() {
 
     $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('webform_pager_form_submit'),
@@ -204,7 +204,7 @@ function transperfect_dashboard_webform_pager_form() {
 function webform_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -218,7 +218,7 @@ function webform_pager_form_validate($form, &$form_state) {
 function webform_pager_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -413,7 +413,7 @@ function transperfect_dashboard_webform_form() {
       $form['pager'] = array('#markup' => theme('pager'));
     }
 
-    if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+    if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
         drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -559,7 +559,7 @@ function transperfect_dashboard_webform_form() {
 
         $form['send_submission']['submit_pd_send'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_SEND,
+          '#value' => t('Send for Translation'),
         );
       }
     }
@@ -577,7 +577,7 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -636,7 +636,7 @@ function transperfect_dashboard_webform_form_submit($form, &$form_state) {
 
   $submission_details = array();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 

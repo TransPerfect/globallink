@@ -38,7 +38,7 @@ function transperfect_taxonomy_active_select_form() {
 
   $form['select_submission']['submission'] = array(
     '#type' => 'select',
-    '#title' => TPT_LABEL_ACTIVE_SUBMISSION . ':&nbsp;&nbsp;',
+    '#title' => t('Active Submission Name:'),
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
@@ -49,14 +49,14 @@ function transperfect_taxonomy_active_select_form() {
 
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
+      '#value' => t('Cancel Submission'),
       '#attributes' => array(
         'onClick' => 'transperfect-taxonomy-active-select-form.submit();',
       ),
@@ -81,11 +81,11 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_GO:
+    case t('Go'):
       $_SESSION['transperfect_taxonomy_selected_submission'] = $form_state['values']['submission'];
 
       break;
-    case TPT_BTN_DASHBOARD_CANCEL_SUBMISSION:
+    case t('Cancel Submission'):
       try {
         sleep(5);
 
@@ -99,11 +99,11 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
         drupal_set_message(t('Submission has been cancelled successfully.'));
       }
       catch (SoapFault $se) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -130,7 +130,7 @@ function transperfect_taxonomy_active_pager_form() {
 
   $form['page_counter']['markup']['action'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
     '#submit' => array('taxonomy_active_pager_form_submit'),
@@ -143,7 +143,7 @@ function transperfect_taxonomy_active_pager_form() {
 function taxonomy_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -219,7 +219,7 @@ function transperfect_taxonomy_active_form() {
   ->limit($page_count) // 10 results per page
   ->extend('TableSort') // Sorting Extender
   ->orderByHeader($header); // Field to sort on is picked from $header
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN');
 
   if ($selected_value != '') {
     $query->condition('submission_ticket', $selected_value, '=');
@@ -264,7 +264,7 @@ function transperfect_taxonomy_active_form() {
     if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
+        '#value' => t('Cancel Selected Documents'),
         '#attributes' => array(
           'onClick' => 'transperfect-taxonomy-active-form.submit();',
         ),
@@ -272,7 +272,7 @@ function transperfect_taxonomy_active_form() {
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
+        '#value' => t('Clear Cancelled Documents'),
         '#attributes' => array(
           'onClick' => 'document.transperfect-dashboard-active.submit();',
         ),
@@ -289,7 +289,7 @@ function transperfect_taxonomy_active_form_validate($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
+  if ($op == t('Cancel Selected Documents')) {
     $rids = array_filter($form_state['values']['table']);
 
     if (!isset($rids) || empty($rids)) {
@@ -305,7 +305,7 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT:
+    case t('Cancel Selected Documents'):
       try {
         $rids_arr = array_filter($form_state['values']['table']);
 
@@ -325,16 +325,16 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
       catch (SoapFault $se) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
       break;
-    case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
+    case t('Clear Cancelled Documents'):
       try {
         $count = transperfect_clear_cancelled_taxonomy_documents();
 
@@ -349,7 +349,7 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 

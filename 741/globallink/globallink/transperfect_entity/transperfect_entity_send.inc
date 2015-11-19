@@ -408,7 +408,7 @@ function transperfect_dashboard_entity_pager_form() {
 
     $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('transperfect_dashboard_entity_pager_form_submit'),
@@ -422,7 +422,7 @@ function transperfect_dashboard_entity_pager_form() {
 function transperfect_dashboard_entity_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -565,7 +565,7 @@ function transperfect_dashboard_entity_form() {
         $results = $t_query->execute();
 
         foreach ($results as $item) {
-          if ($item->status == TPT_STATUS_SENT_FOR_TRANSLATIONS || $item->status == TPT_STATUS_ERROR) {
+          if ($item->status == 'Sent for Translations' || $item->status == 'Error') {
             $key = array_search($item->nid, $include_node_arr);
             unset($include_node_arr[$key]);
           }
@@ -931,6 +931,8 @@ function transperfect_dashboard_entity_form() {
         }
       }
 
+      $form['#attributes']['class'][] = 'transperfect-entity-form-clear';
+
       $form['table'] = array(
         '#type' => 'tableselect',
         '#header' => $header,
@@ -943,15 +945,18 @@ function transperfect_dashboard_entity_form() {
         $form['pager'] = array('#markup' => theme('pager'));
       }
 
-      if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+      if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
         if ($count > 0) {
           if ($modified == 0 && $redirect_nid == '') {
-            $form['clear_changed_flag'] = array('#type' => 'submit',
-              '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
+            $form['clear_changed_flag'] = array(
+              '#type' => 'submit',
+              '#value' => t('Clear "Changed" Status'),
               '#limit_validation_errors' => array(),
+              '#attributes' => array(
+                'class' => array('transperfect-entity-form-clear-submit'),
+              ),
               '#submit' => array('transperfect_entity_form_clear_submit'),
               '#access' => TRUE,
-              '#attributes' => array('onclick' => 'if(!confirm("Are you sure you want to clear the changed status for the selected content(s)?")){return false;}'),
             );
           }
 
@@ -1095,7 +1100,7 @@ function transperfect_dashboard_entity_form() {
 
           $form['send_submission']['submit_pd_send'] = array(
             '#type' => 'submit',
-            '#value' => TPT_BTN_DASHBOARD_SEND,
+            '#value' => t('Send for Translation'),
           );
         }
       }
@@ -1110,7 +1115,7 @@ function transperfect_dashboard_entity_form() {
 function transperfect_entity_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op != TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG) {
+  if ($op != t('Clear "Changed" Status')) {
     return;
   }
 
@@ -1143,7 +1148,7 @@ function transperfect_dashboard_entity_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -1209,7 +1214,7 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
   $submission_details = array();
   $pd4 = transperfect_get_project_director_details();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -1247,11 +1252,11 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
     }
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
   }
 }

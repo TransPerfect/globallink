@@ -129,7 +129,7 @@ function transperfect_update_taxonomy_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => REQUEST_TIME,
           'project_code' => $project_code,
@@ -148,7 +148,7 @@ function transperfect_update_taxonomy_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => REQUEST_TIME,
           'project_code' => $project_code,
@@ -177,19 +177,19 @@ function transperfect_get_taxonomy_row($object_id, $object_type, $source, $targe
 
 function transperfect_update_deleted_taxonomy_records($pd4, $globallink) {
   try {
-    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_update_taxonomy_status($globallink, TPT_STATUS_SOURCE_DELETED);
+    transperfect_update_taxonomy_status($globallink, 'Source Deleted');
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
     form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
 
     return FALSE;
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
     form_set_error('', check_plain('Error: ' . $e->getMessage()));
 
     return FALSE;
@@ -211,22 +211,22 @@ function transperfect_get_taxonomy_translation_status($bid, $tgt_locale, &$title
     $s_taxonomy = taxonomy_term_load($bid);
 
     if (!$s_taxonomy || is_null($s_taxonomy)) {
-      return TPT_STATUS_SOURCE_DELETED;
+      return 'Source Deleted';
     }
-    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS) {
-      return TPT_STATUS_COMPLETED;
+    elseif ($row->status == 'Sent for Translations') {
+      return 'Translation Completed';
     }
-    elseif ($row->status == TPT_STATUS_ERROR) {
-      return TPT_STATUS_ERROR;
+    elseif ($row->status == 'Error') {
+      return 'Error';
     }
   }
 
-  return TPT_STATUS_SENT_FOR_TRANSLATIONS;
+  return 'Sent for Translations';
 }
 
 function transperfect_get_taxonomy_active_submission_names() {
   $query = db_select('transperfect_core_taxonomy', 'tco');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tco');
   $results = $query->execute();
@@ -263,7 +263,7 @@ function transperfect_update_taxonomy_row_document(&$globallink_arr) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_taxonomy')
       ->fields(array(
-        'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+        'status' => 'Pending Translations',
         'timestamp' => REQUEST_TIME,
       ))
       ->condition('rid', $globallink->tptRowId, '=')
@@ -301,7 +301,7 @@ function transperfect_get_taxonomy_submission_name($submission_ticket) {
 function transperfect_update_taxonomy_submission(&$globallink) {
   db_update('transperfect_core_taxonomy')
   ->fields(array(
-    'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+    'status' => 'Pending Translations',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
@@ -378,15 +378,15 @@ function transperfect_get_translated_taxonomies($pd4, &$globallink_arr) {
     catch (SoapFault $se) {
       $count--;
 
-      transperfect_update_taxonomy_status($globallink, TPT_STATUS_ERROR);
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+      transperfect_update_taxonomy_status($globallink, 'Error');
+      watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $count--;
 
-      transperfect_update_taxonomy_status($globallink, TPT_STATUS_ERROR);
-      watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+      transperfect_update_taxonomy_status($globallink, 'Error');
+      watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
   }
@@ -442,7 +442,7 @@ function transperfect_get_translated_taxonomy_items($xml) {
   return $taxonomy_arr;
 }
 
-function transperfect_update_taxonomy_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function transperfect_update_taxonomy_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_taxonomy')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
   ->condition('submission', $globallink->submissionName, '=')
@@ -454,7 +454,7 @@ function transperfect_update_taxonomy_status(&$globallink, $status = TPT_STATUS_
 
 function transperfect_get_active_taxonomy_submission_rows($object_id) {
   $query = db_select('transperfect_core_taxonomy', 'tc');
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
   $query->condition('object_id', $object_id, '=');
   $query->fields('tc');
   $results = $query->execute();
@@ -500,7 +500,7 @@ function transperfect_get_sent_taxonomy_rows_by_bid($bid) {
   $result = db_select('transperfect_core_taxonomy', 'tc')
   ->fields('tc')
   ->condition('object_id', $bid, '=')
-  ->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=')
+  ->condition('status', 'Sent for Translations', '=')
   ->execute();
 
   $rows = array();
@@ -589,7 +589,7 @@ function transperfect_get_vocabulary_list() {
 
 function transperfect_get_distinct_active_taxonomy_submission_names() {
   $query = db_select('transperfect_core_taxonomy', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tc');
   $results = $query->execute();
@@ -603,7 +603,7 @@ function transperfect_get_distinct_active_taxonomy_submission_names() {
   return $arr;
 }
 
-function transperfect_update_taxonomy_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_taxonomy_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_taxonomy')
   ->fields(array(
     'status' => $status,
@@ -617,7 +617,7 @@ function transperfect_get_taxonomy_submission_status() {
   $query = db_select('transperfect_core_taxonomy', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
   $results = $query->execute();
 
   foreach ($results as $row) {
@@ -627,7 +627,7 @@ function transperfect_get_taxonomy_submission_status() {
 
         $doc_status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$doc_status || $doc_status == PD_STATUS_CANCELLED) {
+        if (!$doc_status || $doc_status == 'CANCELLED') {
           transperfect_update_taxonomy_submission_status($row->submission_ticket);
         }
       }
@@ -646,7 +646,7 @@ function transperfect_check_taxonomy_status($rids_arr) {
 
   $query = db_select('transperfect_core_taxonomy', 'tc')
   ->fields('tc', array('rid'))
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN');
 
   $results = $query->execute();
 
@@ -676,12 +676,12 @@ function transperfect_clear_cancelled_taxonomy_documents() {
   $query = db_select('transperfect_core_taxonomy', 'tc')
   ->fields('tc', array('submission_ticket'))
   ->distinct()
-  ->condition('status', TPT_STATUS_CANCELLED, '=');
+  ->condition('status', 'Cancelled', '=');
 
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_taxonomy_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+    transperfect_update_taxonomy_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }
