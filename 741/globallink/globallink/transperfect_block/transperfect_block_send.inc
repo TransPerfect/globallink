@@ -304,7 +304,7 @@ function transperfect_dashboard_block_form() {
       }
     }
 
-    if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+    if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
         $proj_arr = variable_get('transperfect_pd_projects', array());
 

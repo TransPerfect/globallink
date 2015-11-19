@@ -822,7 +822,7 @@ function transperfect_dashboard_node_form() {
         $form['pager'] = array('#markup' => theme('pager'));
       }
 
-      if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+      if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
         if ($count > 0) {
 
           if ($modified == 0 && $redirect_nid == '') {

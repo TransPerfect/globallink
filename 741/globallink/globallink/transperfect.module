@@ -14,7 +14,7 @@ require_once TPT_ROOT . '/' . ('transperfect_receive_translations.inc');
 require_once TPT_ROOT . '/' . ('transperfect_field_configuration.inc');
 
 define('TPT_ROLE_MANAGE_TRANSLATIONS', t('can manage GlobalLink translation tasks and settings'));
-define('TPT_ROLE_DO_TRANSALTIONS', t('can manage GlobalLink translation tasks'));
+define('TPT_ROLE_DO_TRANSLATIONS', t('can manage GlobalLink translation tasks'));
 define('TPT_ROLE_VIEW_TRANSLATIONS', t('can view GlobalLink translation tasks'));
 
 define('PD_STATUS_CANCELLED', 'CANCELLED');
@@ -32,7 +32,7 @@ define('TPT_LOGGING_CONFIG_DEBUG', '2');
 function transperfect_permission() {
   return array(
     TPT_ROLE_MANAGE_TRANSLATIONS => array('title' => TPT_ROLE_MANAGE_TRANSLATIONS),
-    TPT_ROLE_DO_TRANSALTIONS => array('title' => TPT_ROLE_DO_TRANSALTIONS),
+    TPT_ROLE_DO_TRANSLATIONS => array('title' => TPT_ROLE_DO_TRANSLATIONS),
     TPT_ROLE_VIEW_TRANSLATIONS => array('title' => TPT_ROLE_VIEW_TRANSLATIONS)
   );
 }
@@ -1006,7 +1006,7 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     );
 
     if ($pending) {
-      if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSALTIONS)) {
+      if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSLATIONS)) {
         $data['actions']['output']['transperfect']['#link']['title'] = t('Send for translation');
         $data['actions']['output']['transperfect']['#link']['href'] = $send_link;
         $data['actions']['output']['transperfect']['#link']['localized_options'] = array(
@@ -1264,7 +1264,7 @@ function transperfect_menu() {
  * @todo Document this function.
  */
 function transperfect_access_callback_any() {
-  return user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_VIEW_TRANSLATIONS);
+  return user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_VIEW_TRANSLATIONS);
 }
 
 /**

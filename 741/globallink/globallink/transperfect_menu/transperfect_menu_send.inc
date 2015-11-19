@@ -417,7 +417,7 @@ function transperfect_dashboard_menu_form() {
       $form['pager'] = array('#markup' => theme('pager'));
     }
 
-    if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+    if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
         drupal_add_css($module_path . '/css/transperfect.css');
 
