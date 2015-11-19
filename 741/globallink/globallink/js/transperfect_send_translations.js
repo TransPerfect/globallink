@@ -6,7 +6,7 @@
       }
 
       $('.transperfect-node-form-clear-submit', context).click(function(e) {
-        if (!confirm("Are you sure you want to clear the changed status for the selected content(s)?")) {
+        if (!confirm(Drupal.t('Are you sure you want to clear the changed status for the selected content(s)?'))) {
           e.preventDefault();
         }
       });
