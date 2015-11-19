@@ -216,16 +216,29 @@ function transperfect_build_filters($content_translation) {
  * @return array
  *   Array of translatable node types and names.
  */
-function transperfect_get_translatable_node_types_and_names($content_translation) {
+function transperfect_get_translatable_node_types_and_names($content_translation = '') {
   $arr = array();
 
   $node_types = node_type_get_types();
 
-  $entity_translation_enabled = module_exists('entity_translation');
-
   foreach ($node_types as $node_type) {
-    if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
-      $arr[$node_type->type] = $node_type->name;
+    if ($content_translation) {
+      // Show only Node Translation (i18n) enabled content types.
+      if (translation_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
+    }
+    elseif ($content_translation === FALSE) {
+      // Show only Entity Translation enabled content types.
+      if (module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
+    }
+    else {
+      // Show all translation enabled content types.
+      if ((module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
+        $arr[$node_type->type] = $node_type->name;
+      }
     }
   }
 
