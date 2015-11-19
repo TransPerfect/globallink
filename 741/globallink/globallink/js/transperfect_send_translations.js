@@ -1,6 +1,6 @@
 (function($) {
   Drupal.behaviors.transperfectSendTranslations = {
-    attach: function (context, settings) {
+    attach: function(context, settings) {
       if ($('.transperfect-node-form-clear', context).length == 0) {
         return;
       }
