@@ -1,6 +1,6 @@
 (function($) {
   Drupal.behaviors.transperfectActiveSubmissions = {
-    attach: function (context, settings) {
+    attach: function(context, settings) {
       if ($('.transperfect-node-select-submission-form', context).length == 0) {
         return;
       }

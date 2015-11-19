@@ -1,44 +1,52 @@
 var _div;
 var _img;
-(function ($) {
-    Drupal.behaviors.transperfect =   {
-        attach: function() {
-            if(Drupal.settings.transperfect != undefined) {
-                var popup = Drupal.settings.transperfect.popup;
-                var previewpath = Drupal.settings.transperfect.previewpath;
-                var rids = Drupal.settings.transperfect.rids;
-                _img = Drupal.settings.transperfect.ajax_image;
-                $.each(popup, function(link, div) {
-                    //Attach click event and set the contents of div
-                    $('#' + link).click(function() {
-                        _div = div;
-                        $('#' + div).dialog({
-                            modal: true,
-                            show: {
-                                effect: "blind",
-                                duration: 100
-                            },
-                            width: 700,
-                            height : 400
-                        });
-                        $('#' + div).empty();
-                        $('#' + div).append('<div style="width: 100%; height:100%; text-align:center;"><div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div></div>');
-                        $.ajax({
-                            type: 'POST',
-                            url: previewpath,
-                            dataType: 'json',
-                            data: 'rid=' + rids[div],
-                            success: ajax_completed,
-                            error: function(xhr, textStatus, errorThrown) {
-                                $('#' + _div).empty();
-                                $('#'+div).html("An error has occurred - " + errorThrown);
-                            }
-                        });
-                    });
-                });
+
+(function($) {
+  Drupal.behaviors.transperfect = {
+    attach: function() {
+      if (Drupal.settings.transperfect == undefined) {
+        return;
+      }
+
+      var popup = Drupal.settings.transperfect.popup;
+      var previewpath = Drupal.settings.transperfect.previewpath;
+      var rids = Drupal.settings.transperfect.rids;
+
+      _img = Drupal.settings.transperfect.ajax_image;
+
+      $.each(popup, function(link, div) {
+        $('#' + link).click(function() {
+          _div = div;
+
+          $('#' + div).dialog({
+            modal: true,
+            show: {
+              effect: "blind",
+              duration: 100
+            },
+            width: 700,
+            height : 400
+          });
+
+          $('#' + div).empty();
+
+          $('#' + div).append('<div style="width: 100%; height:100%; text-align:center;"><div class="ajax-progress ajax-progress-throbber"><div class="throbber">&nbsp;</div></div></div>');
+
+          $.ajax({
+            type: 'POST',
+            url: previewpath,
+            dataType: 'json',
+            data: 'rid=' + rids[div],
+            success: ajax_completed,
+            error: function(xhr, textStatus, errorThrown) {
+              $('#' + _div).empty();
+              $('#'+div).html("An error has occurred - " + errorThrown);
             }
-        }
+          });
+        });
+      });
     }
+  }
 })(jQuery);
 
 function escape_html(string) {
@@ -46,16 +54,18 @@ function escape_html(string) {
 }
 
 function ajax_completed(data) {
-  var content = '<TABLE class="tpt_popup_table"><TR><TH>&nbsp;</TH><TH>Source Content</TH><TH>Translated Content</TH></TR>';
+  var content = '<table class="tpt_popup_table"><tr><th>&nbsp;</th><th>Source Content</th><th>Translated Content</th></tr>';
   var error = data['error'];
   var target = data['target'];
   var source_obj = data['source'];
 
   if (error != null && error != undefined) {
-    content += '<TR><TD colspan="3"><span style="color: red;text-align: center;">' + error + '</span></TD></TR>';
-    content += '</TABLE>';
+    content += '<tr><td colspan="3"><span style="color: red;text-align: center;">' + error + '</span></td></tr>';
+    content += '</table>';
+
     jQuery('#' + _div).empty();
     jQuery('#' + _div).append(content);
+
     return true;
   }
 
@@ -103,7 +113,7 @@ function ajax_completed(data) {
                       target_text = escape_html(t_field_obj['translatedContent']);
                     }
 
-                    content += '<TR><TD><b>' + t_field_obj['fieldLabel'] + '</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+                    content += '<tr><td><b>' + t_field_obj['fieldLabel'] + '</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
                   });
                 });
               });
@@ -132,7 +142,7 @@ function ajax_completed(data) {
               target_text = escape_html(x_obj['translatedContent']);
             }
 
-            content += '<TR><TD><b>' + x_obj['fieldLabel'] + '</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+            content += '<tr><td><b>' + x_obj['fieldLabel'] + '</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
           });
         });
 
@@ -149,7 +159,7 @@ function ajax_completed(data) {
           target_text = escape_html(f_object);
         }
 
-        content += '<TR><TD><b>Title</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+        content += '<tr><td><b>Title</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
 
         break;
       case 'path':
@@ -166,7 +176,7 @@ function ajax_completed(data) {
           target_text = escape_html(f_object);
         }
 
-        content += '<TR><TD><b>Path Alias</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+        content += '<tr><td><b>Path Alias</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
 
         break;
       default:
@@ -194,7 +204,7 @@ function ajax_completed(data) {
                 target_text = escape_html(obj['translatedContent']);
               }
 
-              content += '<TR><TD><b>' + obj['fieldLabel'] + '</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+              content += '<tr><td><b>' + obj['fieldLabel'] + '</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
             }
             else if (obj['alt'] != undefined || obj['title'] != undefined) {
               if (obj['alt'] != null && obj['alt'] != undefined) {
@@ -213,36 +223,39 @@ function ajax_completed(data) {
                 }
 
                 target_text = escape_html(obj['alt']);
-                content += '<TR><TD><b>Image Alt</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
+                content += '<tr><td><b>Image Alt</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
               }
 
-              if (obj['title'] != null && obj['title'] != undefined) {
-                var source_text = '';
+              if (obj['title'] == null || obj['title'] == undefined) {
+                break;
+              }
 
-                if (source_obj[field] != null && source_obj[field] != undefined) {
-                  if (source_obj[field][t_und] != null && source_obj[field][t_und] != undefined) {
-                    if (source_obj[field][t_und][delta] != null && source_obj[field][t_und][delta] != undefined) {
-                      if (source_obj[field][t_und][delta]['title'] != null && source_obj[field][t_und][delta]['title'] != undefined) {
-                        source_text = escape_html(source_obj[field][t_und][delta]['title']);
-                      }
+              var source_text = '';
+
+              if (source_obj[field] != null && source_obj[field] != undefined) {
+                if (source_obj[field][t_und] != null && source_obj[field][t_und] != undefined) {
+                  if (source_obj[field][t_und][delta] != null && source_obj[field][t_und][delta] != undefined) {
+                    if (source_obj[field][t_und][delta]['title'] != null && source_obj[field][t_und][delta]['title'] != undefined) {
+                      source_text = escape_html(source_obj[field][t_und][delta]['title']);
                     }
                   }
                 }
-
-                if (source_text == '') {
-                  source_text = '<span style="color:red;">Field Deleted</span>';
-                }
-
-                target_text = escape_html(obj['title']);
-                content += '<TR><TD><b>Image Title</b></TD><TD>' + source_text + '</TD><TD>' + target_text + '</TD></TR>';
               }
+
+              if (source_text == '') {
+                source_text = '<span style="color:red;">Field Deleted</span>';
+              }
+
+              target_text = escape_html(obj['title']);
+              content += '<tr><td><b>Image Title</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
             }
           });
         });
     }
   });
 
-  content += '</TABLE>';
+  content += '</table>';
+
   jQuery('#' + _div).empty();
   jQuery('#' + _div).append(content);
 

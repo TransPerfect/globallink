@@ -24,6 +24,8 @@ function transperfect_field() {
 
   $node_types = $n_arr + $t_arr;
 
+  $form['#attributes']['class'][] = 'transperfect-field';
+
   $form['select_field'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('container-inline')),
@@ -34,7 +36,9 @@ function transperfect_field() {
     '#title' => t('Content Type'),
     '#options' => $node_types,
     '#default_value' => $selected_value,
-    '#attributes' => array('onchange' => 'form.submit("transperfect_field")'),
+    '#attributes' => array(
+      'class' => array('transperfect-field-select-type'),
+    ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
 
