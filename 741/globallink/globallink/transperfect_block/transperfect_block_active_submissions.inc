@@ -329,7 +329,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
 
         $_SESSION['transperfect_block_selected_submission'] = '';
         cancel_block_records($rids, $pd4);
-        
+
         $_SESSION['transperfect_block_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
