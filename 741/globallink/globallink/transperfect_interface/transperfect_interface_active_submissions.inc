@@ -271,17 +271,11 @@ function transperfect_interface_active_form() {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
         '#value' => t('Cancel Selected Documents'),
-        '#attributes' => array(
-          'onClick' => 'transperfect-interface-active-form.submit();',
-        ),
       );
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
         '#value' => t('Clear Cancelled Documents'),
-        '#attributes' => array(
-          'onClick' => 'document.transperfect-dashboard-active.submit();',
-        ),
       );
     }
   }
