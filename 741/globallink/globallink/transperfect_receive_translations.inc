@@ -258,11 +258,11 @@ function transperfect_dashboard_receive() {
         }
       }
       catch (SoapFault $se) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
     }
@@ -502,7 +502,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -537,7 +537,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -573,7 +573,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         }
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -589,11 +589,11 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
         $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+        watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
@@ -617,7 +617,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
  *   The type of cron job.
  */
 function transperfect_auto_receive($cron_type) {
-  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Cron Started by %cron_type', array('%cron_type' => $cron_type), WATCHDOG_INFO);
+  watchdog('GlobalLink', 'Cron Started by %cron_type', array('%cron_type' => $cron_type), WATCHDOG_INFO);
 
   try {
     $pd4 = transperfect_get_project_director_details();
@@ -631,7 +631,7 @@ function transperfect_auto_receive($cron_type) {
       switch ($type) {
         case 'node':
           $count = transperfect_get_translated_content($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Node', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Node', array(), WATCHDOG_INFO);
 
           if ($globallink->status == TPT_STATUS_ERROR) {
             transperfect_update_status($globallink);
@@ -643,7 +643,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'entity':
           $count = transperfect_get_translated_entity($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Entity', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Entity', array(), WATCHDOG_INFO);
 
           if ($globallink->status == TPT_STATUS_ERROR) {
             transperfect_update_entity_status($globallink);
@@ -655,7 +655,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'block':
           $count += transperfect_get_translated_blocks($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_BlOCK, t('Imported Block'), array(), WATCHDOG_INFO);
+          watchdog('Block', t('Imported Block'), array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_block_globalLink_arr'] = array();
           $_SESSION['transperfect_block_selected_submission'] = array();
@@ -663,7 +663,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'interface':
           $count += transperfect_get_translated_interfaces($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Interface', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Interface', array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_interface_globalLink_arr'] = array();
           $_SESSION['transperfect_interface_selected_submission'] = array();
@@ -671,7 +671,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'menu':
           $count += transperfect_get_translated_menus($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Menu', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Menu', array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_menu_globalLink_arr'] = array();
           $_SESSION['transperfect_menu_selected_submission'] = array();
@@ -679,7 +679,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'taxonomy':
           $count += transperfect_get_translated_taxonomies($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Taxonomy', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Taxonomy', array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
           $_SESSION['transperfect_taxonomy_selected_submission'] = array();
@@ -687,7 +687,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'webform':
           $count += transperfect_get_translated_webforms($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Webform', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Webform', array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_webform_globalLink_arr'] = array();
           $_SESSION['transperfect_webform_selected_submission'] = array();
@@ -695,7 +695,7 @@ function transperfect_auto_receive($cron_type) {
           break;
         case 'fieldable_panels_panes':
           $count += transperfect_get_translated_fieldable_panels($pd4, $globallink_arr);
-          watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Imported Fieldable Panels Panes', array(), WATCHDOG_INFO);
+          watchdog('GlobalLink', 'Imported Fieldable Panels Panes', array(), WATCHDOG_INFO);
 
           $_SESSION['transperfect_fieldable_panels_panes_globalLink_arr'] = array();
           $_SESSION['transperfect_fieldable_panels_panes_selected_submission'] = array();
@@ -705,13 +705,13 @@ function transperfect_auto_receive($cron_type) {
     }
   }
   catch (SoapFault $se) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
   }
   catch (Exception $e) {
-    watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
   }
 
-  watchdog(TPT_OBJECT_TYPE_GLOBALLINK, 'Cron Completed - %count Records Updated.', array('%count' => $count), WATCHDOG_INFO);
+  watchdog('GlobalLink', 'Cron Completed - %count Records Updated.', array('%count' => $count), WATCHDOG_INFO);
 }
 
 function transperfect_preview_translated_content() {

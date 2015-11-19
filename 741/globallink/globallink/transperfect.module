@@ -32,31 +32,9 @@ define('PD_STATUS_CANCELLED', 'CANCELLED');
 define('TPT_PAGER_LIMIT', variable_get('transperfect_pager_limit', 10));
 define('TPT_PAGER_NUMBER', 0);
 
-define('TPT_DASHBOARD_FILTER_TYPE_BY_STATUS', 'status');
-define('TPT_DASHBOARD_FILTER_TYPE_BY_TITLE', 'title');
-define('TPT_DASHBOARD_FILTER_TYPE_BY_CONTENT_TYPE', 'type');
-define('TPT_DASHBOARD_FILTER_TYPE_BY_TARGET_LANG', 'target');
-
-define('TPT_TABLE_LOCALE', 'transperfect_locale');
-define('TPT_TABLE_CORE', 'transperfect_core');
-
 define('TPT_LOGGING_CONFIG_DISABLED', '0');
 define('TPT_LOGGING_CONFIG_INFO', '1');
 define('TPT_LOGGING_CONFIG_DEBUG', '2');
-
-define('TPT_LOGGING_SEVERITY_INFO', 'Info');
-define('TPT_LOGGING_SEVERITY_WARNING', 'Warning');
-define('TPT_LOGGING_SEVERITY_ERROR', 'Error');
-define('TPT_LOGGING_SEVERITY_DEBUG', 'Debug');
-
-define('TPT_OBJECT_TYPE_CONTENT', 'Content');
-define('TPT_OBJECT_TYPE_BLOCK', 'Block');
-define('TPT_OBJECT_TYPE_FIELDABLE_PANELS', 'Fieldable_Panels_Panes');
-define('TPT_OBJECT_TYPE_MENU', 'Menu');
-define('TPT_OBJECT_TYPE_TAXONOMY', 'Taxonomy');
-define('TPT_OBJECT_TYPE_WEBFORM', 'Webform');
-define('TPT_OBJECT_TYPE_INTERFACE', 'Interface');
-define('TPT_OBJECT_TYPE_GLOBALLINK', 'GlobalLink');
 
 /**
  * Implements hook_permission().
