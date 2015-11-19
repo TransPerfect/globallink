@@ -139,7 +139,7 @@ function transperfect_locale_validate($form, &$form_state) {
 function transperfect_locale_submit($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_ADD) {
+  if ($op == t('Add')) {
     $drupal_seleced_locale = $form_state['values']['drupal_locale_list'];
     $drupal_locale = explode('|', $drupal_seleced_locale);
     $locale_code = $form_state['values']['tpt_locale_list'];
@@ -164,7 +164,7 @@ function transperfect_locale_submit($form, &$form_state) {
 function transperfect_check_pending_submission($locale) {
   $query1 = db_select('transperfect_core', 'tc')
   ->fields('tc', array('rid'))
-  ->condition('tc.status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('tc.status', array('Sent for Translations', 'Error'), 'IN')
   ->condition(
     db_or()
     ->condition('tc.source', $locale)
@@ -184,7 +184,7 @@ function transperfect_check_pending_submission($locale) {
     if (db_table_exists($table)) {
       $query2 = db_select($table, $key)
       ->fields($key, array('rid'))
-      ->condition($key . '.status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+      ->condition($key . '.status', array('Sent for Translations', 'Error'), 'IN')
       ->condition(
         db_or()
         ->condition($key . '.source', $locale)

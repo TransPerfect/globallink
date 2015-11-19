@@ -131,12 +131,12 @@ function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state)
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
       $_SESSION['transperfect_selected_taxonomy_info'] = $form_state['values']['info'];
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_selected_taxonomy_info'] = '';
       $_SESSION['transperfect_selected_taxonomy_vocab'] = '';
 
@@ -180,7 +180,7 @@ function transperfect_dashboard_taxonomy_pager_form() {
 function taxonomy_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -362,7 +362,7 @@ function transperfect_dashboard_taxonomy_form() {
       }
     }
 
-    if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+    if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
         $proj_arr = variable_get('transperfect_pd_projects', array());
 
@@ -522,7 +522,7 @@ function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -581,7 +581,7 @@ function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
 
   $submission_details = array();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 

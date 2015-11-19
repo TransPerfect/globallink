@@ -165,7 +165,7 @@ function get_tpt_entity_sent_rows($nid, $source) {
   $query = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN')
   ->condition('source', transperfect_get_locale_code($source), '=');
 
   $result = $query->execute();

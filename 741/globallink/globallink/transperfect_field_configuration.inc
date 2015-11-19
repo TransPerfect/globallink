@@ -82,15 +82,15 @@ function transperfect_field() {
     $header = array(
       'field_label' => array(
         'field' => 'field_label',
-        'data' => TPT_LABEL_FIELD_LABEL,
+        'data' => t('Field Label'),
       ),
       'field_name' => array(
         'field' => 'field_name',
-        'data' => TPT_LABEL_FIELD_MACHINE,
+        'data' => t('Field Name'),
       ),
       'field_type' => array(
         'field' => 'field_type',
-        'data' => TPT_LABEL_FIELD_TYPE,
+        'data' => t('Field Type'),
       ),
     );
 
@@ -190,11 +190,11 @@ function transperfect_field_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_GO:
+    case t('Go'):
       $_SESSION['transperfect_selected_content_type'] = $form_state['values']['select_type'];
 
       break;
-    case TPT_BTN_FIELD_UPDATE:
+    case t('Update'):
       $type = $form_state['values']['select_type'];
 
       $fids = array_filter($form_state['values']['table']);
@@ -210,7 +210,7 @@ function transperfect_field_submit($form, &$form_state) {
       drupal_set_message(t('Field configurations have been saved successfully.'));
 
       break;
-    case TPT_BTN_ADD:
+    case t('Add'):
       $field = $form_state['values']['pending_fields'];
 
       transperfect_insert_gl_field_config($field, $_SESSION['transperfect_selected_content_type']);

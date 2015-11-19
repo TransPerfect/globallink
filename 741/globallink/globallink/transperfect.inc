@@ -126,7 +126,7 @@ function transperfect_build_filters($content_translation) {
 
   if (module_exists('revisioning')) {
     $filters['status'] = array(
-      'title' => TPT_LABEL_STATUS,
+      'title' => t('Status'),
       'options' => array(
         'status-1' => t('Latest Published Revision'),
         'status-0' => t('Latest Modified Revision'),
@@ -140,7 +140,7 @@ function transperfect_build_filters($content_translation) {
   }
   else {
     $filters['status'] = array(
-      'title' => TPT_LABEL_STATUS,
+      'title' => t('Status'),
       'options' => array(
         '[any]' => t('Any'),
         'status-1' => t('Published'),
@@ -161,7 +161,7 @@ function transperfect_build_filters($content_translation) {
   }
 
   $filters['language_name'] = array(
-    'title' => TPT_LABEL_SOURCE_LANG,
+    'title' => t('Source Language'),
     'field' => 'language',
     'options' => $lang_filter,
     'form-type' => 'select',
@@ -174,7 +174,7 @@ function transperfect_build_filters($content_translation) {
   );
 
   $filters['target_language'] = array(
-    'title' => TPT_LABEL_TARGET_LANG,
+    'title' => t('Target Language'),
     'field' => 'language',
     'options' => $lang_filter,
     'form-type' => 'select',
@@ -186,7 +186,7 @@ function transperfect_build_filters($content_translation) {
   $node_types_filter = $n_arr + $t_arr;
 
   $filters['type'] = array(
-    'title' => TPT_LABEL_CONTENT_TYPE,
+    'title' => t('Content Type'),
     'field' => 'type',
     'options' => $node_types_filter,
     'form-type' => 'select',
@@ -295,7 +295,7 @@ function transperfect_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -622,7 +622,7 @@ function transperfect_escape_json_string($value) { // list from www.json.org: (\
 function transperfect_pending_submission_exists() {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   foreach ($result as $row) {
@@ -646,7 +646,7 @@ function transperfect_pending_submission_exists() {
 function transperfect_pending_submission_exists_for_content_type($type) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->condition('type', $type, '=')
   ->execute();
 

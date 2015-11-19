@@ -185,13 +185,13 @@ function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_selected_menu_types'] = $form_state['values']['types'];
       $_SESSION['transperfect_selected_menu_language'] = $form_state['values']['language'];
       $_SESSION['transperfect_selected_menu_title'] = $form_state['values']['link_title'];
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_selected_menu_types'] = '';
       $_SESSION['transperfect_selected_menu_language'] = '';
       $_SESSION['transperfect_selected_menu_title'] = '';
@@ -236,7 +236,7 @@ function transperfect_dashboard_menu_pager_form() {
 function menu_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -417,7 +417,7 @@ function transperfect_dashboard_menu_form() {
       $form['pager'] = array('#markup' => theme('pager'));
     }
 
-    if (user_access(TPT_ROLE_DO_TRANSALTIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
+    if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
         drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -580,7 +580,7 @@ function transperfect_dashboard_menu_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -639,7 +639,7 @@ function transperfect_dashboard_menu_form_submit($form, &$form_state) {
 
   $submission_details = array();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
