@@ -54,14 +54,14 @@ function transperfect_webform_active_select_form() {
 
   $form['select_submission']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
   if ($selected_value != '') {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_CANCEL_SUBMISSION,
+      '#value' => t('Cancel Submission'),
       '#attributes' => array(
         'onClick' => 'transperfect-webform-active-select-form.submit();',
       ),
@@ -85,11 +85,11 @@ function transperfect_webform_active_select_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_GO:
+    case t('Go'):
       $_SESSION['transperfect_webform_selected_submission'] = $form_state['values']['submission'];
 
       break;
-    case TPT_BTN_DASHBOARD_CANCEL_SUBMISSION:
+    case t('Cancel Submission'):
       try {
         sleep(5);
 
@@ -135,7 +135,7 @@ function transperfect_webform_active_pager_form() {
 
   $form['page_counter']['markup']['action'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
     '#submit' => array('webform_active_pager_form_submit'),
@@ -148,7 +148,7 @@ function transperfect_webform_active_pager_form() {
 function webform_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op == TPT_BTN_DASHBOARD_GO) {
+  if ($op == t('Go')) {
     $page_count = $form_state['input']['p_count'];
 
     if (!is_numeric($page_count) || $page_count < 1) {
@@ -270,7 +270,7 @@ function transperfect_webform_active_form() {
     if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT,
+        '#value' => t('Cancel Selected Documents'),
         '#attributes' => array(
           'onClick' => 'transperfect-webform-active-form.submit();',
         ),
@@ -278,7 +278,7 @@ function transperfect_webform_active_form() {
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS,
+        '#value' => t('Clear Cancelled Documents'),
         '#attributes' => array(
           'onClick' => 'document.transperfect-dashboard-active.submit();',
         ),
@@ -295,7 +295,7 @@ function transperfect_webform_active_form_validate($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT) {
+  if ($op == t('Cancel Selected Documents')) {
     $rids = array_filter($form_state['values']['table']);
 
     if (!isset($rids) || empty($rids)) {
@@ -311,7 +311,7 @@ function transperfect_webform_active_form_submit($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_CANCEL_SELECT_DOCUMENT:
+    case t('Cancel Selected Documents'):
       try {
         $rids_arr = array_filter($form_state['values']['table']);
         $rids = transperfect_check_webform_status($rids_arr);
@@ -340,7 +340,7 @@ function transperfect_webform_active_form_submit($form, &$form_state) {
       }
 
       break;
-    case TPT_BTN_DASHBOARD_CLEAR_CANCELLED_DOCUMENTS:
+    case t('Clear Cancelled Documents'):
       try {
         $count = transperfect_clear_cancelled_webform_documents();
 

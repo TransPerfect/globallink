@@ -79,7 +79,7 @@ function transperfect_pd_settings() {
 
   $form['transperfect_pd_settings']['submit_pd_test'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_SAVE_TEST_PD,
+    '#value' => t('Save and Test Settings'),
     '#suffix' => '</div>'
   );
 
@@ -175,7 +175,7 @@ function transperfect_pd_settings_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_SETTINGS_PD:
+    case t('Save PD Settings'):
       foreach ($form_state['values'] as $key => $value) {
         if (is_array($value) && isset($form_state['values']['array_filter'])) {
           $value = array_keys(array_filter($value));
@@ -188,7 +188,7 @@ function transperfect_pd_settings_submit($form, &$form_state) {
       drupal_set_message(t('The configuration options have been saved.'));
 
       break;
-    case TPT_BTN_SETTINGS_SAVE_TEST_PD:
+    case t('Save and Test Settings'):
       try {
         foreach ($form_state['values'] as $key => $value) {
           if (is_array($value) && isset($form_state['values']['array_filter'])) {
@@ -271,7 +271,7 @@ function transperfect_adaptor_settings() {
 
   $form['transperfect_adaptor_settings']['submit_general_save'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_SETTINGS_GENERAL
+    '#value' => t('Save Adaptor Settings')
   );
 
   return $form;
@@ -280,7 +280,7 @@ function transperfect_adaptor_settings() {
 function transperfect_adaptor_settings_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_SETTINGS_GENERAL) {
+  if ($op == t('Save Adaptor Settings')) {
     $value = $form_state['values']['transperfect_pager_limit'];
 
     if (!is_numeric($value)) {
@@ -306,7 +306,7 @@ function transperfect_adaptor_settings_submit($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op == TPT_BTN_SETTINGS_GENERAL) {
+  if ($op == t('Save Adaptor Settings')) {
     foreach ($form_state['values'] as $key => $value) {
       if (is_array($value) && isset($form_state['values']['array_filter'])) {
         $value = array_keys(array_filter($value));

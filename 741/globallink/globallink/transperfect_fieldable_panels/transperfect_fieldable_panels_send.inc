@@ -68,7 +68,7 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 
     $form['select_fieldable_panels_type']['filters']['filter'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
+      '#value' => t('Filter'),
       '#disabled' => $disable_submit,
     );
 
@@ -97,7 +97,7 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 
       $form['filter-search']['status']['actions']['reset'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_RESET,
+        '#value' => t('Reset'),
       );
     }
   }
@@ -115,11 +115,11 @@ function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$for
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_selected_fieldable_panels_language'] = $form_state['values']['language'];
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_selected_fieldable_panels_language'] = '';
 
       break;
@@ -151,7 +151,7 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
 
     $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('transperfect_dashboard_fieldable_panels_pager_form_submit'),
@@ -165,7 +165,7 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
 function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -179,7 +179,7 @@ function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$fo
 function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -462,7 +462,7 @@ function transperfect_dashboard_fieldable_panels_form() {
 
         $form['send_submission']['submit_pd_send'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_SEND,
+          '#value' => t('Send for Translation'),
         );
       }
     }
@@ -480,7 +480,7 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -538,7 +538,7 @@ function transperfect_dashboard_fieldable_panels_form_submit($form, &$form_state
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 

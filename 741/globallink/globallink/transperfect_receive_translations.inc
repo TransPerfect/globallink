@@ -119,7 +119,7 @@ function transperfect_node_receive_filter_form() {
   $disable_submit = $filter ? TRUE : FALSE;
   $form['node_receive_filter']['filters']['filter'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
+      '#value' => t('Filter'),
       '#disabled' => $disable_submit
   );
 
@@ -164,7 +164,7 @@ function transperfect_node_receive_filter_form() {
 
     $form['filter-search']['status']['actions']['reset'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_RESET,
+      '#value' => t('Reset'),
     );
   }
 
@@ -175,7 +175,7 @@ function transperfect_node_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_node_receive_filter_language'] = $form_state['values']['language'];
       $_SESSION['transperfect_node_receive_filter_status'] = $form_state['values']['status'];
       $_SESSION['transperfect_node_receive_filter_submission'] = $form_state['values']['submission'];
@@ -183,7 +183,7 @@ function transperfect_node_receive_filter_form_submit($form, &$form_state) {
       unset($_SESSION['transperfect_globalLink_arr_last_refreshed']);
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_node_receive_filter_language'] = '';
       $_SESSION['transperfect_node_receive_filter_status'] = '';
       $_SESSION['transperfect_node_receive_filter_submission'] = '';
@@ -210,7 +210,7 @@ function transperfect_node_receive_pager_form() {
   );
   $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('transperfect_node_receive_pager_form_submit'),
@@ -222,7 +222,7 @@ function transperfect_node_receive_pager_form() {
 function transperfect_node_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -399,21 +399,52 @@ function transperfect_dashboard_receive() {
     }
 
     if ($count > 1) {
-      $form['submit_update_selected'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_UPDATE_SELECTED);
-      $form['submit_update_all'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_UPDATE_ALL);
-      $form['submit_clear_deleted_hidden'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS, '#attributes' => array('style' => 'display:none;', 'disabled' => 'true'));
-      $form['submit_clear_deleted'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS);
+      $form['submit_update_selected'] = array(
+        '#type' => 'submit',
+        '#value' => t('Update Selected'),
+      );
+
+      $form['submit_update_all'] = array(
+        '#type' => 'submit',
+        '#value' => t('Update All'),
+      );
+
+      $form['submit_clear_deleted_hidden'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clear Deleted Records'), '#attributes' => array('style' => 'display:none;', 'disabled' => 'true'),
+      );
+
+      $form['submit_clear_deleted'] = array(
+        '#type' => 'submit',
+        '#value' => t('Clear Deleted Records'),
+      );
     }
 
     $last_refreshed = '';
+
     if (isset($_SESSION['transperfect_globalLink_arr_last_refreshed'])) {
       $last_refreshed = $_SESSION['transperfect_globalLink_arr_last_refreshed'];
     }
-    $form['submit_refresh_hidden'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_REFRESH, '#prefix' => '<BR/>', '#attributes' => array('style' => 'display:none;', 'disabled' => 'true'));
-    $form['submit_refresh'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_REFRESH);
+
+    $form['submit_refresh_hidden'] = array(
+      '#type' => 'submit',
+      '#value' => t('Refresh Page'),
+      '#prefix' => '<BR/>',
+      '#attributes' => array(
+        'style' => 'display:none;',
+        'disabled' => 'true',
+      ),
+    );
+
+    $form['submit_refresh'] = array(
+      '#type' => 'submit',
+      '#value' => t('Refresh Page'),
+    );
+
     $form['markup'] = array(
-        '#type' => 'markup',
-        '#markup' => 'Last refreshed : ' . $last_refreshed);
+      '#type' => 'markup',
+      '#markup' => 'Last refreshed : ' . $last_refreshed,
+    );
   }
 
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-refresh").click(function(){jQuery("#edit-submit-refresh").hide();jQuery("#edit-submit-refresh-hidden").css("display","inline");});});', 'inline');
@@ -431,7 +462,7 @@ function transperfect_dashboard_receive_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
   transperfect_validate_project_director_details($pd4);
 
-  if ($op == TPT_BTN_DASHBOARD_UPDATE_SELECTED) {
+  if ($op == t('Update Selected')) {
     $rids = array_filter($form_state['values']['table']);
     if (count($rids) == 0) {
       form_set_error('', t('No items selected.'));
@@ -445,7 +476,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_UPDATE_ALL:
+    case t('Update All'):
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
         $count = transperfect_get_translated_content($pd4, $globallink_arr);
@@ -480,7 +511,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       unset($_SESSION['transperfect_globalLink_arr_last_refreshed']);
 
       break;
-    case TPT_BTN_DASHBOARD_CLEAR_DELETED_RECORDS:
+    case t('Clear Deleted Records'):
       try {
         sleep(2);
         $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
@@ -511,7 +542,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       }
 
       break;
-    case TPT_BTN_DASHBOARD_UPDATE_SELECTED:
+    case t('Update Selected'):
       try {
         $delete_records_selected = FALSE;
         $globallink_arr = unserialize($_SESSION['transperfect_globalLink_arr']);
@@ -551,7 +582,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
       unset($_SESSION['transperfect_globalLink_arr_last_refreshed']);
 
       break;
-    case TPT_BTN_DASHBOARD_REFRESH:
+    case t('Refresh Page'):
       sleep(2);
       $pd4 = transperfect_get_project_director_details();
       try {

@@ -372,7 +372,7 @@ function transperfect_dashboard_pager_form() {
       );
       $form['page_counter']['markup']['action'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_GO,
+          '#value' => t('Go'),
           '#suffix' => '</div>',
           '#limit_validation_errors' => array(),
           '#submit' => array('transperfect_node_form_pager_submit'),
@@ -386,7 +386,7 @@ function transperfect_dashboard_pager_form() {
 function transperfect_node_form_pager_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -827,7 +827,7 @@ function transperfect_dashboard_node_form() {
 
           if ($modified == 0 && $redirect_nid == '') {
             $form['clear_changed_flag'] = array('#type' => 'submit',
-                '#value' => TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG,
+                '#value' => t('Clear "Changed" Status'),
                 '#limit_validation_errors' => array(),
                 '#submit' => array('transperfect_node_form_clear_submit'),
                 '#access' => TRUE,
@@ -944,7 +944,7 @@ function transperfect_dashboard_node_form() {
               '#field_suffix' => '</div></td>',
               '#field_prefix' => '<BR/><div class="description">' . t('Other instructions for this Submission.') . '</div></td><td>',
           );
-          $form['send_submission']['submit_pd_send'] = array('#type' => 'submit', '#value' => TPT_BTN_DASHBOARD_SEND);
+          $form['send_submission']['submit_pd_send'] = array('#type' => 'submit', '#value' => t('Send for Translation'));
         }
       }
 
@@ -956,7 +956,7 @@ function transperfect_dashboard_node_form() {
 
 function transperfect_node_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_DASHBOARD_CLEAR_CHANGED_FLAG) {
+  if ($op == t('Clear "Changed" Status')) {
     $nids = array_filter($form_state['input']['table']);
     if (count($nids) == 0) {
       form_set_error('', t('No items selected.'));
@@ -982,7 +982,7 @@ function transperfect_dashboard_node_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op == TPT_BTN_DASHBOARD_SEND) {
+  if ($op == t('Send for Translation')) {
     $nids = array_filter($form_state['values']['table']);
     if (count($nids) == 0) {
       $nids = array_filter($form_state['values']['table']);
@@ -1029,7 +1029,7 @@ function transperfect_dashboard_node_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
   $pd4 = transperfect_get_project_director_details();
-  if ($op == TPT_BTN_DASHBOARD_SEND) {
+  if ($op == t('Send for Translation')) {
     try {
       $nids = array_filter($form_state['values']['table']);
       $submission_name = $form_state['values']['submission_name'];

@@ -40,7 +40,7 @@ function transperfect_field() {
 
   $form['select_field']['go'] = array(
     '#type' => 'submit',
-    '#value' => TPT_BTN_DASHBOARD_GO,
+    '#value' => t('Go'),
     '#attributes' => array('style' => 'display: none;'),
   );
 
@@ -66,7 +66,7 @@ function transperfect_field() {
 
     $form['select_field']['add_field'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_ADD,
+      '#value' => t('Add'),
       '#disabled' => $disabled,
     );
 
@@ -174,7 +174,7 @@ function transperfect_field() {
     if ($count > 0) {
       $form['submit_field_update'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_FIELD_UPDATE,
+        '#value' => t('Update'),
       );
     }
   }
@@ -186,11 +186,11 @@ function transperfect_field_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_GO:
+    case t('Go'):
       $_SESSION['transperfect_selected_content_type'] = $form_state['values']['select_type'];
 
       break;
-    case TPT_BTN_FIELD_UPDATE:
+    case t('Update'):
       $type = $form_state['values']['select_type'];
 
       $fids = array_filter($form_state['values']['table']);
@@ -206,7 +206,7 @@ function transperfect_field_submit($form, &$form_state) {
       drupal_set_message(t('Field configurations have been saved successfully.'));
 
       break;
-    case TPT_BTN_ADD:
+    case t('Add'):
       $field = $form_state['values']['pending_fields'];
 
       transperfect_insert_gl_field_config($field, $_SESSION['transperfect_selected_content_type']);

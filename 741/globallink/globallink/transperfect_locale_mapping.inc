@@ -108,7 +108,7 @@ function transperfect_locale() {
 
     $form['locale_mapping']['submit_locale_add'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_ADD
+      '#value' => t('Add')
     );
   }
   else {
@@ -139,7 +139,7 @@ function transperfect_locale_validate($form, &$form_state) {
 function transperfect_locale_submit($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  if ($op == TPT_BTN_ADD) {
+  if ($op == t('Add')) {
     $drupal_seleced_locale = $form_state['values']['drupal_locale_list'];
     $drupal_locale = explode('|', $drupal_seleced_locale);
     $locale_code = $form_state['values']['tpt_locale_list'];

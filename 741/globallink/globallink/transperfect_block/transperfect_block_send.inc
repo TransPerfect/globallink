@@ -60,7 +60,7 @@ function transperfect_dashboard_block_filter_form() {
 
     $form['block_info_filter']['filters']['filter'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_FILTER,
+      '#value' => t('Filter'),
       '#disabled' => $disable_submit,
     );
 
@@ -89,7 +89,7 @@ function transperfect_dashboard_block_filter_form() {
 
       $form['filter-search']['status']['actions']['reset'] = array(
         '#type' => 'submit',
-        '#value' => TPT_BTN_DASHBOARD_RESET,
+        '#value' => t('Reset'),
       );
     }
   }
@@ -107,11 +107,11 @@ function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
-    case TPT_BTN_DASHBOARD_FILTER:
+    case t('Filter'):
       $_SESSION['transperfect_selected_block_info'] = $form_state['values']['info'];
 
       break;
-    case TPT_BTN_DASHBOARD_RESET:
+    case t('Reset'):
       $_SESSION['transperfect_selected_block_info'] = '';
 
       break;
@@ -140,7 +140,7 @@ function transperfect_dashboard_block_pager_form() {
 
     $form['page_counter']['markup']['action'] = array(
       '#type' => 'submit',
-      '#value' => TPT_BTN_DASHBOARD_GO,
+      '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
       '#submit' => array('block_pager_form_submit'),
@@ -154,7 +154,7 @@ function transperfect_dashboard_block_pager_form() {
 function block_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
-  if ($op != TPT_BTN_DASHBOARD_GO) {
+  if ($op != t('Go')) {
     return;
   }
 
@@ -445,7 +445,7 @@ function transperfect_dashboard_block_form() {
 
         $form['send_submission']['submit_pd_send'] = array(
           '#type' => 'submit',
-          '#value' => TPT_BTN_DASHBOARD_SEND,
+          '#value' => t('Send for Translation'),
         );
       }
     }
@@ -463,7 +463,7 @@ function transperfect_dashboard_block_form_validate($form, &$form_state) {
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
@@ -520,7 +520,7 @@ function transperfect_dashboard_block_form_submit($form, &$form_state) {
 
   $submission_details = array();
 
-  if ($op != TPT_BTN_DASHBOARD_SEND) {
+  if ($op != t('Send for Translation')) {
     return;
   }
 
