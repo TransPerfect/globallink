@@ -305,7 +305,7 @@ function transperfect_get_fieldable_panels_submission_status() {
 
         $status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$status || $status == PD_STATUS_CANCELLED) {
+        if (!$status || $status == 'CANCELLED') {
           transperfect_update_fieldable_panels_submission_status($row->submission_ticket);
         }
       }

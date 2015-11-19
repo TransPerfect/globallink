@@ -611,7 +611,7 @@ function transperfect_get_webform_pd_submission_status() {
 
         $doc_status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$doc_status || $doc_status == PD_STATUS_CANCELLED) {
+        if (!$doc_status || $doc_status == 'CANCELLED') {
           transperfect_update_webform_submission_status($row->submission_ticket);
         }
       }

@@ -636,7 +636,7 @@ function transperfect_get_taxonomy_submission_status() {
 
         $doc_status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$doc_status || $doc_status == PD_STATUS_CANCELLED) {
+        if (!$doc_status || $doc_status == 'CANCELLED') {
           transperfect_update_taxonomy_submission_status($row->submission_ticket);
         }
       }

@@ -17,10 +17,7 @@ define('TPT_ROLE_MANAGE_TRANSLATIONS', t('can manage GlobalLink translation task
 define('TPT_ROLE_DO_TRANSLATIONS', t('can manage GlobalLink translation tasks'));
 define('TPT_ROLE_VIEW_TRANSLATIONS', t('can view GlobalLink translation tasks'));
 
-define('PD_STATUS_CANCELLED', 'CANCELLED');
-
 define('TPT_PAGER_LIMIT', variable_get('transperfect_pager_limit', 10));
-define('TPT_PAGER_NUMBER', 0);
 
 define('TPT_LOGGING_CONFIG_DISABLED', '0');
 define('TPT_LOGGING_CONFIG_INFO', '1');

@@ -653,7 +653,7 @@ function get_block_submission_status() {
         $pd4 = transperfect_get_project_director_details();
         $status = transperfect_get_status($pd4, $row->submission_ticket);
 
-        if (!$status || $status == PD_STATUS_CANCELLED) {
+        if (!$status || $status == 'CANCELLED') {
           transperfect_update_block_submission_status($row->submission_ticket);
         }
       }
