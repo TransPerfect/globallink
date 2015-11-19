@@ -295,7 +295,7 @@ function transperfect_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -622,7 +622,7 @@ function transperfect_escape_json_string($value) { // list from www.json.org: (\
 function transperfect_pending_submission_exists() {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   foreach ($result as $row) {
@@ -646,7 +646,7 @@ function transperfect_pending_submission_exists() {
 function transperfect_pending_submission_exists_for_content_type($type) {
   $result = db_select('transperfect_core', 'tc')
   ->fields('tc')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->condition('type', $type, '=')
   ->execute();
 

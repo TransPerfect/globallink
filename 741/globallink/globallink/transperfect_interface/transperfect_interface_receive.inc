@@ -50,9 +50,9 @@ function transperfect_interface_receive_filter_form() {
 
   $status_arr = array(
     '[any]' => t('Any'),
-    TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
-    TPT_STATUS_ERROR => TPT_STATUS_ERROR,
-    TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED,
+    'Translation Completed' => 'Translation Completed',
+    'Error' => 'Error',
+    'Source Deleted' => 'Source Deleted',
   );
 
   $default = '[any]';
@@ -351,7 +351,7 @@ function transperfect_interface_receive_form() {
 
         $status = transperfect_get_interface_translation_status($lid, $globallink->targetLocale, $title);
 
-        if ($status == TPT_STATUS_SOURCE_DELETED) {
+        if ($status == 'Source Deleted') {
           $globallink->sourceDeleted = TRUE;
         }
 
@@ -374,7 +374,7 @@ function transperfect_interface_receive_form() {
         }
 
         if (variable_get('transperfect_enable_preview', 1)) {
-          if ($status != TPT_STATUS_SOURCE_DELETED) {
+          if ($status != 'Source Deleted') {
             $tpt_row_id = transperfect_get_interface_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
             if ($tpt_row_id) {
@@ -395,7 +395,7 @@ function transperfect_interface_receive_form() {
         );
 
         if (variable_get('transperfect_enable_preview', 1)) {
-          $rows[$key]['preview'] = $status != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array(
+          $rows[$key]['preview'] = $status != 'Source Deleted' ? l(t('Preview Translations'), 'javascript:void(0)', array(
             'fragment' => '',
             'external' => TRUE,
             'attributes' => array(
@@ -548,7 +548,7 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
             $delete_records_selected = TRUE;
           }
 
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             $error = TRUE;
           }
         }
@@ -631,7 +631,7 @@ function transperfect_interface_receive_form_submit($form, &$form_state) {
             $delete_records_selected = TRUE;
           }
 
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             $error = TRUE;
           }
         }
@@ -755,7 +755,7 @@ function get_interface_translations_for_row_id($row_id) {
           }
         }
         else {
-          $source_xml = TPT_STATUS_SOURCE_DELETED;
+          $source_xml = 'Source Deleted';
           $globallink->sourceDeleted = TRUE;
         }
       }
@@ -786,7 +786,7 @@ function get_interface_translations_for_row_id($row_id) {
                 }
               }
               else {
-                $source_xml = TPT_STATUS_SOURCE_DELETED;
+                $source_xml = 'Source Deleted';
                 $globallink->sourceDeleted = TRUE;
               }
             }
@@ -806,7 +806,7 @@ function get_interface_translations_for_row_id($row_id) {
   $arr['target_ticket'] = $globallink->targetTicket;
 
   if ($globallink->sourceDeleted) {
-    $arr = array(TPT_STATUS_SOURCE_DELETED);
+    $arr = array('Source Deleted');
   }
   elseif ($error) {
     $arr = array('error' => $error);

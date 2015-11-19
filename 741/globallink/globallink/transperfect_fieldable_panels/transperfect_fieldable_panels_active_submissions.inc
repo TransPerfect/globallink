@@ -222,7 +222,7 @@ function transperfect_fieldable_panels_active_form() {
   ->extend('TableSort') // Sorting Extender
   ->orderByHeader($header); // Field to sort on is picked from $header
 
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN');
 
   if ($selected_value != '') {
     $query->condition('submission_ticket', $selected_value, '=');

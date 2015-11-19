@@ -493,7 +493,7 @@ function transperfect_dashboard_node_form() {
 
         $results = $t_query->execute();
         foreach ($results as $item) {
-          if ($item->status == TPT_STATUS_SENT_FOR_TRANSLATIONS || $item->status == TPT_STATUS_ERROR) {
+          if ($item->status == 'Sent for Translations' || $item->status == 'Error') {
             $key = array_search($item->nid, $include_node_arr);
             unset($include_node_arr[$key]);
           }

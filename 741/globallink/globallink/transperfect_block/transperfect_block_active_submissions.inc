@@ -225,9 +225,9 @@ function transperfect_block_active_form() {
   ->orderByHeader($header);
 
   $query->condition('status', array(
-    TPT_STATUS_SENT_FOR_TRANSLATIONS,
-    TPT_STATUS_ERROR,
-    TPT_STATUS_CANCELLED,
+    'Sent for Translations',
+    'Error',
+    'Cancelled',
   ), 'IN');
 
   if ($selected_value != '') {

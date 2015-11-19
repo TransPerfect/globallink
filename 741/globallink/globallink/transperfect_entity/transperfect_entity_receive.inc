@@ -51,9 +51,9 @@ function transperfect_entity_receive_filter_form() {
 
   $status_arr = array(
     '[any]' => t('Any'),
-    TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
-    TPT_STATUS_ERROR => TPT_STATUS_ERROR,
-    TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED,
+    'Translation Completed' => 'Translation Completed',
+    'Error' => 'Error',
+    'Source Deleted' => 'Source Deleted',
   );
 
   $default = '[any]';
@@ -326,20 +326,20 @@ function transperfect_entity_receive_form() {
         }
 
         $source_xml = '';
-        $status = TPT_STATUS_COMPLETED;
+        $status = 'Translation Completed';
 
         $title = transperfect_get_entity_title($globallink);
 
         if (!$title) {
           $title = $globallink->title;
-          $status = TPT_STATUS_SOURCE_DELETED;
-          $source_xml = TPT_STATUS_SOURCE_DELETED;
-          $globallink->status = TPT_STATUS_SOURCE_DELETED;
+          $status = 'Source Deleted';
+          $source_xml = 'Source Deleted';
+          $globallink->status = 'Source Deleted';
           $globallink->sourceDeleted = TRUE;
         }
 
-        if ($globallink->status == TPT_STATUS_ERROR) {
-          $status = TPT_STATUS_ERROR;
+        if ($globallink->status == 'Error') {
+          $status = 'Error';
         }
 
         if ($filter_status != '[any]' && $status != $filter_status) {
@@ -378,7 +378,7 @@ function transperfect_entity_receive_form() {
         );
 
         if (variable_get('transperfect_enable_preview', 1)) {
-          $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array(
+          $rows[$key]['preview'] = $source_xml != 'Source Deleted' ? l(t('Preview Translations'), 'javascript:void(0)', array(
             'fragment' => '',
             'external' => TRUE,
             'attributes' => array(
@@ -532,7 +532,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
             $delete_records_selected = TRUE;
           }
 
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             transperfect_update_entity_status($updated);
             $error = TRUE;
           }
@@ -615,7 +615,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
             $delete_records_selected = TRUE;
           }
 
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             $error = TRUE;
             transperfect_update_entity_status($updated);
           }
@@ -751,12 +751,12 @@ function transperfect_get_translations_for_entity_row_id($row_id) {
         $source_xml = get_entity_xml($node, $globallink->targetLocale, NULL, NULL, $name, TRUE, $drupal_locale_code);
         $source_arr = array();
 
-        if ($source_xml != TPT_STATUS_SOURCE_DELETED) {
+        if ($source_xml != 'Source Deleted') {
           $source_arr = transperfect_get_translated_entity_array($source_xml);
         }
       }
       else {
-        $source_xml = TPT_STATUS_SOURCE_DELETED;
+        $source_xml = 'Source Deleted';
         $globallink->sourceDeleted = TRUE;
       }
     }
@@ -772,7 +772,7 @@ function transperfect_get_translations_for_entity_row_id($row_id) {
   $arr['target_ticket'] = $globallink->targetTicket;
 
   if ($globallink->sourceDeleted) {
-    $arr = array(TPT_STATUS_SOURCE_DELETED);
+    $arr = array('Source Deleted');
   }
   elseif ($error) {
     $arr = array('error' => $error);

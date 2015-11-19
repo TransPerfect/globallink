@@ -119,7 +119,7 @@ function transperfect_update_webform_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => REQUEST_TIME,
           'project_code' => $project_code,
@@ -138,7 +138,7 @@ function transperfect_update_webform_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => REQUEST_TIME,
           'project_code' => $project_code,
@@ -151,10 +151,10 @@ function transperfect_update_webform_ticket_id($arr, $project_code) {
 
 function transperfect_update_deleted_webform_records($pd4, $globallink) {
   try {
-    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_update_webform_status($globallink, TPT_STATUS_SOURCE_DELETED);
+    transperfect_update_webform_status($globallink, 'Source Deleted');
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -219,8 +219,8 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
         _locale_import_one_string_db($report, $language, $webform[0]->context, $webform[0]->source, $translations['translation'], 'webform', $translations['location'], LOCALE_IMPORT_OVERWRITE);
       }
 
-      if ($globallink->status != TPT_STATUS_ERROR) {
-        if ($globallink->status != TPT_STATUS_DELETED) {
+      if ($globallink->status != 'Error') {
+        if ($globallink->status != 'Node Deleted') {
           transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
         }
 
@@ -233,13 +233,13 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
     catch (SoapFault $se) {
       $count--;
 
-      transperfect_update_webform_status($globallink, TPT_STATUS_ERROR);
+      transperfect_update_webform_status($globallink, 'Error');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $ex) {
       $count--;
 
-      transperfect_update_webform_status($globallink, TPT_STATUS_ERROR);
+      transperfect_update_webform_status($globallink, 'Error');
       form_set_error('', check_plain('Error: ' . $ex->getMessage()));
     }
   }
@@ -290,7 +290,7 @@ function transperfect_get_sent_tpt_webform_rows_by_lid($lid) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw')
   ->condition('object_id', $lid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -302,7 +302,7 @@ function transperfect_get_sent_tpt_webform_rows_by_lid($lid) {
   return $rows;
 }
 
-function transperfect_update_webform_status(&$globallink, $status = TPT_STATUS_PENDING_TRANSLATIONS) {
+function transperfect_update_webform_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_webform')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
   ->condition('submission', $globallink->submissionName, '=')
@@ -330,7 +330,7 @@ function transperfect_get_webform_row($object_id, $object_type, $source, $target
 
 function transperfect_get_webform_active_submission_names() {
   $query = db_select('transperfect_core_webform', 'tcw');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tcw');
   $results = $query->execute();
@@ -401,7 +401,7 @@ function transperfect_get_webform_other_row($row_id) {
 function transperfect_update_webform_submission(&$globallink) {
   db_update('transperfect_core_webform')
   ->fields(array(
-    'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+    'status' => 'Pending Translations',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
@@ -414,7 +414,7 @@ function transperfect_update_webform_row_document(&$globallink_arr) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_webform')
       ->fields(array(
-        'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+        'status' => 'Pending Translations',
         'timestamp' => REQUEST_TIME,
       ))
       ->condition('rid', $globallink->tptRowId, '=')
@@ -425,7 +425,7 @@ function transperfect_update_webform_row_document(&$globallink_arr) {
 
 function transperfect_get_distinct_active_webform_submission_names() {
   $query = db_select('transperfect_core_webform', 'tcw');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tcw');
   $results = $query->execute();
@@ -500,17 +500,17 @@ function transperfect_get_webform_translation_status($lid, $tgt_locale, &$title)
     $webform = transperfect_load_source_data($lid);
 
     if (!$webform || is_null($webform)) {
-      return TPT_STATUS_SOURCE_DELETED;
+      return 'Source Deleted';
     }
-    elseif ($row->status == TPT_STATUS_SENT_FOR_TRANSLATIONS) {
-      return TPT_STATUS_COMPLETED;
+    elseif ($row->status == 'Sent for Translations') {
+      return 'Translation Completed';
     }
-    elseif ($row->status == TPT_STATUS_ERROR) {
-      return TPT_STATUS_ERROR;
+    elseif ($row->status == 'Error') {
+      return 'Error';
     }
   }
 
-  return TPT_STATUS_SENT_FOR_TRANSLATIONS;
+  return 'Sent for Translations';
 }
 
 function transperfect_get_sent_tpt_webform_rows_by_lid_target($lid, $target) {
@@ -518,7 +518,7 @@ function transperfect_get_sent_tpt_webform_rows_by_lid_target($lid, $target) {
   ->fields('tcw')
   ->condition('object_id', $lid, '=')
   ->condition('target', $target, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
 
   $rows = array();
@@ -545,7 +545,7 @@ function transperfect_get_webform_row_id_from_submission($submission_ticket, $do
 
 function transperfect_get_webform_active_submission_rows_by_lid($lids) {
   $query = db_select('transperfect_core_webform', 'tci');
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
   $query->condition('object_id', $lids, 'IN');
   $query->fields('tci');
   $results = $query->execute();
@@ -587,7 +587,7 @@ function transperfect_get_webform_active_submission_rows_by_lid($lids) {
   return FALSE;
 }
 
-function transperfect_update_webform_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_webform_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_webform')
   ->fields(array(
     'status' => $status,
@@ -601,7 +601,7 @@ function transperfect_get_webform_pd_submission_status() {
   $query = db_select('transperfect_core_webform', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
   $results = $query->execute();
 
   foreach ($results as $row) {
@@ -629,7 +629,7 @@ function transperfect_check_webform_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core_webform', 'tc')
   ->fields('tc', array('rid'))
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $results = $query->execute();
 
   $rows = array();
@@ -659,12 +659,12 @@ function transperfect_clear_cancelled_webform_documents() {
   $query = db_select('transperfect_core_webform', 'tc')
   ->fields('tc', array('submission_ticket'))
   ->distinct()
-  ->condition('status', TPT_STATUS_CANCELLED, '=');
+  ->condition('status', 'Cancelled', '=');
 
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_webform_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+    transperfect_update_webform_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }

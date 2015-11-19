@@ -141,7 +141,7 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
@@ -162,7 +162,7 @@ function transperfect_update_node_ticket_id($arr, $project_code) {
           'document_ticket' => $globallink->documentTicket,
           'submission' => $globallink->submissionName,
           'submission_ticket' => $globallink->submissionTicket,
-          'status' => TPT_STATUS_SENT_FOR_TRANSLATIONS,
+          'status' => 'Sent for Translations',
           'timestamp' => REQUEST_TIME,
           'last_modified' => $node->changed,
           'changed' => 0,
@@ -239,7 +239,7 @@ function transperfect_update_node_change_flag($nids, $source, $tgts) {
         'document_ticket' => '',
         'submission' => '',
         'submission_ticket' => '',
-        'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+        'status' => 'Pending Translations',
         'timestamp' => REQUEST_TIME,
         'last_modified' => $node->changed,
         'changed' => 2
@@ -326,7 +326,7 @@ function transperfect_update_row_document(&$globallink_arr) {
     if ($globallink->cancelled) {
       db_update('transperfect_core')
       ->fields(array(
-        'status' => TPT_STATUS_CANCELLED,
+        'status' => 'Cancelled',
         'timestamp' => REQUEST_TIME,
         'changed' => 1
       ))
@@ -345,7 +345,7 @@ function transperfect_update_row_document(&$globallink_arr) {
 function transperfect_update_row_submission(&$globallink) {
   db_update('transperfect_core')
   ->fields(array(
-    'status' => TPT_STATUS_CANCELLED,
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
     'changed' => 1
   ))
@@ -362,7 +362,7 @@ function transperfect_update_row_submission(&$globallink) {
  */
 function transperfect_get_distinct_active_submission_names() {
   $query = db_select('transperfect_core', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tc');
   $results = $query->execute();
@@ -387,7 +387,7 @@ function transperfect_get_distinct_active_submission_names() {
  */
 function transperfect_get_submission_from_nid($nid) {
   $query = db_select('transperfect_core', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nid, '=');
   $query->distinct();
   $query->fields('tc');
@@ -439,7 +439,7 @@ function transperfect_get_row_id_from_submission($submission_ticket, $document_t
  */
 function transperfect_update_deleted_records($pd4, $globallink) {
   try {
-    $globallink->status = TPT_STATUS_SOURCE_DELETED;
+    $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
     transperfect_update_status($globallink);
@@ -480,7 +480,7 @@ function transperfect_get_translated_content($pd4, &$globallink_arr) {
 
           transperfect_update_node($globallink);
 
-          if ($globallink->status != TPT_STATUS_ERROR) {
+          if ($globallink->status != 'Error') {
             transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
             transperfect_update_status($globallink);
           }
@@ -511,12 +511,12 @@ function transperfect_get_translated_content($pd4, &$globallink_arr) {
  */
 function transperfect_update_status(&$globallink) {
   switch ($globallink->status) {
-    case TPT_STATUS_SOURCE_DELETED:
+    case 'Source Deleted':
       $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
 
       db_update('transperfect_core')
       ->fields(array(
-        'status' => TPT_STATUS_SOURCE_DELETED,
+        'status' => 'Source Deleted',
         'document_ticket' => '',
         'submission_ticket' => '',
         'timestamp' => REQUEST_TIME,
@@ -525,12 +525,12 @@ function transperfect_update_status(&$globallink) {
       ->execute();
 
       break;
-    case TPT_STATUS_ERROR:
+    case 'Error':
       $row = transperfect_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
 
       db_update('transperfect_core')
       ->fields(array(
-        'status' => TPT_STATUS_ERROR,
+        'status' => 'Error',
         'timestamp' => REQUEST_TIME,
       ))
       ->condition('rid', $row->rid, '=')
@@ -546,7 +546,7 @@ function transperfect_update_status(&$globallink) {
         ->fields(array(
           'vid' => $node->vid,
           'title' => $node->title,
-          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'status' => 'Pending Translations',
           'timestamp' => REQUEST_TIME,
         ))
         ->condition('rid', $row->rid, '=')
@@ -555,7 +555,7 @@ function transperfect_update_status(&$globallink) {
       else {
         db_update('transperfect_core')
         ->fields(array(
-          'status' => TPT_STATUS_PENDING_TRANSLATIONS,
+          'status' => 'Pending Translations',
           'timestamp' => REQUEST_TIME,
         ))
         ->condition('rid', $row->rid, '=')
@@ -604,7 +604,7 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
     $node = node_load($target_nid, $target_vid);
 
     if (!$node || is_null($node) || !is_object($node)) {
-      $globallink->status = TPT_STATUS_SOURCE_DELETED;
+      $globallink->status = 'Source Deleted';
 
       return;
     }
@@ -801,10 +801,10 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
 
         if ($success) {
           transperfect_update_node_tnid($node->nid, $tnid);
-          $globallink->status = TPT_STATUS_PUBLISHED;
+          $globallink->status = 'Published';
         }
         else {
-          $globallink->status = TPT_STATUS_ERROR;
+          $globallink->status = 'Error';
         }
       }
     }
@@ -947,15 +947,15 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
 
         transperfect_update_node_tnid($node->nid, $tnid);
 
-        $globallink->status = TPT_STATUS_PUBLISHED;
+        $globallink->status = 'Published';
       }
       else {
-        $globallink->status = TPT_STATUS_ERROR;
+        $globallink->status = 'Error';
       }
     }
   }
   catch (Exception $e) {
-    $globallink->status = TPT_STATUS_ERROR;
+    $globallink->status = 'Error';
     watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
   }
 }
@@ -1211,7 +1211,7 @@ function transperfect_get_translated_array($xml) {
  */
 function transperfect_get_active_submission_by_nid($nid) {
   $query = db_select('transperfect_core', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nid, '=');
   $query->fields('tc');
   $results = $query->execute();
@@ -1244,7 +1244,7 @@ function transperfect_get_active_submission_by_nid($nid) {
  */
 function transperfect_get_active_submission_rows_by_nid($nids) {
   $query = db_select('transperfect_core', 'tc');
-  $query->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nids, 'IN');
   $query->fields('tc');
   $results = $query->execute();
@@ -1613,10 +1613,10 @@ function transperfect_save_field_collections_recursively($entity_type, $host_ent
  */
 function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE) {
   if (is_null($node)) {
-    return TPT_STATUS_SOURCE_DELETED;
+    return 'Source Deleted';
   }
   elseif (!$node) {
-    return TPT_STATUS_SOURCE_DELETED;
+    return 'Source Deleted';
   }
 
   if ($node && is_object($node)) {
@@ -1632,7 +1632,7 @@ function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$
     return $xml;
   }
 
-  return TPT_STATUS_SOURCE_DELETED;
+  return 'Source Deleted';
 }
 
 /**
@@ -2026,12 +2026,12 @@ function transperfect_get_node_title(&$globallink) {
     $globallink->title = $item->title;
 
     switch ($item->status) {
-      case TPT_STATUS_SENT_FOR_TRANSLATIONS:
-        $globallink->status = TPT_STATUS_COMPLETED;
+      case 'Sent for Translations':
+        $globallink->status = 'Translation Completed';
 
         break;
-      case TPT_STATUS_ERROR:
-        $globallink->status = TPT_STATUS_ERROR;
+      case 'Error':
+        $globallink->status = 'Error';
 
         break;
     }
@@ -2055,9 +2055,9 @@ function transperfect_get_node_title(&$globallink) {
  * @param string $submission_ticket
  *   The submission ticket.
  * @param string $status
- *   The submission status.  Defaults to TPT_STATUS_CANCELLED.
+ *   The submission status.  Defaults to 'Cancelled'.
  */
-function transperfect_update_submission_status($submission_ticket, $status = TPT_STATUS_CANCELLED) {
+function transperfect_update_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core')
   ->fields(array(
     'status' => $status,
@@ -2074,7 +2074,7 @@ function transperfect_get_submission_status() {
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
-  $query->condition('status', TPT_STATUS_SENT_FOR_TRANSLATIONS, '=');
+  $query->condition('status', 'Sent for Translations', '=');
   $results = $query->execute();
 
   foreach ($results as $row) {
@@ -2111,7 +2111,7 @@ function transperfect_check_status($rids_arr) {
 
   $query = db_select('transperfect_core', 'tc')
   ->fields('tc', array('rid'))
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR), 'IN');
+  ->condition('status', array('Sent for Translations', 'Error'), 'IN');
 
   $results = $query->execute();
 
@@ -2148,12 +2148,12 @@ function transperfect_clear_cancelled_documents() {
   $query = db_select('transperfect_core', 'tc')
   ->fields('tc', array('submission_ticket'))
   ->distinct()
-  ->condition('status', TPT_STATUS_CANCELLED, '=');
+  ->condition('status', 'Cancelled', '=');
 
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_submission_status($item->submission_ticket, TPT_STATUS_PENDING_TRANSLATIONS);
+    transperfect_update_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }

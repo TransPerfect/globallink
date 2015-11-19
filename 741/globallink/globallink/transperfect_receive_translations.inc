@@ -51,9 +51,9 @@ function transperfect_node_receive_filter_form() {
   $languages = $n_arr + $t_arr;
 
   $status_arr = array('[any]' => t('Any'),
-      TPT_STATUS_COMPLETED => TPT_STATUS_COMPLETED,
-      TPT_STATUS_ERROR => TPT_STATUS_ERROR,
-      TPT_STATUS_SOURCE_DELETED => TPT_STATUS_SOURCE_DELETED);
+      'Translation Completed' => 'Translation Completed',
+      'Error' => 'Error',
+      'Source Deleted' => 'Source Deleted');
 
   $default = '[any]';
   if (!empty($_SESSION['transperfect_node_receive_filter_language'])) {
@@ -311,17 +311,17 @@ function transperfect_dashboard_receive() {
         }
 
         $source_xml = '';
-        $status = TPT_STATUS_COMPLETED;
+        $status = 'Translation Completed';
         $title = transperfect_get_node_title($globallink);
         if (!$title) {
           $title = $globallink->title;
-          $status = TPT_STATUS_SOURCE_DELETED;
-          $source_xml = TPT_STATUS_SOURCE_DELETED;
-          $globallink->status = TPT_STATUS_SOURCE_DELETED;
+          $status = 'Source Deleted';
+          $source_xml = 'Source Deleted';
+          $globallink->status = 'Source Deleted';
           $globallink->sourceDeleted = TRUE;
         }
-        if ($globallink->status == TPT_STATUS_ERROR) {
-          $status = TPT_STATUS_ERROR;
+        if ($globallink->status == 'Error') {
+          $status = 'Error';
         }
 
         if ($filter_status != '[any]' && $status != $filter_status) {
@@ -356,7 +356,7 @@ function transperfect_dashboard_receive() {
         );
 
         if (variable_get('transperfect_enable_preview', 1)) {
-          $rows[$key]['preview'] = $source_xml != TPT_STATUS_SOURCE_DELETED ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
+          $rows[$key]['preview'] = $source_xml != 'Source Deleted' ? l(t('Preview Translations'), 'javascript:void(0)', array('fragment' => '', 'external' => TRUE, 'attributes' => array('title' => 'Click to Preview', 'id' => 'tpt_content_link_' . $key))) : '';
         }
 
         $count++;
@@ -486,7 +486,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
           if ($updated->sourceDeleted == TRUE) {
             $delete_records_selected = TRUE;
           }
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             transperfect_update_status($updated);
             $error = TRUE;
           }
@@ -557,7 +557,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
           if ($updated->sourceDeleted == TRUE) {
             $delete_records_selected = TRUE;
           }
-          if ($updated->status == TPT_STATUS_ERROR) {
+          if ($updated->status == 'Error') {
             $error = TRUE;
             transperfect_update_status($updated);
           }
@@ -633,7 +633,7 @@ function transperfect_auto_receive($cron_type) {
           $count = transperfect_get_translated_content($pd4, $globallink_arr);
           watchdog('GlobalLink', 'Imported Node', array(), WATCHDOG_INFO);
 
-          if ($globallink->status == TPT_STATUS_ERROR) {
+          if ($globallink->status == 'Error') {
             transperfect_update_status($globallink);
           }
 
@@ -645,7 +645,7 @@ function transperfect_auto_receive($cron_type) {
           $count = transperfect_get_translated_entity($pd4, $globallink_arr);
           watchdog('GlobalLink', 'Imported Entity', array(), WATCHDOG_INFO);
 
-          if ($globallink->status == TPT_STATUS_ERROR) {
+          if ($globallink->status == 'Error') {
             transperfect_update_entity_status($globallink);
           }
 
@@ -770,12 +770,12 @@ function transperfect_get_translations_for_row_id($row_id) {
               $name = '';
               $source_xml = transperfect_get_xml($node, $globallink->targetLocale, NULL, NULL, $name, TRUE);
               $source_arr = array();
-              if ($source_xml != TPT_STATUS_SOURCE_DELETED) {
+              if ($source_xml != 'Source Deleted') {
                 $source_arr = transperfect_get_translated_array($source_xml);
               }
             }
             else {
-              $source_xml = TPT_STATUS_SOURCE_DELETED;
+              $source_xml = 'Source Deleted';
               $globallink->sourceDeleted = TRUE;
             }
           }
@@ -793,7 +793,7 @@ function transperfect_get_translations_for_row_id($row_id) {
   $arr = array();
   $arr['target_ticket'] = $globallink->targetTicket;
   if ($globallink->sourceDeleted) {
-    $arr = array(TPT_STATUS_SOURCE_DELETED);
+    $arr = array('Source Deleted');
   }
   elseif ($error) {
     $arr = array('error' => $error);

@@ -17,16 +17,6 @@ define('TPT_ROLE_MANAGE_TRANSLATIONS', t('can manage GlobalLink translation task
 define('TPT_ROLE_DO_TRANSALTIONS', t('can manage GlobalLink translation tasks'));
 define('TPT_ROLE_VIEW_TRANSLATIONS', t('can view GlobalLink translation tasks'));
 
-define('TPT_STATUS_PENDING_TRANSLATIONS', 'Pending Translations');
-define('TPT_STATUS_SENT_FOR_TRANSLATIONS', 'Sent for Translations');
-define('TPT_STATUS_PUBLISHED', 'Published');
-define('TPT_STATUS_COMPLETED', 'Translation Completed');
-define('TPT_STATUS_DELETED', 'Node Deleted');
-define('TPT_STATUS_SOURCE_DELETED', 'Source Deleted');
-define('TPT_STATUS_ERROR', 'Error');
-define('TPT_STATUS_ARCHIVED', 'Archived');
-define('TPT_STATUS_CANCELLED', 'Cancelled');
-
 define('PD_STATUS_CANCELLED', 'CANCELLED');
 
 define('TPT_PAGER_LIMIT', variable_get('transperfect_pager_limit', 10));
@@ -1055,7 +1045,7 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
   $query = db_select('transperfect_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
-  ->condition('status', array(TPT_STATUS_SENT_FOR_TRANSLATIONS, TPT_STATUS_ERROR, TPT_STATUS_CANCELLED), 'IN')
+  ->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN')
   ->condition('source', transperfect_get_locale_code($source), '=');
 
   $result = $query->execute();
