@@ -29,19 +29,6 @@ define('TPT_STATUS_CANCELLED', 'Cancelled');
 
 define('PD_STATUS_CANCELLED', 'CANCELLED');
 
-define('TPT_LABEL_ACTIVE_SUBMISSION', t('Active Submission Name'));
-define('TPT_LABEL_SUBMISSION', t('Submission'));
-define('TPT_LABEL_CONTENT', t('Content'));
-define('TPT_LABEL_CONTENT_TYPE', t('Content Type'));
-define('TPT_LABEL_SOURCE_LANG', t('Source Language'));
-define('TPT_LABEL_TARGET_LANG', t('Target Language'));
-define('TPT_LABEL_STATUS', t('Status'));
-define('TPT_LABEL_LAST_UPDATED', t('Last Updated'));
-define('TPT_LABEL_TITLE', t('Title'));
-define('TPT_LABEL_FIELD_MACHINE', t('Field Name'));
-define('TPT_LABEL_FIELD_LABEL', t('Field Label'));
-define('TPT_LABEL_FIELD_TYPE', t('Field Type'));
-
 define('TPT_BTN_DASHBOARD_GO', t('Go'));
 define('TPT_BTN_DASHBOARD_BACK', t('Back'));
 define('TPT_BTN_DASHBOARD_SEND', t('Send for Translation'));

@@ -78,15 +78,15 @@ function transperfect_field() {
     $header = array(
       'field_label' => array(
         'field' => 'field_label',
-        'data' => TPT_LABEL_FIELD_LABEL,
+        'data' => t('Field Label'),
       ),
       'field_name' => array(
         'field' => 'field_name',
-        'data' => TPT_LABEL_FIELD_MACHINE,
+        'data' => t('Field Name'),
       ),
       'field_type' => array(
         'field' => 'field_type',
-        'data' => TPT_LABEL_FIELD_TYPE,
+        'data' => t('Field Type'),
       ),
     );
 

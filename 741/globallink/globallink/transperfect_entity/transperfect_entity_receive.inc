@@ -141,9 +141,25 @@ function transperfect_entity_receive_filter_form() {
     );
 
     $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_TARGET_LANG . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_STATUS . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>');
-    $form['filter-search']['filter-markup'][] = array('#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . TPT_LABEL_SUBMISSION . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>');
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>',
+      '#markup' => t('Target Language'),
+      '#suffix' => '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $languages[$default] . '</td></tr>',
+    );
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>',
+      '#markup' => t('Status'),
+      '#suffix' => '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $status_arr[$default_status] . '</td></tr>',
+    );
+
+    $form['filter-search']['filter-markup'][] = array(
+      '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>',
+      '#markup' => t('Submission'),
+      '#suffix' => '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $submission_options[$default_submission] . '</td></tr>',
+    );
+
     $form['filter-search']['filter-markup'][] = array('#markup' => '</table>');
 
     $form['filter-search']['status']['actions'] = array(
@@ -267,11 +283,11 @@ function transperfect_entity_receive_form() {
     }
 
     $header = array(
-      'submissionName' => TPT_LABEL_SUBMISSION,
-      'sourceLocale' => TPT_LABEL_SOURCE_LANG,
-      'targetLocale' => TPT_LABEL_TARGET_LANG,
-      'title' => TPT_LABEL_TITLE,
-      'status' => TPT_LABEL_STATUS,
+      'submissionName' => t('Submission'),
+      'sourceLocale' => t('Source Language'),
+      'targetLocale' => t('Target Language'),
+      'title' => t('Title'),
+      'status' => t('Status'),
     );
 
     if (variable_get('transperfect_enable_preview', 1)) {
