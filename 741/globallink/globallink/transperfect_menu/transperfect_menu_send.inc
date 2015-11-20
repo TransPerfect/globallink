@@ -264,7 +264,7 @@ function transperfect_dashboard_menu_form() {
 
     $count = 0;
 
-    $types = array('main-menu');
+    $types = array_keys(menu_get_menus());
 
     if (!empty($_SESSION['transperfect_selected_menu_types'])) {
       $types = $_SESSION['transperfect_selected_menu_types'];
