@@ -1,21 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_receive_translations.inc is a file that contains most functions
- * needed on the Receive Translation - Content UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_node.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
-require_once TPT_ROOT . '/' . ('transperfect_interface/transperfect_interface.inc');
-require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;
 
@@ -29,6 +13,9 @@ function transperfect_dashboard_receive_page($type) {
 }
 
 function transperfect_node_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'transperfect_node');
+
   $form = array();
 
   $submission_options = transperfect_get_distinct_active_submission_names();
@@ -261,6 +248,9 @@ function transperfect_dashboard_receive() {
     $type = $_SESSION['transpefect_dashboard_receive_type'];
 
     $globallink_arr = array();
+
+    module_load_include('inc', 'transperfect', 'transperfect_settings');
+    module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
     if (empty($_SESSION['transperfect_globalLink_arr'])) {
       try {

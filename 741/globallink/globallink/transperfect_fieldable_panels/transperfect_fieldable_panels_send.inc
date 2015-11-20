@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_fieldable_panels_send.inc is a file that contains most functions
- * needed on the Send for Translation - Fieldable Panels Panes UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 function transperfect_dashboard_fieldable_panels($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -23,7 +13,10 @@ function transperfect_dashboard_fieldable_panels($type) {
 }
 
 function transperfect_dashboard_fieldable_panels_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
+
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
 
   if (!empty($locales)) {

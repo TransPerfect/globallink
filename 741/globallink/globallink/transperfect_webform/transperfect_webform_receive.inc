@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_webform_receive.inc is a file that contains most functions
- * needed on the Receive Translation - Webforms UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_webform_receive_submissions($type) {
   $_SESSION['transpefect_webform_receive_type'] = $type;
 
@@ -23,6 +13,9 @@ function transperfect_webform_receive_submissions($type) {
 }
 
 function transperfect_webform_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
+
   $form = array();
 
   $filter = FALSE;
@@ -253,6 +246,9 @@ function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_webform_receive_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_webform_receive_type'])) {
@@ -746,7 +742,7 @@ function get_webform_translations_for_row_id($row_id) {
           continue;
         }
 
-        $translation = get_translated_webform_items($globallink->targetXML);
+        $translation = transperfect_get_translated_webform_items($globallink->targetXML);
         $lid = $translation['lid'];
         $webform = transperfect_load_source_data($lid);
 
@@ -754,12 +750,12 @@ function get_webform_translations_for_row_id($row_id) {
           $source = transperfect_load_source_data($lid);
           $source_arr_temp['source'] = $source[0]->source;
           $source_arr_temp['location'] = $source[0]->location;
-          $source_xml = get_webform_xml($lid, $source_arr_temp);
+          $source_xml = transperfect_get_webform_xml($lid, $source_arr_temp);
 
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = get_translated_webform_items($source_xml);
+            $source_arr = transperfect_get_translated_webform_items($source_xml);
           }
         }
         else {

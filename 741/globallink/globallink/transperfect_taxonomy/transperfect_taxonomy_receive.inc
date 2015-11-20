@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_taxonomy_receive.inc is a file that contains most functions
- * needed on the Receive Translation - Taxonomy UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_taxonomy_receive_submissions($type) {
   $_SESSION['transpefect_taxonomy_receive_type'] = $type;
 
@@ -23,6 +13,9 @@ function transperfect_taxonomy_receive_submissions($type) {
 }
 
 function transperfect_taxonomy_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
+
   $form = array();
 
   $filter = FALSE;
@@ -254,6 +247,9 @@ function transperfect_taxonomy_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_taxonomy_receive_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_taxonomy_receive_type'])) {

@@ -1,14 +1,5 @@
 <?php
 
-/**
- * @file
- * TransPerfect Entity translation module.
- *
- * This module adds Entity translation support with configuration options.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity_receive.inc');
-
 /*
  * Adds a validation handler to check for change in multilingual options
  */

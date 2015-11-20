@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_taxonomy_active_submissions.inc is a file that contains most functions
- * needed on the Active Submissions - Taxonomy UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-
 function transperfect_taxonomy_active_submissions($type) {
   $_SESSION['transpefect_taxonomy_active_type'] = $type;
 
@@ -21,6 +13,8 @@ function transperfect_taxonomy_active_submissions($type) {
 }
 
 function transperfect_taxonomy_active_select_form() {
+  module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
+
   $form = array();
 
   transperfect_get_taxonomy_submission_status();
@@ -186,6 +180,8 @@ function transperfect_taxonomy_active_form() {
   if (isset($_SESSION['transperfect_taxonomy_active_page_count'])) {
     $page_count = $_SESSION['transperfect_taxonomy_active_page_count'][0];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 

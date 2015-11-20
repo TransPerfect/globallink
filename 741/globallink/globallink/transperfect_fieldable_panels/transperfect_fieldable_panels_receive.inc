@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_fieldable_panels_receive.inc is a file that contains most functions
- * needed on the Receive Translation - Fieldable Panels Panes UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_fieldable_panels_receive_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_receive_type'] = $type;
 
@@ -23,7 +13,13 @@ function transperfect_fieldable_panels_receive_submissions($type) {
 }
 
 function transperfect_fieldable_panels_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
+
   $filter = FALSE;
 
   $submission_options = transperfect_get_distinct_active_fieldable_panels_submission_names();

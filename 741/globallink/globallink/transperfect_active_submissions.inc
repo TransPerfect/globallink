@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_active_submissions.inc is a file that contains most functions
- * needed on the Active Submissions - Content UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_node.inc');
-
 function transperfect_dashboard_active_submissions_page($type) {
   $_SESSION['transpefect_dashboard_active_type'] = $type;
 
@@ -21,6 +13,8 @@ function transperfect_dashboard_active_submissions_page($type) {
 }
 
 function transperfect_node_active_select_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_node');
+
   $form = array();
 
   transperfect_get_submission_status();
@@ -179,6 +173,8 @@ function transperfect_node_active_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_active() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';

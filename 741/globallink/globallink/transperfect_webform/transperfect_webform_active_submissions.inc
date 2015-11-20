@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_webform_active_submissions.inc is a file that contains most functions
- * needed on the Active Submissions - Webforms UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-
 function transperfect_webform_active_submissions($type) {
   $_SESSION['transpefect_webform_active_type'] = $type;
 
@@ -21,6 +13,8 @@ function transperfect_webform_active_submissions($type) {
 }
 
 function transperfect_webform_active_select_form() {
+  module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
+
   $form = array();
 
   transperfect_get_webform_pd_submission_status();
@@ -184,6 +178,8 @@ function transperfect_webform_active_form() {
   if (isset($_SESSION['transperfect_webform_active_page_count'])) {
     $page_count = $_SESSION['transperfect_webform_active_page_count'][0];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 

@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_menu_send.inc is a file that contains most functions
- * needed on the Send for Translation - Menu UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_menu/transperfect_menu.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 function transperfect_dashboard_menu($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -23,6 +13,8 @@ function transperfect_dashboard_menu($type) {
 }
 
 function transperfect_dashboard_menu_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
@@ -359,6 +351,8 @@ function transperfect_dashboard_menu_form() {
     }
 
     $results = $query->execute();
+
+    module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
     $rows = array();
 

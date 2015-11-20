@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_webform_send.inc is a file that contains most functions
- * needed on the Send for Translations - Webform UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_webform/transperfect_webform.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 function transperfect_dashboard_webform_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -23,6 +13,8 @@ function transperfect_dashboard_webform_page($type) {
 }
 
 function transperfect_dashboard_webform_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -273,6 +265,8 @@ function transperfect_dashboard_webform_form() {
         $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
       }
     }
+
+    module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
     if (!($query = transperfect_get_webform_translate_filter_query())) {
       $query = array(

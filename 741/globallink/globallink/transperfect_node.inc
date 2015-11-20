@@ -1,14 +1,6 @@
 <?php
 
 /**
- * @file
- * Miscellaneous TransPerfect functions.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
-
-/**
  * Sends content to GlobalLink for translation.
  *
  * @param array $nids
@@ -2071,6 +2063,9 @@ function transperfect_update_submission_status($submission_ticket, $status = 'Ca
  * Gets submission status for a translation on GlobalLink.
  */
 function transperfect_get_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();

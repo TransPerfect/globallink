@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Miscellaneous TransPerfect functions for webform translations.
- */
-
-require_once DRUPAL_ROOT . ('/includes/locale.inc');
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $globallink_arr = array();
 

@@ -1,16 +1,7 @@
 <?php
 
-/**
- * @file
- * Transperfect_entity_send.inc is a file that contains most functions
- * needed on the Send for Translation - Entity UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 $default_language = language_default();
+
 $GLOBALS['transperfect_entity_source_locale'] = $default_language->language;
 
 function transperfect_dashboard_entity($type) {
@@ -25,7 +16,10 @@ function transperfect_dashboard_entity($type) {
 }
 
 function transperfect_dashboard_entity_filter_form($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
+
   $redirect_nid = isset($_GET['rnid']) ? $_GET['rnid'] : '';
 
   if (!empty($redirect_nid)) {

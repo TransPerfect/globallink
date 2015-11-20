@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_entity_receive.inc is a file that contains most functions
- * needed on the Receive Translation - Entity UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_entity/transperfect_entity.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_receive_translations.inc');
-
 function transperfect_entity_receive_submissions($type) {
   $_SESSION['transpefect_entity_receive_type'] = $type;
 
@@ -22,6 +12,9 @@ function transperfect_entity_receive_submissions($type) {
 }
 
 function transperfect_entity_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
+
   $form = array();
 
   $submission_options = transperfect_get_distinct_entity_active_submission_names();
@@ -248,6 +241,9 @@ function transperfect_entity_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_entity_receive_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_entity_receive_type'])) {

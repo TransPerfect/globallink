@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_block_send.inc is a file that contains most functions
- * needed on the Send for Translation - Blocks UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_block/transperfect_block.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 function transperfect_dashboard_block($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -23,6 +13,8 @@ function transperfect_dashboard_block($type) {
 }
 
 function transperfect_dashboard_block_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -246,6 +238,8 @@ function transperfect_dashboard_block_form() {
       if ($default_info != '') {
         $query->condition('info', '%' . $default_info . '%', 'LIKE');
       }
+
+      module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
       $result = $query->execute();
 

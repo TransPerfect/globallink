@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_taxonomy_send.inc is a file that contains most functions
- * needed on the Send for Translation - Taxonomy UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_taxonomy/transperfect_taxonomy.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 function transperfect_dashboard_taxonomy($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -23,6 +13,9 @@ function transperfect_dashboard_taxonomy($type) {
 }
 
 function transperfect_dashboard_taxonomy_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
+
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);

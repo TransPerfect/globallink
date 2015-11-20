@@ -1,15 +1,5 @@
 <?php
 
-/**
- * @file
- * transperfect_send_translations.inc is a file that contains most functions
- * needed on the Send for Translations - Content UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('transperfect_node.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_send_translations.inc');
-
 $default_language = language_default();
 
 $GLOBALS['transperfect_source_locale'] = $default_language->language;
@@ -27,6 +17,8 @@ function transperfect_dashboard_page($type) {
 }
 
 function transperfect_dashboard_node_filter_form($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $redirect_nid = isset($_GET['rnid']) ? $_GET['rnid'] : '';
@@ -770,6 +762,8 @@ function transperfect_dashboard_node_form() {
           }
 
           $results = $d_query->execute();
+
+          module_load_include('inc', 'transperfect', 'transperfect_node');
 
           $rows = array();
 

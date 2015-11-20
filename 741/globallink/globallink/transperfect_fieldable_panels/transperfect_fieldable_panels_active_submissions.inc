@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Transperfect_fieldable_panels_active_submissions.inc is a file that contains most functions
- * needed on the Active Submissions - Fieldable Panels Panes UI.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_fieldable_panels/transperfect_fieldable_panels.inc');
-
 function transperfect_fieldable_panels_active_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_active_type'] = $type;
 
@@ -20,6 +12,8 @@ function transperfect_fieldable_panels_active_submissions($type) {
 }
 
 function transperfect_fieldable_panels_active_select_form() {
+  module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
+
   $form = array();
 
   transperfect_get_fieldable_panels_submission_status();
@@ -183,6 +177,8 @@ function transperfect_fieldable_panels_active_form() {
   if (isset($_SESSION['transperfect_fieldable_panels_active_page_count'])) {
     $page_count = $_SESSION['transperfect_fieldable_panels_active_page_count'][0];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 

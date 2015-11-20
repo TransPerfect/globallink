@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Miscellaneous TransPerfect functions for entity translations.
- */
-
-require_once TPT_ROOT . '/' . ('transperfect_settings.inc');
-require_once TPT_ROOT . '/' . ('gl_ws/gl_ws_common.inc');
-
 function transperfect_send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $node_check = variable_get('transperfect_implementation_type', 0);
   $submitter = $submission_details['submitter'];
@@ -1357,6 +1349,10 @@ function transperfect_update_submission_entity_status($submission_ticket, $statu
 }
 
 function get_entity_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core_entity', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
