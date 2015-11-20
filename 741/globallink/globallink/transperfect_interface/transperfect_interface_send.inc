@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
-
 function transperfect_dashboard_interface_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_dashboard_interface_page($type) {
 }
 
 function transperfect_dashboard_interface_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -257,6 +256,8 @@ function transperfect_dashboard_interface_form() {
         $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
       }
     }
+
+    module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
 
     if (!($query = transperfect_get_interface_translate_filter_query())) {
       $query = array(

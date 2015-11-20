@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
-
 function transperfect_menu_active_submissions($type) {
   $_SESSION['transpefect_menu_active_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_menu_active_submissions($type) {
 }
 
 function transperfect_menu_active_select_form() {
+  module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
+
   $form = array();
 
   transperfect_get_menu_submission_status();
@@ -159,6 +158,8 @@ function menu_active_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_menu_active_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');

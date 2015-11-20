@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
-
 function transperfect_menu_receive_submissions($type) {
   $_SESSION['transpefect_menu_receive_type'] = $type;
 
@@ -15,6 +13,9 @@ function transperfect_menu_receive_submissions($type) {
 }
 
 function transperfect_menu_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
+
   $form = array();
 
   $filter = FALSE;
@@ -246,6 +247,9 @@ function transperfect_menu_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_menu_receive_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_menu_receive_type'])) {

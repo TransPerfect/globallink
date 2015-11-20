@@ -1,8 +1,7 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-
 $default_language = language_default();
+
 $GLOBALS['transperfect_entity_source_locale'] = $default_language->language;
 
 function transperfect_dashboard_entity($type) {
@@ -17,7 +16,10 @@ function transperfect_dashboard_entity($type) {
 }
 
 function transperfect_dashboard_entity_filter_form($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
+
   $redirect_nid = isset($_GET['rnid']) ? $_GET['rnid'] : '';
 
   if (!empty($redirect_nid)) {

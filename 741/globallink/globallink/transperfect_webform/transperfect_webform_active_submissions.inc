@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
-
 function transperfect_webform_active_submissions($type) {
   $_SESSION['transpefect_webform_active_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_webform_active_submissions($type) {
 }
 
 function transperfect_webform_active_select_form() {
+  module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
+
   $form = array();
 
   transperfect_get_webform_pd_submission_status();
@@ -179,6 +178,8 @@ function transperfect_webform_active_form() {
   if (isset($_SESSION['transperfect_webform_active_page_count'])) {
     $page_count = $_SESSION['transperfect_webform_active_page_count'][0];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 

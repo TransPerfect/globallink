@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
-
 function transperfect_dashboard_webform_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_dashboard_webform_page($type) {
 }
 
 function transperfect_dashboard_webform_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -266,6 +265,8 @@ function transperfect_dashboard_webform_form() {
         $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
       }
     }
+
+    module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
     if (!($query = transperfect_get_webform_translate_filter_query())) {
       $query = array(

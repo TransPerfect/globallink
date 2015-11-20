@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
-
 function transperfect_interface_receive_submissions($type) {
   $_SESSION['transpefect_interface_receive_type'] = $type;
 
@@ -15,6 +13,10 @@ function transperfect_interface_receive_submissions($type) {
 }
 
 function transperfect_interface_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
+
   $form = array();
 
   $filter = FALSE;
@@ -251,6 +253,8 @@ function transperfect_interface_receive_form() {
   if (!empty($_SESSION['transpefect_interface_receive_type'])) {
     $type = $_SESSION['transpefect_interface_receive_type'];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
 
   $globallink_arr = array();
 

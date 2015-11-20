@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
-
 function transperfect_interface_active_submissions($type) {
   $_SESSION['transpefect_interface_active_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_interface_active_submissions($type) {
 }
 
 function transperfect_interface_active_select_form() {
+  module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
+
   $form = array();
 
   transperfect_get_interface_pd_submission_status();
@@ -161,6 +160,8 @@ function interface_active_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_interface_active_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');

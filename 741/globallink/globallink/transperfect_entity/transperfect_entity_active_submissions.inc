@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-
 function transperfect_entity_active_submissions($type) {
   $_SESSION['transpefect_entity_active_type'] = $type;
 
@@ -14,6 +12,9 @@ function transperfect_entity_active_submissions($type) {
 }
 
 function transperfect_entity_active_select_form() {
+  module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   get_entity_submission_status();

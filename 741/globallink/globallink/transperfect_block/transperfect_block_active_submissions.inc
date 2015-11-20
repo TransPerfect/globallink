@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect_block', 'transperfect_block');
-
 function transperfect_block_active_submissions($type) {
   $_SESSION['transpefect_block_active_type'] = $type;
 
@@ -16,6 +13,8 @@ function transperfect_block_active_submissions($type) {
 }
 
 function transperfect_block_active_select_form() {
+  module_load_include('inc', 'transperfect_block', 'transperfect_block');
+
   $form = array();
 
   get_block_submission_status();
@@ -180,6 +179,8 @@ function transperfect_block_active_form() {
   if (isset($_SESSION['transperfect_block_active_page_count'])) {
     $page_count = $_SESSION['transperfect_block_active_page_count'][0];
   }
+
+  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 

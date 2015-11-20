@@ -2063,6 +2063,9 @@ function transperfect_update_submission_status($submission_ticket, $status = 'Ca
  * Gets submission status for a translation on GlobalLink.
  */
 function transperfect_get_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();

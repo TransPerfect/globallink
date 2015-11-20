@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect_settings');
-
 function transperfect_send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $source_arr = transperfect_get_source('default');
   $submitter = $submission_details['submitter'];

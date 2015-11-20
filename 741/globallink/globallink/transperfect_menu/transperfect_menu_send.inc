@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-
 function transperfect_dashboard_menu($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -15,6 +13,8 @@ function transperfect_dashboard_menu($type) {
 }
 
 function transperfect_dashboard_menu_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
@@ -352,6 +352,8 @@ function transperfect_dashboard_menu_form() {
     }
 
     $results = $query->execute();
+
+    module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
     $rows = array();
 

@@ -1,7 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-
 function transperfect_dashboard_fieldable_panels($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -15,7 +13,10 @@ function transperfect_dashboard_fieldable_panels($type) {
 }
 
 function transperfect_dashboard_fieldable_panels_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
+
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
 
   if (!empty($locales)) {

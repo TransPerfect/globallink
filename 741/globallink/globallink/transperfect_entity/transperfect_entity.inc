@@ -1349,6 +1349,10 @@ function transperfect_update_submission_entity_status($submission_ticket, $statu
 }
 
 function get_entity_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core_entity', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();

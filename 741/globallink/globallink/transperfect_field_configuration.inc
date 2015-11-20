@@ -11,6 +11,8 @@ function transperfect_field_page() {
 }
 
 function transperfect_field() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $selected_value = '';
 
   if (!empty($_SESSION['transperfect_selected_content_type'])) {

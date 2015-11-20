@@ -1,8 +1,5 @@
 <?php
 
-module_load_include('inc', 'transperfect', 'transperfect');
-module_load_include('inc', 'transperfect', 'transperfect_node');
-
 function transperfect_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;
 
@@ -16,6 +13,9 @@ function transperfect_dashboard_receive_page($type) {
 }
 
 function transperfect_node_receive_filter_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'transperfect_node');
+
   $form = array();
 
   $submission_options = transperfect_get_distinct_active_submission_names();
@@ -248,6 +248,9 @@ function transperfect_dashboard_receive() {
     $type = $_SESSION['transpefect_dashboard_receive_type'];
 
     $globallink_arr = array();
+
+    module_load_include('inc', 'transperfect', 'transperfect_settings');
+    module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
     if (empty($_SESSION['transperfect_globalLink_arr'])) {
       try {
