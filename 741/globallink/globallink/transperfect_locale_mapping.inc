@@ -12,6 +12,7 @@ function transperfect_locale_page() {
 
 function transperfect_locale() {
   $form = array();
+
   $languages = language_list('language', TRUE);
   $mapped_languages = transperfect_get_mapped_locale_codes();
 
@@ -20,6 +21,7 @@ function transperfect_locale() {
       foreach ($languages as $language) {
         if ($language->language == $mlang) {
           unset($languages[$mlang]);
+
           break;
         }
       }
@@ -27,6 +29,7 @@ function transperfect_locale() {
   }
 
   $drupal_list = array();
+
   foreach ($languages as $language) {
     if ($language->enabled == 1) {
       $drupal_list[$language->language . '|' . $language->name] = $language->name;
@@ -38,41 +41,42 @@ function transperfect_locale() {
   $header = array(
     'drupal_locale_code' => array(
       'field' => 'tl.drupal_locale_desc',
-      'data' => t('Drupal Site Locales')
+      'data' => t('Drupal Site Locales'),
     ),
     'locale_code' => array(
       'field' => 'tl.locale_desc',
-      'data' => t('GlobalLink Locales')
-    )
+      'data' => t('GlobalLink Locales'),
+    ),
   );
 
   $query = db_select('transperfect_locale', 'tl')
-          ->isNotNull('drupal_locale_code')
-          ->fields('tl')
+  ->isNotNull('drupal_locale_code')
+  ->fields('tl')
   ->extend('PagerDefault')
   ->limit(TPT_PAGER_LIMIT)
   ->extend('TableSort')
-  ->orderByHeader($header)
-  ;
+  ->orderByHeader($header);
 
   $results = $query->execute();
 
   $count = 0;
+
   $rows = array();
 
   foreach ($results as $item) {
     $count++;
+
     $rows[$item->locale_code] = array(
-        'drupal_locale_code' => $item->drupal_locale_desc,
-        'locale_code' => $item->locale_desc,
+      'drupal_locale_code' => $item->drupal_locale_desc,
+      'locale_code' => $item->locale_desc,
     );
   }
 
   $form['table'] = array(
-      '#type' => 'tableselect',
-      '#header' => $header,
-      '#options' => $rows,
-      '#empty' => t('No items available'),
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $rows,
+    '#empty' => t('No items available'),
   );
 
   $form['pager'] = array('#markup' => theme('pager'));
@@ -80,16 +84,16 @@ function transperfect_locale() {
   if ($count > 0) {
     $form['submit_locale_delete'] = array(
       '#type' => 'submit',
-      '#value' => t('Delete')
+      '#value' => t('Delete'),
     );
   }
 
   $form['locale_mapping'] = array(
-      '#title' => t('Locale Mapping'),
-      '#type' => 'fieldset',
-      '#description' => t('Map the Drupal locales with GlobalLink locales'),
-      '#collapsible' => TRUE,
-      '#collapsed' => FALSE
+    '#title' => t('Locale Mapping'),
+    '#type' => 'fieldset',
+    '#description' => t('Map the Drupal locales with GlobalLink locales'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
   );
 
 
@@ -97,18 +101,18 @@ function transperfect_locale() {
     $form['locale_mapping']['drupal_locale_list'] = array(
       '#title' => t('Drupal Locale'),
       '#type' => 'select',
-      '#options' => $drupal_list
+      '#options' => $drupal_list,
     );
 
     $form['locale_mapping']['tpt_locale_list'] = array(
       '#title' => t('GlobalLink Locale'),
       '#type' => 'select',
-      '#options' => $tpt_list
+      '#options' => $tpt_list,
     );
 
     $form['locale_mapping']['submit_locale_add'] = array(
       '#type' => 'submit',
-      '#value' => t('Add')
+      '#value' => t('Add'),
     );
   }
   else {
@@ -116,7 +120,7 @@ function transperfect_locale() {
       '#type' => 'markup',
       '#prefix' => '<br/><b><i>',
       '#markup' => t('Nothing to Map'),
-      '#suffix' => '</i></b>'
+      '#suffix' => '</i></b>',
     );
   }
 
@@ -130,26 +134,30 @@ function transperfect_locale_validate($form, &$form_state) {
     return;
   }
 
-    $rids = array_filter($form_state['values']['table']);
-    if (count($rids) == 0) {
-      form_set_error('', t('No items selected.'));
-    }
+  $rids = array_filter($form_state['values']['table']);
+
+  if (count($rids) == 0) {
+    form_set_error('', t('No items selected.'));
+  }
 }
 
 function transperfect_locale_submit($form, &$form_state) {
-
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
+
   if ($op == t('Add')) {
     $drupal_seleced_locale = $form_state['values']['drupal_locale_list'];
     $drupal_locale = explode('|', $drupal_seleced_locale);
     $locale_code = $form_state['values']['tpt_locale_list'];
+
     transperfect_add_locale_mapping($drupal_locale[0], $drupal_locale[1], $locale_code);
     drupal_set_message(t('Mapping added successfully.'));
   }
   else {
     $locales_arr = array_filter($form_state['values']['table']);
+
     foreach ($locales_arr as $locale) {
       $locale_name = transperfect_get_drupal_locale_name($locale);
+
       if (transperfect_check_pending_submission($locale)) {
         transperfect_delete_locale_mapping($locale);
         drupal_set_message(t('@locale mapping deleted successfully.', array('@locale' => check_plain($locale_name))));
@@ -163,6 +171,7 @@ function transperfect_locale_submit($form, &$form_state) {
 
 function transperfect_check_pending_submission($locale) {
   $query1 = db_select('transperfect_core', 'tc')
+
   ->fields('tc', array('rid'))
   ->condition('tc.status', array('Sent for Translations', 'Error'), 'IN')
   ->condition(
@@ -172,12 +181,12 @@ function transperfect_check_pending_submission($locale) {
   );
 
   $table_arr = array(
-      'tce' => 'transperfect_core_entity',
-      'tcb' => 'transperfect_core_block',
-      'tci' => 'transperfect_core_interface',
-      'tcm' => 'transperfect_core_menu',
-      'tct' => 'transperfect_core_taxonomy',
-      'tcw' => 'transperfect_core_webform'
+    'tce' => 'transperfect_core_entity',
+    'tcb' => 'transperfect_core_block',
+    'tci' => 'transperfect_core_interface',
+    'tcm' => 'transperfect_core_menu',
+    'tct' => 'transperfect_core_taxonomy',
+    'tcw' => 'transperfect_core_webform',
   );
 
   foreach ($table_arr as $key => $table) {
@@ -210,26 +219,30 @@ function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $l
   db_update('transperfect_locale')
   ->fields(array(
     'drupal_locale_code' => $drupal_locale,
-    'drupal_locale_desc' => $drupal_locale_desc
+    'drupal_locale_desc' => $drupal_locale_desc,
   ))
-          ->condition('locale_code', $locale_code, '=')
-          ->execute();
+  ->condition('locale_code', $locale_code, '=')
+  ->execute();
 }
 
 function transperfect_delete_locale_mapping($locale_code) {
   db_update('transperfect_locale')
-          ->fields(array('drupal_locale_code' => NULL))
-          ->condition('locale_code', $locale_code, '=')
-          ->execute();
+  ->fields(array(
+    'drupal_locale_code' => NULL,
+  ))
+  ->condition('locale_code', $locale_code, '=')
+  ->execute();
 }
 
 function transperfect_get_tpt_list() {
   $languages = array();
+
   $result = db_select('transperfect_locale', 'tl')
-          ->fields('tl')
-          ->isNull('drupal_locale_code')
-          ->orderBy('locale_desc', 'ASC')
-          ->execute();
+  ->fields('tl')
+  ->isNull('drupal_locale_code')
+  ->orderBy('locale_desc', 'ASC')
+  ->execute();
+
   foreach ($result as $row) {
     $languages[$row->locale_code] = $row->locale_desc;
   }
@@ -239,11 +252,13 @@ function transperfect_get_tpt_list() {
 
 function transperfect_get_mapped_locale_codes() {
   $languages = array();
+
   $result = db_select('transperfect_locale', 'tl')
-          ->fields('tl')
-          ->isNotNull('drupal_locale_code')
-          ->orderBy('locale_desc', 'ASC')
-          ->execute();
+  ->fields('tl')
+  ->isNotNull('drupal_locale_code')
+  ->orderBy('locale_desc', 'ASC')
+  ->execute();
+
   foreach ($result as $row) {
     $languages[$row->locale_code] = $row->drupal_locale_code;
   }
@@ -253,17 +268,20 @@ function transperfect_get_mapped_locale_codes() {
 
 function transperfect_get_mapped_tpt_locales($remove_default = TRUE) {
   $languages = array();
+
   $result = db_select('transperfect_locale', 'tl')
-          ->fields('tl')
-          ->isNotNull('drupal_locale_code')
-          ->orderBy('locale_desc', 'ASC')
-          ->execute();
+  ->fields('tl')
+  ->isNotNull('drupal_locale_code')
+  ->orderBy('locale_desc', 'ASC')
+  ->execute();
+
   foreach ($result as $row) {
     if ($remove_default) {
       if (language_default()->language == $row->drupal_locale_code) {
         continue;
       }
     }
+    
     $languages[$row->locale_code] = $row->locale_desc;
   }
 
