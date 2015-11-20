@@ -459,7 +459,7 @@ function transperfect_dashboard_taxonomy_form() {
           '#title' => t('Source Language'),
           '#required' => TRUE,
           '#options' => $source_lang_arr,
-          '#default_value' => empty($form_state['values']['submission_source_locale']) ? get_tpt_locale_code($default) : $form_state['values']['submission_source_locale'],
+          '#default_value' => empty($form_state['values']['submission_source_locale']) ? transperfect_get_locale_code($default) : $form_state['values']['submission_source_locale'],
           '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
           '#field_suffix' => '</td>',
