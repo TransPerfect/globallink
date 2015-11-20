@@ -247,10 +247,9 @@ function transperfect_dashboard_fieldable_panels_form() {
 
     $query = db_select('fieldable_panels_panes', 'fpp')
     ->fields('fpp')
-    ->condition('language', $default, '=')
-    ->extend('PagerDefault') // Pager Extender
-    ->limit($page_count) // 10 results per page
-    ->extend('TableSort'); // Sorting Extender
+    ->extend('PagerDefault')
+    ->limit($page_count)
+    ->extend('TableSort');
 
     $sort_order = isset($_GET['order']) ? $_GET['order'] : '';
 
@@ -417,8 +416,7 @@ function transperfect_dashboard_fieldable_panels_form() {
           '#title' => t('Source Language'),
           '#required' => TRUE,
           '#options' => $source_lang_arr,
-          '#default_value' => transperfect_get_locale_code($default),
-          '#disabled' => TRUE,
+          '#default_value' => empty($form_state['values']['submission_source_locale']) ? transperfect_get_locale_code($default) : $form_state['values']['submission_source_locale'],
           '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
           '#field_suffix' => '</td>',
