@@ -19,6 +19,3 @@ stylesheets[screen][] = css/transperfect_active_submissions.css
 scripts[] = js/transperfect_active_submissions.js
 scripts[] = js/transperfect_send_translations.js
 scripts[] = js/transperfect_field_configuration.js
-scripts[] = transperfect_entity/js/transperfect_entity_active_submissions.js
-scripts[] = transperfect_interface/js/transperfect_interface_active_submissions.js
-scripts[] = transperfect_entity/js/transperfect_entity_send.js
