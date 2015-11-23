@@ -14,6 +14,7 @@ function transperfect_dashboard_menu($type) {
 
 function transperfect_dashboard_menu_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
 
   $form = array();
 
@@ -563,6 +564,8 @@ function transperfect_dashboard_menu_form() {
 }
 
 function transperfect_dashboard_menu_form_validate($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 

@@ -700,6 +700,9 @@ function transperfect_update_menu_submission_status($submission_ticket, $status 
 }
 
 function transperfect_get_menu_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core_menu', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
