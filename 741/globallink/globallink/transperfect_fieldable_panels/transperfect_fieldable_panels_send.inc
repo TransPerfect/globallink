@@ -256,6 +256,9 @@ function transperfect_dashboard_fieldable_panels_form() {
     $results = $query->execute();
 
     $count = 0;
+
+    module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
+
     $rows = array();
 
     foreach ($results as $item) {
