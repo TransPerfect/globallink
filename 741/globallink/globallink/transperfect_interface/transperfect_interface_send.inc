@@ -219,6 +219,8 @@ function interface_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_interface_form() {
+  module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -256,8 +258,6 @@ function transperfect_dashboard_interface_form() {
         $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
       }
     }
-
-    module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
 
     if (!($query = transperfect_get_interface_translate_filter_query())) {
       $query = array(

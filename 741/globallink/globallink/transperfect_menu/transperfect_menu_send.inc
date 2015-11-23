@@ -245,6 +245,8 @@ function menu_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_menu_form() {
+  module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -351,8 +353,6 @@ function transperfect_dashboard_menu_form() {
     }
 
     $results = $query->execute();
-
-    module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
     $rows = array();
 

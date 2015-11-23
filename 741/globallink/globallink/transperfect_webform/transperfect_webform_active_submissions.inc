@@ -157,6 +157,8 @@ function webform_active_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_webform_active_form() {
+  module_load_include('inc', 'transperfect', 'transperfect');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -178,8 +180,6 @@ function transperfect_webform_active_form() {
   if (isset($_SESSION['transperfect_webform_active_page_count'])) {
     $page_count = $_SESSION['transperfect_webform_active_page_count'][0];
   }
-
-  module_load_include('inc', 'transperfect', 'transperfect');
 
   $projects = transperfect_get_pd_projects();
 
