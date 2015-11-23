@@ -242,15 +242,15 @@ function transperfect_node_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_receive() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  
   $form = array();
 
   if (!empty($_SESSION['transpefect_dashboard_receive_type'])) {
     $type = $_SESSION['transpefect_dashboard_receive_type'];
 
     $globallink_arr = array();
-
-    module_load_include('inc', 'transperfect', 'transperfect_settings');
-    module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
     if (empty($_SESSION['transperfect_globalLink_arr'])) {
       try {

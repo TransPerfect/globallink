@@ -565,6 +565,8 @@ function transperfect_update_status(&$globallink) {
  *   The translated array. Defaults to null.
  */
 function transperfect_update_node(&$globallink, $t_arr = NULL) {
+  module_load_include('inc', 'node', 'node.pages');
+
   $success = FALSE;
 
   try {
@@ -645,7 +647,6 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
         $new_node->language = $_tnode->language;
         $new_node->revision = 1;
 
-        module_load_include('inc', 'node', 'node.pages');
         // Fix for menu link issue
         // node_object_prepare($new_node);
 
@@ -806,7 +807,6 @@ function transperfect_update_node(&$globallink, $t_arr = NULL) {
       unset($new_node->nid);
       unset($new_node->vid);
 
-      module_load_include('inc', 'node', 'node.pages');
       node_object_prepare($new_node);
 
       // IF translating from default to any other language e.g. en to fr

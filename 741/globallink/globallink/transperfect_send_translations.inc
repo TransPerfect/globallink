@@ -460,6 +460,8 @@ function transperfect_node_form_pager_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_node_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_node');
+
   $default_checked_ids = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -762,8 +764,6 @@ function transperfect_dashboard_node_form() {
           }
 
           $results = $d_query->execute();
-
-          module_load_include('inc', 'transperfect', 'transperfect_node');
 
           $rows = array();
 

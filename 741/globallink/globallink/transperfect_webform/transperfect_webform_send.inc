@@ -229,6 +229,8 @@ function webform_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_webform_form() {
+  module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -265,8 +267,6 @@ function transperfect_dashboard_webform_form() {
         $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
       }
     }
-
-    module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
     if (!($query = transperfect_get_webform_translate_filter_query())) {
       $query = array(

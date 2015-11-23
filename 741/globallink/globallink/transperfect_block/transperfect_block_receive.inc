@@ -249,13 +249,13 @@ function transperfect_block_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_block_receive_form() {
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_block_receive_type'])) {
     $type = $_SESSION['transpefect_block_receive_type'];
   }
-
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
   $globallink_arr = array();
 

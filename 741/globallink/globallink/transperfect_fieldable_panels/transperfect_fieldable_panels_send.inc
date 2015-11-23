@@ -189,7 +189,10 @@ function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form
 }
 
 function transperfect_dashboard_fieldable_panels_form() {
+  module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
+
   $form = array();
+  
   $module_path = drupal_get_path('module', 'transperfect');
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
 
@@ -256,6 +259,7 @@ function transperfect_dashboard_fieldable_panels_form() {
     $results = $query->execute();
 
     $count = 0;
+
     $rows = array();
 
     foreach ($results as $item) {

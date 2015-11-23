@@ -248,13 +248,13 @@ function transperfect_interface_receive_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_interface_receive_form() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_interface_receive_type'])) {
     $type = $_SESSION['transpefect_interface_receive_type'];
   }
-
-  module_load_include('inc', 'transperfect', 'transperfect_settings');
 
   $globallink_arr = array();
 

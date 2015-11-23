@@ -163,6 +163,8 @@ function block_pager_form_submit($form, &$form_state) {
 }
 
 function transperfect_dashboard_block_form() {
+  module_load_include('inc', 'transperfect_block', 'transperfect_block');
+
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -238,8 +240,6 @@ function transperfect_dashboard_block_form() {
       if ($default_info != '') {
         $query->condition('info', '%' . $default_info . '%', 'LIKE');
       }
-
-      module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
       $result = $query->execute();
 
