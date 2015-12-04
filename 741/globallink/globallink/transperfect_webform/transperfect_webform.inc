@@ -588,6 +588,9 @@ function transperfect_update_webform_submission_status($submission_ticket, $stat
 }
 
 function transperfect_get_webform_pd_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  
   $query = db_select('transperfect_core_webform', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();

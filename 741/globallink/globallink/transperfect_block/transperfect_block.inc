@@ -631,6 +631,9 @@ function transperfect_update_block_submission_status($submission_ticket, $status
 }
 
 function get_block_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core_block', 'tcb');
   $query->fields('tcb', array('submission_ticket'));
   $query->distinct();
