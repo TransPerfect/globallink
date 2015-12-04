@@ -449,6 +449,8 @@ function transperfect_dashboard_block_form() {
 }
 
 function transperfect_dashboard_block_form_validate($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 

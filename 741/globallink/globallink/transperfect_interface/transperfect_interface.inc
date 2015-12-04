@@ -1,6 +1,8 @@
 <?php
 
 function transperfect_send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
+
   $source_arr = transperfect_get_source('default');
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
@@ -549,6 +551,9 @@ function transperfect_update_interface_submission_status($submission_ticket, $st
 }
 
 function transperfect_get_interface_pd_submission_status() {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+
   $query = db_select('transperfect_core_interface', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
