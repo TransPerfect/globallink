@@ -28,6 +28,8 @@ function transperfect_fieldable_panels_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
+  $form['#attributes']['class'][] = 'transperfect-fieldable-panels-active-select-form';
+
   $form['select_submission'] = array(
     '#type' => 'container',
     '#attributes' => array('class' => array('container-inline')),
@@ -39,7 +41,7 @@ function transperfect_fieldable_panels_active_select_form() {
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
-      'onChange' => 'document.getElementById("transperfect-fieldable-panels-active-select-form").submit();',
+      'class' => array('transperfect-fieldable-panels-select-active-submission'),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
@@ -54,9 +56,6 @@ function transperfect_fieldable_panels_active_select_form() {
     $form['select_submission']['submit_cancel_submission'] = array(
       '#type' => 'submit',
       '#value' => t('Cancel Submission'),
-      '#attributes' => array(
-        'onClick' => 'transperfect-fieldable-panels-active-select-form.submit();',
-      ),
     );
   }
   else {
@@ -262,17 +261,11 @@ function transperfect_fieldable_panels_active_form() {
       $form['submit_cancel_document'] = array(
         '#type' => 'submit',
         '#value' => t('Cancel Selected Documents'),
-        '#attributes' => array(
-          'onClick' => 'transperfect-fieldable-panels-active-form.submit();',
-        ),
       );
 
       $form['submit_clear_cancelled_documents'] = array(
         '#type' => 'submit',
         '#value' => t('Clear Cancelled Documents'),
-        '#attributes' => array(
-          'onClick' => 'document.transperfect-dashboard-active.submit();',
-        ),
       );
     }
   }

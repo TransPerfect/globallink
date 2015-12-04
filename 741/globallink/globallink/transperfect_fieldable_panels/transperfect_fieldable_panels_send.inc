@@ -192,7 +192,7 @@ function transperfect_dashboard_fieldable_panels_form() {
   module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
 
   $form = array();
-  
+
   $module_path = drupal_get_path('module', 'transperfect');
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
 
@@ -467,6 +467,8 @@ function transperfect_dashboard_fieldable_panels_form() {
 }
 
 function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_state) {
+  module_load_include('inc', 'transperfect', 'transperfect_settings');
+  
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
