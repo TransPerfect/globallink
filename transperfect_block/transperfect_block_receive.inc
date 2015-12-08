@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on block receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the block receive dashboard.
+ */
 function transperfect_block_receive_submissions($type) {
   $_SESSION['transpefect_block_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_block_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter blocks to receive on dashboard.
+ */
 function transperfect_block_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'transperfect_settings');
@@ -172,6 +184,9 @@ function transperfect_block_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_block_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -197,6 +212,9 @@ function transperfect_block_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to block receive dashboard.
+ */
 function transperfect_block_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -229,6 +247,9 @@ function transperfect_block_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_block_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -248,6 +269,9 @@ function transperfect_block_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a block submission.
+ */
 function transperfect_block_receive_form() {
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
@@ -504,6 +528,9 @@ function transperfect_block_receive_form() {
   return $form;
 }
 
+/**
+ * Validates block form input.
+ */
 function transperfect_block_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -521,6 +548,9 @@ function transperfect_block_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles block form submission.
+ */
 function transperfect_block_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_block_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -686,6 +716,9 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Previews translated block content in the form of JSON.
+ */
 function preview_translated_block_content() {
   $row_id = $_POST['rid'];
   $arr = get_block_translations_for_row_id($row_id);
@@ -693,6 +726,15 @@ function preview_translated_block_content() {
   drupal_json_output($arr);
 }
 
+/**
+ * Gets block translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of block translations.
+ */
 function get_block_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'block');
 

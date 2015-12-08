@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on block send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the block send dashboard.
+ */
 function transperfect_dashboard_block($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_block($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter blocks to send for translation on dashboard.
+ */
 function transperfect_dashboard_block_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -95,6 +107,9 @@ function transperfect_dashboard_block_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -110,6 +125,9 @@ function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to block send dashboard.
+ */
 function transperfect_dashboard_block_pager_form() {
   $form = array();
 
@@ -143,6 +161,9 @@ function transperfect_dashboard_block_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function block_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -162,6 +183,9 @@ function block_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to create a block submission.
+ */
 function transperfect_dashboard_block_form() {
   module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
@@ -448,9 +472,12 @@ function transperfect_dashboard_block_form() {
   return $form;
 }
 
+/**
+ * Validates block form input.
+ */
 function transperfect_dashboard_block_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -511,6 +538,9 @@ function transperfect_dashboard_block_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles block form submission.
+ */
 function transperfect_dashboard_block_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
