@@ -73,6 +73,32 @@ function transperfect_get_taxonomy_xml($term, $path) {
     transperfect_insert_child_element($dom, $root, 'taxonomy', $path, array('name' => 'path'));
   }
 
+  $fields = field_info_instances('taxonomy_term', $term->vocabulary_machine_name);
+
+  foreach (array_keys($fields) as $field) {
+    if (empty($term->{$field})) {
+      continue;
+    }
+
+    $field_value = $term->{$field};
+
+    if (is_array($field_value) && !empty($field_value[$term->language])) {
+      foreach ($field_value[$term->language] as $delta => $values) {
+        insert_child_element($dom, $root, 'field', $values['value'], array(
+          'field' => $field,
+          'delta' => $delta,
+          'langcode' => $term->language,
+        ));
+      }
+    }
+    elseif (!empty($field_value) && is_string($field_value)) {
+      insert_child_element($dom, $root, 'field', $field_value, array(
+        'field' => $field,
+      ));
+    }
+  }
+
+
   $xml = $dom->saveXML();
 
   return $xml;
