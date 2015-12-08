@@ -29,11 +29,11 @@ function transperfect_block_active_select_form() {
 
   $form = array();
 
-  get_block_submission_status();
+  transperfect_block_get_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = transperfect_get_block_active_submission_names();
+  $options = transperfect_block_get_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_block_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_block_selected_submission'];
@@ -104,7 +104,7 @@ function transperfect_block_active_select_form_submit($form, &$form_state) {
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_block_selected_submission'] = '';
 
-        transperfect_cancel_block_submission($selected_submission);
+        transperfect_block_cancel_submission($selected_submission);
 
         $_SESSION['transperfect_block_globalLink_arr'] = array();
 
@@ -148,7 +148,7 @@ function transperfect_block_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('block_active_pager_form_submit'),
+    '#submit' => array('transperfect_block_active_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -158,7 +158,7 @@ function transperfect_block_active_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function block_active_pager_form_submit($form, &$form_state) {
+function transperfect_block_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -195,7 +195,7 @@ function transperfect_block_active_form() {
     $selected_value = $_SESSION['transperfect_block_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_get_block_active_submission_names();
+    $options = transperfect_block_get_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -267,7 +267,7 @@ function transperfect_block_active_form() {
   foreach ($results as $item) {
     $count++;
 
-    $block_info = transperfect_load_block_data($item->object_id);
+    $block_info = transperfect_block_load_data($item->object_id);
 
     $rows[$item->rid] = array(
       'submission' => $item->submission,
@@ -338,7 +338,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
     case t('Cancel Selected Documents'):
       try {
         $rids_arr = array_filter($form_state['values']['table']);
-        $rids = transperfect_check_block_status($rids_arr);
+        $rids = transperfect_block_check_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -347,7 +347,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
         }
 
         $_SESSION['transperfect_block_selected_submission'] = '';
-        cancel_block_records($rids, $pd4);
+        transperfect_block_cancel_records($rids, $pd4);
 
         $_SESSION['transperfect_block_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
@@ -364,7 +364,7 @@ function transperfect_block_active_form_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_clear_cancelled_block_documents();
+        $count = transperfect_block_clear_cancelled_documents();
 
         $_SESSION['transperfect_block_selected_submission'] = '';
         $_SESSION['transperfect_block_globalLink_arr'] = array();

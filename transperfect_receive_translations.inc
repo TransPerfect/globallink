@@ -731,7 +731,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'block':
-          $count += transperfect_get_translated_blocks($pd4, $globallink_arr);
+          $count += transperfect_block_get_translated_blocks($pd4, $globallink_arr);
 
           watchdog('Block', t('Imported Block'), array(), WATCHDOG_INFO);
 
