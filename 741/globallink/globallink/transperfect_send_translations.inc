@@ -509,7 +509,10 @@ function transperfect_dashboard_node_form() {
 
       $query = db_select('node', 'n');
 
-      if (!empty($_SESSION['transperfect_dashboard_filter'])) {
+      if (empty($_SESSION['transperfect_dashboard_filter'])) {
+        $query->condition('language', $GLOBALS['transperfect_source_locale'], '=');
+      }
+      else {
         $filter_arr = isset($_SESSION['transperfect_dashboard_filter']) ? $_SESSION['transperfect_dashboard_filter'] : array();
         transpefect_build_filter_query($query, $filter_arr);
       }
@@ -563,6 +566,8 @@ function transperfect_dashboard_node_form() {
           $target_lang_arr[$key] = '&nbsp;&nbsp;' . $value . '&nbsp;&nbsp;&nbsp;&nbsp;';
         }
       }
+
+      unset($target_lang_arr[transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale'])]);
 
       if ($tgt_lang != '' && $tgt_lang != '[Any]') {
         $target_lang_arr_keys = array_keys($target_lang_arr);
@@ -1079,6 +1084,7 @@ function transperfect_dashboard_node_form() {
             '#required' => TRUE,
             '#options' => $source_lang_arr,
             '#default_value' => transperfect_get_locale_code(empty($_SESSION['transperfect_source_locale']) ? $GLOBALS['transperfect_source_locale'] : $_SESSION['transperfect_source_locale']),
+            '#disabled' => TRUE,
             '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
             '#suffix' => '</tr>',
             '#field_suffix' => '</td>',
@@ -1163,7 +1169,7 @@ function transperfect_node_form_clear_submit($form, &$form_state) {
 
 function transperfect_dashboard_node_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
