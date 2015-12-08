@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Builds forms on block active submission dashboard.
+ * Builds forms on block active submissions dashboard.
  *
  * @param string $type
  *   The type of task we are working on.
