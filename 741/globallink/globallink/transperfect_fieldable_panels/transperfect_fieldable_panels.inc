@@ -59,7 +59,7 @@ function transperfect_get_fieldable_panels_pane_xml($fpid) {
   $fieldable_panels_pane = fieldable_panels_panes_load($fpid);
   $language = $fieldable_panels_pane->language;
 
-  $fields = transperfect_get_fieldable_panels_pane_fields();
+  $fields = transperfect_get_fieldable_panels_pane_fields($fieldable_panels_pane->bundle);
 
   foreach ($fields as $field) {
     if (empty($fieldable_panels_pane->$field)) {
@@ -196,10 +196,10 @@ function transperfect_update_fieldable_panels_submission(&$globallink) {
   ->execute();
 }
 
-function transperfect_get_fieldable_panels_pane_fields() {
+function transperfect_get_fieldable_panels_pane_fields($bundle) {
   $fields = array();
 
-  foreach (field_info_instances('fieldable_panels_pane', 'fieldable_panels_pane') as $field) {
+  foreach (field_info_instances('fieldable_panels_pane', $bundle) as $field) {
     $fields[] = $field['field_name'];
   }
 
