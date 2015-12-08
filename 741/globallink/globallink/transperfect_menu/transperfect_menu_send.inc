@@ -336,9 +336,10 @@ function transperfect_dashboard_menu_form() {
     $query = db_select('menu_links', 'ml')
     ->fields('ml')
     ->condition('menu_name', $search_menu_types, 'IN')
-    ->extend('PagerDefault')
-    ->limit($page_count)
-    ->extend('TableSort');
+    ->condition('language', $default, '=')
+    ->extend('PagerDefault') // Pager Extender
+    ->limit($page_count) // 10 results per page
+    ->extend('TableSort'); // Sorting Extender
 
     if ($link_title != '') {
       $query->condition('link_title', '%' . $link_title . '%', 'LIKE');
@@ -509,7 +510,9 @@ function transperfect_dashboard_menu_form() {
           '#title' => t('Source Language'),
           '#required' => TRUE,
           '#options' => $source_lang_arr,
-          '#default_value' => empty($form_state['values']['submission_source_locale']) ? transperfect_get_locale_code($default) : $form_state['values']['submission_source_locale'],          '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
+          '#default_value' => transperfect_get_locale_code($default),
+          '#disabled' => TRUE,
+          '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
           '#field_suffix' => '</td>',
           '#field_prefix' => '<BR/><div class="description">' . t('Source language for this Submission.') . '</div></td><td>',
