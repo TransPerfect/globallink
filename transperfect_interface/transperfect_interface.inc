@@ -429,9 +429,9 @@ function transperfect_interface_update_status(&$globallink, $status = 'Pending T
  * @param string $object_type
  *   The object type.
  * @param string $source
- *   The target source
+ *   The target source.
  * @param string $target
- *   The target
+ *   The target.
  *
  * @return
  *   The row if interface exists.  FALSE if not.
