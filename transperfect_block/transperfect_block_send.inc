@@ -1,18 +1,30 @@
 <?php
 
-function transperfect_dashboard_block($type) {
+/**
+ * Builds forms on block send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the block send dashboard.
+ */
+function transperfect_block_dashboard($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_block_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_block_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_block_form');
+  $array[] = drupal_get_form('transperfect_block_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_block_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_block_dashboard_form');
 
   return $array;
 }
 
-function transperfect_dashboard_block_filter_form() {
+/**
+ * Builds form to filter blocks to send for translation on dashboard.
+ */
+function transperfect_block_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -95,7 +107,10 @@ function transperfect_dashboard_block_filter_form() {
   return $form;
 }
 
-function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
+/**
+ * Handles submission of filter form.
+ */
+function transperfect_block_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -110,7 +125,10 @@ function transperfect_dashboard_block_filter_form_submit($form, &$form_state) {
   }
 }
 
-function transperfect_dashboard_block_pager_form() {
+/**
+ * Builds form to add pagination to block send dashboard.
+ */
+function transperfect_block_dashboard_pager_form() {
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -135,7 +153,7 @@ function transperfect_dashboard_block_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('block_pager_form_submit'),
+      '#submit' => array('transperfect_block_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -143,7 +161,10 @@ function transperfect_dashboard_block_pager_form() {
   return $form;
 }
 
-function block_pager_form_submit($form, &$form_state) {
+/**
+ * Handles submission of pager form.
+ */
+function transperfect_block_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -162,7 +183,10 @@ function block_pager_form_submit($form, &$form_state) {
   }
 }
 
-function transperfect_dashboard_block_form() {
+/**
+ * Builds form to create a block submission.
+ */
+function transperfect_block_dashboard_form() {
   module_load_include('inc', 'transperfect_block', 'transperfect_block');
 
   $form = array();
@@ -247,7 +271,7 @@ function transperfect_dashboard_block_form() {
 
       foreach ($result as $item) {
         $active = '';
-        $active_subs = transperfect_get_active_block_submission_rows($item->bid);
+        $active_subs = transperfect_block_get_active_submission_rows($item->bid);
 
         if ($active_subs && array_key_exists($item->bid, $active_subs)) {
           $sub_arr = $active_subs[$item->bid];
@@ -448,9 +472,12 @@ function transperfect_dashboard_block_form() {
   return $form;
 }
 
-function transperfect_dashboard_block_form_validate($form, &$form_state) {
+/**
+ * Validates block form input.
+ */
+function transperfect_block_dashboard_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -496,7 +523,7 @@ function transperfect_dashboard_block_form_validate($form, &$form_state) {
 
   if (count($target_locale_arr) > 0) {
     foreach ($bids as $bid) {
-      $rows = transperfect_get_sent_tpt_block_rows_by_bid($bid);
+      $rows = transperfect_block_get_sent_tpt_rows_by_bid($bid);
 
       foreach ($rows as $row) {
         if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -511,7 +538,10 @@ function transperfect_dashboard_block_form_validate($form, &$form_state) {
   }
 }
 
-function transperfect_dashboard_block_form_submit($form, &$form_state) {
+/**
+ * Handles block form submission.
+ */
+function transperfect_block_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -539,10 +569,10 @@ function transperfect_dashboard_block_form_submit($form, &$form_state) {
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
 
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = transperfect_send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_block_send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_block_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_block_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

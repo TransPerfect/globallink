@@ -1,13 +1,36 @@
 <?php
 
-function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
-  $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($source_locale), 'blocks');
+/**
+ * Sends blocks for translation.
+ *
+ * @param array $bids
+ *   The array of block IDs.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return object
+ *   GlobalLink object that represents active translation.
+ */
+function transperfect_block_send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+  $strings = transperfect_block_get_strings(transperfect_get_drupal_locale_code($source_locale), 'blocks');
   $submitter = $submission_details['submitter'];
 
   $globallink_arr = array();
 
   foreach ($bids as $bid) {
-    $rows = transperfect_get_sent_tpt_block_rows_by_bid($bid);
+    $rows = transperfect_block_get_sent_tpt_rows_by_bid($bid);
     $target_arr = $target_locale_arr;
 
     foreach ($rows as $row) {
@@ -26,7 +49,7 @@ function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name
       continue;
     }
 
-    $xml = get_block_xml($bid, $title_string_arr, $body_string_arr);
+    $xml = transperfect_block_get_xml($bid, $title_string_arr, $body_string_arr);
     $name = 'Block_' . $bid . '.xml';
 
     watchdog('GlobalLink', 'XML - %xml', array('%xml' => $xml), WATCHDOG_DEBUG);
@@ -52,7 +75,20 @@ function transperfect_send_blocks_for_translations($bids, $pd4, $submission_name
   return $globallink_arr;
 }
 
-function get_block_xml($bid, $title_string_arr, $body_string_arr) {
+/**
+ * Gets XML data from specific block.
+ *
+ * @param string $bid
+ *   The block ID.
+ * @param array $title_string_arr
+ *   Array of block's title strings.
+ * @param array $body_string_arr
+ *   Array of block's body strings.
+ *
+ * @return array
+ *   Associative array of block XML data.
+ */
+function transperfect_block_get_xml($bid, $title_string_arr, $body_string_arr) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
@@ -90,7 +126,18 @@ function get_block_xml($bid, $title_string_arr, $body_string_arr) {
   return $xml;
 }
 
-function transperfect_get_strings($language = NULL, $group = 'blocks') {
+/**
+ * Retrieves strings for all blocks.
+ *
+ * @param string $language
+ *   The blocks' $language. Defaults to NULL.
+ * @param string $group
+ *   The Drupal content type.  Defaults to 'blocks.'
+ *
+ * @return array
+ *   Array of strings for blocks.
+ */
+function transperfect_block_get_strings($language = NULL, $group = 'blocks') {
   if (isset($language)) {
     $result = db_query('SELECT s.lid, s.source, s.context, s.location, t.plid, t.plural FROM {locales_source} s LEFT JOIN {locales_target} t ON s.lid = t.lid AND t.language = :language WHERE s.textgroup = :textgroup ORDER BY t.plid, t.plural', array(
       ':language' => $language,
@@ -119,17 +166,25 @@ function transperfect_get_strings($language = NULL, $group = 'blocks') {
   return $strings;
 }
 
-function transperfect_update_block_ticket_id($arr, $project_code) {
+/**
+ * Updates block ticket ID on GlobalLink.
+ *
+ * @param array $arr
+ *   Array of GlobalLink objects.
+ * @param string $project_code
+ *   The block's project code.
+ */
+function transperfect_block_update_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;
     $type = $globallink->type;
 
     if ($type == 'block') {
       $bid = $globallink->otherObjectId;
-      $block = transperfect_load_block_data($bid);
+      $block = transperfect_block_load_data($bid);
 
       foreach ($target_locale_arr as $target_locale) {
-        $row = transperfect_get_block_row($bid, $type, $globallink->sourceLocale, $target_locale);
+        $row = transperfect_block_get_row($bid, $type, $globallink->sourceLocale, $target_locale);
 
         if ($row) {
           db_update('transperfect_core_block')
@@ -169,7 +224,22 @@ function transperfect_update_block_ticket_id($arr, $project_code) {
   }
 }
 
-function transperfect_get_block_row($object_id, $object_type, $source, $target) {
+/**
+ * Retrieves block's row.
+ *
+ * @param string $object_id
+ *   The block's ID.
+ * @param string $object_type
+ *   The block's type.
+ * @param string $source
+ *   The source of the block.
+ * @param string $target
+ *   The target of the block.
+ *
+ * @return
+ *   The row if block exists.  FALSE if the block doesn't exist.
+ */
+function transperfect_block_get_row($object_id, $object_type, $source, $target) {
   $result = db_select('transperfect_core_block', 'tco')
   ->fields('tco')
   ->condition('object_id', $object_id, '=')
@@ -185,12 +255,23 @@ function transperfect_get_block_row($object_id, $object_type, $source, $target) 
   return FALSE;
 }
 
-function transperfect_update_deleted_block_records($pd4, $globallink) {
+/**
+ * Updates status for deleted blocks.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return bool
+ *   TRUE if update was successful, FALSE on error.
+ */
+function transperfect_block_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_update_block_status($globallink, 'Source Deleted');
+    transperfect_block_update_status($globallink, 'Source Deleted');
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -208,7 +289,20 @@ function transperfect_update_deleted_block_records($pd4, $globallink) {
   return TRUE;
 }
 
-function transperfect_get_block_translation_status($bid, $tgt_locale, &$title) {
+/**
+ * Gets block translation status.
+ *
+ * @param string $bid
+ *   The block ID.
+ * @param string $tgt_locale
+ *   The target locale.
+ * @param string $title
+ *   The translation title.
+ *
+ * @return string
+ *   Status message.
+ */
+function transperfect_block_get_translation_status($bid, $tgt_locale, &$title) {
   $query = db_select('transperfect_core_block', 'tco');
   $query->condition('object_id', $bid, '=');
   $query->condition('target', $tgt_locale, '=');
@@ -235,7 +329,13 @@ function transperfect_get_block_translation_status($bid, $tgt_locale, &$title) {
   return 'Sent for Translations';
 }
 
-function transperfect_get_block_active_submission_names() {
+/**
+ * Gets block active submission names.
+ *
+ * @return array
+ *   Array of block submission names.
+ */
+function transperfect_block_get_active_submission_names() {
   $query = db_select('transperfect_core_block', 'tco');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
@@ -252,7 +352,15 @@ function transperfect_get_block_active_submission_names() {
   return $arr;
 }
 
-function cancel_block_records($rowids, $pd4) {
+/**
+ * Cancels block records.
+ *
+ * @param array $rowids
+ *   Array of block IDs.
+ * @param string $pd4
+ *   The project director details.
+ */
+function transperfect_block_cancel_records($rowids, $pd4) {
   $globallink_arr = array();
 
   foreach ($rowids as $rid) {
@@ -267,10 +375,16 @@ function cancel_block_records($rowids, $pd4) {
   }
 
   transperfect_cancel_select_documents($pd4, $globallink_arr);
-  transperfect_update_block_row_document($globallink_arr);
+  transperfect_block_update_row_document($globallink_arr);
 }
 
-function transperfect_update_block_row_document(&$globallink_arr) {
+/**
+ * Updates block rows to reflect translation status.
+ *
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ */
+function transperfect_block_update_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_block')
@@ -284,19 +398,34 @@ function transperfect_update_block_row_document(&$globallink_arr) {
   }
 }
 
-function transperfect_cancel_block_submission($selected_submission) {
+/**
+ * Cancels block submission.
+ *
+ * @param string $selected_submission
+ *   The name of the submission.
+ */
+function transperfect_block_cancel_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
 
   $globallink = new GlobalLink();
-  $submission_name = transperfect_get_block_submission_name($selected_submission);
+  $submission_name = transperfect_block_get_submission_name($selected_submission);
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
   transperfect_cancel_pd_submission($pd4, $globallink);
-  transperfect_update_block_submission($globallink);
+  transperfect_block_update_submission($globallink);
 }
 
-function transperfect_get_block_submission_name($submission_ticket) {
+/**
+ * Gets block submission name.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The block submission name.
+ */
+function transperfect_block_get_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_block', 'tc');
   $query->fields('tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -310,7 +439,13 @@ function transperfect_get_block_submission_name($submission_ticket) {
   }
 }
 
-function transperfect_update_block_submission(&$globallink) {
+/**
+ * Updates block submission with new ticket and name.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
+function transperfect_block_update_submission(&$globallink) {
   db_update('transperfect_core_block')
   ->fields(array(
     'status' => 'Pending Translations',
@@ -321,11 +456,22 @@ function transperfect_update_block_submission(&$globallink) {
   ->execute();
 }
 
-function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
+/**
+ * Gets number of translated blocks.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   The number of translated blocks.
+ */
+function transperfect_block_get_translated_blocks($pd4, &$globallink_arr) {
   $count = 0;
 
   $source_link = array('link_title' => 'No Title');
-  $strings = transperfect_get_strings(NULL, 'blocks');
+  $strings = transperfect_block_get_strings(NULL, 'blocks');
 
   foreach ($globallink_arr as $globallink) {
     $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
@@ -341,7 +487,7 @@ function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
     $count++;
 
     $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
-    $translated_arr = transperfect_get_translated_block_items($target_xml);
+    $translated_arr = transperfect_block_get_translated_items($target_xml);
 
     try {
       $bid = $translated_arr['bid'];
@@ -386,13 +532,13 @@ function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
         _locale_import_one_string_db($report, $language, $translations['context'], $source, $translations['translation'], 'blocks', $translations['location'], LOCALE_IMPORT_OVERWRITE);
       }
 
-      transperfect_update_block_status($globallink);
+      transperfect_block_update_status($globallink);
       transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
     }
     catch (SoapFault $se) {
       $count--;
 
-      transperfect_update_block_status($globallink, 'Error');
+      transperfect_block_update_status($globallink, 'Error');
 
       watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
@@ -400,7 +546,7 @@ function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
     catch (Exception $e) {
       $count--;
 
-      transperfect_update_block_status($globallink, 'Error');
+      transperfect_block_update_status($globallink, 'Error');
 
       watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
@@ -410,7 +556,16 @@ function transperfect_get_translated_blocks($pd4, &$globallink_arr) {
   return $count;
 }
 
-function transperfect_get_translated_block_items($xml) {
+/**
+ * Gets translated block items.
+ *
+ * @param object $xml
+ *   XML representation of block items.
+ *
+ * @return array
+ *   Array of block items.
+ */
+function transperfect_block_get_translated_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -458,7 +613,15 @@ function transperfect_get_translated_block_items($xml) {
   return $block_arr;
 }
 
-function transperfect_update_block_status(&$globallink, $status = 'Pending Translations') {
+/**
+ * Updates block status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param string $status
+ *   The translation status.  Defaults to 'Pending Translations.'
+ */
+function transperfect_block_update_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_block')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
   ->condition('submission', $globallink->submissionName, '=')
@@ -468,7 +631,16 @@ function transperfect_update_block_status(&$globallink, $status = 'Pending Trans
   ->execute();
 }
 
-function transperfect_get_active_block_submission_rows($object_id) {
+/**
+ * Gets active block submission rows.
+ *
+ * @param string $object_id
+ *   The GlobalLink object ID.
+ *
+ * @return
+ *   Array of active block submission rows if there are any.  FALSE if not.
+ */
+function transperfect_block_get_active_submission_rows($object_id) {
   $query = db_select('transperfect_core_block', 'tc');
   $query->condition('status', 'Sent for Translations', '=');
   $query->condition('object_id', $object_id, '=');
@@ -513,7 +685,16 @@ function transperfect_get_active_block_submission_rows($object_id) {
   return FALSE;
 }
 
-function transperfect_get_sent_tpt_block_rows_by_bid($bid) {
+/**
+ * Gets sent block rows by ID.
+ *
+ * @param string $bid
+ *   The block ID.
+ *
+ * @return array
+ *   Array of block rows.
+ */
+function transperfect_block_get_sent_tpt_rows_by_bid($bid) {
   $result = db_select('transperfect_core_block', 'tc')
   ->fields('tc')
   ->condition('object_id', $bid, '=')
@@ -529,7 +710,20 @@ function transperfect_get_sent_tpt_block_rows_by_bid($bid) {
   return $rows;
 }
 
-function transperfect_get_block_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+/**
+ * Gets block row ID from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return string
+ *   The block row ID.
+ */
+function transperfect_block_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $result = db_select('transperfect_core_block', 'tc')
   ->condition('submission_ticket', $submission_ticket, '=')
   ->condition('document_ticket', $document_ticket, '=')
@@ -542,7 +736,16 @@ function transperfect_get_block_row_id_from_submission($submission_ticket, $docu
   }
 }
 
-function transperfect_load_block_data($bid) {
+/**
+ * Loads block data.
+ *
+ * @param string $bid
+ *   The block ID.
+ *
+ * @return array
+ *   Array of block data.
+ */
+function transperfect_block_load_data($bid) {
   $query = db_select('block_custom', 'bc')
   ->fields('bc')
   ->condition('bid', $bid, '=');
@@ -558,7 +761,16 @@ function transperfect_load_block_data($bid) {
   return $rows;
 }
 
-function transperfect_get_arr_block_items($xml) {
+/**
+ * Gets array of block items from XML data.
+ *
+ * @param object $xml
+ *   The XML data.
+ *
+ * @return array
+ *   Array of block items.
+ */
+function transperfect_block_get_arr_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -603,7 +815,13 @@ function transperfect_get_arr_block_items($xml) {
   return $block_arr;
 }
 
-function transperfect_get_distinct_active_block_submission_names() {
+/**
+ * Gets distinct active block submission names.
+ *
+ * @return array
+ *   Array of distinct active block submission names.
+ */
+function transperfect_block_get_distinct_active_submission_names() {
   $query = db_select('transperfect_core_block', 'tc');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
@@ -620,7 +838,15 @@ function transperfect_get_distinct_active_block_submission_names() {
   return $arr;
 }
 
-function transperfect_update_block_submission_status($submission_ticket, $status = 'Cancelled') {
+/**
+ * Updates block submission status.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $status
+ *   The submission status.  Defaults to 'Cancelled.'
+ */
+function transperfect_block_update_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_block')
   ->fields(array(
     'status' => $status,
@@ -630,7 +856,10 @@ function transperfect_update_block_submission_status($submission_ticket, $status
   ->execute();
 }
 
-function get_block_submission_status() {
+/**
+ * Gets block submission status.
+ */
+function transperfect_block_get_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
 
@@ -648,20 +877,29 @@ function get_block_submission_status() {
         $status = transperfect_get_status($pd4, $row->submission_ticket);
 
         if (!$status || $status == 'CANCELLED') {
-          transperfect_update_block_submission_status($row->submission_ticket);
+          transperfect_block_update_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        transperfect_update_block_submission_status($row->submission_ticket);
+        transperfect_block_update_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        transperfect_update_block_submission_status($row->submission_ticket);
+        transperfect_block_update_submission_status($row->submission_ticket);
       }
     }
   }
 }
 
-function transperfect_check_block_status($rids_arr) {
+/**
+ * Checks block status based on row IDs.
+ *
+ * @param array $rids_arr
+ *   Array of row IDs.
+ *
+ * @return array
+ *   Array of row IDs that have been sent for translation or threw an error.
+ */
+function transperfect_block_check_status($rids_arr) {
   $status = TRUE;
 
   $query = db_select('transperfect_core_block', 'tcb')
@@ -690,7 +928,13 @@ function transperfect_check_block_status($rids_arr) {
   return $rids_arr;
 }
 
-function transperfect_clear_cancelled_block_documents() {
+/**
+ * Clears cancelled block documents.
+ *
+ * @return int
+ *   Number of cancelled block documents.
+ */
+function transperfect_block_clear_cancelled_documents() {
   $count = 0;
 
   $query = db_select('transperfect_core_block', 'tcb')
@@ -701,7 +945,7 @@ function transperfect_clear_cancelled_block_documents() {
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_block_submission_status($item->submission_ticket, 'Pending Translations');
+    transperfect_block_update_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }
