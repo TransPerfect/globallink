@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on menu receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the menu receive dashboard.
+ */
 function transperfect_menu_receive_submissions($type) {
   $_SESSION['transpefect_menu_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_menu_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter menus to receive on dashboard.
+ */
 function transperfect_menu_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
@@ -170,6 +182,9 @@ function transperfect_menu_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_menu_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -195,6 +210,9 @@ function transperfect_menu_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to menu receive dashboard.
+ */
 function transperfect_menu_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -227,6 +245,9 @@ function transperfect_menu_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_menu_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -246,6 +267,9 @@ function transperfect_menu_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a menu submission.
+ */
 function transperfect_menu_receive_form() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
@@ -505,6 +529,9 @@ function transperfect_menu_receive_form() {
   return $form;
 }
 
+/**
+ * Validates menu form input.
+ */
 function transperfect_menu_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -520,6 +547,9 @@ function transperfect_menu_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles menu form submission.
+ */
 function transperfect_menu_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_menu_receive_type'];
 
@@ -684,6 +714,9 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Previews translated menu content in the form of JSON.
+ */
 function preview_translated_menu_content() {
   $row_id = $_POST['rid'];
   $arr = get_menu_translations_for_row_id($row_id);
@@ -691,6 +724,15 @@ function preview_translated_menu_content() {
   drupal_json_output($arr);
 }
 
+/**
+ * Gets menu translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of menu translations.
+ */
 function get_menu_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'menu');
 

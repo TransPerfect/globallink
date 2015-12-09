@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Sends menus for translation.
+ *
+ * @param array $mlids
+ *   The array of menu IDs.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return object
+ *   GlobalLink object that represents active translation.
+ */
 function transperfect_send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
@@ -43,6 +66,16 @@ function transperfect_send_menus_for_translations($mlids, $pd4, $submission_name
   return $globallink_arr;
 }
 
+
+/**
+ * Gets XML data from specific menu.
+ *
+ * @param string $mlid
+ *   The menu ID.
+ *
+ * @return array
+ *   Associative array of block XML data.
+ */
 function get_menu_xml($mlid) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
@@ -70,6 +103,14 @@ function get_menu_xml($mlid) {
   return $xml;
 }
 
+/**
+ * Updates menu ticket ID on GlobalLink.
+ *
+ * @param array $arr
+ *   Array of GlobalLink objects.
+ * @param string $project_code
+ *   The menu's project code.
+ */
 function transperfect_update_menu_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;
@@ -122,6 +163,21 @@ function transperfect_update_menu_ticket_id($arr, $project_code) {
   }
 }
 
+/**
+ * Retrieves menu's row by ID.
+ *
+ * @param string $object_id
+ *   The object ID.
+ * @param string $object_type
+ *   The object type.
+ * @param string $source
+ *   The target source.
+ * @param string $target
+ *   The target.
+ *
+ * @return
+ *   The row if menu exists.
+ */
 function transperfect_get_menu_row($object_id, $object_type, $source, $target) {
   $result = db_select('transperfect_core_menu', 'tco')
   ->fields('tco')
@@ -138,6 +194,17 @@ function transperfect_get_menu_row($object_id, $object_type, $source, $target) {
   return FALSE;
 }
 
+/**
+ * Updates status for deleted menus.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return bool
+ *   TRUE if update was successful, FALSE on error.
+ */
 function transperfect_update_deleted_menu_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
@@ -161,6 +228,20 @@ function transperfect_update_deleted_menu_records($pd4, $globallink) {
   return TRUE;
 }
 
+
+/**
+ * Gets menu translation status.
+ *
+ * @param string $mlid
+ *   The menu ID.
+ * @param string $tgt_locale
+ *   The target locale.
+ * @param string $title
+ *   The translation title.
+ *
+ * @return string
+ *   Status message.
+ */
 function transperfect_get_menu_translation_status($mlid, $tgt_locale, &$title) {
   $query = db_select('transperfect_core_menu', 'tco');
   $query->condition('object_id', $mlid, '=');
@@ -188,6 +269,12 @@ function transperfect_get_menu_translation_status($mlid, $tgt_locale, &$title) {
   return 'Sent for Translations';
 }
 
+/**
+ * Gets active menu submission names.
+ *
+ * @return array
+ *   Array of active menu submission names.
+ */
 function transperfect_get_menu_active_submission_names() {
   $query = db_select('transperfect_core_menu', 'tco');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
@@ -205,6 +292,14 @@ function transperfect_get_menu_active_submission_names() {
   return $arr;
 }
 
+/**
+ * Cancels menu records.
+ *
+ * @param array $rowids
+ *   Array of menu IDs.
+ * @param string $pd4
+ *   The project director details.
+ */
 function transperfect_cancel_menu_records($rowids, $pd4) {
   $globallink_arr = array();
 
@@ -223,6 +318,12 @@ function transperfect_cancel_menu_records($rowids, $pd4) {
   transperfect_update_menu_row_document($globallink_arr);
 }
 
+/**
+ * Updates menu rows to reflect translation status.
+ *
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ */
 function transperfect_update_menu_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
@@ -237,6 +338,12 @@ function transperfect_update_menu_row_document(&$globallink_arr) {
   }
 }
 
+/**
+ * Cancels menu submission.
+ *
+ * @param string $selected_submission
+ *   The name of the submission.
+ */
 function transperfect_cancel_menu_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
 
@@ -250,6 +357,15 @@ function transperfect_cancel_menu_submission($selected_submission) {
   transperfect_update_menu_submission($globallink);
 }
 
+/**
+ * Gets menu submission name.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The menu submission name.
+ */
 function transperfect_get_menu_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_menu', 'tc');
   $query->fields('tc');
@@ -264,6 +380,12 @@ function transperfect_get_menu_submission_name($submission_ticket) {
   }
 }
 
+/**
+ * Updates menu submission.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
 function transperfect_update_menu_submission(&$globallink) {
   db_update('transperfect_core_menu')
   ->fields(array(
@@ -275,6 +397,15 @@ function transperfect_update_menu_submission(&$globallink) {
   ->execute();
 }
 
+/**
+ * Gets internationalization menu set.
+ *
+ * @param string $tsid
+ *   The TSID.
+ *
+ * @return array
+ *   Array representing the internationalization menu set.
+ */
 function transperfect_get_i18n_menu_set($tsid) {
   $arr = array();
 
@@ -291,6 +422,17 @@ function transperfect_get_i18n_menu_set($tsid) {
   return $arr;
 }
 
+/**
+ * Sorts GlobalLink objects by menu order.
+ *
+ * @param string $gl_1
+ *   The first GlobalLink object.
+ * @param string $gl_2
+ *   The second GlobalLink object.
+ *
+ * @return int
+ *   -1 if the first object has fewer parents than the second object.  1 otherwise.
+ */
 function transperfect_sort_gl_objects_by_menu_order($gl_1, $gl_2) {
   $link_1 = menu_link_load($gl_1->otherObjectId);
   $link_2 = menu_link_load($gl_2->otherObjectId);
@@ -298,6 +440,15 @@ function transperfect_sort_gl_objects_by_menu_order($gl_1, $gl_2) {
   return (transperfect_count_parents($link_1) < transperfect_count_parents($link_2)) ? -1 : 1;
 }
 
+/**
+ * Counts parents of menu link.
+ *
+ * @param string $menu_link
+ *   The menu link.
+ *
+ * @return int
+ *   The number of parents of the menu link.
+ */
 function transperfect_count_parents($menu_link) {
   $count = 0;
 
@@ -342,6 +493,17 @@ function transperfect_count_parents($menu_link) {
   return $count;
 }
 
+/**
+ * Gets number of translated menus.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   The number of translated menus.
+ */
 function transperfect_get_translated_menus($pd4, &$globallink_arr) {
   module_load_include('inc', 'i18n_menu', 'i18n_menu.admin');
 
@@ -506,6 +668,15 @@ function transperfect_get_translated_menus($pd4, &$globallink_arr) {
   return $count;
 }
 
+/**
+ * Gets translated menu items from XML data.
+ *
+ * @param object $xml
+ *   XML representation of menu items.
+ *
+ * @return array
+ *   Array of menu items.
+ */
 function transperfect_get_translated_menu_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
@@ -556,6 +727,14 @@ function transperfect_get_translated_menu_items($xml) {
   return $arr;
 }
 
+/**
+ * Updates menu status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param string $status
+ *   The new status.  Defaults to 'Pending Translations.'
+ */
 function transperfect_update_menu_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_menu')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
@@ -566,6 +745,15 @@ function transperfect_update_menu_status(&$globallink, $status = 'Pending Transl
   ->execute();
 }
 
+/**
+ * Gets active menu submission rows by object ID.
+ *
+ * @param string $object_id
+ *   The object ID.
+ *
+ * @return
+ *   Associative array of menu active submission rows.  FALSE if the array is empty.
+ */
 function transperfect_get_active_menu_submission_rows($object_id) {
   $query = db_select('transperfect_core_menu', 'tc');
   $query->condition('status', 'Sent for Translations', '=');
@@ -611,6 +799,15 @@ function transperfect_get_active_menu_submission_rows($object_id) {
   return FALSE;
 }
 
+/**
+ * Gets active menu submission rows by menu ID.
+ *
+ * @param string $mlid
+ *   The menu ID.
+ *
+ * @return
+ *   Associative array of menu active submission rows.  FALSE if the array is empty.
+ */
 function transperfect_get_sent_menu_rows_by_mlid($mlid) {
   $result = db_select('transperfect_core_menu', 'tc')
   ->fields('tc')
@@ -627,6 +824,19 @@ function transperfect_get_sent_menu_rows_by_mlid($mlid) {
   return $rows;
 }
 
+/**
+ * Gets sent menu rows from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return
+ *   Array of sent menu rows.  FALSE if the array is empty.
+ */
 function transperfect_get_sent_menu_rows($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_menu', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -643,6 +853,19 @@ function transperfect_get_sent_menu_rows($submission_ticket, $document_ticket, $
   return FALSE;
 }
 
+/**
+ * Gets menu row ID from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return string
+ *   The menu row ID.  FALSE if the row doesn't exist.
+ */
 function transperfect_get_menu_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_menu', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -659,6 +882,15 @@ function transperfect_get_menu_row_id_from_submission($submission_ticket, $docum
   return FALSE;
 }
 
+/**
+ * Loads menu data from menu ID.
+ *
+ * @param string $mlid
+ *   The menu ID.
+ *
+ * @return array
+ *   Array of menu data.
+ */
 function transperfect_load_menu_data($mlid) {
   $query = db_select('menu_links', 'ml')
   ->fields('ml')
@@ -675,6 +907,12 @@ function transperfect_load_menu_data($mlid) {
   return $rows;
 }
 
+/**
+ * Gets distinct active menu submission names.
+ *
+ * @return array
+ *   Array of distinct active menu submission names.
+ */
 function transperfect_get_distinct_active_menu_submission_names() {
   $query = db_select('transperfect_core_menu', 'tc');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
@@ -692,6 +930,14 @@ function transperfect_get_distinct_active_menu_submission_names() {
   return $arr;
 }
 
+/**
+ * Updates menu submission status.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $status
+ *   The submission status.  Defaults to 'Cancelled.'
+ */
 function transperfect_update_menu_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_menu')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
@@ -699,6 +945,9 @@ function transperfect_update_menu_submission_status($submission_ticket, $status 
   ->execute();
 }
 
+/**
+ * Gets menu submission status.
+ */
 function transperfect_get_menu_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
@@ -731,6 +980,15 @@ function transperfect_get_menu_submission_status() {
   }
 }
 
+/**
+ * Checks menu status based on row IDs.
+ *
+ * @param array $rids_arr
+ *   Array of row IDs.
+ *
+ * @return array
+ *   Array of row IDs that have been sent for translation or threw an error.
+ */
 function transperfect_check_menu_status($rids_arr) {
   $status = TRUE;
 
@@ -760,6 +1018,12 @@ function transperfect_check_menu_status($rids_arr) {
   return $rids_arr;
 }
 
+/**
+ * Clears cancelled menu documents.
+ *
+ * @return int
+ *   Number of cancelled menu documents.
+ */
 function transperfect_clear_cancelled_menu_documents() {
   $count = 0;
 

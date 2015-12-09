@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on menu send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the menu send dashboard.
+ */
 function transperfect_dashboard_menu($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_menu($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter menus to send for translation on dashboard.
+ */
 function transperfect_dashboard_menu_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
@@ -174,6 +186,9 @@ function transperfect_dashboard_menu_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -193,6 +208,9 @@ function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to menu send dashboard.
+ */
 function transperfect_dashboard_menu_pager_form() {
   $form = array();
 
@@ -226,6 +244,9 @@ function transperfect_dashboard_menu_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function menu_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -245,6 +266,9 @@ function menu_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to create a menu submission.
+ */
 function transperfect_dashboard_menu_form() {
   module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
@@ -566,6 +590,9 @@ function transperfect_dashboard_menu_form() {
   return $form;
 }
 
+/**
+ * Validates menu form input.
+ */
 function transperfect_dashboard_menu_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
 
@@ -631,6 +658,9 @@ function transperfect_dashboard_menu_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles menu form submission.
+ */
 function transperfect_dashboard_menu_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
