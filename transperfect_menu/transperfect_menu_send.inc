@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the menu send dashboard.
  */
-function transperfect_dashboard_menu($type) {
+function transperfect_menu_dashboard($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_menu_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_menu_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_menu_form');
+  $array[] = drupal_get_form('transperfect_menu_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_menu_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_menu_dashboard_form');
 
   return $array;
 }
@@ -24,7 +24,7 @@ function transperfect_dashboard_menu($type) {
 /**
  * Builds form to filter menus to send for translation on dashboard.
  */
-function transperfect_dashboard_menu_filter_form() {
+function transperfect_menu_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
 
@@ -189,7 +189,7 @@ function transperfect_dashboard_menu_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
+function transperfect_menu_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -211,7 +211,7 @@ function transperfect_dashboard_menu_filter_form_submit($form, &$form_state) {
 /**
  * Builds form to add pagination to menu send dashboard.
  */
-function transperfect_dashboard_menu_pager_form() {
+function transperfect_menu_dashboard_pager_form() {
   $form = array();
 
   $languages = transperfect_get_mapped_drupal_locales(FALSE);
@@ -236,7 +236,7 @@ function transperfect_dashboard_menu_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('menu_pager_form_submit'),
+      '#submit' => array('transperfect_menu_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -247,7 +247,7 @@ function transperfect_dashboard_menu_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function menu_pager_form_submit($form, &$form_state) {
+function transperfect_menu_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -269,7 +269,7 @@ function menu_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to create a menu submission.
  */
-function transperfect_dashboard_menu_form() {
+function transperfect_menu_dashboard_form() {
   module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
 
   $form = array();
@@ -386,7 +386,7 @@ function transperfect_dashboard_menu_form() {
       $count++;
 
       $active = '';
-      $active_subs = transperfect_get_active_menu_submission_rows($item->mlid);
+      $active_subs = transperfect_menu_get_active_submission_rows($item->mlid);
 
       if ($active_subs && array_key_exists($item->mlid, $active_subs)) {
         $sub_arr = $active_subs[$item->mlid];
@@ -593,7 +593,7 @@ function transperfect_dashboard_menu_form() {
 /**
  * Validates menu form input.
  */
-function transperfect_dashboard_menu_form_validate($form, &$form_state) {
+function transperfect_menu_dashboard_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -644,7 +644,7 @@ function transperfect_dashboard_menu_form_validate($form, &$form_state) {
   }
 
   foreach ($mids as $mlid) {
-    $rows = transperfect_get_sent_menu_rows_by_mlid($mlid);
+    $rows = transperfect_menu_get_sent_rows_by_mlid($mlid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -661,7 +661,7 @@ function transperfect_dashboard_menu_form_validate($form, &$form_state) {
 /**
  * Handles menu form submission.
  */
-function transperfect_dashboard_menu_form_submit($form, &$form_state) {
+function transperfect_menu_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -688,10 +688,10 @@ function transperfect_dashboard_menu_form_submit($form, &$form_state) {
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = transperfect_send_menus_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_menu_send_for_translations($mlids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_menu_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_menu_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

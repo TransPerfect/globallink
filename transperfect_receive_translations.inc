@@ -749,7 +749,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'menu':
-          $count += transperfect_get_translated_menus($pd4, $globallink_arr);
+          $count += transperfect_menu_get_translated($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Menu', array(), WATCHDOG_INFO);
 

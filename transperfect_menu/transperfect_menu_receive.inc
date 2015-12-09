@@ -32,7 +32,7 @@ function transperfect_menu_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = transperfect_get_distinct_active_menu_submission_names();
+  $submission_options = transperfect_menu_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_menu_receive_filter_submission'])) {
@@ -354,13 +354,13 @@ function transperfect_menu_receive_form() {
         continue;
       }
 
-      $tpt_menu_arr = transperfect_get_sent_menu_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+      $tpt_menu_arr = transperfect_menu_get_sent_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
       $title = '';
 
       if ($tpt_menu_arr) {
         $mlid = $tpt_menu_arr->object_id;
-        $status = transperfect_get_menu_translation_status($mlid, $globallink->targetLocale, $title);
+        $status = transperfect_menu_get_translation_status($mlid, $globallink->targetLocale, $title);
       }
       else {
         $status = 'Source Deleted';
@@ -390,7 +390,7 @@ function transperfect_menu_receive_form() {
       }
 
       if (variable_get('transperfect_enable_preview', 1)) {
-        $tpt_row_id = transperfect_get_menu_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+        $tpt_row_id = transperfect_menu_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
         if ($status != 'Source Deleted') {
           $mlid_tpt_arr = array();
@@ -561,7 +561,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_menu_globalLink_arr']);
 
-        $count = transperfect_get_translated_menus($pd4, $globallink_arr);
+        $count = transperfect_menu_get_translated($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -609,7 +609,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_menu_records($pd4, $globallink);
+            $success = transperfect_menu_update_deleted_records($pd4, $globallink);
             $count++;
           }
         }
@@ -644,7 +644,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_menus($pd4, $updated_globalLink_arr);
+        $count = transperfect_menu_get_translated($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -717,9 +717,9 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
 /**
  * Previews translated menu content in the form of JSON.
  */
-function preview_translated_menu_content() {
+function transperfect_menu_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = get_menu_translations_for_row_id($row_id);
+  $arr = transperfect_menu_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
@@ -733,7 +733,7 @@ function preview_translated_menu_content() {
  * @return array
  *   Array of menu translations.
  */
-function get_menu_translations_for_row_id($row_id) {
+function transperfect_menu_get_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'menu');
 
   $globallink = new GlobalLink();
@@ -775,16 +775,16 @@ function get_menu_translations_for_row_id($row_id) {
           continue;
         }
 
-        $translation = transperfect_get_translated_menu_items($globallink->targetXML);
+        $translation = transperfect_menu_get_translated_items($globallink->targetXML);
         $mlid = $translation['mlid'];
         $menu = load_menu_data($mlid);
 
         if ($menu && is_array($menu) && !is_null($menu)) {
-          $source_xml = get_menu_xml($mlid);
+          $source_xml = transperfect_menu_get_xml($mlid);
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = transperfect_get_translated_menu_items($source_xml);
+            $source_arr = transperfect_menu_get_translated_items($source_xml);
           }
         }
         else {
@@ -803,17 +803,17 @@ function get_menu_translations_for_row_id($row_id) {
             $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
 
             if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-              $translation = transperfect_get_translated_menu_items($globallink->targetXML);
+              $translation = transperfect_menu_get_translated_items($globallink->targetXML);
               $mlid = $translation['mlid'];
 
-              $menu = transperfect_load_menu_data($mlid);
+              $menu = transperfect_menu_load_data($mlid);
 
               if ($menu && is_array($menu) && !is_null($menu)) {
-                $source_xml = get_menu_xml($mlid);
+                $source_xml = transperfect_menu_get_xml($mlid);
                 $source_arr = array();
 
                 if ($source_xml) {
-                  $source_arr = transperfect_get_translated_menu_items($source_xml);
+                  $source_arr = transperfect_menu_get_translated_items($source_xml);
                 }
               }
               else {
