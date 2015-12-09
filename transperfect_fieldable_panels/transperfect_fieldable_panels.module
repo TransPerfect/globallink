@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect Fieldable Panels Panes translation module.
+ * Transperfect fieldable panels panes translation module.
  *
- * This module adds Fieldable Panels Panes translation support with configuration options.
+ * This module adds fieldable panels panes translation support with configuration options.
  */
 
 /**
@@ -15,7 +15,7 @@ function transperfect_fieldable_panels_menu() {
 
   $items ['admin/transperfect-translations/dashboard/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes  ',
-    'page callback' => 'transperfect_dashboard_fieldable_panels',
+    'page callback' => 'transperfect_fieldable_panels_dashboard',
     'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_fieldable_panels_send.inc',
@@ -45,7 +45,7 @@ function transperfect_fieldable_panels_menu() {
 
   $items['admin/transperfect-translations/receiveTranslation/fieldable_panels/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'preview_translated_fieldable_panels_content',
+    'page callback' => 'transperfect_fieldable_panels_preview_translated_content',
     'file' => 'transperfect_fieldable_panels_receive.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
