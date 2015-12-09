@@ -491,7 +491,7 @@ function transperfect_entity_update_deleted_records($pd4, $globallink) {
  * @return int
  *   The number of translated entities.
  */
-function transperfect_entity_get_translated_entity($pd4, &$globallink_arr) {
+function transperfect_entity_get_translated_enties($pd4, &$globallink_arr) {
   try {
     $count = 0;
 
@@ -533,7 +533,7 @@ function transperfect_entity_get_translated_entity($pd4, &$globallink_arr) {
  *   The entity row ID.
  *
  * @return
- *   The row if entity exists.
+ *   The row if entity exists.  FALSE if not.
  */
 function transperfect_entity_get_row($row_id) {
   $result = db_select('transperfect_core_entity', 'tc')
