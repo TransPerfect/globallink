@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Sends fieldable panels for translation.
+ *
+ * @param array $fpids
+ *   The array of fieldable panels IDs.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return object
+ *   GlobalLink object that represents active translation.
+ */
 function transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
 
@@ -45,6 +68,15 @@ function transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, 
   return $globallink_arr;
 }
 
+/**
+ * Gets XML data from specific fieldable panel.
+ *
+ * @param string $fpid
+ *   The fieldable panel ID.
+ *
+ * @return array
+ *   Associative array of fieldable panel XML data.
+ */
 function transperfect_get_fieldable_panels_pane_xml($fpid) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
@@ -83,6 +115,14 @@ function transperfect_get_fieldable_panels_pane_xml($fpid) {
   return $xml;
 }
 
+/**
+ * Cancels fieldable panels records.
+ *
+ * @param array $rowids
+ *   Array of fieldable panels IDs.
+ * @param string $pd4
+ *   The project director details.
+ */
 function transperfect_cancel_fieldable_panels_records($rowids, $pd4) {
   $globallink_arr = array();
 
@@ -100,6 +140,12 @@ function transperfect_cancel_fieldable_panels_records($rowids, $pd4) {
   transperfect_update_fieldable_panels_row_document($globallink_arr);
 }
 
+/**
+ * Updates fieldable panels rows to reflect translation status.
+ *
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ */
 function transperfect_update_fieldable_panels_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
@@ -114,6 +160,12 @@ function transperfect_update_fieldable_panels_row_document(&$globallink_arr) {
   }
 }
 
+/**
+ * Cancels fieldable panels submission.
+ *
+ * @param string $selected_submission
+ *   The name of the submission.
+ */
 function transperfect_cancel_fieldable_panels_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
   $globallink = new GlobalLink();
@@ -125,6 +177,15 @@ function transperfect_cancel_fieldable_panels_submission($selected_submission) {
   transperfect_update_fieldable_panels_submission($globallink);
 }
 
+/**
+ * Checks fieldable panel status based on row IDs.
+ *
+ * @param array $rids_arr
+ *   Array of row IDs.
+ *
+ * @return array
+ *   Array of row IDs that have been sent for translation or threw an error.
+ */
 function transperfect_check_fieldable_panels_status($ids_arr) {
   $status = TRUE;
 
@@ -153,6 +214,12 @@ function transperfect_check_fieldable_panels_status($ids_arr) {
   return $ids_arr;
 }
 
+/**
+ * Clears cancelled fieldable panels documents.
+ *
+ * @return int
+ *   Number of cancelled fieldable panels documents.
+ */
 function transperfect_clear_cancelled_fieldable_panels_documents() {
   $count = 0;
 
@@ -172,6 +239,15 @@ function transperfect_clear_cancelled_fieldable_panels_documents() {
   return $count;
 }
 
+/**
+ * Gets fieldable panels submission name.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The fieldable panels submission name.
+ */
 function transperfect_get_fieldable_panels_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->fields('tcfp');
@@ -185,6 +261,12 @@ function transperfect_get_fieldable_panels_submission_name($submission_ticket) {
   }
 }
 
+/**
+ * Updates fieldable panels submission.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
 function transperfect_update_fieldable_panels_submission(&$globallink) {
   db_update('transperfect_core_fieldable_panels')
   ->fields(array(
@@ -196,6 +278,15 @@ function transperfect_update_fieldable_panels_submission(&$globallink) {
   ->execute();
 }
 
+/**
+ * Gets fieldable panels fields based on bundle.
+ *
+ * @param string $bundle
+ *   The bundle.
+ *
+ * @return array
+ *   Array of fields.
+ */
 function transperfect_get_fieldable_panels_pane_fields($bundle) {
   $fields = array();
 
@@ -206,6 +297,12 @@ function transperfect_get_fieldable_panels_pane_fields($bundle) {
   return $fields;
 }
 
+/**
+ * Gets active fieldable panels submission names.
+ *
+ * @return array
+ *   Array of active fieldable panels submission names.
+ */
 function transperfect_get_fieldable_panels_active_submission_names() {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
@@ -222,6 +319,15 @@ function transperfect_get_fieldable_panels_active_submission_names() {
   return $arr;
 }
 
+/**
+ * Gets active fieldable panels submission rows by node ID.
+ *
+ * @param string $fpids
+ *   The array of fieldable panels IDs.
+ *
+ * @return
+ *   Associative array of fieldable panels active submission rows.  FALSE if the array is empty.
+ */
 function transperfect_get_active_fieldable_panels_submission_rows($fpid) {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('status', 'Sent for Translations', '=');
@@ -266,6 +372,12 @@ function transperfect_get_active_fieldable_panels_submission_rows($fpid) {
   return FALSE;
 }
 
+/**
+ * Gets distinct active fieldable panels submission names.
+ *
+ * @return array
+ *   Array of distinct active fieldable panels submission names.
+ */
 function transperfect_get_distinct_active_fieldable_panels_submission_names() {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
@@ -282,6 +394,9 @@ function transperfect_get_distinct_active_fieldable_panels_submission_names() {
   return $arr;
 }
 
+/**
+ * Gets fieldable panels submission status.
+ */
 function transperfect_get_fieldable_panels_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
@@ -314,6 +429,19 @@ function transperfect_get_fieldable_panels_submission_status() {
   }
 }
 
+/**
+ * Gets sent fieldable panels row that matches criteria.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return
+ *   Fieldable panels object that matches criteria.  FALSE if none exists.
+ */
 function transperfect_get_sent_tpt_fieldable_panels_rows($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -330,6 +458,19 @@ function transperfect_get_sent_tpt_fieldable_panels_rows($submission_ticket, $do
   return FALSE;
 }
 
+/**
+ * Gets fieldable panel translation status.
+ *
+ * @param string $fpid
+ *   The fieldable panel ID.
+ * @param string $tgt_locale
+ *   The target locale.
+ * @param string $title
+ *   The translation title.
+ *
+ * @return string
+ *   Status message.
+ */
 function transperfect_get_fieldable_panels_translation_status($fpid, $tgt_locale, &$title) {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('fpid', $fpid, '=');
@@ -357,6 +498,19 @@ function transperfect_get_fieldable_panels_translation_status($fpid, $tgt_locale
   return 'Sent for Translations';
 }
 
+/**
+ * Gets fieldable panels row ID from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return
+ *   The fieldable panels row ID.  FALSE if the row doesn't exist.
+ */
 function transperfect_get_fieldable_panels_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -373,6 +527,15 @@ function transperfect_get_fieldable_panels_row_id_from_submission($submission_ti
   return FALSE;
 }
 
+/**
+ * Gets sent fieldable panel rows by node ID.
+ *
+ * @param string $fpid
+ *   The fieldable panel ID.
+ *
+ * @return array
+ *   Array of fieldable panels rows.
+ */
 function transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid) {
   $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
@@ -389,6 +552,19 @@ function transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid) {
   return $rows;
 }
 
+/**
+ * Retrieves fieldable panel's row by ID.
+ *
+ * @param string $fpid
+ *   The fieldable panel row ID.
+ * @param string $source
+ *   The fieldable panel source.
+ * @param string $target
+ *   The fieldable panel target.
+ *
+ * @return
+ *   The row if fieldable panel exists.  FALSE if not.
+ */
 function transperfect_get_fieldable_panels_row($fpid, $source, $target) {
   $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
@@ -404,6 +580,15 @@ function transperfect_get_fieldable_panels_row($fpid, $source, $target) {
   return FALSE;
 }
 
+/**
+ * Gets fieldable panel row by id.
+ *
+ * @param string $id
+ *   The fieldable panel row ID.
+ *
+ * @return
+ *   The fieldable panel row.  FALSE if row doesn't exist.
+ */
 function transperfect_get_fieldable_panels_row_by_id($id) {
   $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
@@ -417,6 +602,15 @@ function transperfect_get_fieldable_panels_row_by_id($id) {
   return FALSE;
 }
 
+/**
+ * Gets array of translated fieldable panels.
+ *
+ * @param object $xml
+ *   XML representation of fieldable panels.
+ *
+ * @return array
+ *   Associative array of translated fieldable panels.
+ */
 function transperfect_get_translated_fieldable_panels_array($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
@@ -493,6 +687,14 @@ function transperfect_get_translated_fieldable_panels_array($xml) {
   return $arr;
 }
 
+/**
+ * Updates fieldable panels submission status.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $status
+ *   The submission status.  Defaults to 'Cancelled.'
+ */
 function transperfect_update_fieldable_panels_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_fieldable_panels')
   ->fields(array(
@@ -503,6 +705,17 @@ function transperfect_update_fieldable_panels_submission_status($submission_tick
   ->execute();
 }
 
+/**
+ * Gets number of translated fieldable panels.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   The number of translated fieldable panels.
+ */
 function transperfect_get_translated_fieldable_panels($pd4, &$globallink_arr) {
   $count = 0;
 
@@ -597,6 +810,14 @@ function transperfect_get_translated_fieldable_panels($pd4, &$globallink_arr) {
   return $count;
 }
 
+/**
+ * Updates fieldable panels status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param string $status
+ *   The new status.  Defaults to 'Pending Translations.'
+ */
 function transperfect_update_fieldable_panels_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_fieldable_panels')
   ->fields(array(
@@ -610,6 +831,17 @@ function transperfect_update_fieldable_panels_status(&$globallink, $status = 'Pe
   ->execute();
 }
 
+/**
+ * Updates status for deleted fieldable panels.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return bool
+ *   TRUE if update was successful, FALSE on error.
+ */
 function transperfect_update_deleted_fieldable_panels_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
@@ -633,6 +865,14 @@ function transperfect_update_deleted_fieldable_panels_records($pd4, $globallink)
   return TRUE;
 }
 
+/**
+ * Updates fieldable panel's ticket ID on GlobalLink.
+ *
+ * @param array $arr
+ *   Array of GlobalLink objects.
+ * @param string $project_code
+ *   The fieldable panel's project code.
+ */
 function transperfect_update_fieldable_panels_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;

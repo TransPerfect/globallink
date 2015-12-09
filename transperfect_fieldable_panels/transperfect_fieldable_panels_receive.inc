@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on fieldable panels receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the entity receive dashboard.
+ */
 function transperfect_fieldable_panels_receive_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_fieldable_panels_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter fieldable panels to receive on dashboard.
+ */
 function transperfect_fieldable_panels_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'transperfect_settings');
@@ -170,6 +182,9 @@ function transperfect_fieldable_panels_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_fieldable_panels_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -195,6 +210,9 @@ function transperfect_fieldable_panels_receive_filter_form_submit($form, &$form_
   }
 }
 
+/**
+ * Builds form to add pagination to fieldable panels receive dashboard.
+ */
 function transperfect_fieldable_panels_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -227,6 +245,9 @@ function transperfect_fieldable_panels_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_fieldable_panels_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -246,6 +267,9 @@ function transperfect_fieldable_panels_receive_pager_form_submit($form, &$form_s
   }
 }
 
+/**
+ * Builds form to receive a fieldable panels submission.
+ */
 function transperfect_fieldable_panels_receive_form() {
   $form = array();
 
@@ -502,6 +526,9 @@ function transperfect_fieldable_panels_receive_form() {
   return $form;
 }
 
+/**
+ * Validates fieldable panels form input.
+ */
 function transperfect_fieldable_panels_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -517,6 +544,9 @@ function transperfect_fieldable_panels_receive_form_validate($form, &$form_state
   }
 }
 
+/**
+ * Handles fieldable panels form submission.
+ */
 function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_fieldable_panels_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -676,6 +706,9 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
   }
 }
 
+/**
+ * Previews translated fieldable panels content in the form of JSON.
+ */
 function preview_translated_fieldable_panels_content() {
   $row_id = $_POST['rid'];
   $arr = get_fieldable_panels_translations_for_row_id($row_id);
@@ -683,6 +716,15 @@ function preview_translated_fieldable_panels_content() {
   drupal_json_output($arr);
 }
 
+/**
+ * Gets fieldable panels translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of fieldable panels translations.
+ */
 function get_fieldable_panels_translations_for_row_id($row_id) {
   $row = transperfect_get_fieldable_panels_row_by_id($row_id, 'fieldable_panels');
 

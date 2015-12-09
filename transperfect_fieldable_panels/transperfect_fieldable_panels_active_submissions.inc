@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on fieldable panels active submissions dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the fieldable panels active submissions dashboard.
+ */
 function transperfect_fieldable_panels_active_submissions($type) {
   $_SESSION['transpefect_fieldable_panels_active_type'] = $type;
 
@@ -11,6 +20,9 @@ function transperfect_fieldable_panels_active_submissions($type) {
   return $array;
 }
 
+/**
+ * Builds form to allow selection of specific fieldable panels submission by ID.
+ */
 function transperfect_fieldable_panels_active_select_form() {
   module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
 
@@ -68,6 +80,9 @@ function transperfect_fieldable_panels_active_select_form() {
   return $form;
 }
 
+/**
+ * Handles submission of active select form.
+ */
 function transperfect_fieldable_panels_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
@@ -106,6 +121,9 @@ function transperfect_fieldable_panels_active_select_form_submit($form, &$form_s
   }
 }
 
+/**
+ * Builds form to add pagination to fieldable panels send dashboard.
+ */
 function transperfect_fieldable_panels_active_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -138,6 +156,9 @@ function transperfect_fieldable_panels_active_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function fieldable_panels_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -157,6 +178,9 @@ function fieldable_panels_active_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to show all active fieldable panels submissions.
+ */
 function transperfect_fieldable_panels_active_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -273,6 +297,9 @@ function transperfect_fieldable_panels_active_form() {
   return $form;
 }
 
+/**
+ * Validates form actions for active fieldable panels submissions.
+ */
 function transperfect_fieldable_panels_active_form_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
   transperfect_validate_project_director_details($pd4);
@@ -288,6 +315,9 @@ function transperfect_fieldable_panels_active_form_validate($form, &$form_state)
   }
 }
 
+/**
+ * Handles submission of active fieldable panels form.
+ */
 function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
   sleep(5);
 

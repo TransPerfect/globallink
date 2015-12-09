@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on fieldable panels send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the fieldable panels send dashboard.
+ */
 function transperfect_dashboard_fieldable_panels($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_fieldable_panels($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter fieldable panels to send for translation on dashboard.
+ */
 function transperfect_dashboard_fieldable_panels_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -104,6 +116,9 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -119,6 +134,9 @@ function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$for
   }
 }
 
+/**
+ * Builds form to add pagination to fieldable panels send dashboard.
+ */
 function transperfect_dashboard_fieldable_panels_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -155,6 +173,9 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
   return $form;
 }
 
+/**
+ * Validates pager form input.
+ */
 function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -169,6 +190,9 @@ function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$fo
   }
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -188,6 +212,9 @@ function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form
   }
 }
 
+/**
+ * Builds form to create a fieldable panels submission.
+ */
 function transperfect_dashboard_fieldable_panels_form() {
   module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
 
@@ -468,9 +495,12 @@ function transperfect_dashboard_fieldable_panels_form() {
   return $form;
 }
 
+/**
+ * Validates fieldable panels form input.
+ */
 function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -533,6 +563,9 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
   }
 }
 
+/**
+ * Handles fieldable panels form submission.
+ */
 function transperfect_dashboard_fieldable_panels_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
