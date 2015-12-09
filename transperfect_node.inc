@@ -1628,7 +1628,7 @@ function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$
 }
 
 /**
- * Builds XML document with transltion data.
+ * Builds XML document with translation data.
  *
  * @param object $node
  *   The node data.
@@ -1644,7 +1644,7 @@ function transperfect_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$
  *   Indicate for display purposes only.
  *
  * @return string
- *   The transltion XML data.
+ *   The translation XML data.
  */
 function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE) {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
