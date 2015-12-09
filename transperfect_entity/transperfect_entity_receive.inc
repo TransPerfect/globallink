@@ -29,7 +29,7 @@ function transperfect_entity_receive_filter_form() {
 
   $form = array();
 
-  $submission_options = transperfect_get_distinct_entity_active_submission_names();
+  $submission_options = transperfect_entity_get_distinct_active_submission_names();
   unset($submission_options['']);
 
   $submission_options['[any]'] = 'Any';
@@ -348,7 +348,7 @@ function transperfect_entity_receive_form() {
         $source_xml = '';
         $status = 'Translation Completed';
 
-        $title = transperfect_get_entity_title($globallink);
+        $title = transperfect_entity_get_title($globallink);
 
         if (!$title) {
           $title = $globallink->title;
@@ -380,7 +380,7 @@ function transperfect_entity_receive_form() {
           continue;
         }
 
-        $tpt_row_id = transperfect_get_entity_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+        $tpt_row_id = transperfect_entity_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
         if ($tpt_row_id) {
           $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
@@ -549,7 +549,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
     case t('Update All'):
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_globalLink_entity_arr']);
-        $count = transperfect_get_translated_entity($pd4, $globallink_arr);
+        $count = transperfect_entity_get_translated_entity($pd4, $globallink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
 
@@ -559,7 +559,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
           }
 
           if ($updated->status == 'Error') {
-            transperfect_update_entity_status($updated);
+            transperfect_entity_update_status($updated);
             $error = TRUE;
           }
         }
@@ -597,7 +597,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_entity_records($pd4, $globallink);
+            $success = transperfect_entity_update_deleted_records($pd4, $globallink);
             $count++;
           }
         }
@@ -632,7 +632,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_entity($pd4, $updated_globalLink_arr);
+        $count = transperfect_entity_get_translated_entity($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
 
@@ -643,7 +643,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
 
           if ($updated->status == 'Error') {
             $error = TRUE;
-            transperfect_update_entity_status($updated);
+            transperfect_entity_update_status($updated);
           }
         }
 
@@ -703,9 +703,9 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
 /**
  * Previews translated entity content in the form of JSON.
  */
-function transperfect_preview_translated_entity() {
+function transperfect_entity_preview_translated_entity() {
   $row_id = $_POST['rid'];
-  $arr = transperfect_get_translations_for_entity_row_id($row_id);
+  $arr = transperfect_entity_get_translations_for_row_id($row_id);
   drupal_json_output($arr);
 }
 
@@ -718,8 +718,8 @@ function transperfect_preview_translated_entity() {
  * @return array
  *   Array of entity translations.
  */
-function transperfect_get_translations_for_entity_row_id($row_id) {
-  $row = transperfect_get_entity_row($row_id);
+function transperfect_entity_get_translations_for_row_id($row_id) {
+  $row = transperfect_entity_get_row($row_id);
 
   $globallink = new GlobalLink();
   $globallink->tptRowId = $row_id;
@@ -767,7 +767,7 @@ function transperfect_get_translations_for_entity_row_id($row_id) {
         continue;
       }
 
-      $translation = transperfect_get_translated_entity_array($globallink->targetXML);
+      $translation = transperfect_entity_get_translated_array($globallink->targetXML);
 
       $nid = $translation['nid'];
       $vid = $translation['vid'];
@@ -790,7 +790,7 @@ function transperfect_get_translations_for_entity_row_id($row_id) {
         $source_arr = array();
 
         if ($source_xml != 'Source Deleted') {
-          $source_arr = transperfect_get_translated_entity_array($source_xml);
+          $source_arr = transperfect_entity_get_translated_array($source_xml);
         }
       }
       else {

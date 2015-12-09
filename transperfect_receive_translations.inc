@@ -718,12 +718,12 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'entity':
-          $count = transperfect_get_translated_entity($pd4, $globallink_arr);
+          $count = transperfect_entity_get_translated_entity($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Entity', array(), WATCHDOG_INFO);
 
           if ($globallink->status == 'Error') {
-            transperfect_update_entity_status($globallink);
+            transperfect_entity_update_status($globallink);
           }
 
           $_SESSION['transperfect_entity_globalLink_arr'] = array();

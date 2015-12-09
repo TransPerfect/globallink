@@ -13,13 +13,13 @@ $GLOBALS['transperfect_entity_source_locale'] = $default_language->language;
  * @return array
  *   Array of forms for the entity send dashboard.
  */
-function transperfect_dashboard_entity($type) {
+function transperfect_entity_dashboard($type) {
   $_SESSION['transperfect_entity_selected_type'] = $type;
 
   $array = array();
-  $array[] = drupal_get_form('transperfect_dashboard_entity_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_entity_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_entity_form');
+  $array[] = drupal_get_form('transperfect_entity_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_entity_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_entity_dashboard_form');
 
   return $array;
 }
@@ -27,7 +27,7 @@ function transperfect_dashboard_entity($type) {
 /**
  * Builds form to filter entities to send for translation on dashboard.
  */
-function transperfect_dashboard_entity_filter_form($form, &$form_state) {
+function transperfect_entity_dashboard_filter_form($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -98,7 +98,7 @@ function transperfect_dashboard_entity_filter_form($form, &$form_state) {
                 '#field_prefix' => '</td><td>',
                 '#ajax' => array(
                   'event' => 'change',
-                  'callback' => 'transperfect_dashboard_entity_filter_target',
+                  'callback' => 'transperfect_entity_dashboard_filter_target',
                   'wrapper' => 'replace-target',
                 ),
               );
@@ -332,14 +332,14 @@ function transperfect_entity_get_target_options($selected) {
  * @return string
  *   The target language.
  */
-function transperfect_dashboard_entity_filter_target($form, &$form_state) {
+function transperfect_entity_dashboard_filter_target($form, &$form_state) {
   return $form['filters']['status']['filters']['target_language'];
 }
 
 /**
  * Handles submission of filter form.
  */
-function transperfect_dashboard_entity_filter_form_submit($form, &$form_state) {
+function transperfect_entity_dashboard_filter_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   $filters = transperfect_build_filters(FALSE);
@@ -422,7 +422,7 @@ function transperfect_dashboard_entity_filter_form_submit($form, &$form_state) {
 /**
  * Builds form to add pagination to entity send dashboard.
  */
-function transperfect_dashboard_entity_pager_form() {
+function transperfect_entity_dashboard_pager_form() {
   $form = array();
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
 
@@ -446,7 +446,7 @@ function transperfect_dashboard_entity_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('transperfect_dashboard_entity_pager_form_submit'),
+      '#submit' => array('transperfect_entity_dashboard_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -457,7 +457,7 @@ function transperfect_dashboard_entity_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function transperfect_dashboard_entity_pager_form_submit($form, &$form_state) {
+function transperfect_entity_dashboard_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -479,7 +479,7 @@ function transperfect_dashboard_entity_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to create an entity submission.
  */
-function transperfect_dashboard_entity_form() {
+function transperfect_entity_dashboard_form() {
   $default_checked_ids = array();
   $module_path = drupal_get_path('module', 'transperfect');
 
@@ -699,7 +699,7 @@ function transperfect_dashboard_entity_form() {
             }
 
             $results = $d_query->execute();
-            $active_subs = transperfect_get_active_entity_submission_rows_by_nid($include_node_arr);
+            $active_subs = transperfect_entity_get_active_submission_rows_by_nid($include_node_arr);
 
             $rows = array();
 
@@ -785,7 +785,7 @@ function transperfect_dashboard_entity_form() {
 
           foreach ($results as $item) {
             $count++;
-            $active_arr = transperfect_get_active_entity_submission_by_nid($item->nid);
+            $active_arr = transperfect_entity_get_active_submission_by_nid($item->nid);
 
             $vid = $item->vid;
 
@@ -891,7 +891,7 @@ function transperfect_dashboard_entity_form() {
           foreach ($results as $item) {
             $count++;
 
-            $active_arr = transperfect_get_active_entity_submission_by_nid($item->nid);
+            $active_arr = transperfect_entity_get_active_submission_by_nid($item->nid);
 
             $vid = $item->vid;
 
@@ -1178,7 +1178,7 @@ function transperfect_entity_form_clear_submit($form, &$form_state) {
       array_push($nid_arr, $nid);
     }
 
-    transperfect_update_entity_change_flag($nid_arr, $source, $tgt_arr);
+    transperfect_entity_update_change_flag($nid_arr, $source, $tgt_arr);
     drupal_set_message(t('Status has been cleared successfully for selected record(s).'));
   }
 }
@@ -1186,7 +1186,7 @@ function transperfect_entity_form_clear_submit($form, &$form_state) {
 /**
  * Validates entity form input.
  */
-function transperfect_dashboard_entity_form_validate($form, &$form_state) {
+function transperfect_entity_dashboard_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -1242,7 +1242,7 @@ function transperfect_dashboard_entity_form_validate($form, &$form_state) {
       $nid = $node->tnid;
     }
 
-    $rows = transperfect_get_sent_entity_rows_by_nid($nid);
+    $rows = transperfect_entity_get_sent_rows_by_nid($nid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -1259,7 +1259,7 @@ function transperfect_dashboard_entity_form_validate($form, &$form_state) {
 /**
  * Handles entity form submission.
  */
-function transperfect_dashboard_entity_form_submit($form, &$form_state) {
+function transperfect_entity_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
   $pd4 = transperfect_get_project_director_details();
@@ -1285,10 +1285,10 @@ function transperfect_dashboard_entity_form_submit($form, &$form_state) {
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
 
-    $updated_globalLink_arr = transperfect_send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_entity_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_entity_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_entity_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
     else {

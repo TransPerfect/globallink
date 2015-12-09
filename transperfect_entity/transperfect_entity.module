@@ -202,7 +202,7 @@ function transperfect_entity_menu() {
 
   $items ['admin/transperfect-translations/dashboard/entity'] = array(
     'title' => ' Entity ',
-    'page callback' => 'transperfect_dashboard_entity',
+    'page callback' => 'transperfect_entity_dashboard',
     'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_entity_send.inc',
@@ -229,7 +229,7 @@ function transperfect_entity_menu() {
 
   $items['admin/transperfect-translations/receiveTranslation/entity/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'transperfect_preview_translated_entity',
+    'page callback' => 'transperfect_entity_preview_translated_entity',
     'file' => 'transperfect_entity_receive.inc',
     'access callback' => 'transperfect_access_callback_admin',
     'type' => MENU_CALLBACK,
