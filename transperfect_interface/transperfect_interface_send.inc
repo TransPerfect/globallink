@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on interface send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the interface send dashboard.
+ */
 function transperfect_dashboard_interface_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_interface_page($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter interfaces to send for translation on dashboard.
+ */
 function transperfect_dashboard_interface_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -140,6 +152,9 @@ function transperfect_dashboard_interface_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_interface_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -159,6 +174,9 @@ function transperfect_dashboard_interface_filter_form_submit($form, &$form_state
   }
 }
 
+/**
+ * Builds form to add pagination to interface send dashboard.
+ */
 function transperfect_dashboard_interface_pager_form() {
   $form = array();
 
@@ -192,6 +210,9 @@ function transperfect_dashboard_interface_pager_form() {
   return $form;
 }
 
+/**
+ * Validates pager form input.
+ */
 function interface_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -206,6 +227,9 @@ function interface_pager_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function interface_pager_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -218,6 +242,9 @@ function interface_pager_form_submit($form, &$form_state) {
   $_SESSION['transperfect_interface_page_count'] = array($page_count);
 }
 
+/**
+ * Builds form to create an interface submission.
+ */
 function transperfect_dashboard_interface_form() {
   module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
 
@@ -555,9 +582,12 @@ function transperfect_dashboard_interface_form() {
   return $form;
 }
 
+/**
+ * Validates interface form input.
+ */
 function transperfect_dashboard_interface_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -620,6 +650,9 @@ function transperfect_dashboard_interface_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles interface form submission.
+ */
 function transperfect_dashboard_interface_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 

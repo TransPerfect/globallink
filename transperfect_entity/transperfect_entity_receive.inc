@@ -549,7 +549,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
     case t('Update All'):
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_globalLink_entity_arr']);
-        $count = transperfect_entity_get_translated_entity($pd4, $globallink_arr);
+        $count = transperfect_entity_get_translated_enties($pd4, $globallink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
 
@@ -632,7 +632,7 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_entity_get_translated_entity($pd4, $updated_globalLink_arr);
+        $count = transperfect_entity_get_translated_enties($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
 
