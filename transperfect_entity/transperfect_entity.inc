@@ -433,7 +433,7 @@ function transperfect_entity_get_distinct_active_submission_names() {
  *   The target locale.
  *
  * @return string
- *   The entity row ID.
+ *   The entity row ID.  FALSE if the row doesn't exist.
  */
 function transperfect_entity_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_entity', 'tc');

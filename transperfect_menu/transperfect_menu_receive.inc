@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on menu receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the menu receive dashboard.
+ */
 function transperfect_menu_receive_submissions($type) {
   $_SESSION['transpefect_menu_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_menu_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter menus to receive on dashboard.
+ */
 function transperfect_menu_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_menu', 'transperfect_menu');
@@ -20,7 +32,7 @@ function transperfect_menu_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = transperfect_get_distinct_active_menu_submission_names();
+  $submission_options = transperfect_menu_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_menu_receive_filter_submission'])) {
@@ -170,6 +182,9 @@ function transperfect_menu_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_menu_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -195,6 +210,9 @@ function transperfect_menu_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to menu receive dashboard.
+ */
 function transperfect_menu_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -227,6 +245,9 @@ function transperfect_menu_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_menu_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -246,6 +267,9 @@ function transperfect_menu_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a menu submission.
+ */
 function transperfect_menu_receive_form() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
@@ -330,13 +354,13 @@ function transperfect_menu_receive_form() {
         continue;
       }
 
-      $tpt_menu_arr = transperfect_get_sent_menu_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+      $tpt_menu_arr = transperfect_menu_get_sent_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
       $title = '';
 
       if ($tpt_menu_arr) {
         $mlid = $tpt_menu_arr->object_id;
-        $status = transperfect_get_menu_translation_status($mlid, $globallink->targetLocale, $title);
+        $status = transperfect_menu_get_translation_status($mlid, $globallink->targetLocale, $title);
       }
       else {
         $status = 'Source Deleted';
@@ -366,7 +390,7 @@ function transperfect_menu_receive_form() {
       }
 
       if (variable_get('transperfect_enable_preview', 1)) {
-        $tpt_row_id = transperfect_get_menu_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+        $tpt_row_id = transperfect_menu_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
         if ($status != 'Source Deleted') {
           $mlid_tpt_arr = array();
@@ -505,6 +529,9 @@ function transperfect_menu_receive_form() {
   return $form;
 }
 
+/**
+ * Validates menu form input.
+ */
 function transperfect_menu_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -520,6 +547,9 @@ function transperfect_menu_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles menu form submission.
+ */
 function transperfect_menu_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_menu_receive_type'];
 
@@ -531,7 +561,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_menu_globalLink_arr']);
 
-        $count = transperfect_get_translated_menus($pd4, $globallink_arr);
+        $count = transperfect_menu_get_translated($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -579,7 +609,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_menu_records($pd4, $globallink);
+            $success = transperfect_menu_update_deleted_records($pd4, $globallink);
             $count++;
           }
         }
@@ -614,7 +644,7 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_menus($pd4, $updated_globalLink_arr);
+        $count = transperfect_menu_get_translated($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -684,14 +714,26 @@ function transperfect_menu_receive_form_submit($form, &$form_state) {
   }
 }
 
-function preview_translated_menu_content() {
+/**
+ * Previews translated menu content in the form of JSON.
+ */
+function transperfect_menu_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = get_menu_translations_for_row_id($row_id);
+  $arr = transperfect_menu_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
 
-function get_menu_translations_for_row_id($row_id) {
+/**
+ * Gets menu translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of menu translations.
+ */
+function transperfect_menu_get_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'menu');
 
   $globallink = new GlobalLink();
@@ -733,16 +775,16 @@ function get_menu_translations_for_row_id($row_id) {
           continue;
         }
 
-        $translation = transperfect_get_translated_menu_items($globallink->targetXML);
+        $translation = transperfect_menu_get_translated_items($globallink->targetXML);
         $mlid = $translation['mlid'];
         $menu = load_menu_data($mlid);
 
         if ($menu && is_array($menu) && !is_null($menu)) {
-          $source_xml = get_menu_xml($mlid);
+          $source_xml = transperfect_menu_get_xml($mlid);
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = transperfect_get_translated_menu_items($source_xml);
+            $source_arr = transperfect_menu_get_translated_items($source_xml);
           }
         }
         else {
@@ -761,17 +803,17 @@ function get_menu_translations_for_row_id($row_id) {
             $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
 
             if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-              $translation = transperfect_get_translated_menu_items($globallink->targetXML);
+              $translation = transperfect_menu_get_translated_items($globallink->targetXML);
               $mlid = $translation['mlid'];
 
-              $menu = transperfect_load_menu_data($mlid);
+              $menu = transperfect_menu_load_data($mlid);
 
               if ($menu && is_array($menu) && !is_null($menu)) {
-                $source_xml = get_menu_xml($mlid);
+                $source_xml = transperfect_menu_get_xml($mlid);
                 $source_arr = array();
 
                 if ($source_xml) {
-                  $source_arr = transperfect_get_translated_menu_items($source_xml);
+                  $source_arr = transperfect_menu_get_translated_items($source_xml);
                 }
               }
               else {
