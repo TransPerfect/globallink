@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the fieldable panels send dashboard.
  */
-function transperfect_dashboard_fieldable_panels($type) {
+function transperfect_fieldable_panels_dashboard($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_fieldable_panels_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_fieldable_panels_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_fieldable_panels_form');
+  $array[] = drupal_get_form('transperfect_fieldable_panels_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_fieldable_panels_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_fieldable_panels_dashboard_form');
 
   return $array;
 }
@@ -24,7 +24,7 @@ function transperfect_dashboard_fieldable_panels($type) {
 /**
  * Builds form to filter fieldable panels to send for translation on dashboard.
  */
-function transperfect_dashboard_fieldable_panels_filter_form() {
+function transperfect_fieldable_panels_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -119,7 +119,7 @@ function transperfect_dashboard_fieldable_panels_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$form_state) {
+function transperfect_fieldable_panels_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -137,7 +137,7 @@ function transperfect_dashboard_fieldable_panels_filter_form_submit($form, &$for
 /**
  * Builds form to add pagination to fieldable panels send dashboard.
  */
-function transperfect_dashboard_fieldable_panels_pager_form() {
+function transperfect_fieldable_panels_dashboard_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -165,7 +165,7 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('transperfect_dashboard_fieldable_panels_pager_form_submit'),
+      '#submit' => array('transperfect_fieldable_panels_dashboard_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -176,7 +176,7 @@ function transperfect_dashboard_fieldable_panels_pager_form() {
 /**
  * Validates pager form input.
  */
-function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$form_state) {
+function transperfect_fieldable_panels_dashboard_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op != t('Go')) {
@@ -193,7 +193,7 @@ function transperfect_dashboard_fieldable_panels_pager_form_validate($form, &$fo
 /**
  * Handles submission of pager form.
  */
-function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form_state) {
+function transperfect_fieldable_panels_dashboard_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -215,7 +215,7 @@ function transperfect_dashboard_fieldable_panels_pager_form_submit($form, &$form
 /**
  * Builds form to create a fieldable panels submission.
  */
-function transperfect_dashboard_fieldable_panels_form() {
+function transperfect_fieldable_panels_dashboard_form() {
   module_load_include('inc', 'transperfect_fieldable_panels', 'transperfect_fieldable_panels');
 
   $form = array();
@@ -294,7 +294,7 @@ function transperfect_dashboard_fieldable_panels_form() {
       $count++;
 
       $active = '';
-      $active_subs = transperfect_get_active_fieldable_panels_submission_rows($item->fpid);
+      $active_subs = transperfect_fieldable_panels_get_active_submission_rows($item->fpid);
 
       if ($active_subs && array_key_exists($item->fpid, $active_subs)) {
         $sub_arr = $active_subs[$item->fpid];
@@ -498,7 +498,7 @@ function transperfect_dashboard_fieldable_panels_form() {
 /**
  * Validates fieldable panels form input.
  */
-function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_state) {
+function transperfect_fieldable_panels_dashboard_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -549,7 +549,7 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
   }
 
   foreach ($fpids as $fpid) {
-    $rows = transperfect_get_sent_fieldable_panels_rows_by_fpid($fpid);
+    $rows = transperfect_fieldable_panels_get_sent_rows_by_fpid($fpid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -566,7 +566,7 @@ function transperfect_dashboard_fieldable_panels_form_validate($form, &$form_sta
 /**
  * Handles fieldable panels form submission.
  */
-function transperfect_dashboard_fieldable_panels_form_submit($form, &$form_state) {
+function transperfect_fieldable_panels_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $submission_details = array();
 
@@ -593,10 +593,10 @@ function transperfect_dashboard_fieldable_panels_form_submit($form, &$form_state
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = transperfect_send_fieldable_panels_pane_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_fieldable_panels_pane_send_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_fieldable_panels_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_fieldable_panels_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

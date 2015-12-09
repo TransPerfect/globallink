@@ -34,7 +34,7 @@ function transperfect_fieldable_panels_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = transperfect_get_distinct_active_fieldable_panels_submission_names();
+  $submission_options = transperfect_fieldable_panels_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_fieldable_panels_receive_filter_submission'])) {
@@ -351,13 +351,13 @@ function transperfect_fieldable_panels_receive_form() {
         continue;
       }
 
-      $tpt_fieldable_panels_arr = transperfect_get_sent_tpt_fieldable_panels_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+      $tpt_fieldable_panels_arr = transperfect_fieldable_panels_get_sent_tpt_rows($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
       $title = '';
 
       if ($tpt_fieldable_panels_arr) {
         $fpid = $tpt_fieldable_panels_arr->fpid;
-        $status = transperfect_get_fieldable_panels_translation_status($fpid, $globallink->targetLocale, $title);
+        $status = transperfect_fieldable_panels_get_translation_status($fpid, $globallink->targetLocale, $title);
       }
       else {
         $status = 'Source Deleted';
@@ -387,7 +387,7 @@ function transperfect_fieldable_panels_receive_form() {
       }
 
       if (variable_get('transperfect_enable_preview', 1)) {
-        $tpt_row_id = transperfect_get_fieldable_panels_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+        $tpt_row_id = transperfect_fieldable_panels_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
         if ($status != 'Source Deleted') {
           $fpid_tpt_arr = array();
@@ -556,7 +556,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
     case t('Update All'):
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_fieldable_panels_globalLink_arr']);
-        $count = transperfect_get_translated_fieldable_panels($pd4, $globallink_arr);
+        $count = transperfect_fieldable_panels_get_translated($pd4, $globallink_arr);
         $error = FALSE;
         $delete_records_selected = FALSE;
 
@@ -601,7 +601,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_fieldable_panels_records($pd4, $globallink);
+            $success = transperfect_fieldable_panels_update_deleted_records($pd4, $globallink);
             $count++;
           }
         }
@@ -636,7 +636,7 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_fieldable_panels($pd4, $updated_globalLink_arr);
+        $count = transperfect_fieldable_panels_get_translated($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -709,9 +709,9 @@ function transperfect_fieldable_panels_receive_form_submit($form, &$form_state) 
 /**
  * Previews translated fieldable panels content in the form of JSON.
  */
-function preview_translated_fieldable_panels_content() {
+function transperfect_fieldable_panels_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = get_fieldable_panels_translations_for_row_id($row_id);
+  $arr = transperfect_fieldable_panels_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
@@ -725,8 +725,8 @@ function preview_translated_fieldable_panels_content() {
  * @return array
  *   Array of fieldable panels translations.
  */
-function get_fieldable_panels_translations_for_row_id($row_id) {
-  $row = transperfect_get_fieldable_panels_row_by_id($row_id, 'fieldable_panels');
+function transperfect_fieldable_panels_get_translations_for_row_id($row_id) {
+  $row = transperfect_fieldable_panels_get_row_by_id($row_id, 'fieldable_panels');
 
   $globallink = new GlobalLink();
   $globallink->tptRowId = $row_id;
@@ -769,17 +769,17 @@ function get_fieldable_panels_translations_for_row_id($row_id) {
         continue;
       }
 
-      $translation = transperfect_get_translated_fieldable_panels_array($globallink->targetXML);
+      $translation = transperfect_fieldable_panels_get_translated_array($globallink->targetXML);
       $fpid = $translation['fpid'];
 
       $entity = fieldable_panels_panes_load($fpid);
 
       if (!empty($entity)) {
-        $source_xml = transperfect_get_fieldable_panels_pane_xml($fpid);
+        $source_xml = transperfect_fieldable_panels_pane_get_xml($fpid);
         $source_arr = array();
 
         if ($source_xml) {
-          $source_arr = transperfect_get_translated_fieldable_panels_array($source_xml);
+          $source_arr = transperfect_fieldable_panels_get_translated_array($source_xml);
         }
       }
       else {

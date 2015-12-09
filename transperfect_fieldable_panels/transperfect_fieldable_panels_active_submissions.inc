@@ -28,10 +28,10 @@ function transperfect_fieldable_panels_active_select_form() {
 
   $form = array();
 
-  transperfect_get_fieldable_panels_submission_status();
+  transperfect_fieldable_panels_get_submission_status();
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = transperfect_get_fieldable_panels_active_submission_names();
+  $options = transperfect_fieldable_panels_get_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_fieldable_panels_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_fieldable_panels_selected_submission'];
@@ -102,7 +102,7 @@ function transperfect_fieldable_panels_active_select_form_submit($form, &$form_s
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_fieldable_panels_selected_submission'] = '';
 
-        transperfect_cancel_fieldable_panels_submission($selected_submission);
+        transperfect_fieldable_panels_cancel_submission($selected_submission);
 
         $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
 
@@ -149,7 +149,7 @@ function transperfect_fieldable_panels_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('fieldable_panels_active_pager_form_submit'),
+    '#submit' => array('transperfect_fieldable_panels_active_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -159,7 +159,7 @@ function transperfect_fieldable_panels_active_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function fieldable_panels_active_pager_form_submit($form, &$form_state) {
+function transperfect_fieldable_panels_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -193,7 +193,7 @@ function transperfect_fieldable_panels_active_form() {
     $selected_value = $_SESSION['transperfect_fieldable_panels_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_get_fieldable_panels_active_submission_names();
+    $options = transperfect_fieldable_panels_get_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -328,7 +328,7 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
     case t('Cancel Selected Documents'):
       try {
         $ids_arr = array_filter($form_state['values']['table']);
-        $ids = transperfect_check_fieldable_panels_status($ids_arr);
+        $ids = transperfect_fieldable_panels_check_status($ids_arr);
 
         if (count($ids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -337,7 +337,7 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
         }
 
         $_SESSION['transperfect_fieldable_panels_selected_submission'] = '';
-        transperfect_cancel_fieldable_panels_records($ids, $pd4);
+        transperfect_fieldable_panels_cancel_records($ids, $pd4);
 
         $_SESSION['transperfect_fieldable_panels_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
@@ -354,7 +354,7 @@ function transperfect_fieldable_panels_active_form_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_clear_cancelled_fieldable_panels_documents();
+        $count = transperfect_fieldable_panels_clear_cancelled_documents();
 
         $_SESSION['transperfect_selected_submission'] = '';
         $_SESSION['transperfect_globalLink_arr'] = array();

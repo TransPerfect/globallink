@@ -776,7 +776,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'fieldable_panels_panes':
-          $count += transperfect_get_translated_fieldable_panels($pd4, $globallink_arr);
+          $count += transperfect_fieldable_panels_get_translated($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Fieldable Panels Panes', array(), WATCHDOG_INFO);
 
