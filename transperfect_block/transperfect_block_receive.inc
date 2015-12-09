@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on block receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the block receive dashboard.
+ */
 function transperfect_block_receive_submissions($type) {
   $_SESSION['transpefect_block_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_block_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter blocks to receive on dashboard.
+ */
 function transperfect_block_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'transperfect_settings');
@@ -21,7 +33,7 @@ function transperfect_block_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = transperfect_get_distinct_active_block_submission_names();
+  $submission_options = transperfect_block_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_block_receive_filter_submission']) && !in_array($_SESSION['transperfect_block_receive_filter_submission'], $submission_options)) {
@@ -172,6 +184,9 @@ function transperfect_block_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_block_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -197,6 +212,9 @@ function transperfect_block_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to block receive dashboard.
+ */
 function transperfect_block_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -229,6 +247,9 @@ function transperfect_block_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_block_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -248,6 +269,9 @@ function transperfect_block_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a block submission.
+ */
 function transperfect_block_receive_form() {
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
@@ -305,7 +329,7 @@ function transperfect_block_receive_form() {
   }
 
   if (isset($globallink_arr) && is_array($globallink_arr)) {
-    $strings = transperfect_get_strings(NULL, 'blocks');
+    $strings = transperfect_block_get_strings(NULL, 'blocks');
     $filter_status = '[any]';
 
     if (!empty($_SESSION['transperfect_block_receive_filter_status'])) {
@@ -336,13 +360,13 @@ function transperfect_block_receive_form() {
       $pd4 = transperfect_get_project_director_details();
 
       $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
-      $block_arr = transperfect_get_translated_block_items($target_xml);
+      $block_arr = transperfect_block_get_translated_items($target_xml);
 
       if (count($block_arr) > 0) {
         $bid = $block_arr['bid'];
         $title = '';
 
-        $status = transperfect_get_block_translation_status($bid, $globallink->targetLocale, $title);
+        $status = transperfect_block_get_translation_status($bid, $globallink->targetLocale, $title);
 
         if ($status == 'Source Deleted') {
           $globallink->sourceDeleted = TRUE;
@@ -368,7 +392,7 @@ function transperfect_block_receive_form() {
 
         if (variable_get('transperfect_enable_preview', 1)) {
           if ($status != 'Source Deleted') {
-            $tpt_row_id = transperfect_get_block_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+            $tpt_row_id = transperfect_block_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
             if ($tpt_row_id) {
               $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
@@ -504,6 +528,9 @@ function transperfect_block_receive_form() {
   return $form;
 }
 
+/**
+ * Validates block form input.
+ */
 function transperfect_block_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -521,6 +548,9 @@ function transperfect_block_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles block form submission.
+ */
 function transperfect_block_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_block_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -531,7 +561,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
     case t('Update All'):
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_block_globalLink_arr']);
-        $count = transperfect_get_translated_blocks($pd4, $globallink_arr);
+        $count = transperfect_block_get_translated_blocks($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -580,7 +610,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_block_records($pd4, $globallink);
+            $success = transperfect_block_update_deleted_records($pd4, $globallink);
 
             $count++;
           }
@@ -616,7 +646,7 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_blocks($pd4, $updated_globalLink_arr);
+        $count = transperfect_block_get_translated_blocks($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -686,14 +716,26 @@ function transperfect_block_receive_form_submit($form, &$form_state) {
   }
 }
 
-function preview_translated_block_content() {
+/**
+ * Previews translated block content in the form of JSON.
+ */
+function transperfect_block_preview_translated_block_content() {
   $row_id = $_POST['rid'];
-  $arr = get_block_translations_for_row_id($row_id);
+  $arr = transperfect_block_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
 
-function get_block_translations_for_row_id($row_id) {
+/**
+ * Gets block translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of block translations.
+ */
+function transperfect_block_get_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'block');
 
   $globallink = new GlobalLink();
@@ -734,20 +776,20 @@ function get_block_translations_for_row_id($row_id) {
           continue;
         }
 
-        $translation = transperfect_get_arr_block_items($globallink->targetXML);
+        $translation = transperfect_block_get_arr_items($globallink->targetXML);
         $bid = $translation['bid'];
-        $block = transperfect_load_block_data($bid);
+        $block = transperfect_block_load_data($bid);
 
         if ($block && is_array($block) && !is_null($block)) {
-          $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
+          $strings = transperfect_block_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
           $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
           $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
 
-          $source_xml = get_block_xml($bid, $title, $body);
+          $source_xml = transperfect_block_get_xml($bid, $title, $body);
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = transperfect_get_arr_block_items($source_xml);
+            $source_arr = transperfect_block_get_arr_items($source_xml);
           }
         }
         else {
@@ -774,20 +816,20 @@ function get_block_translations_for_row_id($row_id) {
         continue;
       }
 
-      $translation = transperfect_get_arr_block_items($globallink->targetXML);
+      $translation = transperfect_block_get_arr_items($globallink->targetXML);
       $bid = $translation['bid'];
-      $block = transperfect_load_block_data($bid);
+      $block = transperfect_block_load_data($bid);
 
       if ($block && is_array($block) && !is_null($block)) {
-        $strings = transperfect_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
+        $strings = transperfect_block_get_strings(transperfect_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
         $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
         $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
 
-        $source_xml = get_block_xml($bid, $title, $body);
+        $source_xml = transperfect_block_get_xml($bid, $title, $body);
         $source_arr = array();
 
         if ($source_xml) {
-          $source_arr = transperfect_get_arr_block_items($source_xml);
+          $source_arr = transperfect_block_get_arr_items($source_xml);
         }
       }
       else {
