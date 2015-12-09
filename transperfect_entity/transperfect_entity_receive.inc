@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on entity receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the entity receive dashboard.
+ */
 function transperfect_entity_receive_submissions($type) {
   $_SESSION['transpefect_entity_receive_type'] = $type;
 
@@ -11,6 +20,9 @@ function transperfect_entity_receive_submissions($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter entities to receive on dashboard.
+ */
 function transperfect_entity_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
@@ -169,6 +181,9 @@ function transperfect_entity_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_entity_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -192,6 +207,9 @@ function transperfect_entity_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to entity receive dashboard.
+ */
 function transperfect_entity_receive_pager_form() {
   $form = array();
 
@@ -221,6 +239,9 @@ function transperfect_entity_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_entity_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -240,6 +261,9 @@ function transperfect_entity_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive an entity submission.
+ */
 function transperfect_entity_receive_form() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
@@ -495,6 +519,9 @@ function transperfect_entity_receive_form() {
   return $form;
 }
 
+/**
+ * Validates entity form input.
+ */
 function transperfect_entity_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -510,6 +537,9 @@ function transperfect_entity_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles entity form submission.
+ */
 function transperfect_entity_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_entity_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -670,12 +700,24 @@ function transperfect_entity_receive_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Previews translated entity content in the form of JSON.
+ */
 function transperfect_preview_translated_entity() {
   $row_id = $_POST['rid'];
   $arr = transperfect_get_translations_for_entity_row_id($row_id);
   drupal_json_output($arr);
 }
 
+/**
+ * Gets entity translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of entity translations.
+ */
 function transperfect_get_translations_for_entity_row_id($row_id) {
   $row = transperfect_get_entity_row($row_id);
 

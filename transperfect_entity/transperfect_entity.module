@@ -1,7 +1,14 @@
 <?php
 
+/**
+ * @file
+ * Transperfect entity translation module.
+ *
+ * This module adds entity translation support with configuration options.
+ */
+
 /*
- * Adds a validation handler to check for change in multilingual options
+ * Adds a validation handler to check for change in multilingual options.
  */
 function transperfect_entity_form_node_type_form_alter(&$form, $form_state) {
   array_unshift($form['#validate'], 'transperfect_entity_form_node_type_form_validate');
@@ -9,7 +16,7 @@ function transperfect_entity_form_node_type_form_alter(&$form, $form_state) {
 
 /*
  * Validation to check if any active submission exists for this content type
- * Only if there is a change in multilingual options.
+ * only if there is a change in multilingual options.
  */
 function transperfect_entity_form_node_type_form_validate($form, &$form_state) {
   $language_content_type = $form_state['values']['language_content_type'];
@@ -137,6 +144,14 @@ function transperfect_entity_node_presave($node) {
   }
 }
 
+/**
+ * Updates change detection entity with new node ID and language.
+ *
+ * @param object $node
+ *   The node object.
+ * @param string $lang
+ *   The target language.
+ */
 function transperfect_update_change_detection_entity($node, $lang) {
   $tpt_locale_code = transperfect_get_locale_code($lang);
 
@@ -150,6 +165,17 @@ function transperfect_update_change_detection_entity($node, $lang) {
   ->execute();
 }
 
+/**
+ * Gets entity rows that have been sent for translation.
+ *
+ * @param string $nid
+ *   The entity node ID.
+ * @param string $source
+ *   The target language of the entity.
+ *
+ * @return array
+ *   Array of entity rows that have been sent for translation.
+ */
 function get_tpt_entity_sent_rows($nid, $source) {
   $arr = array();
 
@@ -166,19 +192,6 @@ function get_tpt_entity_sent_rows($nid, $source) {
   }
 
   return $arr;
-}
-
-function transperfect_entity_update_change_detection($node, $lang) {
-  $tpt_locale_code = get_tpt_locale_code($lang);
-
-  db_update('transperfect_core_entity')
-  ->fields(array(
-    'last_modified' => REQUEST_TIME,
-    'changed' => 1,
-  ))
-  ->condition('nid', $node->nid, '=')
-  ->condition('source', $tpt_locale_code, '=')
-  ->execute();
 }
 
 /**
