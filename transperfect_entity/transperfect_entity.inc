@@ -1,6 +1,29 @@
 <?php
 
-function transperfect_send_entity_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+/**
+ * Sends entities for translation.
+ *
+ * @param array $nids
+ *   The array of entity node IDs.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return object
+ *   GlobalLink object that represents active translation.
+ */
+function transperfect_entity_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $node_check = variable_get('transperfect_implementation_type', 0);
   $submitter = $submission_details['submitter'];
   $drupal_locale_code = transperfect_get_drupal_locale_code($source_locale);
@@ -9,7 +32,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
   foreach ($nids as $nid) {
     list($nid, $vid) = explode('-', $nid, 2);
 
-    $rows = transperfect_get_sent_entity_rows_by_nid($nid);
+    $rows = transperfect_entity_get_sent_rows_by_nid($nid);
 
     $target_arr = $target_locale_arr;
 
@@ -52,7 +75,7 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
 
     $name = '.xml';
 
-    $xml = transperfect_get_entity_xml($node, $drupal_target_arr, $tnid, $tvid, $name, FALSE, $drupal_locale_code);
+    $xml = transperfect_entity_get_xml($node, $drupal_target_arr, $tnid, $tvid, $name, FALSE, $drupal_locale_code);
 
     if (!$xml) {
       watchdog('GlobalLink', 'Cannot create XML. Skipping nid - %nid', array('%nid' => $nid), WATCHDOG_CRITICAL);
@@ -85,7 +108,15 @@ function transperfect_send_entity_for_translations($nids, $pd4, $submission_name
   return $globallink_arr;
 }
 
-function transperfect_update_entity_ticket_id($arr, $project_code) {
+/**
+ * Updates entity ticket ID on GlobalLink.
+ *
+ * @param array $arr
+ *   Array of GlobalLink objects.
+ * @param string $project_code
+ *   The entity's project code.
+ */
+function transperfect_entity_update_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $nid = $globallink->nid;
     $node = node_load($nid);
@@ -93,7 +124,7 @@ function transperfect_update_entity_ticket_id($arr, $project_code) {
     $source_locale_code = transperfect_get_drupal_locale_code($globallink->sourceLocale);
 
     foreach ($target_locale_arr as $target_locale) {
-      $row = transperfect_get_entity_row_by_nid_and_locale($nid, $globallink->sourceLocale, $target_locale);
+      $row = transperfect_entity_get_row_by_nid_and_locale($nid, $globallink->sourceLocale, $target_locale);
       $title = $node->title;
 
       if ($row) {
@@ -137,7 +168,20 @@ function transperfect_update_entity_ticket_id($arr, $project_code) {
   }
 }
 
-function transperfect_get_entity_row_by_nid_and_locale($nid, $source, $target) {
+/**
+ * Gets entity row by node ID and locale.
+ *
+ * @param string $nid
+ *   The node ID.
+ * @param string $source
+ *   The source of the entity.
+ * @param string $target
+ *   The target of the entity.
+ *
+ * @return
+ *   The entity row if all goes well.  FALSE if it fails.
+ */
+function transperfect_entity_get_row_by_nid_and_locale($nid, $source, $target) {
   $result = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
@@ -152,7 +196,16 @@ function transperfect_get_entity_row_by_nid_and_locale($nid, $source, $target) {
   return FALSE;
 }
 
-function transperfect_get_sent_entity_rows_by_nid($nid) {
+/**
+ * Gets sent entity rows by node ID.
+ *
+ * @param string $nid
+ *   The node ID.
+ *
+ * @return array
+ *   Array of entity rows.
+ */
+function transperfect_entity_get_sent_rows_by_nid($nid) {
   $result = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
@@ -168,7 +221,17 @@ function transperfect_get_sent_entity_rows_by_nid($nid) {
   return $rows;
 }
 
-function transperfect_update_entity_change_flag($nids, $source, $tgts) {
+/**
+ * Clears "Changed" status for entities.
+ *
+ * @param array $nids
+ *   The array of entity node IDs.
+ * @param string $source
+ *   The source of the nodes.
+ * @param array $tgts
+ *   The targets of the nodes.
+ */
+function transperfect_entity_update_change_flag($nids, $source, $tgts) {
   watchdog('GlobalLink', 'CHANGED Status Cleared for Node Ids - [%nids]', array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
 
   $insert_arr = array();
@@ -231,12 +294,19 @@ function transperfect_update_entity_change_flag($nids, $source, $tgts) {
   }
 }
 
-function transperfect_cancel_select_entity_records($rowids, $pd4) {
+/**
+ * Cancels entity records.
+ *
+ * @param array $rowids
+ *   Array of entity IDs.
+ * @param string $pd4
+ *   The project director details.
+ */
+function transperfect_entity_cancel_select_records($rowids, $pd4) {
   $globallink_arr = array();
 
   foreach ($rowids as $rid) {
-
-    $row = transperfect_get_entity_row($rid);
+    $row = transperfect_entity_get_row($rid);
 
     $globallink = new GlobalLink();
     $globallink->tptRowId = $row->rid;
@@ -247,22 +317,37 @@ function transperfect_cancel_select_entity_records($rowids, $pd4) {
   }
 
   transperfect_cancel_select_documents($pd4, $globallink_arr);
-  transperfect_update_entity_row_document($globallink_arr);
+  transperfect_entity_update_row_document($globallink_arr);
 }
 
-function transperfect_cancel_entity_submission($selected_submission) {
+/**
+ * Cancels entity submission.
+ *
+ * @param string $selected_submission
+ *   The name of the submission.
+ */
+function transperfect_entity_cancel_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
 
   $globallink = new GlobalLink();
-  $submission_name = transperfect_get_entity_submission_name($selected_submission);
+  $submission_name = transperfect_entity_get_submission_name($selected_submission);
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
   transperfect_cancel_pd_submission($pd4, $globallink);
-  transperfect_update_entity_row_submission($globallink);
+  transperfect_entity_update_row_submission($globallink);
 }
 
-function transperfect_get_entity_submission_name($submission_ticket) {
+/**
+ * Gets entity submission name.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The entity submission name.
+ */
+function transperfect_entity_get_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->fields('tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -276,7 +361,13 @@ function transperfect_get_entity_submission_name($submission_ticket) {
   }
 }
 
-function transperfect_update_entity_row_document(&$globallink_arr) {
+/**
+ * Updates entity rows to reflect translation status.
+ *
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ */
+function transperfect_entity_update_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_entity')
@@ -291,7 +382,13 @@ function transperfect_update_entity_row_document(&$globallink_arr) {
   }
 }
 
-function transperfect_update_entity_row_submission(&$globallink) {
+/**
+ * Updates entity submission with new ticket and name.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
+function transperfect_entity_update_row_submission(&$globallink) {
   db_update('transperfect_core_entity')
   ->fields(array(
     'status' => 'Pending Translations',
@@ -303,7 +400,13 @@ function transperfect_update_entity_row_submission(&$globallink) {
   ->execute();
 }
 
-function transperfect_get_distinct_entity_active_submission_names() {
+/**
+ * Gets distinct active entity submission names.
+ *
+ * @return array
+ *   Array of distinct active entity submission names.
+ */
+function transperfect_entity_get_distinct_active_submission_names() {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
@@ -319,7 +422,20 @@ function transperfect_get_distinct_entity_active_submission_names() {
   return $arr;
 }
 
-function transperfect_get_entity_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+/**
+ * Gets entity row ID from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return string
+ *   The entity row ID.
+ */
+function transperfect_entity_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
@@ -334,12 +450,23 @@ function transperfect_get_entity_row_id_from_submission($submission_ticket, $doc
   }
 }
 
-function transperfect_update_deleted_entity_records($pd4, $globallink) {
+/**
+ * Updates status for deleted entities.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return bool
+ *   TRUE if update was successful, FALSE on error.
+ */
+function transperfect_entity_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_update_entity_status($globallink);
+    transperfect_entity_update_status($globallink);
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -353,7 +480,18 @@ function transperfect_update_deleted_entity_records($pd4, $globallink) {
   return TRUE;
 }
 
-function transperfect_get_translated_entity($pd4, &$globallink_arr) {
+/**
+ * Gets number of translated entities.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   The number of translated entities.
+ */
+function transperfect_entity_get_translated_entity($pd4, &$globallink_arr) {
   try {
     $count = 0;
 
@@ -363,11 +501,11 @@ function transperfect_get_translated_entity($pd4, &$globallink_arr) {
 
         if (isset($globallink->targetXML)) {
           $count++;
-          transperfect_update_entity($globallink);
+          transperfect_entity_update($globallink);
 
           if ($globallink->status != 'Error') {
             transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-            transperfect_update_entity_status($globallink);
+            transperfect_entity_update_status($globallink);
           }
           else {
             $count--;
@@ -388,7 +526,16 @@ function transperfect_get_translated_entity($pd4, &$globallink_arr) {
   return $count;
 }
 
-function transperfect_get_entity_row($row_id) {
+/**
+ * Retrieves entity's row by ID.
+ *
+ * @param string $row_id
+ *   The entity row ID.
+ *
+ * @return
+ *   The row if entity exists.
+ */
+function transperfect_entity_get_row($row_id) {
   $result = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('rid', $row_id, '=')
@@ -399,11 +546,17 @@ function transperfect_get_entity_row($row_id) {
   }
 }
 
-function transperfect_update_entity_status(&$globallink) {
+/**
+ * Updates entity status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
+function transperfect_entity_update_status(&$globallink) {
   switch ($globallink->status) {
     case 'Source Deleted':
     case 'Error':
-      $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      $row = transperfect_entity_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       $node = node_load($row->nid);
 
       if ($node->vid != $row->vid) {
@@ -429,7 +582,7 @@ function transperfect_update_entity_status(&$globallink) {
 
       break;
     case 'Source Deleted':
-      $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      $row = transperfect_entity_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
 
       db_update('transperfect_core_entity')
       ->fields(array(
@@ -443,7 +596,7 @@ function transperfect_update_entity_status(&$globallink) {
 
       break;
     case 'Error':
-      $row = transperfect_get_entity_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
+      $row = transperfect_entity_get_row_by_nid_and_locale($globallink->nid, $globallink->sourceLocale, $globallink->targetLocale);
       db_update('transperfect_core_entity')
       ->fields(array(
         'status' => 'Error',
@@ -456,7 +609,15 @@ function transperfect_update_entity_status(&$globallink) {
   }
 }
 
-function transperfect_update_entity(&$globallink, $t_arr = NULL) {
+/**
+ * Updates entity.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param array $t_arr
+ *   The translated array.  Defaults to NULL.
+ */
+function transperfect_entity_update(&$globallink, $t_arr = NULL) {
   try {
     $target_lang = transperfect_get_drupal_locale_code($globallink->targetLocale);
 
@@ -464,7 +625,7 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
       $translated_arr = $t_arr;
     }
     else {
-      $translated_arr = transperfect_get_translated_entity_array($globallink->targetXML, $target_lang);
+      $translated_arr = transperfect_entity_get_translated_array($globallink->targetXML, $target_lang);
     }
 
     $target_nid = $translated_arr['nid'];
@@ -541,7 +702,7 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
       }
     }
 
-    $success = save_translated_entity_with_fields($node, $translated_arr, $target_lang);
+    $success = transperfect_entity_save_translated_entity_with_fields($node, $translated_arr, $target_lang);
 
     if ($success) {
       // todo Pathauto Module Support
@@ -557,7 +718,18 @@ function transperfect_update_entity(&$globallink, $t_arr = NULL) {
   }
 }
 
-function transperfect_get_translated_entity_array($xml, $target_lang = LANGUAGE_NONE) {
+/**
+ * Gets array of translated entities.
+ *
+ * @param object $xml
+ *   XML representation of entities.
+ * @param string $target_lang
+ *   The entities' target language.  Defaults to LANGUAGE_NONE.
+ *
+ * @return array
+ *   Associative array of translated entities.
+ */
+function transperfect_entity_get_translated_array($xml, $target_lang = LANGUAGE_NONE) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -772,7 +944,16 @@ function transperfect_get_translated_entity_array($xml, $target_lang = LANGUAGE_
   return $arr;
 }
 
-function transperfect_get_active_entity_submission_by_nid($nid) {
+/**
+ * Gets active entity submission by node ID.
+ *
+ * @param string $nid
+ *   The entity node ID.
+ *
+ * @return array
+ *   Associative array representing the active entity submission.
+ */
+function transperfect_entity_get_active_submission_by_nid($nid) {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nid, '=');
@@ -796,7 +977,16 @@ function transperfect_get_active_entity_submission_by_nid($nid) {
   return $arr;
 }
 
-function transperfect_get_active_entity_submission_rows_by_nid($nids) {
+/**
+ * Gets active entity submission rows by node ID.
+ *
+ * @param string $nids
+ *   The array of entity node IDs.
+ *
+ * @return
+ *   Associative array of entity active submission rows.  FALSE if the array is empty.
+ */
+function transperfect_entity_get_active_submission_rows_by_nid($nids) {
   $query = db_select('transperfect_core_entity', 'tc');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->condition('nid', $nids, 'IN');
@@ -840,6 +1030,15 @@ function transperfect_get_active_entity_submission_rows_by_nid($nids) {
   return FALSE;
 }
 
+/**
+ * Saves entity.
+ *
+ * @param object $node
+ *   The entity node.
+ *
+ * @return bool
+ *   TRUE if successful.  FALSE on failure.
+ */
 function transperfect_entity_save(&$node) {
   try {
     node_save($node);
@@ -853,7 +1052,20 @@ function transperfect_entity_save(&$node) {
   }
 }
 
-function save_translated_entity_with_fields(&$node, $translation_arr, $target_lang) {
+/**
+ * Saves translated entity with fields.
+ *
+ * @param object $node
+ *   The entity node.
+ * @param array $translation_arr
+ *   The translation array.
+ * @param string $target_lang
+ *   The target language of the entity.
+ *
+ * @return bool
+ *   TRUE if save was successful.  FALSE on failure.
+ */
+function transperfect_entity_save_translated_entity_with_fields(&$node, $translation_arr, $target_lang) {
   $config_fields = transperfect_get_config_fields($node->type);
 
   foreach ($config_fields as $field_name => $field_info) {
@@ -923,7 +1135,17 @@ function save_translated_entity_with_fields(&$node, $translation_arr, $target_la
   return $success;
 }
 
-function transperfect_save_entity_field_collections($node, $t_arr, $target_lang) {
+/**
+ * Saves entity field collections.
+ *
+ * @param object $node
+ *   The entity node.
+ * @param array $t_arr
+ *   The translated array.
+ * @param string $target_lang
+ *   The node's target language.
+ */
+function transperfect_entity_save_field_collections($node, $t_arr, $target_lang) {
   $field_arr = field_info_instances('node', $node->type);
   $keys = array_keys($field_arr);
 
@@ -938,7 +1160,7 @@ function transperfect_save_entity_field_collections($node, $t_arr, $target_lang)
           foreach ($items as $entity_id_arr) {
             if (isset($entity_id_arr['value'])) {
               $fc_entity_id = $entity_id_arr['value'];
-              transperfect_save_entity_field_collections_recursively('node', $node, $fc_entity_id, $t_arr['field_collection'][$field], $target_lang);
+              transperfect_entity_save_field_collections_recursively('node', $node, $fc_entity_id, $t_arr['field_collection'][$field], $target_lang);
             }
           }
         }
@@ -947,7 +1169,21 @@ function transperfect_save_entity_field_collections($node, $t_arr, $target_lang)
   }
 }
 
-function transperfect_save_entity_field_collections_recursively($entity_type, $host_entity, $fc_entity_id, $translated_fc_arr, $target_lang) {
+/**
+ * Saves entity field collections recursively.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param string $host_entity
+ *   The host entity.
+ * @param string $fc_entity_id
+ *   The field collection entity ID.
+ * @param array $translated_fc_arr
+ *   The translated field collection array.
+ * @param string $target_lang
+ *   The entities' target language.
+ */
+function transperfect_entity_save_field_collections_recursively($entity_type, $host_entity, $fc_entity_id, $translated_fc_arr, $target_lang) {
   $field_collection_item_entity = entity_load_unchanged('field_collection_item', $fc_entity_id);
 
   if (!$field_collection_item_entity) {
@@ -1036,7 +1272,7 @@ function transperfect_save_entity_field_collections_recursively($entity_type, $h
           foreach ($items as $entity_id_arr) {
             if (isset($entity_id_arr['value'])) {
               $fc_entity_id = $entity_id_arr['value'];
-              transperfect_save_entity_field_collections_recursively('field_collection_item', $new_entity, $fc_entity_id, $translated_fc_arr, $target_lang);
+              transperfect_entity_save_field_collections_recursively('field_collection_item', $new_entity, $fc_entity_id, $translated_fc_arr, $target_lang);
             }
           }
         }
@@ -1045,7 +1281,28 @@ function transperfect_save_entity_field_collections_recursively($entity_type, $h
   }
 }
 
-function transperfect_get_entity_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE, $source_lang = '') {
+/**
+ * Gets XML data from specific entity.
+ *
+ * @param object $node
+ *   The entity node.
+ * @param array $target_arr
+ *   The target array
+ * @param string $tnid
+ *   The translated entity node ID.  Defaults to NULL.
+ * @param string $tvid
+ *   The translated entity VID.  Defaults to NULL.
+ * @param string $name
+ *   The node name.  Defaults to empty.
+ * @param bool $for_display
+ *   Whether or not the XML will be displayed.  Defaults to FALSE.
+ * @param string $source_lang
+ *   The source language of the entity.  Defaults to empty.
+ *
+ * @return
+ *   XML representation of the entity.  'Source Deleted' if the entity no longer exists.
+ */
+function transperfect_entity_get_xml($node, $target_arr, $tnid = NULL, $tvid = NULL, &$name = '', $for_display = FALSE, $source_lang = '') {
   if (is_null($node)) {
     return 'Source Deleted';
   }
@@ -1061,7 +1318,7 @@ function transperfect_get_entity_xml($node, $target_arr, $tnid = NULL, $tvid = N
       $name = transperfect_format_file_name($node->title) . $name;
     }
 
-    $xml = transperfect_generate_entity_xml_document($node, $target_arr, $tnid, $tvid, $for_display, $source_lang);
+    $xml = transperfect_entity_generate_xml_document($node, $target_arr, $tnid, $tvid, $for_display, $source_lang);
 
     return $xml;
   }
@@ -1069,7 +1326,26 @@ function transperfect_get_entity_xml($node, $target_arr, $tnid = NULL, $tvid = N
   return 'Source Deleted';
 }
 
-function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE, $source_lang = '') {
+/**
+ * Generates XML document for entity.
+ *
+ * @param object $node
+ *   The entity node.
+ * @param array $target_arr
+ *   The target array
+ * @param string $tnid
+ *   The translated entity node ID.  Defaults to NULL.
+ * @param string $tvid
+ *   The translated entity VID.  Defaults to NULL.
+ * @param bool $for_display
+ *   Whether or not the XML will be displayed.  Defaults to FALSE.
+ * @param string $source_lang
+ *   The source language of the entity.  Defaults to empty.
+ *
+ * @return
+ *   XML representation of the entity.  FALSE on failure.
+ */
+function transperfect_entity_generate_xml_document($node, $target_arr, $tnid = NULL, $tvid = NULL, $for_display = FALSE, $source_lang = '') {
   $is_hook_enabled = variable_get('transperfect_implementation_type', 0);
 
   try {
@@ -1133,7 +1409,7 @@ function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = N
           }
         }
 
-        transperfect_traverse_entity_fields_and_field_collections('node', $node->type, $parent_fc, $node->type, $node->nid, $items, $field, $field_def, $dom, $root, $node, $target_arr, $is_hook_enabled);
+        transperfect_entity_traverse_fields_and_field_collections('node', $node->type, $parent_fc, $node->type, $node->nid, $items, $field, $field_def, $dom, $root, $node, $target_arr, $is_hook_enabled);
       }
     }
 
@@ -1178,7 +1454,37 @@ function transperfect_generate_entity_xml_document($node, $target_arr, $tnid = N
   return $dom->saveXML();
 }
 
-function transperfect_traverse_entity_fields_and_field_collections($entity_type, $content_type, $parent_fc, $bundle, $entity_id, $items, $field, $field_def, $dom, $root, $source_node, $target_arr, $is_hook_enabled = 0) {
+/**
+ * Traverses entity fields and field collections.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param string $content_type
+ *   The content type.
+ * @param string $parent_fc
+ *   The parent field collection.
+ * @param string $bundle
+ *   The bundle.
+ * @param string $entity_id
+ *   The entity ID.
+ * @param array $items
+ *   The array of items.
+ * @param object $field
+ *   The entity field.
+ * @param object $field_def
+ *   The field definition object.
+ * @param object $dom
+ *   Object representation of the DOM.
+ * @param object $root
+ *   The DOM root.
+ * @param object $source_node
+ *   The source node.
+ * @param array $target_arr
+ *   The target array.
+ * @param bool $is_hook_enabled
+ *   Determines whether or not the hook is enabled.  Defaults to 0.
+ */
+function transperfect_entity_traverse_fields_and_field_collections($entity_type, $content_type, $parent_fc, $bundle, $entity_id, $items, $field, $field_def, $dom, $root, $source_node, $target_arr, $is_hook_enabled = 0) {
   if (!$items) {
     return;
   }
@@ -1300,14 +1606,23 @@ function transperfect_traverse_entity_fields_and_field_collections($entity_type,
         $fc_item = field_get_items('field_collection_item', $field_collection_item_entity, $key);
 
         if ($fc_item) {
-          transperfect_traverse_entity_fields_and_field_collections('field_collection_item', $content_type, $parent_fc, $field_collection_name, $fc_entity_id, $fc_item, $key, $fc_field_def, $dom, $root, $source_node, $target_arr, $is_hook_enabled);
+          transperfect_entity_traverse_fields_and_field_collections('field_collection_item', $content_type, $parent_fc, $field_collection_name, $fc_entity_id, $fc_item, $key, $fc_field_def, $dom, $root, $source_node, $target_arr, $is_hook_enabled);
         }
       }
     }
   }
 }
 
-function transperfect_get_entity_title(&$globallink) {
+/**
+ * Gets entity title
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return
+ *   The entity title.  FALSE if it cannot be found.
+ */
+function transperfect_entity_get_title(&$globallink) {
   $result = db_select('transperfect_core_entity', 'tc')
   ->fields('tc')
   ->condition('document_ticket', $globallink->documentTicket, '=')
@@ -1338,7 +1653,15 @@ function transperfect_get_entity_title(&$globallink) {
   return FALSE;
 }
 
-function transperfect_update_submission_entity_status($submission_ticket, $status = 'Cancelled') {
+/**
+ * Updates entity submission status.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $status
+ *   The submission status.  Defaults to 'Cancelled.'
+ */
+function transperfect_entity_update_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_entity')
   ->fields(array(
     'status' => $status,
@@ -1348,7 +1671,10 @@ function transperfect_update_submission_entity_status($submission_ticket, $statu
   ->execute();
 }
 
-function get_entity_submission_status() {
+/**
+ * Gets entity submission status.
+ */
+function transperfect_entity_get_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
@@ -1367,20 +1693,29 @@ function get_entity_submission_status() {
         $status = transperfect_get_status($pd4, $row->submission_ticket);
 
         if (!$status || $status == 'CANCELLED') {
-          transperfect_update_submission_entity_status($row->submission_ticket);
+          transperfect_entity_update_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        transperfect_update_submission_entity_status($row->submission_ticket);
+        transperfect_entity_update_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        transperfect_update_submission_entity_status($row->submission_ticket);
+        transperfect_entity_update_submission_status($row->submission_ticket);
       }
     }
   }
 }
 
-function transperfect_check_entity_status($rids_arr) {
+/**
+ * Checks entity status based on row IDs.
+ *
+ * @param array $rids_arr
+ *   Array of row IDs.
+ *
+ * @return array
+ *   Array of row IDs that have been sent for translation or threw an error.
+ */
+function transperfect_entity_check_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core_entity', 'tc')
   ->fields('tc', array('rid'))
@@ -1407,7 +1742,13 @@ function transperfect_check_entity_status($rids_arr) {
   return $rids_arr;
 }
 
-function transperfect_clear_cancelled_entity_documents() {
+/**
+ * Clears cancelled entity documents.
+ *
+ * @return int
+ *   Number of cancelled entity documents.
+ */
+function transperfect_entity_clear_cancelled_documents() {
   $count = 0;
   $query = db_select('transperfect_core_entity', 'tc')
   ->fields('tc', array('submission_ticket'))
@@ -1417,7 +1758,7 @@ function transperfect_clear_cancelled_entity_documents() {
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_submission_entity_status($item->submission_ticket, 'Pending Translations');
+    transperfect_entity_update_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }

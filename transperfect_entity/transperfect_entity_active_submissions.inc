@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on entity active submissions dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the entity active submissions dashboard.
+ */
 function transperfect_entity_active_submissions($type) {
   $_SESSION['transpefect_entity_active_type'] = $type;
 
@@ -11,17 +20,20 @@ function transperfect_entity_active_submissions($type) {
   return $array;
 }
 
+/**
+ * Builds form to allow selection of specific entity submission by ID.
+ */
 function transperfect_entity_active_select_form() {
   module_load_include('inc', 'transperfect_entity', 'transperfect_entity');
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
 
-  get_entity_submission_status();
+  transperfect_entity_get_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = transperfect_get_distinct_entity_active_submission_names();
+  $options = transperfect_entity_get_distinct_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_entity_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_entity_selected_submission'];
@@ -72,6 +84,9 @@ function transperfect_entity_active_select_form() {
   return $form;
 }
 
+/**
+ * Handles submission of active select form.
+ */
 function transperfect_entity_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
@@ -87,7 +102,7 @@ function transperfect_entity_active_select_form_submit($form, &$form_state) {
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['transperfect_entity_selected_submission'] = '';
 
-        transperfect_cancel_entity_submission($selected_submission, $pd4);
+        transperfect_entity_cancel_submission($selected_submission, $pd4);
 
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
 
@@ -110,6 +125,9 @@ function transperfect_entity_active_select_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to entity send dashboard.
+ */
 function transperfect_entity_active_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -142,6 +160,9 @@ function transperfect_entity_active_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_entity_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -161,6 +182,9 @@ function transperfect_entity_active_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to show all active entity submissions.
+ */
 function transperfect_entity_active_form() {
   $form = array();
 
@@ -171,7 +195,7 @@ function transperfect_entity_active_form() {
     $selected_value = $_SESSION['transperfect_entity_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_get_distinct_entity_active_submission_names();
+    $options = transperfect_entity_get_distinct_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -286,6 +310,9 @@ function transperfect_entity_active_form() {
   return $form;
 }
 
+/**
+ * Validates form actions for active entity submissions.
+ */
 function transperfect_entity_active_form_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
   transperfect_validate_project_director_details($pd4);
@@ -301,6 +328,9 @@ function transperfect_entity_active_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of active entity form.
+ */
 function transperfect_entity_active_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -312,7 +342,7 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
 
         $rids_arr = array_filter($form_state['values']['table']);
 
-        $rids = transperfect_check_entity_status($rids_arr);
+        $rids = transperfect_entity_check_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -322,7 +352,7 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
 
         $_SESSION['transperfect_entity_selected_submission'] = '';
 
-        transperfect_cancel_select_entity_records($rids, $pd4);
+        transperfect_entity_cancel_select_records($rids, $pd4);
 
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
@@ -341,7 +371,7 @@ function transperfect_entity_active_form_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_clear_cancelled_entity_documents();
+        $count = transperfect_entity_clear_cancelled_documents();
         $_SESSION['transperfect_entity_selected_submission'] = '';
         $_SESSION['transperfect_entity_globalLink_arr'] = array();
 
