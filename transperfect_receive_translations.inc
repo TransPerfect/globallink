@@ -740,7 +740,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'interface':
-          $count += transperfect_get_translated_interfaces($pd4, $globallink_arr);
+          $count += transperfect_interface_get_translated($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Interface', array(), WATCHDOG_INFO);
 

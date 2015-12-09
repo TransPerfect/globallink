@@ -15,7 +15,7 @@ function transperfect_interface_menu() {
 
   $items ['admin/transperfect-translations/dashboard/interface'] = array(
     'title' => ' Interfaces ',
-    'page callback' => 'transperfect_dashboard_interface_page',
+    'page callback' => 'transperfect_interface_dashboard_page',
     'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_interface_send.inc',
@@ -45,7 +45,7 @@ function transperfect_interface_menu() {
 
   $items['admin/transperfect-translations/receiveTranslation/interface/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'preview_translated_interface_content',
+    'page callback' => 'transperfect_interface_preview_translated_content',
     'file' => 'transperfect_interface_receive.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,

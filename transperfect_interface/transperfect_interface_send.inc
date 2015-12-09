@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the interface send dashboard.
  */
-function transperfect_dashboard_interface_page($type) {
+function transperfect_interface_dashboard_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_interface_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_interface_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_interface_form');
+  $array[] = drupal_get_form('transperfect_interface_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_interface_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_interface_dashboard_form');
 
   return $array;
 }
@@ -24,7 +24,7 @@ function transperfect_dashboard_interface_page($type) {
 /**
  * Builds form to filter interfaces to send for translation on dashboard.
  */
-function transperfect_dashboard_interface_filter_form() {
+function transperfect_interface_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -155,7 +155,7 @@ function transperfect_dashboard_interface_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_dashboard_interface_filter_form_submit($form, &$form_state) {
+function transperfect_interface_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -177,7 +177,7 @@ function transperfect_dashboard_interface_filter_form_submit($form, &$form_state
 /**
  * Builds form to add pagination to interface send dashboard.
  */
-function transperfect_dashboard_interface_pager_form() {
+function transperfect_interface_dashboard_pager_form() {
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -202,7 +202,7 @@ function transperfect_dashboard_interface_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('interface_pager_form_submit'),
+      '#submit' => array('transperfect_interface_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -213,7 +213,7 @@ function transperfect_dashboard_interface_pager_form() {
 /**
  * Validates pager form input.
  */
-function interface_pager_form_validate($form, &$form_state) {
+function transperfect_interface_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op != t('Go')) {
@@ -230,7 +230,7 @@ function interface_pager_form_validate($form, &$form_state) {
 /**
  * Handles submission of pager form.
  */
-function interface_pager_form_submit($form, &$form_state) {
+function transperfect_interface_pager_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op != t('Go')) {
@@ -245,7 +245,7 @@ function interface_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to create an interface submission.
  */
-function transperfect_dashboard_interface_form() {
+function transperfect_interface_dashboard_form() {
   module_load_include('inc', 'transperfect_interface', 'transperfect_interface');
 
   $form = array();
@@ -286,7 +286,7 @@ function transperfect_dashboard_interface_form() {
       }
     }
 
-    if (!($query = transperfect_get_interface_translate_filter_query())) {
+    if (!($query = transperfect_interface_get_translate_filter_query())) {
       $query = array(
         'translation' => 'all',
         'language' => 'all',
@@ -364,7 +364,7 @@ function transperfect_dashboard_interface_form() {
       array_push($lids, $item->lid);
     }
 
-    $active_subs = transperfect_get_active_submission_rows_by_lid($lids);
+    $active_subs = transperfect_interface_get_active_submission_rows_by_lid($lids);
     $locales = transperfect_get_mapped_drupal_locales(FALSE);
 
     $interface_results = $sql_query->execute();
@@ -585,7 +585,7 @@ function transperfect_dashboard_interface_form() {
 /**
  * Validates interface form input.
  */
-function transperfect_dashboard_interface_form_validate($form, &$form_state) {
+function transperfect_interface_dashboard_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -636,7 +636,7 @@ function transperfect_dashboard_interface_form_validate($form, &$form_state) {
   }
 
   foreach ($lids as $lid) {
-    $rows = transperfect_get_sent_interface_rows_by_lid($lid);
+    $rows = transperfect_interface_get_sent_rows_by_lid($lid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -653,7 +653,7 @@ function transperfect_dashboard_interface_form_validate($form, &$form_state) {
 /**
  * Handles interface form submission.
  */
-function transperfect_dashboard_interface_form_submit($form, &$form_state) {
+function transperfect_interface_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -680,10 +680,10 @@ function transperfect_dashboard_interface_form_submit($form, &$form_state) {
 
     $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
     $project_code = $form_state['values']['submission_pd_project'];
-    $updated_globalLink_arr = transperfect_send_interface_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_interface_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_interface_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_interface_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }
