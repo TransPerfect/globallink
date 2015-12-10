@@ -8,17 +8,15 @@
  */
 
 /**
- * By implementing this hook, you can programmatically filter out if a particular
- * node is translatable or not by displaying/hiding it on the Send For Translation dashboard.
- * If the node is not translatable this method should not return anything(not even false)
- * and the node will not show up on the dashboard.
+ * Implements hook_is_node_translatable().
  *
- * @param $node
- * The node object on which this check is being performed.
+ * @param object $node
+ *   The node object on which this check is being performed.
+ * @param string $target_drupal_locale
+ *   The target language code is only passed if the target language filter is selected on the dashboard.  Defaults to NULL.
  *
- * @param $target_drupal_locale
- * The target language code is only passed if the Target Language filter is selected on the dashboard.
- *
+ * @return bool
+ *   TRUE if the node is translatable.
  */
 function module_transperfect_is_node_translatable($node, $drupal_target_locale = NULL) {
   if ($node->type == 'article') {
@@ -30,20 +28,17 @@ function module_transperfect_is_node_translatable($node, $drupal_target_locale =
 }
 
 /**
- * By implementing this hook, you can programmatically filter out if a particular
- * field is translatable or not.
- * If the field is not translatable this method should not return anything(not even false).
- * This hook overrides the fields configuration settings on the Field Configuration tab.
+ * Implements hook_is_field_translatable().
  *
- * @param $node
- * The node object on which this check is being performed.
+ * @param object $node
+ *   The node object on which this check is being performed.
+ * @param string $field
+ *   The field name on which this check is being performed.
+ * @param array $target_arr
+ *   The target language array as selected while creating the submission.  Defaults to NULL.
  *
- * @param $field
- * The field name on which this check is being performed.
- *
- * @param $target_arr
- * The target language array as selected while creating the submission.
- *
+ * @return bool
+ *   TRUE if the field is translatable.
  */
 function module_transperfect_is_field_translatable($node, $field, $target_arr = NULL) {
   if ($node->type == 'article') {
@@ -65,16 +60,12 @@ function module_transperfect_is_field_translatable($node, $field, $target_arr = 
 }
 
 /**
- * By implementing this hook, you can modify translated node before its imported in Drupal.
- * This hook is called just before the translated node is saved in the database.
+ * Implements hook_import_translation().
  *
  * @param $source_nid
- * The node id of the source node object
- *
+ *   The node id of the source node object.
  * @param $target_node
- * The translated node object about to be saved in database.
- * Must add '&' to the $target_node for accessing by reference.
- *
+ *   The translated node object about to be saved in database.
  */
 function module_transperfect_import_translation($source_nid, &$target_node) {
   $source_node = node_load($source_nid);
@@ -82,17 +73,15 @@ function module_transperfect_import_translation($source_nid, &$target_node) {
 }
 
 /**
- * By implementing this hook, you can programmatically filter out if a particular
- * node is translatable or not for a particular language.
- * If the node is not translatable this method should not return anything(not even false)
- * This hook is called just before the content is being send for translation.
+ * Implements hook_translate_node_for_language().
  *
- * @param $source_node
- * The source node object
+ * @param object $source_node
+ *   The source node object.
+ * @param string $drupal_target_locale
+ *   Drupal target language selected by user for which this node is being translated.
  *
- * @param $drupal_target_locale
- * Drupal target language selected by user for which this node is being translated
- *
+ * @return bool
+ *   TRUE if the translation was successful.
  */
 function module_transperfect_translate_node_for_language($source_node, $drupal_target_locale) {
   if ($source_node->type == 'article' && $drupal_target_locale == 'fr') {

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Miscellaneous Web Service functions for TransPerfect.
+ * Miscellaneous Web Service functions for Transperfect.
  */
 
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');

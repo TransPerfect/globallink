@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect translation module.
+ * Transperfect translation module.
  *
- * This module adds Node translation using the Internationalization module (i18n). Also, includes TransPerfect core settings UI and configuration.
+ * This module adds node translation using the Internationalization module (i18n). Also, includes Transperfect core settings UI and configuration.
  */
 
 define('TPT_ROOT', dirname(__FILE__));

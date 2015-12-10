@@ -120,7 +120,7 @@ function transperfect_webform_get_xml($lid) {
 }
 
 /**
- * Updates webform ticket ID on GlobalLink.
+ * Updates webform ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.

@@ -866,7 +866,7 @@ function transperfect_fieldable_panels_update_deleted_records($pd4, $globallink)
 }
 
 /**
- * Updates fieldable panel's ticket ID on GlobalLink.
+ * Updates fieldable panel's ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.
