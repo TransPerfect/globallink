@@ -1,12 +1,35 @@
 <?php
 
-function transperfect_send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+/**
+ * Sends webforms for translation.
+ *
+ * @param array $lids
+ *   The array of webform LIDs.
+ * @param string $pd4
+ *   The project director details.
+ * @param string $submission_name
+ *   The name of the submission.
+ * @param string $due_date
+ *   When the translation is due.
+ * @param string $project_code
+ *   The project's registered code.
+ * @param string $source_locale
+ *   The locale of the content being translated.
+ * @param array $target_locale_arr
+ *   Array of desired locales to translate into.
+ * @param array $submission_details
+ *   Associative array of details about the submission.
+ *
+ * @return object
+ *   GlobalLink object that represents active translation.
+ */
+function transperfect_webform_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   $globallink_arr = array();
 
   $submitter = $submission_details['submitter'];
 
   foreach ($lids as $lid) {
-    $rows = transperfect_get_sent_tpt_webform_rows_by_lid($lid);
+    $rows = transperfect_webform_get_sent_tpt_rows_by_lid($lid);
 
     $target_arr = $target_locale_arr;
 
@@ -20,7 +43,7 @@ function transperfect_send_webform_for_translations($lids, $pd4, $submission_nam
       continue;
     }
 
-    $xml = transperfect_get_webform_xml($lid);
+    $xml = transperfect_webform_get_xml($lid);
 
     $name = 'Webform_' . $lid . '.xml';
     watchdog('GlobalLink', 'XML - %xml', array('%xml' => $xml), WATCHDOG_DEBUG);
@@ -46,7 +69,16 @@ function transperfect_send_webform_for_translations($lids, $pd4, $submission_nam
   return $globallink_arr;
 }
 
-function transperfect_get_webform_xml($lid) {
+/**
+ * Gets XML data from specific webform.
+ *
+ * @param string $lid
+ *   The webform LID.
+ *
+ * @return array
+ *   Associative array of block XML data.
+ */
+function transperfect_webform_get_xml($lid) {
   $property_arr = array();
 
   $string_result = db_select('i18n_string', 's')
@@ -87,7 +119,15 @@ function transperfect_get_webform_xml($lid) {
   return $xml;
 }
 
-function transperfect_update_webform_ticket_id($arr, $project_code) {
+/**
+ * Updates webform ticket ID on GlobalLink.
+ *
+ * @param array $arr
+ *   Array of GlobalLink objects.
+ * @param string $project_code
+ *   The webform's project code.
+ */
+function transperfect_webform_update_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;
     $type = $globallink->type;
@@ -100,7 +140,7 @@ function transperfect_update_webform_ticket_id($arr, $project_code) {
     $webform = transperfect_load_source_data($lid);
 
     foreach ($target_locale_arr as $target_locale) {
-      $row = transperfect_get_webform_row($lid, $type, $globallink->sourceLocale, $target_locale);
+      $row = transperfect_webform_get_row($lid, $type, $globallink->sourceLocale, $target_locale);
 
       if ($row) {
         db_update('transperfect_core_webform')
@@ -139,12 +179,23 @@ function transperfect_update_webform_ticket_id($arr, $project_code) {
   }
 }
 
-function transperfect_update_deleted_webform_records($pd4, $globallink) {
+/**
+ * Updates status for deleted webforms.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param object $globallink
+ *   GlobalLink object.
+ *
+ * @return bool
+ *   TRUE if update was successful, FALSE on error.
+ */
+function transperfect_webform_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
 
     transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_update_webform_status($globallink, 'Source Deleted');
+    transperfect_webform_update_status($globallink, 'Source Deleted');
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -162,7 +213,18 @@ function transperfect_update_deleted_webform_records($pd4, $globallink) {
   return TRUE;
 }
 
-function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
+/**
+ * Gets number of translated webforms.
+ *
+ * @param string $pd4
+ *   The project director details.
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ *
+ * @return int
+ *   The number of translated webforms.
+ */
+function transperfect_webform_get_translated($pd4, &$globallink_arr) {
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {
@@ -179,7 +241,7 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
     $count++;
 
     $language = transperfect_get_drupal_locale_code($globallink->targetLocale);
-    $translated_arr = transperfect_get_translated_webform_items($target_xml);
+    $translated_arr = transperfect_webform_get_translated_items($target_xml);
 
     try {
       $lid = $translated_arr['lid'];
@@ -214,7 +276,7 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
           transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
         }
 
-        transperfect_update_webform_status($globallink);
+        transperfect_webform_update_status($globallink);
       }
       else {
         $count--;
@@ -223,13 +285,13 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
     catch (SoapFault $se) {
       $count--;
 
-      transperfect_update_webform_status($globallink, 'Error');
+      transperfect_webform_update_status($globallink, 'Error');
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $ex) {
       $count--;
 
-      transperfect_update_webform_status($globallink, 'Error');
+      transperfect_webform_update_status($globallink, 'Error');
       form_set_error('', check_plain('Error: ' . $ex->getMessage()));
     }
   }
@@ -237,7 +299,13 @@ function transperfect_get_translated_webforms($pd4, &$globallink_arr) {
   return $count;
 }
 
-function transperfect_get_webform_translate_filter_query() {
+/**
+ * Gets webform filters.
+ *
+ * @return array
+ *   Associative array of webform filters.
+ */
+function transperfect_webform_get_translate_filter_query() {
   $filter = array();
 
   if (isset($_SESSION['transperfect_webform_filter'])) {
@@ -249,7 +317,10 @@ function transperfect_get_webform_translate_filter_query() {
   return $filter;
 }
 
-function transperfect_get_webform_submission_status($lid, $locale_code) {
+/**
+ * Gets webform submission status.
+ */
+function transperfect_webform_get_submission_status($lid, $locale_code) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw', array('status'))
   ->condition('object_id', $lid, '=')
@@ -261,12 +332,21 @@ function transperfect_get_webform_submission_status($lid, $locale_code) {
   }
 }
 
+/**
+ * Gets status for each language to be translated into.
+ *
+ * @param string $lid
+ *   The webform LID.
+ *
+ * @return string
+ *   String of languages and their respective statuses.
+ */
 function transperfect_webform_locale_languages($lid) {
   $mapped_locales = transperfect_get_mapped_locales_with_drupal_desc(TRUE);
   $translation_status = '';
 
   foreach ($mapped_locales as $code => $locale) {
-    $result = transperfect_get_webform_submission_status($lid, $code);
+    $result = transperfect_webform_get_submission_status($lid, $code);
 
     if ($result) {
       $translation_status .= $locale . ' - ' . $result['status'] . '<br />';
@@ -276,7 +356,16 @@ function transperfect_webform_locale_languages($lid) {
   return $translation_status;
 }
 
-function transperfect_get_sent_tpt_webform_rows_by_lid($lid) {
+/**
+ * Gets sent webform rows by LID.
+ *
+ * @param string $lid
+ *   The webform LID.
+ *
+ * @return array
+ *   Array of webform rows.
+ */
+function transperfect_webform_get_sent_tpt_rows_by_lid($lid) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw')
   ->condition('object_id', $lid, '=')
@@ -292,7 +381,15 @@ function transperfect_get_sent_tpt_webform_rows_by_lid($lid) {
   return $rows;
 }
 
-function transperfect_update_webform_status(&$globallink, $status = 'Pending Translations') {
+/**
+ * Updates webform status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param string $status
+ *   The new status.  Defaults to 'Pending Translations.'
+ */
+function transperfect_webform_update_status(&$globallink, $status = 'Pending Translations') {
   db_update('transperfect_core_webform')
   ->fields(array('status' => $status, 'timestamp' => REQUEST_TIME))
   ->condition('submission', $globallink->submissionName, '=')
@@ -302,7 +399,22 @@ function transperfect_update_webform_status(&$globallink, $status = 'Pending Tra
   ->execute();
 }
 
-function transperfect_get_webform_row($object_id, $object_type, $source, $target) {
+/**
+ * Retrieves webform's row by ID.
+ *
+ * @param string $object_id
+ *   The object ID.
+ * @param string $object_type
+ *   The object type.
+ * @param string $source
+ *   The target source.
+ * @param string $target
+ *   The target.
+ *
+ * @return
+ *   The row if webform exists.
+ */
+function transperfect_webform_get_row($object_id, $object_type, $source, $target) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw')
   ->condition('object_id', $object_id, '=')
@@ -318,7 +430,13 @@ function transperfect_get_webform_row($object_id, $object_type, $source, $target
   return FALSE;
 }
 
-function transperfect_get_webform_active_submission_names() {
+/**
+ * Gets active menu submission names.
+ *
+ * @return array
+ *   Array of active menu submission names.
+ */
+function transperfect_webform_get_active_submission_names() {
   $query = db_select('transperfect_core_webform', 'tcw');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
@@ -334,7 +452,16 @@ function transperfect_get_webform_active_submission_names() {
   return $arr;
 }
 
-function transperfect_get_webform_submission_name($submission_ticket) {
+/**
+ * Gets webform submission name.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ *
+ * @return string
+ *   The webform submission name.
+ */
+function transperfect_webform_get_submission_name($submission_ticket) {
   $query = db_select('transperfect_core_webform', 'tcw');
   $query->fields('tcw');
   $query->condition('submission_ticket', $submission_ticket, '=');
@@ -347,23 +474,37 @@ function transperfect_get_webform_submission_name($submission_ticket) {
   }
 }
 
-function transperfect_cancel_webform_submission($selected_submission) {
+/**
+ * Cancels webform submission.
+ *
+ * @param string $selected_submission
+ *   The name of the submission.
+ */
+function transperfect_webform_cancel_submission($selected_submission) {
   $pd4 = transperfect_get_project_director_details();
 
   $globallink = new GlobalLink();
-  $submission_name = transperfect_get_webform_submission_name($selected_submission);
+  $submission_name = transperfect_webform_get_submission_name($selected_submission);
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
   transperfect_cancel_pd_submission($pd4, $globallink);
-  transperfect_update_webform_submission($globallink);
+  transperfect_webform_update_submission($globallink);
 }
 
-function transperfect_cancel_webform_records($rowids, $pd4) {
+/**
+ * Cancels webform records.
+ *
+ * @param array $rowids
+ *   Array of webform IDs.
+ * @param string $pd4
+ *   The project director details.
+ */
+function transperfect_webform_cancel_records($rowids, $pd4) {
   $globallink_arr = array();
 
   foreach ($rowids as $rid) {
-    $row = transperfect_get_webform_other_row($rid);
+    $row = transperfect_webform_get_other_row($rid);
 
     $globallink = new GlobalLink();
     $globallink->tptRowId = $row->rid;
@@ -374,10 +515,19 @@ function transperfect_cancel_webform_records($rowids, $pd4) {
   }
 
   transperfect_cancel_select_documents($pd4, $globallink_arr);
-  transperfect_update_webform_row_document($globallink_arr);
+  transperfect_webform_update_row_document($globallink_arr);
 }
 
-function transperfect_get_webform_other_row($row_id) {
+/**
+ * Gets other webform row.
+ *
+ * @param int $row_id
+ *   The id of the row.
+ *
+ * @return object
+ *   Other webform row.
+ */
+function transperfect_webform_get_other_row($row_id) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw')
   ->condition('rid', $row_id, '=')
@@ -388,7 +538,13 @@ function transperfect_get_webform_other_row($row_id) {
   }
 }
 
-function transperfect_update_webform_submission(&$globallink) {
+/**
+ * Updates webform submission.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ */
+function transperfect_webform_update_submission(&$globallink) {
   db_update('transperfect_core_webform')
   ->fields(array(
     'status' => 'Pending Translations',
@@ -399,7 +555,13 @@ function transperfect_update_webform_submission(&$globallink) {
   ->execute();
 }
 
-function transperfect_update_webform_row_document(&$globallink_arr) {
+/**
+ * Updates webform rows to reflect translation status.
+ *
+ * @param array $globallink_arr
+ *   Array of GlobalLink objects.
+ */
+function transperfect_webform_update_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
       db_update('transperfect_core_webform')
@@ -413,7 +575,13 @@ function transperfect_update_webform_row_document(&$globallink_arr) {
   }
 }
 
-function transperfect_get_distinct_active_webform_submission_names() {
+/**
+ * Gets distinct active webform submission names.
+ *
+ * @return array
+ *   Array of distinct active webform submission names.
+ */
+function transperfect_webform_get_distinct_active_submission_names() {
   $query = db_select('transperfect_core_webform', 'tcw');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
@@ -429,7 +597,16 @@ function transperfect_get_distinct_active_webform_submission_names() {
   return $arr;
 }
 
-function transperfect_get_translated_webform_items($xml) {
+/**
+ * Gets translated webform items from XML data.
+ *
+ * @param object $xml
+ *   XML representation of webform items.
+ *
+ * @return array
+ *   Array of webform items.
+ */
+function transperfect_webform_get_translated_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -477,7 +654,20 @@ function transperfect_get_translated_webform_items($xml) {
   return $webform_arr;
 }
 
-function transperfect_get_webform_translation_status($lid, $tgt_locale, &$title) {
+/**
+ * Gets webform translation status.
+ *
+ * @param string $lid
+ *   The webform LID.
+ * @param string $tgt_locale
+ *   The target locale.
+ * @param string $title
+ *   The translation title.
+ *
+ * @return string
+ *   Status message.
+ */
+function transperfect_webform_get_translation_status($lid, $tgt_locale, &$title) {
   $query = db_select('transperfect_core_webform', 'tcw');
   $query->condition('object_id', $lid, '=');
   $query->condition('target', $tgt_locale, '=');
@@ -503,7 +693,18 @@ function transperfect_get_webform_translation_status($lid, $tgt_locale, &$title)
   return 'Sent for Translations';
 }
 
-function transperfect_get_sent_tpt_webform_rows_by_lid_target($lid, $target) {
+/**
+ * Gets sent webform rows by LID target.
+ *
+ * @param string $lid
+ *   The webform LID.
+ * @param string $target
+ *   The LID target.
+ *
+ * @return array
+ *   Array of sent webform rows.
+ */
+function transperfect_webform_get_sent_tpt_rows_by_lid_target($lid, $target) {
   $result = db_select('transperfect_core_webform', 'tcw')
   ->fields('tcw')
   ->condition('object_id', $lid, '=')
@@ -520,7 +721,20 @@ function transperfect_get_sent_tpt_webform_rows_by_lid_target($lid, $target) {
   return $rows;
 }
 
-function transperfect_get_webform_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+/**
+ * Gets webform row ID from submission details.
+ *
+ * @param string $submission_ticket
+ *   The submission ticket.
+ * @param string $document_ticket
+ *   The document ticket.
+ * @param string $target_locale
+ *   The target locale.
+ *
+ * @return string
+ *   The webform row ID.  FALSE if the row doesn't exist.
+ */
+function transperfect_webform_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
   $query = db_select('transperfect_core_webform', 'tc');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
@@ -533,7 +747,16 @@ function transperfect_get_webform_row_id_from_submission($submission_ticket, $do
   }
 }
 
-function transperfect_get_webform_active_submission_rows_by_lid($lids) {
+/**
+ * Gets active webform submission rows by LID.
+ *
+ * @param string $lids
+ *   The webform LID.
+ *
+ * @return
+ *   Associative array of webform active submission rows.  FALSE if the array is empty.
+ */
+function transperfect_webform_get_active_submission_rows_by_lid($lids) {
   $query = db_select('transperfect_core_webform', 'tci');
   $query->condition('status', 'Sent for Translations', '=');
   $query->condition('object_id', $lids, 'IN');
@@ -577,7 +800,15 @@ function transperfect_get_webform_active_submission_rows_by_lid($lids) {
   return FALSE;
 }
 
-function transperfect_update_webform_submission_status($submission_ticket, $status = 'Cancelled') {
+/**
+ * Updates webform status.
+ *
+ * @param object $globallink
+ *   GlobalLink object.
+ * @param string $status
+ *   The new status.  Defaults to 'Cancelled.'
+ */
+function transperfect_webform_update_submission_status($submission_ticket, $status = 'Cancelled') {
   db_update('transperfect_core_webform')
   ->fields(array(
     'status' => $status,
@@ -587,10 +818,13 @@ function transperfect_update_webform_submission_status($submission_ticket, $stat
   ->execute();
 }
 
-function transperfect_get_webform_pd_submission_status() {
+/**
+ * Gets webform project director submission status.
+ */
+function transperfect_webform_get_pd_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
-  
+
   $query = db_select('transperfect_core_webform', 'tc');
   $query->fields('tc', array('submission_ticket'));
   $query->distinct();
@@ -605,20 +839,29 @@ function transperfect_get_webform_pd_submission_status() {
         $doc_status = transperfect_get_status($pd4, $row->submission_ticket);
 
         if (!$doc_status || $doc_status == 'CANCELLED') {
-          transperfect_update_webform_submission_status($row->submission_ticket);
+          transperfect_webform_update_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        transperfect_update_webform_submission_status($row->submission_ticket);
+        transperfect_webform_update_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        transperfect_update_webform_submission_status($row->submission_ticket);
+        transperfect_webform_update_submission_status($row->submission_ticket);
       }
     }
   }
 }
 
-function transperfect_check_webform_status($rids_arr) {
+/**
+ * Checks webform status based on row IDs.
+ *
+ * @param array $rids_arr
+ *   Array of row IDs.
+ *
+ * @return array
+ *   Array of row IDs that have been sent for translation or threw an error.
+ */
+function transperfect_webform_check_status($rids_arr) {
   $status = TRUE;
   $query = db_select('transperfect_core_webform', 'tc')
   ->fields('tc', array('rid'))
@@ -646,7 +889,13 @@ function transperfect_check_webform_status($rids_arr) {
   return $rids_arr;
 }
 
-function transperfect_clear_cancelled_webform_documents() {
+/**
+ * Clears cancelled webform documents.
+ *
+ * @return int
+ *   Number of cancelled webform documents.
+ */
+function transperfect_webform_clear_cancelled_documents() {
   $count = 0;
 
   $query = db_select('transperfect_core_webform', 'tc')
@@ -657,7 +906,7 @@ function transperfect_clear_cancelled_webform_documents() {
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_update_webform_submission_status($item->submission_ticket, 'Pending Translations');
+    transperfect_webform_update_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }

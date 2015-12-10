@@ -174,23 +174,6 @@ function transperfect_fieldable_panels_dashboard_pager_form() {
 }
 
 /**
- * Validates pager form input.
- */
-function transperfect_fieldable_panels_dashboard_pager_form_validate($form, &$form_state) {
-  $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-
-  if ($op != t('Go')) {
-    return;
-  }
-
-  $page_count = $form_state['input']['p_count'];
-
-  if (!is_numeric($page_count) || $page_count < 1) {
-    form_set_error('', t('Invalid Page Count.'));
-  }
-}
-
-/**
  * Handles submission of pager form.
  */
 function transperfect_fieldable_panels_dashboard_pager_form_submit($form, &$form_state) {

@@ -1,18 +1,30 @@
 <?php
 
-function transperfect_dashboard_webform_page($type) {
+/**
+ * Builds forms on webform send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the webform send dashboard.
+ */
+function transperfect_webform_dashboard_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_webform_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_webform_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_webform_form');
+  $array[] = drupal_get_form('transperfect_webform_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_webform_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_webform_dashboard_form');
 
   return $array;
 }
 
-function transperfect_dashboard_webform_filter_form() {
+/**
+ * Builds form to filter webforms to send for translation on dashboard.
+ */
+function transperfect_webform_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -148,7 +160,10 @@ function transperfect_dashboard_webform_filter_form() {
   return $form;
 }
 
-function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) {
+/**
+ * Handles submission of filter form.
+ */
+function transperfect_webform_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -167,7 +182,10 @@ function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) 
   }
 }
 
-function transperfect_dashboard_webform_pager_form() {
+/**
+ * Builds form to add pagination to webform send dashboard.
+ */
+function transperfect_webform_dashboard_pager_form() {
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -192,7 +210,7 @@ function transperfect_dashboard_webform_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('webform_pager_form_submit'),
+      '#submit' => array('transperfect_webform_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -200,21 +218,10 @@ function transperfect_dashboard_webform_pager_form() {
   return $form;
 }
 
-function webform_pager_form_validate($form, &$form_state) {
-  $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-
-  if ($op != t('Go')) {
-    return;
-  }
-
-  $page_count = $form_state['input']['p_count'];
-
-  if (!is_numeric($page_count) || $page_count < 1) {
-    form_set_error('', t('Invalid Page Count.'));
-  }
-}
-
-function webform_pager_form_submit($form, &$form_state) {
+/**
+ * Handles submission of pager form.
+ */
+function transperfect_webform_pager_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op != t('Go')) {
@@ -228,7 +235,10 @@ function webform_pager_form_submit($form, &$form_state) {
   return;
 }
 
-function transperfect_dashboard_webform_form() {
+/**
+ * Builds form to create a webform submission.
+ */
+function transperfect_webform_dashboard_form() {
   module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
   $form = array();
@@ -268,7 +278,7 @@ function transperfect_dashboard_webform_form() {
       }
     }
 
-    if (!($query = transperfect_get_webform_translate_filter_query())) {
+    if (!($query = transperfect_webform_get_translate_filter_query())) {
       $query = array(
         'translation' => 'all',
         'language' => 'all',
@@ -349,7 +359,7 @@ function transperfect_dashboard_webform_form() {
     }
 
     if (!empty($lids)) {
-      $active_subs = transperfect_get_webform_active_submission_rows_by_lid($lids);
+      $active_subs = transperfect_webform_get_active_submission_rows_by_lid($lids);
     }
 
     $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -569,7 +579,10 @@ function transperfect_dashboard_webform_form() {
   return $form;
 }
 
-function transperfect_dashboard_webform_form_validate($form, &$form_state) {
+/**
+ * Validates webform form input.
+ */
+function transperfect_webform_dashboard_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -618,7 +631,7 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   }
 
   foreach ($lids as $lid) {
-    $rows = transperfect_get_sent_tpt_webform_rows_by_lid($lid);
+    $rows = transperfect_webform_get_sent_tpt_rows_by_lid($lid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -632,7 +645,10 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   }
 }
 
-function transperfect_dashboard_webform_form_submit($form, &$form_state) {
+/**
+ * Handles webform form submission.
+ */
+function transperfect_webform_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -661,10 +677,10 @@ function transperfect_dashboard_webform_form_submit($form, &$form_state) {
 
     $project_code = $form_state['values']['submission_pd_project'];
 
-    $updated_globalLink_arr = transperfect_send_webform_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_webform_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_webform_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_webform_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

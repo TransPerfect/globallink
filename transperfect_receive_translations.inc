@@ -767,7 +767,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'webform':
-          $count += transperfect_get_translated_webforms($pd4, $globallink_arr);
+          $count += transperfect_webform_get_translated($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Webform', array(), WATCHDOG_INFO);
 

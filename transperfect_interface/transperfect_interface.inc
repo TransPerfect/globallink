@@ -764,7 +764,7 @@ function transperfect_interface_update_submission_status($submission_ticket, $st
 }
 
 /**
- * Gets interface project directory submission status.
+ * Gets interface project director submission status.
  */
 function transperfect_interface_get_pd_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
