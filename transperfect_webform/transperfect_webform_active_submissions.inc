@@ -29,11 +29,11 @@ function transperfect_webform_active_select_form() {
 
   $form = array();
 
-  transperfect_get_webform_pd_submission_status();
+  transperfect_webform_get_pd_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = transperfect_get_webform_active_submission_names();
+  $options = transperfect_webform_get_active_submission_names();
 
   if (empty($redirect_submission) && !empty($_SESSION['transperfect_webform_selected_submission'])) {
     $selected_value = $_SESSION['transperfect_webform_selected_submission'];
@@ -105,7 +105,7 @@ function transperfect_webform_active_select_form_submit($form, &$form_state) {
 
         $_SESSION['transperfect_webform_selected_submission'] = '';
 
-        transperfect_cancel_webform_submission($selected_submission);
+        transperfect_webform_cancel_submission($selected_submission);
 
         $_SESSION['transperfect_webform_globalLink_arr'] = array();
 
@@ -149,7 +149,7 @@ function transperfect_webform_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('webform_active_pager_form_submit'),
+    '#submit' => array('transperfect_webform_active_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -159,7 +159,7 @@ function transperfect_webform_active_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function webform_active_pager_form_submit($form, &$form_state) {
+function transperfect_webform_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op == t('Go')) {
@@ -194,7 +194,7 @@ function transperfect_webform_active_form() {
     $selected_value = $_SESSION['transperfect_webform_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_get_webform_active_submission_names();
+    $options = transperfect_webform_get_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
@@ -333,7 +333,7 @@ function transperfect_webform_active_form_submit($form, &$form_state) {
     case t('Cancel Selected Documents'):
       try {
         $rids_arr = array_filter($form_state['values']['table']);
-        $rids = transperfect_check_webform_status($rids_arr);
+        $rids = transperfect_webform_check_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -343,7 +343,7 @@ function transperfect_webform_active_form_submit($form, &$form_state) {
 
         $_SESSION['transperfect_webform_selected_submission'] = '';
 
-        transperfect_cancel_webform_records($rids, $pd4);
+        transperfect_webform_cancel_records($rids, $pd4);
 
         $_SESSION['transperfect_webform_globalLink_arr'] = array();
 
@@ -361,7 +361,7 @@ function transperfect_webform_active_form_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_clear_cancelled_webform_documents();
+        $count = transperfect_webform_clear_cancelled_documents();
 
         $_SESSION['transperfect_selected_submission'] = '';
         $_SESSION['transperfect_globalLink_arr'] = array();
