@@ -66,7 +66,6 @@ function transperfect_menu_send_for_translations($mlids, $pd4, $submission_name,
   return $globallink_arr;
 }
 
-
 /**
  * Gets XML data from specific menu.
  *
@@ -227,7 +226,6 @@ function transperfect_menu_update_deleted_records($pd4, $globallink) {
 
   return TRUE;
 }
-
 
 /**
  * Gets menu translation status.

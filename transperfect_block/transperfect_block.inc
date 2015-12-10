@@ -557,13 +557,13 @@ function transperfect_block_get_translated_blocks($pd4, &$globallink_arr) {
 }
 
 /**
- * Gets translated block items.
+ * Gets translated blocks.
  *
  * @param object $xml
- *   XML representation of block items.
+ *   XML representation of blocks.
  *
  * @return array
- *   Array of block items.
+ *   Array of blocks.
  */
 function transperfect_block_get_translated_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
@@ -762,13 +762,13 @@ function transperfect_block_load_data($bid) {
 }
 
 /**
- * Gets array of block items from XML data.
+ * Gets array of blocks from XML data.
  *
  * @param object $xml
  *   The XML data.
  *
  * @return array
- *   Array of block items.
+ *   Array of blocks.
  */
 function transperfect_block_get_arr_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
