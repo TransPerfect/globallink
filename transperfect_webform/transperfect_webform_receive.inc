@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on webform receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the webform receive dashboard.
+ */
 function transperfect_webform_receive_submissions($type) {
   $_SESSION['transpefect_webform_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_webform_receive_submissions($type) {
   return $arr;
 }
 
+/**
+ * Builds form to filter webforms to receive on dashboard.
+ */
 function transperfect_webform_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
@@ -169,6 +181,9 @@ function transperfect_webform_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_webform_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -194,6 +209,9 @@ function transperfect_webform_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to webform receive dashboard.
+ */
 function transperfect_webform_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -226,6 +244,9 @@ function transperfect_webform_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -245,6 +266,9 @@ function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a webform submission.
+ */
 function transperfect_webform_receive_form() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
@@ -510,6 +534,9 @@ function transperfect_webform_receive_form() {
   return $form;
 }
 
+/**
+ * Validates webform form input.
+ */
 function transperfect_webform_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -525,6 +552,9 @@ function transperfect_webform_receive_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles webform form submission.
+ */
 function transperfect_webform_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_webform_receive_type'];
 
@@ -693,6 +723,9 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Previews translated webform content in the form of JSON.
+ */
 function preview_translated_webform_content() {
   $row_id = $_POST['rid'];
   $arr = get_webform_translations_for_row_id($row_id);
@@ -700,6 +733,15 @@ function preview_translated_webform_content() {
   drupal_json_output($arr);
 }
 
+/**
+ * Gets webform translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of webform translations.
+ */
 function get_webform_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'webform');
 

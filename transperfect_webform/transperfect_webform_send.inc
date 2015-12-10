@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on webform send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the webform send dashboard.
+ */
 function transperfect_dashboard_webform_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_webform_page($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter webforms to send for translation on dashboard.
+ */
 function transperfect_dashboard_webform_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -148,6 +160,9 @@ function transperfect_dashboard_webform_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -167,6 +182,9 @@ function transperfect_dashboard_webform_filter_form_submit($form, &$form_state) 
   }
 }
 
+/**
+ * Builds form to add pagination to webform send dashboard.
+ */
 function transperfect_dashboard_webform_pager_form() {
   $form = array();
 
@@ -200,6 +218,9 @@ function transperfect_dashboard_webform_pager_form() {
   return $form;
 }
 
+/**
+ * Validates submission of pager form.
+ */
 function webform_pager_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -214,6 +235,9 @@ function webform_pager_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function webform_pager_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -228,6 +252,9 @@ function webform_pager_form_submit($form, &$form_state) {
   return;
 }
 
+/**
+ * Builds form to create a webform submission.
+ */
 function transperfect_dashboard_webform_form() {
   module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
 
@@ -569,6 +596,9 @@ function transperfect_dashboard_webform_form() {
   return $form;
 }
 
+/**
+ * Validates webform form input.
+ */
 function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -632,6 +662,9 @@ function transperfect_dashboard_webform_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles webform form submission.
+ */
 function transperfect_dashboard_webform_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
