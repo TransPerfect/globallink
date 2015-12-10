@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Installation file for TransPerfect module.
+ * Installation file for Transperfect module.
  */
 
 /**
@@ -1996,7 +1996,7 @@ function transperfect_install() {
     }
 
     if (module_exists('field_collection')) {
-      insert_field_collections($node_type->type);
+      transperfect_insert_field_collections($node_type->type);
     }
   }
 }
@@ -2027,7 +2027,9 @@ function transperfect_uninstall() {
 }
 
 /**
- * Version 2.0 updates
+ * Implements hook_update_N().
+ *
+ * Version 2.0 updates.
  */
 function transperfect_update_7200() {
   variable_set('transperfect_pd_max_target', 99999);
@@ -2245,7 +2247,9 @@ function transperfect_update_7200() {
 }
 
 /**
- * Version 2.0.1 updates
+ * Implements hook_update_N().
+ *
+ * Version 2.0.1 updates.
  */
 function transperfect_update_7201() {
   $keys = array_keys($_SESSION);
@@ -2322,16 +2326,22 @@ function transperfect_update_7201() {
           ))->execute();
       }
     }
-    
+
     if (module_exists('field_collection')) {
-      insert_field_collections($node_type->type);
+      transperfect_insert_field_collections($node_type->type);
     }
   }
 
   return t('GlobalLink module has been successfully upgraded to version 2.0.1');
 }
 
-function insert_field_collections($node_type) {
+/**
+ * Inserts field collections.
+ *
+ * @param string $node_type
+ *   The content type.
+ */
+function transperfect_insert_field_collections($node_type) {
   $field_arr = field_info_instances('node', $node_type);
 
   $keys = array_keys($field_arr);
@@ -2360,13 +2370,23 @@ function insert_field_collections($node_type) {
       $fc_items = array_keys($fc_field_infos[$field_name]);
 
       foreach ($fc_items as $fc_item) {
-        insert_field_collection_items($node_type, $field_name, $fc_item);
+        transperfect_insert_field_collection_items($node_type, $field_name, $fc_item);
       }
     }
   }
 }
 
-function insert_field_collection_items($content_type, $parent_field_name, $field_name) {
+/**
+ * Inserts field collection items.
+ *
+ * @param string $content_type
+ *   The content type.
+ * @param string $parent_field_name
+ *   The parent's field name.
+ * @param string $field_name
+ *   The field name.
+ */
+function transperfect_insert_field_collection_items($content_type, $parent_field_name, $field_name) {
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);
 
@@ -2394,7 +2414,7 @@ function insert_field_collection_items($content_type, $parent_field_name, $field
         $fc_items = array_keys($fc_field_infos[$field_name]);
 
         foreach ($fc_items as $fc_item) {
-          insert_field_collection_items($content_type, $field_name, $fc_item);
+          transperfect_insert_field_collection_items($content_type, $field_name, $fc_item);
         }
       }
 
@@ -2416,7 +2436,9 @@ function insert_field_collection_items($content_type, $parent_field_name, $field
 }
 
 /**
- * Version 2.1.0 updates
+ * Implements hook_update_N().
+ *
+ * Version 2.1.0 updates.
  */
 function transperfect_update_7210() {
   $keys = array_keys($_SESSION);
@@ -2434,7 +2456,9 @@ function transperfect_update_7210() {
 }
 
 /**
- * Version 2.3.0 updates
+ * Implements hook_update_N().
+ *
+ * Version 2.3.0 updates.
  */
 function transperfect_update_7230() {
   db_insert('transperfect_locale')
@@ -3105,7 +3129,9 @@ function transperfect_update_7230() {
 }
 
 /**
- * Version 2.6.0 updates
+ * Implements hook_update_N().
+ *
+ * Version 2.6.0 updates.
  */
 function transperfect_update_7260() {
   db_add_field('transperfect_core', 'project_code', array(

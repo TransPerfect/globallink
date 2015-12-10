@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect translation module.
+ * Transperfect translation module.
  *
- * This module adds Node translation using the Internationalization module (i18n). Also, includes TransPerfect core settings UI and configuration.
+ * This module adds node translation using the Internationalization module (i18n). Also, includes Transperfect core settings UI and configuration.
  */
 
 define('TPT_ROOT', dirname(__FILE__));
@@ -647,7 +647,7 @@ function transperfect_node_type_update($info) {
   }
 
   if (!transperfect_translation_supported($info->type)) {
-    delete_field_configs($info->type);
+    transperfect_delete_field_configs($info->type);
 
     return;
   }
@@ -731,7 +731,7 @@ function transperfect_insert_all_fields($content_type) {
  * @param string $type
  *   The node content type.
  */
-function delete_field_configs($type) {
+function transperfect_delete_field_configs($type) {
   db_delete('transperfect_field_config')
   ->condition('content_type', $type, ' = ')
   ->execute();
@@ -741,7 +741,7 @@ function delete_field_configs($type) {
  * Implements hook_node_type_delete().
  */
 function transperfect_node_type_delete($info) {
-  delete_field_configs($info->type);
+  transperfect_delete_field_configs($info->type);
 }
 
 /**

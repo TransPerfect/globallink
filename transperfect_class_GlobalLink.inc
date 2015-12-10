@@ -6,27 +6,27 @@
  */
 
 class GlobalLink {
-  public $documentTicket; // String
-  public $submissionTicket; // String
-  public $submissionName; // String
-  public $sourceLocale; // String
-  public $targetLocale; // String array
-  public $sourceXML; // String
-  public $targetTicket; // String
-  public $targetXML; // String
-  public $status; // String
-  public $tptRowId; // String
-  public $nid; // String
-  public $vid; // String
-  public $title; // String
-  public $type; // String
-  public $sourceFileName; // String
-  public $dueDate; // long
-  public $cancelled = FALSE; // boolean
-  public $sourceDeleted = FALSE; // boolean
-  public $otherObjectId;// String
+  public $documentTicket;
+  public $submissionTicket;
+  public $submissionName;
+  public $sourceLocale;
+  public $targetLocale;
+  public $sourceXML;
+  public $targetTicket;
+  public $targetXML;
+  public $status;
+  public $tptRowId;
+  public $nid;
+  public $vid;
+  public $title;
+  public $type;
+  public $sourceFileName;
+  public $dueDate;
+  public $cancelled = FALSE;
+  public $sourceDeleted = FALSE;
+  public $otherObjectId;
   public $errorMessage;
-  public $submissionInstructions; // String
-  public $submitter; // String
-  public $metadata; // String
+  public $submissionInstructions;
+  public $submitter;
+  public $metadata;
 }

@@ -167,7 +167,7 @@ function transperfect_block_get_strings($language = NULL, $group = 'blocks') {
 }
 
 /**
- * Updates block ticket ID on GlobalLink.
+ * Updates block ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.

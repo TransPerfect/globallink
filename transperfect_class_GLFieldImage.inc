@@ -6,7 +6,7 @@
  */
 
 class GLFieldImage {
-  public $title; // String
-  public $alt; // String
+  public $title;
+  public $alt;
   public $delta;
 }

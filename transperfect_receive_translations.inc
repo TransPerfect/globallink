@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on Transperfect receive dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the Transperfect receive dashboard.
+ */
 function transperfect_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_receive_page($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter Transperfect nodes to receive on dashboard.
+ */
 function transperfect_node_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect', 'transperfect_node');
@@ -168,6 +180,9 @@ function transperfect_node_receive_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_node_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -193,6 +208,9 @@ function transperfect_node_receive_filter_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to Transperfect receive dashboard.
+ */
 function transperfect_node_receive_pager_form() {
   $form = array();
 
@@ -222,6 +240,9 @@ function transperfect_node_receive_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_node_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -241,10 +262,13 @@ function transperfect_node_receive_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to receive a Transperfect submission.
+ */
 function transperfect_dashboard_receive() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
-  
+
   $form = array();
 
   if (!empty($_SESSION['transpefect_dashboard_receive_type'])) {
@@ -499,6 +523,9 @@ function transperfect_dashboard_receive() {
   return $form;
 }
 
+/**
+ * Validates Transperfect form input.
+ */
 function transperfect_dashboard_receive_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -514,6 +541,9 @@ function transperfect_dashboard_receive_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles Transperfect form submission.
+ */
 function transperfect_dashboard_receive_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_dashboard_receive_type'];
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -685,7 +715,7 @@ function transperfect_dashboard_receive_submit($form, &$form_state) {
 }
 
 /**
- * Automatically receives the translated contents.
+ * Automatically receives translated contents.
  *
  * @param string $cron_type
  *   The type of cron job.
@@ -797,6 +827,9 @@ function transperfect_auto_receive($cron_type) {
   watchdog('GlobalLink', 'Cron Completed - %count Records Updated.', array('%count' => $count), WATCHDOG_INFO);
 }
 
+/**
+ * Previews translated Transperfect content in the form of JSON.
+ */
 function transperfect_preview_translated_content() {
   $row_id = $_POST['rid'];
   $arr = transperfect_get_translations_for_row_id($row_id);
@@ -804,6 +837,15 @@ function transperfect_preview_translated_content() {
   drupal_json_output($arr);
 }
 
+/**
+ * Gets Transperfect translations by row ID.
+ *
+ * @param string $row_id
+ *   The row ID.
+ *
+ * @return array
+ *   Array of Transperfect translations.
+ */
 function transperfect_get_translations_for_row_id($row_id) {
   $row = transperfect_get_row($row_id);
 

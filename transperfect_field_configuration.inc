@@ -6,10 +6,16 @@
  * needed on the Field Configuration UI.
  */
 
+/**
+ * Returns form for transperfect_field page.
+ */
 function transperfect_field_page() {
   return drupal_get_form('transperfect_field');
 }
 
+/**
+ * Renders form for transperfect_field.
+ */
 function transperfect_field() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -188,6 +194,9 @@ function transperfect_field() {
   return $form;
 }
 
+/**
+ * Handles submission of transperfect_field form.
+ */
 function transperfect_field_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -222,6 +231,14 @@ function transperfect_field_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Updates GlobalLink field configuration.
+ *
+ * @param string $type
+ *   The content type.
+ * @param array $fids
+ *   The array of field IDs.
+ */
 function transperfect_update_gl_field_config($type, $fids) {
   // First update everything to 0 for this type
   db_update('transperfect_field_config')
@@ -237,6 +254,14 @@ function transperfect_update_gl_field_config($type, $fids) {
   }
 }
 
+/**
+ * Inserts GlobalLink field configuration.
+ *
+ * @param string $field_name
+ *   The field name.
+ * @param string $content_type
+ *   The content type.
+ */
 function transperfect_insert_gl_field_config($field_name, $content_type) {
   $p_arr = transperfect_get_pending_fields($content_type);
 
@@ -328,6 +353,12 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
   }
 }
 
+/**
+ * Inserts field collection fields.
+ *
+ * @param string $node_type
+ *   The node type.
+ */
 function transperfect_insert_fc_fields($node_type) {
   $field_arr = field_info_instances('node', $node_type);
 
@@ -363,6 +394,16 @@ function transperfect_insert_fc_fields($node_type) {
   }
 }
 
+/**
+ * Inserts field collection item fields.
+ *
+ * @param string $content_type
+ *   The content type.
+ * @param string $parent_field_name
+ *   The parent's field name.
+ * @param string $field_name
+ *   The field name.
+ */
 function transperfect_insert_fc_item_fields($content_type, $parent_field_name, $field_name) {
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);

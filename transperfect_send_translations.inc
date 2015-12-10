@@ -4,6 +4,15 @@ $default_language = language_default();
 
 $GLOBALS['transperfect_source_locale'] = $default_language->language;
 
+/**
+ * Builds forms on Transperfect send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the Transperfect send dashboard.
+ */
 function transperfect_dashboard_page($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -16,6 +25,9 @@ function transperfect_dashboard_page($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter Transperfect nodes to send for translation on dashboard.
+ */
 function transperfect_dashboard_node_filter_form($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -302,6 +314,15 @@ function transperfect_dashboard_node_filter_form($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Gets target options for Transperfect node.
+ *
+ * @param string $selected
+ *   The selected Transperfect node.
+ *
+ * @return string
+ *   The target options.
+ */
 function transperfect_get_target_options($selected) {
   $lang_filter = array();
 
@@ -320,10 +341,19 @@ function transperfect_get_target_options($selected) {
   return $any + $lang_filter;
 }
 
+/**
+ * Gets the target language as a filter item.
+ *
+ * @return string
+ *   The target language.
+ */
 function transperfect_dashboard_node_filter_target($form, &$form_state) {
   return $form['filters']['status']['filters']['target_language'];
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
   $filters = transperfect_build_filters(TRUE);
@@ -404,6 +434,9 @@ function transperfect_dashboard_node_filter_form_submit($form, &$form_state) {
   return;
 }
 
+/**
+ * Builds form to add pagination to Transperfect send dashboard.
+ */
 function transperfect_dashboard_pager_form() {
   $form = array();
 
@@ -440,6 +473,9 @@ function transperfect_dashboard_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_node_form_pager_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -459,6 +495,9 @@ function transperfect_node_form_pager_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to create a Transperfect submission.
+ */
 function transperfect_dashboard_node_form() {
   module_load_include('inc', 'transperfect', 'transperfect_node');
 
@@ -1140,6 +1179,9 @@ function transperfect_dashboard_node_form() {
   return $form;
 }
 
+/**
+ * Handles clearing the "Changed" status on Transperfect nodes that have been sent.
+ */
 function transperfect_node_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -1167,6 +1209,9 @@ function transperfect_node_form_clear_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Validates form actions for Transperfect submissions.
+ */
 function transperfect_dashboard_node_form_validate($form, &$form_state) {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
 
@@ -1237,6 +1282,9 @@ function transperfect_dashboard_node_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles Transperfect form submission.
+ */
 function transperfect_dashboard_node_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 

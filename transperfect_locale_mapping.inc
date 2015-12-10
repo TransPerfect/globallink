@@ -6,10 +6,16 @@
  * needed on the Locale Mapping UI.
  */
 
+/**
+ * Returns form for transperfect_locale page.
+ */
 function transperfect_locale_page() {
   return drupal_get_form('transperfect_locale');
 }
 
+/**
+ * Renders form for transperfect_locale.
+ */
 function transperfect_locale() {
   $form = array();
 
@@ -127,6 +133,9 @@ function transperfect_locale() {
   return $form;
 }
 
+/**
+ * Handles validation of transperfect_locale form.
+ */
 function transperfect_locale_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -141,6 +150,9 @@ function transperfect_locale_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of transperfect_locale form.
+ */
 function transperfect_locale_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -169,6 +181,15 @@ function transperfect_locale_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Checks pending submission by locale.
+ *
+ * @param string $locale
+ *   The locale.
+ *
+ * @return bool
+ *   TRUE if the submission has not yet been sent.  FALSE otherwise.
+ */
 function transperfect_check_pending_submission($locale) {
   $query1 = db_select('transperfect_core', 'tc')
 
@@ -215,6 +236,16 @@ function transperfect_check_pending_submission($locale) {
   return TRUE;
 }
 
+/**
+ * Adds locale mapping for Drupal locales.
+ *
+ * @param string $drupal_locale
+ *   The Drupal locale.
+ * @param string $drupal_locale_desc
+ *   The Drupal locale description.
+ * @param string $locale_code
+ *   The locale code.
+ */
 function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $locale_code) {
   db_update('transperfect_locale')
   ->fields(array(
@@ -225,6 +256,12 @@ function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $l
   ->execute();
 }
 
+/**
+ * Deletes locale mapping.
+ *
+ * @param string $locale_code
+ *   The code for the locale to delete.
+ */
 function transperfect_delete_locale_mapping($locale_code) {
   db_update('transperfect_locale')
   ->fields(array(
@@ -234,6 +271,12 @@ function transperfect_delete_locale_mapping($locale_code) {
   ->execute();
 }
 
+/**
+ * Gets locale list.
+ *
+ * @return array
+ *   Associative array of locales.
+ */
 function transperfect_get_tpt_list() {
   $languages = array();
 
@@ -250,6 +293,12 @@ function transperfect_get_tpt_list() {
   return $languages;
 }
 
+/**
+ * Gets mapped locale codes.
+ *
+ * @return array
+ *   Associative array of mapped locale codes.
+ */
 function transperfect_get_mapped_locale_codes() {
   $languages = array();
 
@@ -261,28 +310,6 @@ function transperfect_get_mapped_locale_codes() {
 
   foreach ($result as $row) {
     $languages[$row->locale_code] = $row->drupal_locale_code;
-  }
-
-  return $languages;
-}
-
-function transperfect_get_mapped_tpt_locales($remove_default = TRUE) {
-  $languages = array();
-
-  $result = db_select('transperfect_locale', 'tl')
-  ->fields('tl')
-  ->isNotNull('drupal_locale_code')
-  ->orderBy('locale_desc', 'ASC')
-  ->execute();
-
-  foreach ($result as $row) {
-    if ($remove_default) {
-      if (language_default()->language == $row->drupal_locale_code) {
-        continue;
-      }
-    }
-    
-    $languages[$row->locale_code] = $row->locale_desc;
   }
 
   return $languages;

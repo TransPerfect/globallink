@@ -286,7 +286,7 @@ function transperfect_cancel_submission($selected_submission) {
 }
 
 /**
- * Gets submission name from GlobalLink
+ * Gets submission name.
  *
  * @param string $submission_ticket
  *   The submission ticket.
@@ -308,7 +308,7 @@ function transperfect_get_submission_name($submission_ticket) {
 }
 
 /**
- * Updates a row document on GlobalLink.
+ * Updates a row document.
  *
  * @param array $globallink_arr
  *   Array of GlobalLink objects.
@@ -329,7 +329,7 @@ function transperfect_update_row_document(&$globallink_arr) {
 }
 
 /**
- * Updates a submission on GlobalLink.
+ * Updates a submission.
  *
  * @param object $globallink
  *   A GlobalLink object.
@@ -419,7 +419,7 @@ function transperfect_get_row_id_from_submission($submission_ticket, $document_t
 }
 
 /**
- * Updates deleted records on GlobalLink.
+ * Updates deleted records.
  *
  * @param string $pd4
  *   The project director details.
@@ -449,7 +449,7 @@ function transperfect_update_deleted_records($pd4, $globallink) {
 }
 
 /**
- * Gets translated content from GlobalLink.
+ * Gets translated content.
  *
  * @param string $pd4
  *   The project director details.
@@ -1784,7 +1784,7 @@ function transperfect_generate_xml_document($node, $target_arr, $tnid = NULL, $t
 }
 
 /**
- * Recursively add fields and field collections to translation XML document.
+ * Recursively adds fields and field collections to translation XML document.
  *
  * @param string $entity_type
  *   The type of entity.
@@ -2042,7 +2042,7 @@ function transperfect_get_node_title(&$globallink) {
 }
 
 /**
- * Updates submission status for a translation on GlobalLink.
+ * Updates submission status for a translation.
  *
  * @param string $submission_ticket
  *   The submission ticket.
@@ -2060,7 +2060,7 @@ function transperfect_update_submission_status($submission_ticket, $status = 'Ca
 }
 
 /**
- * Gets submission status for a translation on GlobalLink.
+ * Gets submission status for a translation.
  */
 function transperfect_get_submission_status() {
   module_load_include('inc', 'transperfect', 'transperfect_settings');
@@ -2132,7 +2132,7 @@ function transperfect_check_status($rids_arr) {
 }
 
 /**
- * Clear cancelled documents on GlobalLink.
+ * Clears cancelled documents.
  *
  * @return int
  *   Number of cancelled documents that have been cleared.
