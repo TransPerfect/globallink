@@ -1996,7 +1996,7 @@ function transperfect_install() {
     }
 
     if (module_exists('field_collection')) {
-      insert_field_collections($node_type->type);
+      transperfect_insert_field_collections($node_type->type);
     }
   }
 }
@@ -2328,7 +2328,7 @@ function transperfect_update_7201() {
     }
 
     if (module_exists('field_collection')) {
-      insert_field_collections($node_type->type);
+      transperfect_insert_field_collections($node_type->type);
     }
   }
 
@@ -2341,7 +2341,7 @@ function transperfect_update_7201() {
  * @param string $node_type
  *   The content type.
  */
-function insert_field_collections($node_type) {
+function transperfect_insert_field_collections($node_type) {
   $field_arr = field_info_instances('node', $node_type);
 
   $keys = array_keys($field_arr);
@@ -2370,7 +2370,7 @@ function insert_field_collections($node_type) {
       $fc_items = array_keys($fc_field_infos[$field_name]);
 
       foreach ($fc_items as $fc_item) {
-        insert_field_collection_items($node_type, $field_name, $fc_item);
+        transperfect_insert_field_collection_items($node_type, $field_name, $fc_item);
       }
     }
   }
@@ -2386,7 +2386,7 @@ function insert_field_collections($node_type) {
  * @param string $field_name
  *   The field name.
  */
-function insert_field_collection_items($content_type, $parent_field_name, $field_name) {
+function transperfect_insert_field_collection_items($content_type, $parent_field_name, $field_name) {
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);
 
@@ -2414,7 +2414,7 @@ function insert_field_collection_items($content_type, $parent_field_name, $field
         $fc_items = array_keys($fc_field_infos[$field_name]);
 
         foreach ($fc_items as $fc_item) {
-          insert_field_collection_items($content_type, $field_name, $fc_item);
+          transperfect_insert_field_collection_items($content_type, $field_name, $fc_item);
         }
       }
 

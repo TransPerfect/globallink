@@ -8,7 +8,10 @@
  */
 
 /**
- * Implements hook_is_node_translatable().
+ * By implementing this hook, you can programmatically filter out if a particular
+ * node is translatable or not by displaying/hiding it on the Send For Translation dashboard.
+ * If the node is not translatable, this method should not return anything (not even false)
+ * and the node will not show up on the dashboard.
  *
  * @param object $node
  *   The node object on which this check is being performed.
@@ -28,7 +31,10 @@ function module_transperfect_is_node_translatable($node, $drupal_target_locale =
 }
 
 /**
- * Implements hook_is_field_translatable().
+ * By implementing this hook, you can programmatically filter out if a particular
+ * field is translatable or not.
+ * If the field is not translatable, this method should not return anything (not even false).
+ * This hook overrides the field configuration settings on the Field Configuration tab.
  *
  * @param object $node
  *   The node object on which this check is being performed.
@@ -60,7 +66,8 @@ function module_transperfect_is_field_translatable($node, $field, $target_arr = 
 }
 
 /**
- * Implements hook_import_translation().
+ * By implementing this hook, you can modify translated node before it's imported in Drupal.
+ * This hook is called just before the translated node is saved in the database.
  *
  * @param $source_nid
  *   The node id of the source node object.
@@ -73,7 +80,10 @@ function module_transperfect_import_translation($source_nid, &$target_node) {
 }
 
 /**
- * Implements hook_translate_node_for_language().
+ * By implementing this hook, you can programmatically filter out if a particular
+ * node is translatable or not for a particular language.
+ * If the node is not translatable, this method should not return anything (not even false).
+ * This hook is called just before the content is being send for translation.
  *
  * @param object $source_node
  *   The source node object.
