@@ -582,13 +582,13 @@ function transperfect_interface_update_submission(&$globallink) {
 }
 
 /**
- * Gets translated interface items from XML data.
+ * Gets translated interfaces from XML data.
  *
  * @param object $xml
- *   XML representation of interface items.
+ *   XML representation of interfaces.
  *
  * @return array
- *   Array of interface items.
+ *   Array of interfaces.
  */
 function transperfect_interface_get_translated_items($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {

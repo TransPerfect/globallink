@@ -2,9 +2,9 @@
 
 /**
  * @file
- * TransPerfect Taxonomy translation module.
+ * Transperfect taxonomy translation module.
  *
- * This module adds Taxonomy translation support with configuration options.
+ * This module adds taxonomy translation support with configuration options.
  */
 
 /**
@@ -15,7 +15,7 @@ function transperfect_taxonomy_menu() {
 
   $items ['admin/transperfect-translations/dashboard/taxonomy'] = array(
     'title' => ' Taxonomy ',
-    'page callback' => 'transperfect_dashboard_taxonomy',
+    'page callback' => 'transperfect_taxonomy_dashboard',
     'access callback' => 'transperfect_access_callback_any',
     'type' => MENU_LOCAL_TASK,
     'file' => 'transperfect_taxonomy_send.inc',
@@ -45,7 +45,7 @@ function transperfect_taxonomy_menu() {
 
   $items['admin/transperfect-translations/receiveTranslation/taxonomy/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'preview_translated_taxonomy_content',
+    'page callback' => 'transperfect_taxonomy_preview_translated_content',
     'file' => 'transperfect_taxonomy_receive.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
