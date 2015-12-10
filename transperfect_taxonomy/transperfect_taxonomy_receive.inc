@@ -32,7 +32,7 @@ function transperfect_taxonomy_receive_filter_form() {
 
   $filter = FALSE;
 
-  $submission_options = transperfect_get_distinct_active_taxonomy_submission_names();
+  $submission_options = transperfect_taxonomy_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
   if (!empty($_SESSION['transperfect_taxonomy_receive_filter_submission'])) {
@@ -358,7 +358,7 @@ function transperfect_taxonomy_receive_form() {
       $pd4 = transperfect_get_project_director_details();
 
       $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
-      $taxonomy_arr = transperfect_get_translated_taxonomy_items($target_xml);
+      $taxonomy_arr = transperfect_taxonomy_get_translated_items($target_xml);
 
       if (count($taxonomy_arr) == 0) {
         continue;
@@ -367,7 +367,7 @@ function transperfect_taxonomy_receive_form() {
       $bid = $taxonomy_arr['bid'];
       $title = '';
 
-      $status = transperfect_get_taxonomy_translation_status($bid, $globallink->targetLocale, $title);
+      $status = transperfect_taxonomy_get_translation_status($bid, $globallink->targetLocale, $title);
 
       if ($status == 'Source Deleted') {
         $globallink->sourceDeleted = TRUE;
@@ -393,7 +393,7 @@ function transperfect_taxonomy_receive_form() {
 
       if (variable_get('transperfect_enable_preview', 1)) {
         if ($status != 'Source Deleted') {
-          $tpt_row_id = transperfect_get_taxonomy_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+          $tpt_row_id = transperfect_taxonomy_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
           if ($tpt_row_id) {
             $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
@@ -562,7 +562,7 @@ function transperfect_taxonomy_receive_form_submit($form, &$form_state) {
       try {
         $globallink_arr = unserialize($_SESSION['transperfect_taxonomy_globalLink_arr']);
 
-        $count = transperfect_get_translated_taxonomies($pd4, $globallink_arr);
+        $count = transperfect_taxonomy_get_translated($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -610,7 +610,7 @@ function transperfect_taxonomy_receive_form_submit($form, &$form_state) {
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_update_deleted_taxonomy_records($pd4, $globallink);
+            $success = transperfect_taxonomy_update_deleted_records($pd4, $globallink);
             $count++;
           }
         }
@@ -646,7 +646,7 @@ function transperfect_taxonomy_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_get_translated_taxonomies($pd4, $updated_globalLink_arr);
+        $count = transperfect_taxonomy_get_translated($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -719,9 +719,9 @@ function transperfect_taxonomy_receive_form_submit($form, &$form_state) {
 /**
  * Previews translated taxonomy content in the form of JSON.
  */
-function preview_translated_taxonomy_content() {
+function transperfect_taxonomy_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = get_taxonomy_translations_for_row_id($row_id);
+  $arr = transperfect_taxonomy_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
@@ -735,7 +735,7 @@ function preview_translated_taxonomy_content() {
  * @return array
  *   Array of taxonomy translations.
  */
-function get_taxonomy_translations_for_row_id($row_id) {
+function transperfect_taxonomy_get_translations_for_row_id($row_id) {
   $row = transperfect_get_other_row($row_id, 'taxonomy');
 
   $globallink = new GlobalLink();
@@ -779,17 +779,17 @@ function get_taxonomy_translations_for_row_id($row_id) {
         continue;
       }
 
-      $translation = transperfect_get_arr_taxonomy_items($globallink->targetXML);
+      $translation = transperfect_taxonomy_get_arr_items($globallink->targetXML);
       $bid = $translation['bid'];
       $term = taxonomy_term_load($bid);
 
       if (!empty($term)) {
         $path = drupal_lookup_path('alias', 'taxonomy/term/' . $bid, $term->language);
-        $source_xml = transperfect_get_taxonomy_xml($term, $path);
+        $source_xml = transperfect_taxonomy_get_xml($term, $path);
         $source_arr = array();
 
         if ($source_xml) {
-          $source_arr = transperfect_get_arr_taxonomy_items($source_xml);
+          $source_arr = transperfect_taxonomy_get_arr_items($source_xml);
         }
       }
       else {

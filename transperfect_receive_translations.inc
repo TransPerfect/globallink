@@ -758,7 +758,7 @@ function transperfect_auto_receive($cron_type) {
 
           break;
         case 'taxonomy':
-          $count += transperfect_get_translated_taxonomies($pd4, $globallink_arr);
+          $count += transperfect_taxonomy_get_translated($pd4, $globallink_arr);
 
           watchdog('GlobalLink', 'Imported Taxonomy', array(), WATCHDOG_INFO);
 

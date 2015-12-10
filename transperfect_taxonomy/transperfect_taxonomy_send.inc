@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the taxonomy send dashboard.
  */
-function transperfect_dashboard_taxonomy($type) {
+function transperfect_taxonomy_dashboard($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_dashboard_taxonomy_filter_form');
-  $array[] = drupal_get_form('transperfect_dashboard_taxonomy_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_taxonomy_form');
+  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_filter_form');
+  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_pager_form');
+  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_form');
 
   return $array;
 }
@@ -24,7 +24,7 @@ function transperfect_dashboard_taxonomy($type) {
 /**
  * Builds form to filter taxonomies to send for translation on dashboard.
  */
-function transperfect_dashboard_taxonomy_filter_form() {
+function transperfect_taxonomy_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
 
@@ -49,7 +49,7 @@ function transperfect_dashboard_taxonomy_filter_form() {
       $filter = TRUE;
     }
 
-    $vocab_arr = transperfect_get_vocabulary_list();
+    $vocab_arr = transperfect_taxonomy_get_vocabulary_list();
 
     $form['taxonomy_info_filter'] = array(
       '#type' => 'fieldset',
@@ -135,7 +135,7 @@ function transperfect_dashboard_taxonomy_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state) {
+function transperfect_taxonomy_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
@@ -155,7 +155,7 @@ function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state)
 /**
  * Builds form to add pagination to taxonomy send dashboard.
  */
-function transperfect_dashboard_taxonomy_pager_form() {
+function transperfect_taxonomy_dashboard_pager_form() {
   $form = array();
 
   $locales = transperfect_get_mapped_drupal_locales(FALSE);
@@ -180,7 +180,7 @@ function transperfect_dashboard_taxonomy_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('taxonomy_pager_form_submit'),
+      '#submit' => array('transperfect_taxonomy_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -191,7 +191,7 @@ function transperfect_dashboard_taxonomy_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function taxonomy_pager_form_submit($form, &$form_state) {
+function transperfect_taxonomy_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -213,7 +213,7 @@ function taxonomy_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to create a taxonomy submission.
  */
-function transperfect_dashboard_taxonomy_form() {
+function transperfect_taxonomy_dashboard_form() {
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
@@ -326,7 +326,7 @@ function transperfect_dashboard_taxonomy_form() {
 
       foreach ($result as $item) {
         $active = '';
-        $active_subs = transperfect_get_active_taxonomy_submission_rows($item->tid);
+        $active_subs = transperfect_taxonomy_get_active_submission_rows($item->tid);
 
         if ($active_subs && array_key_exists($item->tid, $active_subs)) {
           $sub_arr = $active_subs[$item->tid];
@@ -533,7 +533,7 @@ function transperfect_dashboard_taxonomy_form() {
 /**
  * Validates taxonomy form input.
  */
-function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
+function transperfect_taxonomy_dashboard_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
 
@@ -582,7 +582,7 @@ function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
   }
 
   foreach ($bids as $bid) {
-    $rows = transperfect_get_sent_taxonomy_rows_by_bid($bid);
+    $rows = transperfect_taxonomy_get_sent_rows_by_bid($bid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -599,7 +599,7 @@ function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
 /**
  * Handles taxonomy form submission.
  */
-function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
+function transperfect_taxonomy_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -628,10 +628,10 @@ function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
 
     $project_code = $form_state['values']['submission_pd_project'];
 
-    $updated_globalLink_arr = transperfect_send_taxonomies_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = transperfect_taxonomy_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_update_taxonomy_ticket_id($updated_globalLink_arr, $project_code);
+      transperfect_taxonomy_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }
