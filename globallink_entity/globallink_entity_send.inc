@@ -480,6 +480,8 @@ function globallink_entity_dashboard_pager_form_submit($form, &$form_state) {
  * Builds form to create an entity submission.
  */
 function globallink_entity_dashboard_form() {
+  module_load_include('inc', 'globallink_entity', 'globallink_entity');
+
   $default_checked_ids = array();
   $module_path = drupal_get_path('module', 'globallink');
 
@@ -1187,6 +1189,8 @@ function globallink_entity_form_clear_submit($form, &$form_state) {
  * Validates entity form input.
  */
 function globallink_entity_dashboard_form_validate($form, &$form_state) {
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
 

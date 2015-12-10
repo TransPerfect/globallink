@@ -94,6 +94,8 @@ function globallink_pd_settings() {
  * Handles validation of globallink_pd_settings form.
  */
 function globallink_pd_settings_validate(&$form, &$form_state) {
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
+
   $project_short_code_char_arr = str_split(str_replace(' ', '', $form_state['values']['globallink_pd_projectid']));
 
   foreach ($project_short_code_char_arr as $val) {

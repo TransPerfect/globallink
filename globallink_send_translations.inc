@@ -1229,7 +1229,9 @@ function globallink_dashboard_node_form_validate($form, &$form_state) {
 
   $nids = array_filter($form_state['values']['table']);
 
-  form_set_error('', t('No items selected.'));
+  if (count($nids) == 0) {
+    form_set_error('', t('No items selected.'));
+  }
 
   if (!empty($form_state['values']['submission_due_date'])) {
     $due_date = (globallink_convert_date_to_timestamp($form_state['values']['submission_due_date'])) / 1000;

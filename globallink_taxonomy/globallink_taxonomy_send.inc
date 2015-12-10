@@ -534,6 +534,8 @@ function globallink_taxonomy_dashboard_form() {
  * Validates taxonomy form input.
  */
 function globallink_taxonomy_dashboard_form_validate($form, &$form_state) {
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
 

@@ -12,5 +12,5 @@ class ProjectDirector {
   public $projectShortCode;
   public $submissionPrefix;
   public $classifier;
-  public $maxTargetCount
+  public $maxTargetCount;
 }

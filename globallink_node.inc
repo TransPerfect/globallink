@@ -24,6 +24,8 @@
  *   Associative array representing a GlobalLink object.
  */
 function globallink_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+
   $node_check = variable_get('globallink_implementation_type', 0);
   $submitter = $submission_details['submitter'];
 

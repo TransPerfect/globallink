@@ -24,6 +24,8 @@
  *   GlobalLink object that represents active translation.
  */
 function globallink_webform_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+
   $globallink_arr = array();
 
   $submitter = $submission_details['submitter'];
