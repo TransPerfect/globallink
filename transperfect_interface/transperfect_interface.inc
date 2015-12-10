@@ -103,7 +103,7 @@ function transperfect_interface_get_xml($lid, $source_arr) {
 }
 
 /**
- * Updates interface ticket ID on GlobalLink.
+ * Updates interface ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.

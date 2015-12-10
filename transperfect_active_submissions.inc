@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on Transperfect active submissions dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the Transperfect active submissions dashboard.
+ */
 function transperfect_dashboard_active_submissions_page($type) {
   $_SESSION['transpefect_dashboard_active_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_active_submissions_page($type) {
   return $array;
 }
 
+/**
+ * Builds form to allow selection of specific Transperfect submission by ID.
+ */
 function transperfect_node_active_select_form() {
   module_load_include('inc', 'transperfect', 'transperfect_node');
 
@@ -81,6 +93,9 @@ function transperfect_node_active_select_form() {
   return $form;
 }
 
+/**
+ * Handles submission of active select form.
+ */
 function transperfect_node_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
@@ -121,6 +136,9 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to Transperfect send dashboard.
+ */
 function transperfect_node_active_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
@@ -153,6 +171,9 @@ function transperfect_node_active_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function transperfect_node_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -172,6 +193,9 @@ function transperfect_node_active_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to show all active Transperfect submissions.
+ */
 function transperfect_dashboard_active() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -302,6 +326,9 @@ function transperfect_dashboard_active() {
   return $form;
 }
 
+/**
+ * Validates form actions for active Transperfect submissions.
+ */
 function transperfect_dashboard_active_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
   transperfect_validate_project_director_details($pd4);
@@ -317,6 +344,9 @@ function transperfect_dashboard_active_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of active Transperfect form.
+ */
 function transperfect_dashboard_active_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();

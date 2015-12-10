@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Returns form for transperfect_pd_settings page.
+ */
 function transperfect_settings_page() {
   $array = array();
 
@@ -9,6 +12,9 @@ function transperfect_settings_page() {
   return $array;
 }
 
+/**
+ * Renders form for transperfect_pd_settings.
+ */
 function transperfect_pd_settings() {
   $form = array();
 
@@ -84,6 +90,9 @@ function transperfect_pd_settings() {
   return $form;
 }
 
+/**
+ * Handles validation of transperfect_pd_settings form.
+ */
 function transperfect_pd_settings_validate(&$form, &$form_state) {
   $project_short_code_char_arr = str_split(str_replace(' ', '', $form_state['values']['transperfect_pd_projectid']));
 
@@ -169,6 +178,9 @@ function transperfect_pd_settings_validate(&$form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of transperfect_pd_settings form.
+ */
 function transperfect_pd_settings_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -212,6 +224,9 @@ function transperfect_pd_settings_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Renders form for transperfect_adaptor_settings.
+ */
 function transperfect_adaptor_settings() {
   $form = array();
 
@@ -275,6 +290,9 @@ function transperfect_adaptor_settings() {
   return $form;
 }
 
+/**
+ * Exports log.
+ */
 function transperfect_view_log_submit($form, &$form_state) {
   $from_date = $form_state['input']['log_view_date'];
   $from_date = transperfect_convert_date_to_timestamp($from_date) / 1000;
@@ -289,6 +307,15 @@ function transperfect_view_log_submit($form, &$form_state) {
   ));
 }
 
+/**
+ * Gets log data from specific date in the form of HTML.
+ *
+ * @param string $from_date
+ *   The timestamp.
+ *
+ * @return string
+ *   HTML representation of log data.
+ */
 function transperfect_get_log_data($from_date) {
   $html = '<html><head><title>GlobalLink Log</title><style>.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 1px solid #006699; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }.datagrid table td, .datagrid table th { padding: 3px 10px; }.datagrid table thead th {background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006699", endColorstr="#00557F");background-color:#006699; color:#FFFFFF; font-size: 15px; font-weight: bold; border-left: 1px solid #0070A8; } .datagrid table thead th:first-child { border: none; }.datagrid table tbody td { color: #00496B; border-left: 1px solid #E1EEF4;font-size: 12px;font-weight: normal; }.datagrid table tbody .alt td { background: #E1EEF4; color: #00496B; }.datagrid table tbody td:first-child { border-left: none; }.datagrid table tbody tr:last-child td { border-bottom: none; }</style></head><body>';
 
@@ -322,6 +349,9 @@ function transperfect_get_log_data($from_date) {
   return $html;
 }
 
+/**
+ * Validates adaptor settings.
+ */
 function transperfect_adaptor_settings_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -345,6 +375,9 @@ function transperfect_adaptor_settings_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Submits adaptor settings.
+ */
 function transperfect_adaptor_settings_submit($form, &$form_state) {
   $old_value = variable_get('transperfect_implementation_type');
   $old_preview = variable_get('transperfect_enable_preview', 1);
@@ -378,6 +411,12 @@ function transperfect_adaptor_settings_submit($form, &$form_state) {
   drupal_set_message(t('The configuration options have been saved.'));
 }
 
+/**
+ * Gets project director details.
+ *
+ * @return object
+ *   The project director object.
+ */
 function transperfect_get_project_director_details() {
   $pd4 = new ProjectDirector();
 
@@ -400,6 +439,9 @@ function transperfect_get_project_director_details() {
   return $pd4;
 }
 
+/**
+ * Saves project names.
+ */
 function transperfect_save_project_names() {
   $pd4 = transperfect_get_project_director_details();
 
@@ -421,6 +463,15 @@ function transperfect_save_project_names() {
   variable_set('transperfect_pd_projects', $var_arr);
 }
 
+/**
+ * Validates project director details.
+ *
+ * @param object $pd4
+ *   The project director object.
+ *
+ * @return bool
+ *   TRUE if the project director details are valid.  FALSE otherwise.
+ */
 function transperfect_validate_project_director_details($pd4) {
   if (empty($pd4->url)) {
     form_set_error('', t('GlobalLink URL is undefined.'));
@@ -461,6 +512,12 @@ function transperfect_validate_project_director_details($pd4) {
   return TRUE;
 }
 
+/**
+ * Wraps transperfect_convert_date_to_timestamp.
+ *
+ * @param string $from_date
+ *   The desired log date.
+ */
 function transperfect_view_log($from_date) {
   $from_date = transperfect_convert_date_to_timestamp($from_date);
 }

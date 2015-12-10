@@ -109,7 +109,7 @@ function transperfect_entity_send_for_translations($nids, $pd4, $submission_name
 }
 
 /**
- * Updates entity ticket ID on GlobalLink.
+ * Updates entity ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.

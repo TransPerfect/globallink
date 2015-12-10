@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Miscellaneous TransPerfect functions for node translations (non-entity).
+ * Miscellaneous Transperfect functions for node translations (non-entity).
  */
 
 /**
@@ -474,7 +474,7 @@ function transperfect_convert_date_to_timestamp($date) {
 }
 
 /**
- * Checks for existence of node id from GlobalLink object.
+ * Checks for existence of node id object.
  *
  * @param object $globallink
  *   The GlobalLink object.
@@ -627,7 +627,7 @@ function transperfect_escape_json_string($value) { // list from www.json.org: (\
 }
 
 /**
- * Checks to see if a pending submission exists on GlobalLink.
+ * Checks to see if a pending submission exists.
  *
  * @return
  *   True if the submission exists.
@@ -648,7 +648,7 @@ function transperfect_pending_submission_exists() {
 }
 
 /**
- * Checks to see if a pending submission exists on GlobalLink for a specified content type.
+ * Checks to see if a pending submission exists for a specified content type.
  *
  * @param string $type
  *   The content type.
@@ -702,7 +702,7 @@ function transperfect_get_mapped_drupal_locales($remove_default = TRUE) {
 }
 
 /**
- * Gets config fields from GlobalLink by content type.
+ * Gets config fields by content type.
  *
  * @param string $content_type
  *   The desired content type.
@@ -726,7 +726,7 @@ function transperfect_get_config_fields($content_type) {
 }
 
 /**
- * Gets non-translatable config fields from GlobalLink by content type.
+ * Gets non-translatable config fields by content type.
  *
  * @param string $content_type
  *   The desired content type.
@@ -751,7 +751,7 @@ function transperfect_get_non_translatable_config_fields($content_type) {
 }
 
 /**
- * Gets pending fields from GlobalLink by content type.
+ * Gets pending fields by content type.
  *
  * @param string $content_type
  *   The desired content type.
@@ -1008,7 +1008,7 @@ function transperfect_get_source($group) {
 }
 
 /**
- * Loads source data from GlobalLink.
+ * Loads source data.
  *
  * @param string $lid
  *   The lid.
@@ -1032,7 +1032,7 @@ function transperfect_load_source_data($lid) {
 }
 
 /**
- * Gets other row from GlobalLink.
+ * Gets other row.
  *
  * @param int $row_id
  *   The id of the row.
@@ -1040,7 +1040,7 @@ function transperfect_load_source_data($lid) {
  *   The type of Transperfect core.
  *
  * @return object
- *   Other row from GlobalLink.
+ *   Other row.
  */
 function transperfect_get_other_row($row_id, $type) {
   $result = db_select('transperfect_core_' . $type, 'tc')

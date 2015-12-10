@@ -104,7 +104,7 @@ function transperfect_menu_get_xml($mlid) {
 }
 
 /**
- * Updates menu ticket ID on GlobalLink.
+ * Updates menu ticket ID.
  *
  * @param array $arr
  *   Array of GlobalLink objects.
