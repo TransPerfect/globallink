@@ -286,7 +286,7 @@ function transperfect_cancel_submission($selected_submission) {
 }
 
 /**
- * Gets submission name
+ * Gets submission name.
  *
  * @param string $submission_ticket
  *   The submission ticket.
