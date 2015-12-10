@@ -2,7 +2,7 @@
 
 /**
  * @file
- * TransPerfect taxonomy translation install file.
+ * Transperfect taxonomy translation install file.
  */
 
 /**
@@ -124,9 +124,11 @@ function transperfect_taxonomy_schema() {
  * Version 2.6.0 updates
  */
 function transperfect_taxonomy_update_7260() {
-  db_add_field('transperfect_core_taxonomy', 'project_code', array('description' => 'PD Project Code.',
-      'type' => 'varchar',
-      'not null' => TRUE,
-      'default' => '',
-      'length' => 255));
+  db_add_field('transperfect_core_taxonomy', 'project_code', array(
+    'description' => 'PD Project Code.',
+    'type' => 'varchar',
+    'not null' => TRUE,
+    'default' => '',
+    'length' => 255,
+  ));
 }

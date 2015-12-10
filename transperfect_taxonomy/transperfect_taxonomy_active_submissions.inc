@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on taxonomy active submissions dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the taxonomy active submissions dashboard.
+ */
 function transperfect_taxonomy_active_submissions($type) {
   $_SESSION['transpefect_taxonomy_active_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_taxonomy_active_submissions($type) {
   return $array;
 }
 
+/**
+ * Builds form to allow selection of specific taxonomy submission by ID.
+ */
 function transperfect_taxonomy_active_select_form() {
   module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
 
@@ -71,6 +83,9 @@ function transperfect_taxonomy_active_select_form() {
   return $form;
 }
 
+/**
+ * Handles submission of active select form.
+ */
 function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
@@ -109,6 +124,9 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to add pagination to taxonomy send dashboard.
+ */
 function transperfect_taxonomy_active_pager_form() {
   $form = array();
 
@@ -138,6 +156,9 @@ function transperfect_taxonomy_active_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function taxonomy_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -157,6 +178,9 @@ function taxonomy_active_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to show all active taxonomy submissions.
+ */
 function transperfect_taxonomy_active_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
@@ -277,6 +301,9 @@ function transperfect_taxonomy_active_form() {
   return $form;
 }
 
+/**
+ * Validates form actions for active taxonomy submissions.
+ */
 function transperfect_taxonomy_active_form_validate($form, &$form_state) {
   $pd4 = transperfect_get_project_director_details();
   transperfect_validate_project_director_details($pd4);
@@ -292,6 +319,9 @@ function transperfect_taxonomy_active_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles submission of active taxonomy form.
+ */
 function transperfect_taxonomy_active_form_submit($form, &$form_state) {
   sleep(5);
 

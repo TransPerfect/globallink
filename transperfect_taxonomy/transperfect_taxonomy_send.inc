@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Builds forms on taxonomy send dashboard.
+ *
+ * @param string $type
+ *   The type of task we are working on.
+ *
+ * @return array
+ *   Array of forms for the taxonomy send dashboard.
+ */
 function transperfect_dashboard_taxonomy($type) {
   $_SESSION['transperfect_selected_type'] = $type;
 
@@ -12,6 +21,9 @@ function transperfect_dashboard_taxonomy($type) {
   return $array;
 }
 
+/**
+ * Builds form to filter taxonomies to send for translation on dashboard.
+ */
 function transperfect_dashboard_taxonomy_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
   module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
@@ -120,6 +132,9 @@ function transperfect_dashboard_taxonomy_filter_form() {
   return $form;
 }
 
+/**
+ * Handles submission of filter form.
+ */
 function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -137,6 +152,9 @@ function transperfect_dashboard_taxonomy_filter_form_submit($form, &$form_state)
   }
 }
 
+/**
+ * Builds form to add pagination to taxonomy send dashboard.
+ */
 function transperfect_dashboard_taxonomy_pager_form() {
   $form = array();
 
@@ -170,6 +188,9 @@ function transperfect_dashboard_taxonomy_pager_form() {
   return $form;
 }
 
+/**
+ * Handles submission of pager form.
+ */
 function taxonomy_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
@@ -189,6 +210,9 @@ function taxonomy_pager_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Builds form to create a taxonomy submission.
+ */
 function transperfect_dashboard_taxonomy_form() {
   $form = array();
 
@@ -506,6 +530,9 @@ function transperfect_dashboard_taxonomy_form() {
   return $form;
 }
 
+/**
+ * Validates taxonomy form input.
+ */
 function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = transperfect_get_project_director_details();
@@ -569,6 +596,9 @@ function transperfect_dashboard_taxonomy_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Handles taxonomy form submission.
+ */
 function transperfect_dashboard_taxonomy_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
