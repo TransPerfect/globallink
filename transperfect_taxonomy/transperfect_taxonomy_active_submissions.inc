@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the taxonomy active submissions dashboard.
  */
-function transperfect_taxonomy_active_submissions($type) {
+function globallink_taxonomy_active_submissions($type) {
   $_SESSION['transpefect_taxonomy_active_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_taxonomy_active_select_form');
-  $array[] = drupal_get_form('transperfect_taxonomy_active_pager_form');
-  $array[] = drupal_get_form('transperfect_taxonomy_active_form');
+  $array[] = drupal_get_form('globallink_taxonomy_active_select_form');
+  $array[] = drupal_get_form('globallink_taxonomy_active_pager_form');
+  $array[] = drupal_get_form('globallink_taxonomy_active_form');
 
   return $array;
 }
@@ -24,19 +24,19 @@ function transperfect_taxonomy_active_submissions($type) {
 /**
  * Builds form to allow selection of specific taxonomy submission by ID.
  */
-function transperfect_taxonomy_active_select_form() {
-  module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
+function globallink_taxonomy_active_select_form() {
+  module_load_include('inc', 'globallink_taxonomy', 'globallink_taxonomy');
 
   $form = array();
 
-  transperfect_taxonomy_get_submission_status();
+  globallink_taxonomy_get_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
-  $options = transperfect_taxonomy_get_active_submission_names();
+  $options = globallink_taxonomy_get_active_submission_names();
 
-  if (empty($redirect_submission) && !empty($_SESSION['transperfect_taxonomy_selected_submission'])) {
-    $selected_value = $_SESSION['transperfect_taxonomy_selected_submission'];
+  if (empty($redirect_submission) && !empty($_SESSION['globallink_taxonomy_selected_submission'])) {
+    $selected_value = $_SESSION['globallink_taxonomy_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
     $selected_value = array_search($redirect_submission, $options);
@@ -86,7 +86,7 @@ function transperfect_taxonomy_active_select_form() {
 /**
  * Handles submission of active select form.
  */
-function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
+function globallink_taxonomy_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
   }
@@ -95,7 +95,7 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
 
   switch ($op) {
     case t('Go'):
-      $_SESSION['transperfect_taxonomy_selected_submission'] = $form_state['values']['submission'];
+      $_SESSION['globallink_taxonomy_selected_submission'] = $form_state['values']['submission'];
 
       break;
     case t('Cancel Submission'):
@@ -104,11 +104,11 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
 
         $selected_submission = $form_state['values']['submission'];
 
-        $_SESSION['transperfect_taxonomy_selected_submission'] = '';
+        $_SESSION['globallink_taxonomy_selected_submission'] = '';
 
-        transperfect_taxonomy_cancel_submission($selected_submission);
+        globallink_taxonomy_cancel_submission($selected_submission);
 
-        $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
+        $_SESSION['globallink_taxonomy_globalLink_arr'] = array();
         drupal_set_message(t('Submission has been cancelled successfully.'));
       }
       catch (SoapFault $se) {
@@ -127,7 +127,7 @@ function transperfect_taxonomy_active_select_form_submit($form, &$form_state) {
 /**
  * Builds form to add pagination to taxonomy send dashboard.
  */
-function transperfect_taxonomy_active_pager_form() {
+function globallink_taxonomy_active_pager_form() {
   $form = array();
 
   $form['page_counter']['markup'] = array(
@@ -138,7 +138,7 @@ function transperfect_taxonomy_active_pager_form() {
   $form['page_counter']['markup']['p_count'] = array(
     '#type' => 'textfield',
     '#size' => 5,
-    '#default_value' => isset($_SESSION['transperfect_taxonomy_active_page_count']) ? $_SESSION['transperfect_taxonomy_active_page_count'][0] : TPT_PAGER_LIMIT,
+    '#default_value' => isset($_SESSION['globallink_taxonomy_active_page_count']) ? $_SESSION['globallink_taxonomy_active_page_count'][0] : TPT_PAGER_LIMIT,
     '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
     '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
     '#prefix' => '<div class="container-inline">',
@@ -149,7 +149,7 @@ function transperfect_taxonomy_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('transperfect_taxonomy_active_pager_form_submit'),
+    '#submit' => array('globallink_taxonomy_active_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -159,7 +159,7 @@ function transperfect_taxonomy_active_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function transperfect_taxonomy_active_pager_form_submit($form, &$form_state) {
+function globallink_taxonomy_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -172,7 +172,7 @@ function transperfect_taxonomy_active_pager_form_submit($form, &$form_state) {
     form_set_error('', t('Invalid Page Count.'));
   }
   else {
-    $_SESSION['transperfect_taxonomy_active_page_count'] = array($page_count);
+    $_SESSION['globallink_taxonomy_active_page_count'] = array($page_count);
 
     return;
   }
@@ -181,7 +181,7 @@ function transperfect_taxonomy_active_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to show all active taxonomy submissions.
  */
-function transperfect_taxonomy_active_form() {
+function globallink_taxonomy_active_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -192,21 +192,21 @@ function transperfect_taxonomy_active_form() {
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';
 
-  if (empty($redirect_submission) && !empty($_SESSION['transperfect_taxonomy_selected_submission'])) {
-    $selected_value = $_SESSION['transperfect_taxonomy_selected_submission'];
+  if (empty($redirect_submission) && !empty($_SESSION['globallink_taxonomy_selected_submission'])) {
+    $selected_value = $_SESSION['globallink_taxonomy_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_taxonomy_get_active_submission_names();
+    $options = globallink_taxonomy_get_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
   $page_count = TPT_PAGER_LIMIT;
 
-  if (isset($_SESSION['transperfect_taxonomy_active_page_count'])) {
-    $page_count = $_SESSION['transperfect_taxonomy_active_page_count'][0];
+  if (isset($_SESSION['globallink_taxonomy_active_page_count'])) {
+    $page_count = $_SESSION['globallink_taxonomy_active_page_count'][0];
   }
 
-  $projects = transperfect_get_pd_projects();
+  $projects = globallink_get_pd_projects();
 
   $header = array(
     'submission' => array(
@@ -239,7 +239,7 @@ function transperfect_taxonomy_active_form() {
     ),
   );
 
-  $query = db_select('transperfect_core_taxonomy', 'tc')->extend('PagerDefault') // Pager Extender
+  $query = db_select('globallink_core_taxonomy', 'tc')->extend('PagerDefault') // Pager Extender
   ->limit($page_count) // 10 results per page
   ->extend('TableSort') // Sorting Extender
   ->orderByHeader($header); // Field to sort on is picked from $header
@@ -249,8 +249,8 @@ function transperfect_taxonomy_active_form() {
     $query->condition('submission_ticket', $selected_value, '=');
   }
 
-  $query->join('transperfect_locale', 'tl1', 'tc.source = tl1.locale_code');
-  $query->join('transperfect_locale', 'tl2', 'tc.target = tl2.locale_code');
+  $query->join('globallink_locale', 'tl1', 'tc.source = tl1.locale_code');
+  $query->join('globallink_locale', 'tl2', 'tc.target = tl2.locale_code');
   $query->fields('tc');
   $query->addField('tl1', 'drupal_locale_desc', 'source_name');
   $query->addField('tl2', 'drupal_locale_desc', 'target_name');
@@ -304,9 +304,9 @@ function transperfect_taxonomy_active_form() {
 /**
  * Validates form actions for active taxonomy submissions.
  */
-function transperfect_taxonomy_active_form_validate($form, &$form_state) {
-  $pd4 = transperfect_get_project_director_details();
-  transperfect_validate_project_director_details($pd4);
+function globallink_taxonomy_active_form_validate($form, &$form_state) {
+  $pd4 = globallink_get_project_director_details();
+  globallink_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -322,18 +322,18 @@ function transperfect_taxonomy_active_form_validate($form, &$form_state) {
 /**
  * Handles submission of active taxonomy form.
  */
-function transperfect_taxonomy_active_form_submit($form, &$form_state) {
+function globallink_taxonomy_active_form_submit($form, &$form_state) {
   sleep(5);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
   switch ($op) {
     case t('Cancel Selected Documents'):
       try {
         $rids_arr = array_filter($form_state['values']['table']);
 
-        $rids = transperfect_taxonomy_check_status($rids_arr);
+        $rids = globallink_taxonomy_check_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -341,11 +341,11 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
           return;
         }
 
-        $_SESSION['transperfect_taxonomy_selected_submission'] = '';
+        $_SESSION['globallink_taxonomy_selected_submission'] = '';
 
-        transperfect_taxonomy_cancel_records($rids, $pd4);
+        globallink_taxonomy_cancel_records($rids, $pd4);
 
-        $_SESSION['transperfect_taxonomy_globalLink_arr'] = array();
+        $_SESSION['globallink_taxonomy_globalLink_arr'] = array();
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
       catch (SoapFault $se) {
@@ -360,10 +360,10 @@ function transperfect_taxonomy_active_form_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_taxonomy_clear_cancelled_documents();
+        $count = globallink_taxonomy_clear_cancelled_documents();
 
-        $_SESSION['transperfect_selected_submission'] = '';
-        $_SESSION['transperfect_globalLink_arr'] = array();
+        $_SESSION['globallink_selected_submission'] = '';
+        $_SESSION['globallink_globalLink_arr'] = array();
 
         if ($count > 0) {
           drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));

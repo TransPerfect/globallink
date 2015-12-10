@@ -10,24 +10,24 @@
 /**
  * Implements hook_menu().
  */
-function transperfect_fieldable_panels_menu() {
+function globallink_fieldable_panels_menu() {
   $items = array();
 
   $items ['admin/transperfect-translations/dashboard/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes  ',
-    'page callback' => 'transperfect_fieldable_panels_dashboard',
-    'access callback' => 'transperfect_access_callback_any',
+    'page callback' => 'globallink_fieldable_panels_dashboard',
+    'access callback' => 'globallink_access_callback_any',
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_fieldable_panels_send.inc',
+    'file' => 'globallink_fieldable_panels_send.inc',
     'weight' => 10,
     'page arguments' => array('fieldable_panels'),
   );
 
   $items ['admin/transperfect-translations/activeSubmissions/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
-    'page callback' => 'transperfect_fieldable_panels_active_submissions',
-    'access callback' => 'transperfect_access_callback_any',
-    'file' => 'transperfect_fieldable_panels_active_submissions.inc',
+    'page callback' => 'globallink_fieldable_panels_active_submissions',
+    'access callback' => 'globallink_access_callback_any',
+    'file' => 'globallink_fieldable_panels_active_submissions.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
     'page arguments' => array('fieldable_panels'),
@@ -35,9 +35,9 @@ function transperfect_fieldable_panels_menu() {
 
   $items ['admin/transperfect-translations/receiveTranslation/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
-    'page callback' => 'transperfect_fieldable_panels_receive_submissions',
-    'access callback' => 'transperfect_access_callback_any',
-    'file' => 'transperfect_fieldable_panels_receive.inc',
+    'page callback' => 'globallink_fieldable_panels_receive_submissions',
+    'access callback' => 'globallink_access_callback_any',
+    'file' => 'globallink_fieldable_panels_receive.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
     'page arguments' => array('fieldable_panels'),
@@ -45,8 +45,8 @@ function transperfect_fieldable_panels_menu() {
 
   $items['admin/transperfect-translations/receiveTranslation/fieldable_panels/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'transperfect_fieldable_panels_preview_translated_content',
-    'file' => 'transperfect_fieldable_panels_receive.inc',
+    'page callback' => 'globallink_fieldable_panels_preview_translated_content',
+    'file' => 'globallink_fieldable_panels_receive.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );

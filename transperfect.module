@@ -13,7 +13,7 @@ define('TPT_ROLE_MANAGE_TRANSLATIONS', t('can manage GlobalLink translation task
 define('TPT_ROLE_DO_TRANSLATIONS', t('can manage GlobalLink translation tasks'));
 define('TPT_ROLE_VIEW_TRANSLATIONS', t('can view GlobalLink translation tasks'));
 
-define('TPT_PAGER_LIMIT', variable_get('transperfect_pager_limit', 10));
+define('TPT_PAGER_LIMIT', variable_get('globallink_pager_limit', 10));
 
 define('TPT_LOGGING_CONFIG_DISABLED', '0');
 define('TPT_LOGGING_CONFIG_INFO', '1');
@@ -22,7 +22,7 @@ define('TPT_LOGGING_CONFIG_DEBUG', '2');
 /**
  * Implements hook_permission().
  */
-function transperfect_permission() {
+function globallink_permission() {
   return array(
     TPT_ROLE_MANAGE_TRANSLATIONS => array('title' => TPT_ROLE_MANAGE_TRANSLATIONS),
     TPT_ROLE_DO_TRANSLATIONS => array('title' => TPT_ROLE_DO_TRANSLATIONS),
@@ -33,7 +33,7 @@ function transperfect_permission() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function transperfect_form_field_ui_field_delete_form_alter(&$form, &$form_state) {
+function globallink_form_field_ui_field_delete_form_alter(&$form, &$form_state) {
   $field_name = $form['field_name']['#value'];
   $field_info = field_info_field($field_name);
 
@@ -44,25 +44,25 @@ function transperfect_form_field_ui_field_delete_form_alter(&$form, &$form_state
     case 'taxonomy_term_reference':
       break;
     default:
-      array_unshift($form['#submit'], 'transperfect_form_field_ui_field_delete_form_submit');
+      array_unshift($form['#submit'], 'globallink_form_field_ui_field_delete_form_submit');
   }
 }
 
 /**
  * Adds a validation handler to check for change in multilingual options.
  */
-function transperfect_form_node_type_form_alter(&$form, $form_state) {
-  array_unshift($form['#validate'], 'transperfect_form_node_type_form_validate');
+function globallink_form_node_type_form_alter(&$form, $form_state) {
+  array_unshift($form['#validate'], 'globallink_form_node_type_form_validate');
 }
 
 /**
  * Validation to check if any active submission exists for this content type.
  * Only if there is a change in multilingual options.
  */
-function transperfect_form_node_type_form_validate($form, &$form_state) {
+function globallink_form_node_type_form_validate($form, &$form_state) {
   $language_content_type = $form_state['values']['language_content_type'];
 
-  if ($language_content_type != 2 && transperfect_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
+  if ($language_content_type != 2 && globallink_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
     form_set_error('language_content_type', 'Active submission exists for this content type in GlobalLink.');
   }
 }
@@ -71,7 +71,7 @@ function transperfect_form_node_type_form_validate($form, &$form_state) {
  * Submit handler for delete link on Manage Fields Page of Content Type and Field Collection.
  * This deletes a field from fields config table.
  */
-function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state) {
+function globallink_form_field_ui_field_delete_form_submit($form, &$form_state) {
   $entity_type = isset($form['entity_type']['#value']) ? $form['entity_type']['#value'] : FALSE;
   $bundle_name = isset($form['bundle']['#value']) ? $form['bundle']['#value'] : FALSE;
   $field_name = isset($form['field_name']['#value']) ? $form['field_name']['#value'] : FALSE;
@@ -93,10 +93,10 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
           break;
         case 'field_collection':
           // field-collection being deleted, delete all fields recursively for this content type only
-          transperfect_delete_fc($bundle_name, $field_name, $entity_type, $bundle_name);
+          globallink_delete_fc($bundle_name, $field_name, $entity_type, $bundle_name);
         default:
           // Regular field, just delete from the config
-          db_delete('transperfect_field_config')
+          db_delete('globallink_field_config')
           ->condition('content_type', $bundle_name, ' = ')
           ->condition('entity_type', $entity_type, ' = ')
           ->condition('bundle', $bundle_name, ' = ')
@@ -117,19 +117,19 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
         case 'taxonomy_term_reference':
         case 'field_collection':
           // Field-collection being deleted, delete all fields recursively for all the content types
-          $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
+          $content_types = globallink_get_all_content_types_for_field($bundle_name, 'field_collection');
 
           foreach ($content_types as $content_type) {
-            transperfect_delete_fc($content_type, $field_name, $entity_type, $bundle_name);
+            globallink_delete_fc($content_type, $field_name, $entity_type, $bundle_name);
           }
 
           break;
         default:
           // Regular field-collection field, just delete from the config for all content types
-          $content_types = transperfect_get_all_content_types_for_field($bundle_name, 'field_collection');
+          $content_types = globallink_get_all_content_types_for_field($bundle_name, 'field_collection');
 
           foreach ($content_types as $content_type) {
-            db_delete('transperfect_field_config')
+            db_delete('globallink_field_config')
             ->condition('content_type', $content_type, ' = ')
             ->condition('entity_type', $entity_type, ' = ')
             ->condition('bundle', $bundle_name, ' = ')
@@ -151,8 +151,8 @@ function transperfect_form_field_ui_field_delete_form_submit($form, &$form_state
  * @return bool
  *   True if the translation is supported.
  */
-function transperfect_translation_supported($type) {
-  if (translation_supported_type($type) || (module_exists('transperfect_entity') && entity_translation_node_supported_type($type))) {
+function globallink_translation_supported($type) {
+  if (translation_supported_type($type) || (module_exists('globallink_entity') && entity_translation_node_supported_type($type))) {
     return TRUE;
   }
 
@@ -171,8 +171,8 @@ function transperfect_translation_supported($type) {
  * @param string $bundle
  *   The field bundle name.
  */
-function transperfect_delete_fc($content_type, $fc_name, $entity_type, $bundle) {
-  db_delete('transperfect_field_config')
+function globallink_delete_fc($content_type, $fc_name, $entity_type, $bundle) {
+  db_delete('globallink_field_config')
   ->condition('content_type', $content_type, ' = ')
   ->condition('entity_type', $entity_type, ' = ')
   ->condition('bundle', $bundle, ' = ')
@@ -186,7 +186,7 @@ function transperfect_delete_fc($content_type, $fc_name, $entity_type, $bundle) 
 
     foreach ($fc_items as $fc_item) {
       // All field collection items have entity type as field_collection_item
-      transperfect_delete_fc_items($content_type, $fc_name, $fc_item, 'field_collection_item');
+      globallink_delete_fc_items($content_type, $fc_name, $fc_item, 'field_collection_item');
     }
   }
 }
@@ -203,7 +203,7 @@ function transperfect_delete_fc($content_type, $fc_name, $entity_type, $bundle) 
  * @param string $entity_type
  *   The field entity type.
  */
-function transperfect_delete_fc_items($content_type, $parent_field_name, $field_name, $entity_type) {
+function globallink_delete_fc_items($content_type, $parent_field_name, $field_name, $entity_type) {
   $fc_field_info = field_info_field($field_name);
 
   switch ($fc_field_info['type']) {
@@ -214,7 +214,7 @@ function transperfect_delete_fc_items($content_type, $parent_field_name, $field_
       break;
     case 'field_collection':
       // First delete the field-collection field
-      db_delete('transperfect_field_config')
+      db_delete('globallink_field_config')
       ->condition('content_type', $content_type, ' = ')
       ->condition('entity_type', $entity_type, ' = ')
       ->condition('bundle', $parent_field_name, ' = ')
@@ -228,14 +228,14 @@ function transperfect_delete_fc_items($content_type, $parent_field_name, $field_
 
         foreach ($fc_items as $fc_item) {
           // Delete all child fields recursively
-          transperfect_delete_fc_items($content_type, $field_name, $fc_item, $entity_type);
+          globallink_delete_fc_items($content_type, $field_name, $fc_item, $entity_type);
         }
       }
 
       break;
     default:
       // Regular field-collection field, just delete from config
-      db_delete('transperfect_field_config')
+      db_delete('globallink_field_config')
       ->condition('content_type', $content_type, ' = ')
       ->condition('entity_type', $entity_type, ' = ')
       ->condition('bundle', $parent_field_name, ' = ')
@@ -247,15 +247,15 @@ function transperfect_delete_fc_items($content_type, $parent_field_name, $field_
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function transperfect_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
-  $form['#submit'][] = 'transperfect_form_field_ui_field_overview_form_submit';
+function globallink_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
+  $form['#submit'][] = 'globallink_form_field_ui_field_overview_form_submit';
 }
 
 /**
  * Submit handler for Manage Fields Page of Content Type and Field Collection.
  * Adds a new field being added to the fields config table for translation.
  */
-function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_state) {
+function globallink_form_field_ui_field_overview_form_submit(&$form, &$form_state) {
   $entity_type = isset($form['#entity_type']) ? $form['#entity_type'] : FALSE;
   $bundle = isset($form['#bundle']) ? $form['#bundle'] : FALSE;
   $new_field = isset($form['fields']['_add_new_field']) ? $form['fields']['_add_new_field'] : FALSE;
@@ -267,7 +267,7 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
 
   switch ($entity_type) {
     case 'node':
-      if (!transperfect_translation_supported($bundle)) {
+      if (!globallink_translation_supported($bundle)) {
         break;
       }
 
@@ -284,7 +284,7 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
             $new_field_name = $new_field['field_name']['#value'];
 
             if ($new_field_name != '') {
-              db_insert('transperfect_field_config')
+              db_insert('globallink_field_config')
               ->fields(array(
                 'content_type' => $bundle,
                 'entity_type' => $entity_type,
@@ -302,7 +302,7 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
             $new_field_name = $new_field['field_name']['#value'];
 
             if ($new_field_name != '') {
-              db_insert('transperfect_field_config')
+              db_insert('globallink_field_config')
               ->fields(array(
                 'content_type' => $bundle,
                 'entity_type' => $entity_type,
@@ -338,14 +338,14 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
         case 'field_collection':
           // Existing FC being added to this content type
           // Add FC and all the FC fields recursively to the config
-          transperfect_insert_fc($entity_type, $existing_field_name, $bundle, $bundle);
+          globallink_insert_fc($entity_type, $existing_field_name, $bundle, $bundle);
 
           break;
         default:
           // Regular existing field, just add to config
           $existing_field_instance = field_info_instance($entity_type, $existing_field_name, $bundle);
 
-          db_insert('transperfect_field_config')
+          db_insert('globallink_field_config')
           ->fields(array(
             'content_type' => $bundle,
             'entity_type' => $entity_type,
@@ -383,10 +383,10 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
 
             // First get all the content types for this field-collection from config,
             // then add this field for all the content types in the config
-            $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
+            $content_types = globallink_get_all_content_types_for_field($fc_name, 'field_collection');
 
             foreach ($content_types as $content_type) {
-              db_insert('transperfect_field_config')
+              db_insert('globallink_field_config')
               ->fields(array(
                 'content_type' => $content_type,
                 'entity_type' => $entity_type,
@@ -421,24 +421,24 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
           break;
         case 'field_collection':
           // If existing field-collection is added to the field-collection, then add fields recursively
-          $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
+          $content_types = globallink_get_all_content_types_for_field($fc_name, 'field_collection');
 
           // First get all the content types for this field-collection from config
           // then add this field for all the content types in the config
           foreach ($content_types as $content_type) {
-            transperfect_insert_fc($entity_type, $existing_field_name, $content_type, $fc_name);
+            globallink_insert_fc($entity_type, $existing_field_name, $content_type, $fc_name);
           }
 
           break;
         default:
           // First get all the content types for this field-collection from config
           // then add this field for all the content types in the config
-          $content_types = transperfect_get_all_content_types_for_field($fc_name, 'field_collection');
+          $content_types = globallink_get_all_content_types_for_field($fc_name, 'field_collection');
 
           foreach ($content_types as $content_type) {
             $existing_field_instance = field_info_instance($entity_type, $existing_field_name, $bundle);
 
-            db_insert('transperfect_field_config')
+            db_insert('globallink_field_config')
             ->fields(array(
               'content_type' => $content_type,
               'entity_type' => $entity_type,
@@ -467,12 +467,12 @@ function transperfect_form_field_ui_field_overview_form_submit(&$form, &$form_st
  * @param string $bundle
  *   The field bundle name.
  */
-function transperfect_insert_fc($entity_type, $fc_name, $content_type, $bundle) {
+function globallink_insert_fc($entity_type, $fc_name, $content_type, $bundle) {
   $fc_field_info = field_info_field($fc_name);
   $fc_field_instance = field_info_instance($entity_type, $fc_name, $bundle);
 
   // Add FC field to the config
-  db_insert('transperfect_field_config')
+  db_insert('globallink_field_config')
   ->fields(array(
     'content_type' => $content_type,
     'entity_type' => $entity_type,
@@ -490,7 +490,7 @@ function transperfect_insert_fc($entity_type, $fc_name, $content_type, $bundle) 
 
     foreach ($fc_items as $fc_item) {
       // Add all the FC field items recursively
-      transperfect_insert_fc_items($content_type, $fc_name, $fc_item);
+      globallink_insert_fc_items($content_type, $fc_name, $fc_item);
     }
   }
 }
@@ -505,7 +505,7 @@ function transperfect_insert_fc($entity_type, $fc_name, $content_type, $bundle) 
  * @param string $field_name
  *   The field name.
  */
-function transperfect_insert_fc_items($content_type, $parent_field_name, $field_name) {
+function globallink_insert_fc_items($content_type, $parent_field_name, $field_name) {
   // Everything added here will have entity type as field_collection_item
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);
@@ -517,7 +517,7 @@ function transperfect_insert_fc_items($content_type, $parent_field_name, $field_
       break;
     case 'field_collection':
       // Field-collection in a field-collection, first add this field-collection to the config
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $content_type,
         'entity_type' => 'field_collection_item',
@@ -535,7 +535,7 @@ function transperfect_insert_fc_items($content_type, $parent_field_name, $field_
 
         foreach ($fc_items as $fc_item) {
           // Now add the child fields for this field-collection recursively
-          transperfect_insert_fc_items($content_type, $field_name, $fc_item);
+          globallink_insert_fc_items($content_type, $field_name, $fc_item);
         }
       }
 
@@ -543,7 +543,7 @@ function transperfect_insert_fc_items($content_type, $parent_field_name, $field_
     default:
       $translatable = 1;
 
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $content_type,
         'entity_type' => 'field_collection_item',
@@ -567,10 +567,10 @@ function transperfect_insert_fc_items($content_type, $parent_field_name, $field_
  * @return array
  *   An array containing all content types for the specified field.
  */
-function transperfect_get_all_content_types_for_field($field_name, $type) {
+function globallink_get_all_content_types_for_field($field_name, $type) {
   $array = array();
 
-  $result = db_select('transperfect_field_config', 'tf')
+  $result = db_select('globallink_field_config', 'tf')
   ->fields('tf', array('content_type'))
   ->distinct()
   ->condition('field_name', $field_name, '=')
@@ -587,12 +587,12 @@ function transperfect_get_all_content_types_for_field($field_name, $type) {
 /**
  * Implements hook_node_type_insert().
  */
-function transperfect_node_type_insert($info) {
-  if (!transperfect_translation_supported($info->type)) {
+function globallink_node_type_insert($info) {
+  if (!globallink_translation_supported($info->type)) {
     return;
   }
 
-  db_insert('transperfect_field_config')
+  db_insert('globallink_field_config')
   ->fields(array(
     'content_type' => $info->type,
     'entity_type' => 'node',
@@ -603,7 +603,7 @@ function transperfect_node_type_insert($info) {
     'translatable' => 1,
   ))->execute();
 
-  db_insert('transperfect_field_config')
+  db_insert('globallink_field_config')
   ->fields(array(
     'content_type' => $info->type,
     'entity_type' => 'node',
@@ -617,7 +617,7 @@ function transperfect_node_type_insert($info) {
   $metatag_module_exists = module_exists("metatag");
 
   if ($metatag_module_exists) {
-    db_insert('transperfect_field_config')
+    db_insert('globallink_field_config')
     ->fields(array(
       'content_type' => $info->type,
       'entity_type' => 'node',
@@ -633,36 +633,36 @@ function transperfect_node_type_insert($info) {
 /**
  * Implements hook_node_type_update().
  */
-function transperfect_node_type_update($info) {
+function globallink_node_type_update($info) {
   if (!$info->modified) {
     return;
   }
 
-  if (count(transperfect_get_translatable_fields($info->old_type)) == 0) {
-    if (transperfect_translation_supported($info->type)) {
-      transperfect_insert_all_fields($info->type);
+  if (count(globallink_get_translatable_fields($info->old_type)) == 0) {
+    if (globallink_translation_supported($info->type)) {
+      globallink_insert_all_fields($info->type);
     }
 
     return;
   }
 
-  if (!transperfect_translation_supported($info->type)) {
-    transperfect_delete_field_configs($info->type);
+  if (!globallink_translation_supported($info->type)) {
+    globallink_delete_field_configs($info->type);
 
     return;
   }
 
-  db_update('transperfect_field_config')
+  db_update('globallink_field_config')
   ->fields(array('content_type' => $info->orig_type))
   ->condition('content_type', $info->old_type, '=')
   ->execute();
 
-  db_update('transperfect_field_config')
+  db_update('globallink_field_config')
   ->fields(array('bundle' => $info->orig_type))
   ->condition('bundle', $info->old_type, '=')
   ->execute();
 
-  db_update('transperfect_core')
+  db_update('globallink_core')
   ->fields(array('type' => $info->orig_type))
   ->condition('type', $info->old_type, '=')
   ->execute();
@@ -674,8 +674,8 @@ function transperfect_node_type_update($info) {
  * @param string $content_type
  *   The node content type.
  */
-function transperfect_insert_all_fields($content_type) {
-  $p_arr = transperfect_get_pending_fields($content_type);
+function globallink_insert_all_fields($content_type) {
+  $p_arr = globallink_get_pending_fields($content_type);
   $f_keys = array_keys($p_arr);
 
   foreach ($f_keys as $f_key) {
@@ -694,7 +694,7 @@ function transperfect_insert_all_fields($content_type) {
         case 'field_collection':
           break;
         default:
-          db_insert('transperfect_field_config')
+          db_insert('globallink_field_config')
           ->fields(array(
             'content_type' => $content_type,
             'entity_type' => 'node',
@@ -707,7 +707,7 @@ function transperfect_insert_all_fields($content_type) {
       }
     }
     else {
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $content_type,
         'entity_type' => 'node',
@@ -721,7 +721,7 @@ function transperfect_insert_all_fields($content_type) {
   }
 
   if (module_exists('field_collection')) {
-    transperfect_insert_fc_fields($content_type);
+    globallink_insert_fc_fields($content_type);
   }
 }
 
@@ -731,8 +731,8 @@ function transperfect_insert_all_fields($content_type) {
  * @param string $type
  *   The node content type.
  */
-function transperfect_delete_field_configs($type) {
-  db_delete('transperfect_field_config')
+function globallink_delete_field_configs($type) {
+  db_delete('globallink_field_config')
   ->condition('content_type', $type, ' = ')
   ->execute();
 }
@@ -740,14 +740,14 @@ function transperfect_delete_field_configs($type) {
 /**
  * Implements hook_node_type_delete().
  */
-function transperfect_node_type_delete($info) {
-  transperfect_delete_field_configs($info->type);
+function globallink_node_type_delete($info) {
+  globallink_delete_field_configs($info->type);
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
+function globallink_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   $field_type = $form['#field']['type'];
 
   switch ($field_type) {
@@ -766,15 +766,15 @@ function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
         break;
       }
 
-      if (!transperfect_translation_supported($bundle_name)) {
+      if (!globallink_translation_supported($bundle_name)) {
         break;
       }
 
-      $translatable = transperfect_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
+      $translatable = globallink_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $bundle_name);
       $label = t('GlobalLink Translation');
       $title = t('This field can be translated using Translations.com translation services.');
 
-      $form['instance']['transperfect_translate_field'] = array(
+      $form['instance']['globallink_translate_field'] = array(
         '#prefix' => '<label>' . $label . '</label>',
         '#type' => 'checkbox',
         '#title' => $title,
@@ -782,18 +782,18 @@ function transperfect_form_field_ui_field_edit_form_alter(&$form, $form_state) {
       );
   }
 
-  $form['#submit'][] = 'transperfect_form_field_ui_field_edit_form_submit';
+  $form['#submit'][] = 'globallink_form_field_ui_field_edit_form_submit';
 }
 
 /**
  * Update field config for modified bundle field.
  */
-function transperfect_form_field_ui_field_edit_form_submit($form, &$form_state) {
+function globallink_form_field_ui_field_edit_form_submit($form, &$form_state) {
   $field_name = $form['#instance']['field_name'];
   $entity_type = $form['#instance']['entity_type'];
   $bundle_name = $form['#instance']['bundle'];
 
-  if (!transperfect_check_field_configured($bundle_name, $entity_type, $bundle_name, $field_name)) {
+  if (!globallink_check_field_configured($bundle_name, $entity_type, $bundle_name, $field_name)) {
     return;
   }
 
@@ -801,17 +801,17 @@ function transperfect_form_field_ui_field_edit_form_submit($form, &$form_state) 
     return;
   }
 
-  if (!transperfect_translation_supported($bundle_name)) {
+  if (!globallink_translation_supported($bundle_name)) {
     return;
   }
 
-  if (!isset($form['instance']['transperfect_translate_field'])) {
+  if (!isset($form['instance']['globallink_translate_field'])) {
     return;
   }
 
-  $translatable = $form['instance']['transperfect_translate_field']['#value'];
+  $translatable = $form['instance']['globallink_translate_field']['#value'];
 
-  db_update('transperfect_field_config')
+  db_update('globallink_field_config')
   ->fields(array(
     'field_label' => $form['instance']['label']['#value'],
     'translatable' => $translatable,
@@ -826,7 +826,7 @@ function transperfect_form_field_ui_field_edit_form_submit($form, &$form_state) 
 /**
  * Implements hook_node_presave().
  */
-function transperfect_node_presave($node) {
+function globallink_node_presave($node) {
   if (isset($node->tpt_skip) && $node->tpt_skip == TRUE) {
     return;
   }
@@ -840,7 +840,7 @@ function transperfect_node_presave($node) {
   }
 
   $handler = entity_translation_get_handler("node", $node);
-  $config_fields = transperfect_get_translatable_fields($node->type, $node->type);
+  $config_fields = globallink_get_translatable_fields($node->type, $node->type);
   $orig = $node->original;
   $lang = $handler->getFormLanguage();
 
@@ -853,7 +853,7 @@ function transperfect_node_presave($node) {
     switch ($field_name) {
       case 'title':
         if ($orig->title != $node->title) {
-          transperfect_update_change_detection($node, $lang);
+          globallink_update_change_detection($node, $lang);
 
           break 2;
         }
@@ -870,7 +870,7 @@ function transperfect_node_presave($node) {
     }
 
     if (!isset($node->$field_name) || !isset($orig->$field_name)) {
-      transperfect_update_change_detection($node, $lang);
+      globallink_update_change_detection($node, $lang);
 
       break;
     }
@@ -879,14 +879,14 @@ function transperfect_node_presave($node) {
     $n_arr = isset($node->$field_name) ? $node->$field_name : array();
 
     if (empty($o_arr) || empty($n_arr) || count($o_arr) != count($n_arr)) {
-      transperfect_update_change_detection($node, $lang);
+      globallink_update_change_detection($node, $lang);
 
       continue;
     }
 
     if (!is_array($o_arr) || !is_array($n_arr)) {
       if ($o_arr != $n_arr) {
-        transperfect_update_change_detection($node, $lang);
+        globallink_update_change_detection($node, $lang);
 
         break;
       }
@@ -899,19 +899,19 @@ function transperfect_node_presave($node) {
     }
 
     if (isset($o_arr[$lang]) && isset($n_arr[$lang]) && count($o_arr[$lang]) != count($n_arr[$lang])) {
-      transperfect_update_change_detection($node, $lang);
+      globallink_update_change_detection($node, $lang);
 
       break;
     }
 
     if ((isset($o_arr[$lang]) && empty($n_arr[$lang])) || (empty($o_arr[$lang]) && isset($n_arr[$lang]))) {
-      transperfect_update_change_detection($node, $lang);
+      globallink_update_change_detection($node, $lang);
 
       break;
     }
 
     if (count($o_arr[$lang]) != count($n_arr[$lang])) {
-      transperfect_update_change_detection($node, $lang);
+      globallink_update_change_detection($node, $lang);
 
       break;
     }
@@ -919,13 +919,13 @@ function transperfect_node_presave($node) {
     foreach ($o_arr[$lang] as $delta => $n_field) {
       if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
         if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
-          transperfect_update_change_detection($node, $lang);
+          globallink_update_change_detection($node, $lang);
 
           break 2;
         }
       }
       else {
-        transperfect_update_change_detection($node, $lang);
+        globallink_update_change_detection($node, $lang);
 
         break 2;
       }
@@ -936,8 +936,8 @@ function transperfect_node_presave($node) {
 /**
  * Implements hook_menu_local_tasks_alter().
  */
-function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
-  $node_check = variable_get('transperfect_implementation_type', 0);
+function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  $node_check = variable_get('globallink_implementation_type', 0);
 
   if ($root_path != 'node/%/translate') {
     return;
@@ -967,7 +967,7 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
 
     if ($node_check == 1) {
-      if (!transperfect_is_node_translatable(node_load($nid))) {
+      if (!globallink_is_node_translatable(node_load($nid))) {
         return;
       }
     }
@@ -983,7 +983,7 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
         unset($langs[$source]);
 
         if (count($langs) > 0) {
-          $tgt_arr = transperfect_get_tpt_sent_rows($nid, $source);
+          $tgt_arr = globallink_get_tpt_sent_rows($nid, $source);
           $tpt_count = count($tgt_arr);
 
           if ($tpt_count > 0 && $tpt_count == count($langs)) {
@@ -1032,19 +1032,19 @@ function transperfect_menu_local_tasks_alter(&$data, $router_item, $root_path) {
  * @return array
  *   An array containing all drupal locale codes with in progress translations.
  */
-function transperfect_get_tpt_sent_rows($nid, $source) {
+function globallink_get_tpt_sent_rows($nid, $source) {
   $arr = array();
 
-  $query = db_select('transperfect_core', 'tc')
+  $query = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN')
-  ->condition('source', transperfect_get_locale_code($source), '=');
+  ->condition('source', globallink_get_locale_code($source), '=');
 
   $result = $query->execute();
 
   foreach ($result as $row) {
-    $arr[] = transperfect_get_drupal_locale_code($row->target);
+    $arr[] = globallink_get_drupal_locale_code($row->target);
   }
 
   return $arr;
@@ -1058,10 +1058,10 @@ function transperfect_get_tpt_sent_rows($nid, $source) {
  * @param string $lang
  *   The locale of the node.
  */
-function transperfect_update_change_detection($node, $lang) {
-  $tpt_locale_code = transperfect_get_locale_code($lang);
+function globallink_update_change_detection($node, $lang) {
+  $tpt_locale_code = globallink_get_locale_code($lang);
 
-  db_update('transperfect_core')
+  db_update('globallink_core')
   ->fields(array('last_modified' => REQUEST_TIME, 'changed' => 1))
   ->condition('nid', $node->nid, '=')
   ->condition('source', $tpt_locale_code, '=')
@@ -1079,18 +1079,18 @@ function transperfect_update_change_detection($node, $lang) {
  * @return array
  *   An array containing all fields of the specified type that are translatable.
  */
-function transperfect_get_translatable_fields($type, $bundle = FALSE) {
+function globallink_get_translatable_fields($type, $bundle = FALSE) {
   $fields = array();
 
   if ($bundle) {
-    $result = db_select('transperfect_field_config', 'tfc')
+    $result = db_select('globallink_field_config', 'tfc')
     ->fields('tfc')
     ->condition('content_type', $type, '=')
     ->condition('bundle', $bundle, '=')
     ->execute();
   }
   else {
-    $result = db_select('transperfect_field_config', 'tfc')
+    $result = db_select('globallink_field_config', 'tfc')
     ->fields('tfc')
     ->condition('content_type', $type, '=')
     ->execute();
@@ -1118,8 +1118,8 @@ function transperfect_get_translatable_fields($type, $bundle = FALSE) {
  * @return bool
  *   True if the field is configured, and false if it isn't.
  */
-function transperfect_check_field_configured($content_type, $entity_type, $bundle, $field_name) {
-  $result = db_select('transperfect_field_config', 'tfc')
+function globallink_check_field_configured($content_type, $entity_type, $bundle, $field_name) {
+  $result = db_select('globallink_field_config', 'tfc')
   ->fields('tfc')
   ->condition('content_type', $content_type, '=')
   ->condition('entity_type', $entity_type, '=')
@@ -1137,15 +1137,15 @@ function transperfect_check_field_configured($content_type, $entity_type, $bundl
 /**
  * Implements hook_menu().
  */
-function transperfect_menu() {
+function globallink_menu() {
   $items = array();
 
   $items ['admin/transperfect-translations'] = array(
     'title' => 'GlobalLink',
     'description' => 'Allows users to manage and translate content using Translations.com translation services',
-    'page callback' => 'transperfect_dashboard_page',
-    'access callback' => 'transperfect_access_callback_any',
-    'file' => 'transperfect_send_translations.inc',
+    'page callback' => 'globallink_dashboard_page',
+    'access callback' => 'globallink_access_callback_any',
+    'file' => 'globallink_send_translations.inc',
     'page arguments' => array('node'),
   );
 
@@ -1166,9 +1166,9 @@ function transperfect_menu() {
   $items ['admin/transperfect-translations/activeSubmissions'] = array(
     'title' => 'Active Submissions',
     'description' => 'Presents a Dashboard interface to view active submissions',
-    'page callback' => 'transperfect_dashboard_active_submissions_page',
-    'access callback' => 'transperfect_access_callback_any',
-    'file' => 'transperfect_active_submissions.inc',
+    'page callback' => 'globallink_dashboard_active_submissions_page',
+    'access callback' => 'globallink_access_callback_any',
+    'file' => 'globallink_active_submissions.inc',
     'weight' => -1,
     'type' => MENU_LOCAL_TASK,
     'page arguments' => array('node'),
@@ -1178,23 +1178,23 @@ function transperfect_menu() {
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
-    'access callback' => 'transperfect_access_callback_any',
+    'access callback' => 'globallink_access_callback_any',
   );
 
   $items ['admin/transperfect-translations/receiveTranslation'] = array(
     'title' => 'Receive Translation',
     'description' => 'Presents a Dashboard interface to receive and publish translations',
-    'page callback' => 'transperfect_dashboard_receive_page',
-    'access callback' => 'transperfect_access_callback_any',
+    'page callback' => 'globallink_dashboard_receive_page',
+    'access callback' => 'globallink_access_callback_any',
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_receive_translations.inc',
+    'file' => 'globallink_receive_translations.inc',
     'weight' => -1,
     'page arguments' => array('node'),
   );
 
   $items ['admin/transperfect-translations/receiveTranslation/node'] = array(
     'title' => ' Content ',
-    'access callback' => 'transperfect_access_callback_any',
+    'access callback' => 'globallink_access_callback_any',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
   );
@@ -1202,50 +1202,50 @@ function transperfect_menu() {
   $items ['admin/transperfect-translations/settings'] = array(
     'title' => 'Settings',
     'description' => 'Manage settings for GlobalLink',
-    'page callback' => 'transperfect_settings_page',
+    'page callback' => 'globallink_settings_page',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_settings.inc',
+    'file' => 'globallink_settings.inc',
   );
 
   $items ['admin/transperfect-translations/locale'] = array(
     'title' => 'Locale Mapping',
     'description' => 'Manage locale mappings for GlobalLink',
-    'page callback' => 'transperfect_locale_page',
+    'page callback' => 'globallink_locale_page',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_locale_mapping.inc',
+    'file' => 'globallink_locale_mapping.inc',
   );
 
   $items ['admin/transperfect-translations/fieldConfig'] = array(
     'title' => 'Field Configuration',
     'description' => 'Manage translatable fields for content types',
-    'page callback' => 'transperfect_field_page',
+    'page callback' => 'globallink_field_page',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_field_configuration.inc',
+    'file' => 'globallink_field_configuration.inc',
   );
 
   $items['admin/transperfect-translations/cron'] = array(
     'title' => 'Receive Translations Cron',
-    'page callback' => 'transperfect_receive_translated_contents_automatically',
-    'file' => 'transperfect_receive_translations.inc',
+    'page callback' => 'globallink_receive_translated_contents_automatically',
+    'file' => 'globallink_receive_translations.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
 
   $items['admin/transperfect-translations/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'transperfect_preview_translated_content',
-    'file' => 'transperfect_receive_translations.inc',
+    'page callback' => 'globallink_preview_translated_content',
+    'file' => 'globallink_receive_translations.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
 
   $items['admin/transperfect-translations/view_log'] = array(
     'title' => 'View Log',
-    'page callback' => 'transperfect_view_log',
-    'file' => 'transperfect_settings.inc',
+    'page callback' => 'globallink_view_log',
+    'file' => 'globallink_settings.inc',
     'access arguments' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
@@ -1256,16 +1256,16 @@ function transperfect_menu() {
 /**
  * @todo Document this function.
  */
-function transperfect_access_callback_any() {
+function globallink_access_callback_any() {
   return user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_VIEW_TRANSLATIONS);
 }
 
 /**
  * Implements hook_cron().
  */
-function transperfect_cron() {
+function globallink_cron() {
   // Only run this if settings are set to Drupal Cron.
-  if (!variable_get('transperfect_cron_type', 0)) {
+  if (!variable_get('globallink_cron_type', 0)) {
     return;
   }
 
@@ -1277,19 +1277,19 @@ function transperfect_cron() {
 /**
  * Implements hook_cron_queue_info().
  */
-function transperfect_cron_queue_info() {
+function globallink_cron_queue_info() {
   $queues['auto_receive'] = array(
-    'worker callback' => 'transperfect_auto_receive',
+    'worker callback' => 'globallink_auto_receive',
   );
 
   return $queues;
 }
 
 /**
- * Implements hook_transperfect_is_node_translatable().
+ * Implements hook_globallink_is_node_translatable().
  */
-function transperfect_is_node_translatable($node, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_node_translatable', $node, $drupal_target_locale);
+function globallink_is_node_translatable($node, $drupal_target_locale = NULL) {
+  $result = module_invoke_all('globallink_is_node_translatable', $node, $drupal_target_locale);
 
   if (count($result) > 0) {
     return TRUE;
@@ -1299,10 +1299,10 @@ function transperfect_is_node_translatable($node, $drupal_target_locale = NULL) 
 }
 
 /**
- * Implements hook_transperfect_is_field_translatable().
+ * Implements hook_globallink_is_field_translatable().
  */
-function transperfect_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
-  $result = module_invoke_all('transperfect_is_field_translatable', $node, $field, $drupal_target_locale);
+function globallink_is_field_translatable($node, $field, $drupal_target_locale = NULL) {
+  $result = module_invoke_all('globallink_is_field_translatable', $node, $field, $drupal_target_locale);
 
   if (count($result) > 0) {
     return TRUE;
@@ -1312,10 +1312,10 @@ function transperfect_is_field_translatable($node, $field, $drupal_target_locale
 }
 
 /**
- * Implements hook_transperfect_translate_node_for_language().
+ * Implements hook_globallink_translate_node_for_language().
  */
-function transperfect_translate_node_for_language($node, $drupal_target_locale) {
-  $result = module_invoke_all('transperfect_translate_node_for_language', $node, $drupal_target_locale);
+function globallink_translate_node_for_language($node, $drupal_target_locale) {
+  $result = module_invoke_all('globallink_translate_node_for_language', $node, $drupal_target_locale);
 
   if (count($result) > 0) {
     return TRUE;
@@ -1325,11 +1325,11 @@ function transperfect_translate_node_for_language($node, $drupal_target_locale) 
 }
 
 /**
- * Implements hook_transperfect_import_translation().
+ * Implements hook_globallink_import_translation().
  */
-function transperfect_update_node_hook($source_node, $target_node) {
-  foreach (module_implements('transperfect_import_translation') as $module) {
-    $function = $module . '_transperfect_import_translation';
+function globallink_update_node_hook($source_node, $target_node) {
+  foreach (module_implements('globallink_import_translation') as $module) {
+    $function = $module . '_globallink_import_translation';
     $function($source_node->nid, $target_node);
   }
 }

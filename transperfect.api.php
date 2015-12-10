@@ -21,7 +21,7 @@
  * @return bool
  *   TRUE if the node is translatable.
  */
-function module_transperfect_is_node_translatable($node, $drupal_target_locale = NULL) {
+function module_globallink_is_node_translatable($node, $drupal_target_locale = NULL) {
   if ($node->type == 'article') {
     return TRUE;
   }
@@ -46,7 +46,7 @@ function module_transperfect_is_node_translatable($node, $drupal_target_locale =
  * @return bool
  *   TRUE if the field is translatable.
  */
-function module_transperfect_is_field_translatable($node, $field, $target_arr = NULL) {
+function module_globallink_is_field_translatable($node, $field, $target_arr = NULL) {
   if ($node->type == 'article') {
     if ($field == 'title' || $field == 'body') {
       return TRUE;
@@ -74,7 +74,7 @@ function module_transperfect_is_field_translatable($node, $field, $target_arr = 
  * @param $target_node
  *   The translated node object about to be saved in database.
  */
-function module_transperfect_import_translation($source_nid, &$target_node) {
+function module_globallink_import_translation($source_nid, &$target_node) {
   $source_node = node_load($source_nid);
   $target_node->title = 'TEST ' . $source_node->title;
 }
@@ -93,7 +93,7 @@ function module_transperfect_import_translation($source_nid, &$target_node) {
  * @return bool
  *   TRUE if the translation was successful.
  */
-function module_transperfect_translate_node_for_language($source_node, $drupal_target_locale) {
+function module_globallink_translate_node_for_language($source_node, $drupal_target_locale) {
   if ($source_node->type == 'article' && $drupal_target_locale == 'fr') {
     return TRUE;
   }

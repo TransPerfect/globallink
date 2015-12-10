@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the webform receive dashboard.
  */
-function transperfect_webform_receive_submissions($type) {
+function globallink_webform_receive_submissions($type) {
   $_SESSION['transpefect_webform_receive_type'] = $type;
 
   $arr = array();
 
-  $arr[] = drupal_get_form('transperfect_webform_receive_filter_form');
-  $arr[] = drupal_get_form('transperfect_webform_receive_pager_form');
-  $arr[] = drupal_get_form('transperfect_webform_receive_form');
+  $arr[] = drupal_get_form('globallink_webform_receive_filter_form');
+  $arr[] = drupal_get_form('globallink_webform_receive_pager_form');
+  $arr[] = drupal_get_form('globallink_webform_receive_form');
 
   return $arr;
 }
@@ -24,32 +24,32 @@ function transperfect_webform_receive_submissions($type) {
 /**
  * Builds form to filter webforms to receive on dashboard.
  */
-function transperfect_webform_receive_filter_form() {
+function globallink_webform_receive_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect_webform', 'transperfect_webform');
+  module_load_include('inc', 'globallink_webform', 'globallink_webform');
 
   $form = array();
 
   $filter = FALSE;
 
-  $submission_options = transperfect_webform_get_distinct_active_submission_names();
+  $submission_options = globallink_webform_get_distinct_active_submission_names();
   $default_submission = '[any]';
 
-  if (!empty($_SESSION['transperfect_webform_receive_filter_submission'])) {
-    if (!in_array($_SESSION['transperfect_webform_receive_filter_submission'], $submission_options)) {
-      $_SESSION['transperfect_webform_receive_filter_submission'] = '';
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
-      unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+  if (!empty($_SESSION['globallink_webform_receive_filter_submission'])) {
+    if (!in_array($_SESSION['globallink_webform_receive_filter_submission'], $submission_options)) {
+      $_SESSION['globallink_webform_receive_filter_submission'] = '';
+      $_SESSION['globallink_webform_globalLink_arr'] = array();
+      unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
     }
   }
 
-  if (!empty($_SESSION['transperfect_webform_receive_filter_submission'])) {
-    $default_submission = $_SESSION['transperfect_webform_receive_filter_submission'];
+  if (!empty($_SESSION['globallink_webform_receive_filter_submission'])) {
+    $default_submission = $_SESSION['globallink_webform_receive_filter_submission'];
     $filter = TRUE;
   }
 
   $n_arr = array('[any]' => t('Any'));
-  $t_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
+  $t_arr = globallink_get_mapped_locales_with_drupal_desc(FALSE);
   $languages = $n_arr + $t_arr;
 
   $status_arr = array(
@@ -61,15 +61,15 @@ function transperfect_webform_receive_filter_form() {
 
   $default = '[any]';
 
-  if (!empty($_SESSION['transperfect_webform_receive_filter_language'])) {
-    $default = $_SESSION['transperfect_webform_receive_filter_language'];
+  if (!empty($_SESSION['globallink_webform_receive_filter_language'])) {
+    $default = $_SESSION['globallink_webform_receive_filter_language'];
     $filter = TRUE;
   }
 
   $default_status = '[any]';
 
-  if (!empty($_SESSION['transperfect_webform_receive_filter_status'])) {
-    $default_status = $_SESSION['transperfect_webform_receive_filter_status'];
+  if (!empty($_SESSION['globallink_webform_receive_filter_status'])) {
+    $default_status = $_SESSION['globallink_webform_receive_filter_status'];
     $filter = TRUE;
   }
 
@@ -184,26 +184,26 @@ function transperfect_webform_receive_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_webform_receive_filter_form_submit($form, &$form_state) {
+function globallink_webform_receive_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
     case t('Filter'):
-      $_SESSION['transperfect_webform_receive_filter_language'] = $form_state['values']['language'];
-      $_SESSION['transperfect_webform_receive_filter_status'] = $form_state['values']['status'];
-      $_SESSION['transperfect_webform_receive_filter_submission'] = $form_state['values']['submission'];
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
+      $_SESSION['globallink_webform_receive_filter_language'] = $form_state['values']['language'];
+      $_SESSION['globallink_webform_receive_filter_status'] = $form_state['values']['status'];
+      $_SESSION['globallink_webform_receive_filter_submission'] = $form_state['values']['submission'];
+      $_SESSION['globallink_webform_globalLink_arr'] = array();
 
-      unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+      unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
 
       break;
     case t('Reset'):
-      $_SESSION['transperfect_webform_receive_filter_language'] = '';
-      $_SESSION['transperfect_webform_receive_filter_status'] = '';
-      $_SESSION['transperfect_webform_receive_filter_submission'] = '';
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
+      $_SESSION['globallink_webform_receive_filter_language'] = '';
+      $_SESSION['globallink_webform_receive_filter_status'] = '';
+      $_SESSION['globallink_webform_receive_filter_submission'] = '';
+      $_SESSION['globallink_webform_globalLink_arr'] = array();
 
-      unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+      unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
 
       break;
   }
@@ -212,7 +212,7 @@ function transperfect_webform_receive_filter_form_submit($form, &$form_state) {
 /**
  * Builds form to add pagination to webform receive dashboard.
  */
-function transperfect_webform_receive_pager_form() {
+function globallink_webform_receive_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -226,7 +226,7 @@ function transperfect_webform_receive_pager_form() {
   $form['page_counter']['markup']['p_count'] = array(
     '#type' => 'textfield',
     '#size' => 5,
-    '#default_value' => isset($_SESSION['transperfect_webform_receive_page_count']) ? $_SESSION['transperfect_webform_receive_page_count'][0] : TPT_PAGER_LIMIT,
+    '#default_value' => isset($_SESSION['globallink_webform_receive_page_count']) ? $_SESSION['globallink_webform_receive_page_count'][0] : TPT_PAGER_LIMIT,
     '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
     '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
     '#prefix' => '<div class="container-inline">',
@@ -237,7 +237,7 @@ function transperfect_webform_receive_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('transperfect_webform_receive_pager_form_submit'),
+    '#submit' => array('globallink_webform_receive_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -247,7 +247,7 @@ function transperfect_webform_receive_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
+function globallink_webform_receive_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -260,7 +260,7 @@ function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
     form_set_error('', t('Invalid Page Count.'));
   }
   else {
-    $_SESSION['transperfect_webform_receive_page_count'] = array($page_count);
+    $_SESSION['globallink_webform_receive_page_count'] = array($page_count);
 
     return;
   }
@@ -269,8 +269,8 @@ function transperfect_webform_receive_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to receive a webform submission.
  */
-function transperfect_webform_receive_form() {
-  module_load_include('inc', 'transperfect', 'transperfect_settings');
+function globallink_webform_receive_form() {
+  module_load_include('inc', 'transperfect', 'globallink_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
 
   $form = array();
@@ -281,17 +281,17 @@ function transperfect_webform_receive_form() {
 
   $globallink_arr = array();
 
-  if (empty($_SESSION['transperfect_webform_globalLink_arr'])) {
+  if (empty($_SESSION['globallink_webform_globalLink_arr'])) {
     try {
-      $pd4 = transperfect_get_project_director_details();
+      $pd4 = globallink_get_project_director_details();
 
-      if (transperfect_validate_project_director_details($pd4)) {
-        $_SESSION['transperfect_webform_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
+      if (globallink_validate_project_director_details($pd4)) {
+        $_SESSION['globallink_webform_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
 
-        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
+        $globallink_arr = globallink_get_ready_translations_details_from_pd($pd4, $type);
 
         if (sizeof($globallink_arr) > 0) {
-          $_SESSION['transperfect_webform_globalLink_arr'] = serialize($globallink_arr);
+          $_SESSION['globallink_webform_globalLink_arr'] = serialize($globallink_arr);
         }
       }
     }
@@ -305,17 +305,17 @@ function transperfect_webform_receive_form() {
     }
   }
   else {
-    $globallink_arr = unserialize($_SESSION['transperfect_webform_globalLink_arr']);
+    $globallink_arr = unserialize($_SESSION['globallink_webform_globalLink_arr']);
   }
 
-  $page_count = isset($_SESSION['transperfect_webform_receive_page_count']) ? $_SESSION['transperfect_webform_receive_page_count'][0] : TPT_PAGER_LIMIT;
+  $page_count = isset($_SESSION['globallink_webform_receive_page_count']) ? $_SESSION['globallink_webform_receive_page_count'][0] : TPT_PAGER_LIMIT;
 
   $rows = array();
 
   $filter_lang = '[any]';
 
-  if (!empty($_SESSION['transperfect_webform_receive_filter_language'])) {
-    $filter_lang = $_SESSION['transperfect_webform_receive_filter_language'];
+  if (!empty($_SESSION['globallink_webform_receive_filter_language'])) {
+    $filter_lang = $_SESSION['globallink_webform_receive_filter_language'];
   }
 
   if (isset($globallink_arr) && is_array($globallink_arr)) {
@@ -329,8 +329,8 @@ function transperfect_webform_receive_form() {
   if (isset($globallink_arr) && is_array($globallink_arr)) {
     $filter_status = '[any]';
 
-    if (!empty($_SESSION['transperfect_webform_receive_filter_status'])) {
-      $filter_status = $_SESSION['transperfect_webform_receive_filter_status'];
+    if (!empty($_SESSION['globallink_webform_receive_filter_status'])) {
+      $filter_status = $_SESSION['globallink_webform_receive_filter_status'];
     }
 
     $header = array(
@@ -341,7 +341,7 @@ function transperfect_webform_receive_form() {
       'status' => t('Status'),
     );
 
-    if (variable_get('transperfect_enable_preview', 1)) {
+    if (variable_get('globallink_enable_preview', 1)) {
       $header['preview'] = '';
     }
 
@@ -354,22 +354,22 @@ function transperfect_webform_receive_form() {
         continue;
       }
 
-      $pd4 = transperfect_get_project_director_details();
+      $pd4 = globallink_get_project_director_details();
 
       try {
-        $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
+        $target_xml = globallink_download_target_resource($pd4, $globallink->targetTicket);
       }
       catch (Exception $e) {
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
-      $webform_arr = transperfect_webform_get_translated_items($target_xml);
+      $webform_arr = globallink_webform_get_translated_items($target_xml);
 
       if (count($webform_arr) > 0) {
         $lid = $webform_arr['lid'];
         $title = '';
 
-        $status = transperfect_webform_get_translation_status($lid, $globallink->targetLocale, $title);
+        $status = globallink_webform_get_translation_status($lid, $globallink->targetLocale, $title);
 
         if ($status == 'Source Deleted') {
           $globallink->sourceDeleted = TRUE;
@@ -383,8 +383,8 @@ function transperfect_webform_receive_form() {
 
         $filter_submission = '[any]';
 
-        if (!empty($_SESSION['transperfect_webform_receive_filter_submission'])) {
-          $filter_submission = $_SESSION['transperfect_webform_receive_filter_submission'];
+        if (!empty($_SESSION['globallink_webform_receive_filter_submission'])) {
+          $filter_submission = $_SESSION['globallink_webform_receive_filter_submission'];
         }
 
         if ($filter_submission != '[any]' && $globallink->submissionName != $filter_submission) {
@@ -393,9 +393,9 @@ function transperfect_webform_receive_form() {
           continue;
         }
 
-        if (variable_get('transperfect_enable_preview', 1)) {
+        if (variable_get('globallink_enable_preview', 1)) {
           if ($status != 'Source Deleted') {
-            $tpt_row_id = transperfect_webform_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
+            $tpt_row_id = globallink_webform_get_row_id_from_submission($globallink->submissionTicket, $globallink->documentTicket, $globallink->targetLocale);
 
             if ($tpt_row_id) {
               $rid_arr['tpt_content_div_' . $key] = $tpt_row_id;
@@ -403,8 +403,8 @@ function transperfect_webform_receive_form() {
           }
         }
 
-        $source_name = transperfect_get_drupal_locale_name($globallink->sourceLocale);
-        $target_name = transperfect_get_drupal_locale_name($globallink->targetLocale);
+        $source_name = globallink_get_drupal_locale_name($globallink->sourceLocale);
+        $target_name = globallink_get_drupal_locale_name($globallink->targetLocale);
 
         $rows[$key] = array(
           'submissionName' => $globallink->submissionName,
@@ -414,7 +414,7 @@ function transperfect_webform_receive_form() {
           'status' => $status,
         );
 
-        if (variable_get('transperfect_enable_preview', 1)) {
+        if (variable_get('globallink_enable_preview', 1)) {
           $rows[$key]['preview'] = $status != 'Source Deleted' ? l(t('Preview Translations'), 'javascript:void(0)', array(
             'fragment' => '',
             'external' => TRUE,
@@ -431,13 +431,13 @@ function transperfect_webform_receive_form() {
     $form['table'] = array(
       '#type' => 'tableselect',
       '#header' => $header,
-      '#options' => transperfect_pager_array_splice($rows, $page_count),
+      '#options' => globallink_pager_array_splice($rows, $page_count),
       '#empty' => t('No items available'),
     );
 
     $form['pager'] = array('#markup' => theme('pager'));
 
-    if (variable_get('transperfect_enable_preview', 1)) {
+    if (variable_get('globallink_enable_preview', 1)) {
       $lcount = 1;
 
       $div_arr = array();
@@ -493,13 +493,13 @@ function transperfect_webform_receive_form() {
     }
 
     if (sizeof($globallink_arr) > 0) {
-      $_SESSION['transperfect_webform_globalLink_arr'] = serialize($globallink_arr);
+      $_SESSION['globallink_webform_globalLink_arr'] = serialize($globallink_arr);
     }
 
     $last_refreshed = '';
 
-    if (isset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed'])) {
-      $last_refreshed = $_SESSION['transperfect_webform_globalLink_arr_last_refreshed'];
+    if (isset($_SESSION['globallink_webform_globalLink_arr_last_refreshed'])) {
+      $last_refreshed = $_SESSION['globallink_webform_globalLink_arr_last_refreshed'];
     }
 
     $form['submit_refresh_hidden'] = array(
@@ -529,7 +529,7 @@ function transperfect_webform_receive_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_library('system', 'ui.dialog');
   drupal_add_css($module_path . '/css/transperfect.css');
-  drupal_add_js($module_path . '/transperfect_webform/js/transperfect_webform.js');
+  drupal_add_js($module_path . '/globallink_webform/js/globallink_webform.js');
 
   return $form;
 }
@@ -537,11 +537,11 @@ function transperfect_webform_receive_form() {
 /**
  * Validates webform form input.
  */
-function transperfect_webform_receive_form_validate($form, &$form_state) {
+function globallink_webform_receive_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
-  transperfect_validate_project_director_details($pd4);
+  globallink_validate_project_director_details($pd4);
 
   if ($op == t('Update Selected')) {
     $rids = array_filter($form_state['values']['table']);
@@ -555,18 +555,18 @@ function transperfect_webform_receive_form_validate($form, &$form_state) {
 /**
  * Handles webform form submission.
  */
-function transperfect_webform_receive_form_submit($form, &$form_state) {
+function globallink_webform_receive_form_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_webform_receive_type'];
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
   switch ($op) {
     case t('Update All'):
       try {
-        $globallink_arr = unserialize($_SESSION['transperfect_webform_globalLink_arr']);
+        $globallink_arr = unserialize($_SESSION['globallink_webform_globalLink_arr']);
 
-        $count = transperfect_webform_get_translated($pd4, $globallink_arr);
+        $count = globallink_webform_get_translated($pd4, $globallink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -600,22 +600,22 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
-      $_SESSION['transperfect_webform_selected_submission'] = array();
+      $_SESSION['globallink_webform_globalLink_arr'] = array();
+      $_SESSION['globallink_webform_selected_submission'] = array();
 
-      unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+      unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
 
       break;
     case t('Clear Deleted Records'):
       try {
-        $globallink_arr = unserialize($_SESSION['transperfect_webform_globalLink_arr']);
+        $globallink_arr = unserialize($_SESSION['globallink_webform_globalLink_arr']);
 
         $success = FALSE;
         $count = 0;
 
         foreach ($globallink_arr as $globallink) {
           if ($globallink->sourceDeleted == TRUE) {
-            $success = transperfect_webform_update_deleted_records($pd4, $globallink);
+            $success = globallink_webform_update_deleted_records($pd4, $globallink);
 
             $count++;
           }
@@ -625,10 +625,10 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
           drupal_set_message(t('No source record(s) deleted.'), 'warning', NULL);
         }
         else {
-          $_SESSION['transperfect_webform_globalLink_arr'] = array();
-          $_SESSION['transperfect_webform_selected_submission'] = array();
+          $_SESSION['globallink_webform_globalLink_arr'] = array();
+          $_SESSION['globallink_webform_selected_submission'] = array();
 
-          unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+          unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
         }
 
         if ($success) {
@@ -643,7 +643,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
       break;
     case t('Update Selected'):
       try {
-        $globallink_arr = unserialize($_SESSION['transperfect_webform_globalLink_arr']);
+        $globallink_arr = unserialize($_SESSION['globallink_webform_globalLink_arr']);
 
         $updated_globalLink_arr = array();
         $rids = array_filter($form_state['values']['table']);
@@ -652,7 +652,7 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
           array_push($updated_globalLink_arr, $globallink_arr[$rid]);
         }
 
-        $count = transperfect_webform_get_translated($pd4, $updated_globalLink_arr);
+        $count = globallink_webform_get_translated($pd4, $updated_globalLink_arr);
 
         $error = FALSE;
         $delete_records_selected = FALSE;
@@ -686,19 +686,19 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
 
-      $_SESSION['transperfect_webform_globalLink_arr'] = array();
-      $_SESSION['transperfect_webform_selected_submission'] = array();
+      $_SESSION['globallink_webform_globalLink_arr'] = array();
+      $_SESSION['globallink_webform_selected_submission'] = array();
 
-      unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+      unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
 
       break;
     case t('Refresh Page'):
       sleep(2);
 
-      $pd4 = transperfect_get_project_director_details();
+      $pd4 = globallink_get_project_director_details();
 
       try {
-        $globallink_arr = transperfect_get_ready_translations_details_from_pd($pd4, $type);
+        $globallink_arr = globallink_get_ready_translations_details_from_pd($pd4, $type);
       }
       catch (SoapFault $se) {
         watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -710,13 +710,13 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
       }
 
       if (sizeof($globallink_arr) > 0) {
-        $_SESSION['transperfect_webform_globalLink_arr'] = serialize($globallink_arr);
-        $_SESSION['transperfect_webform_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
+        $_SESSION['globallink_webform_globalLink_arr'] = serialize($globallink_arr);
+        $_SESSION['globallink_webform_globalLink_arr_last_refreshed'] = format_date(REQUEST_TIME, 'custom', 'D M j, Y G:i:s');
       }
       else {
-        $_SESSION['transperfect_webform_globalLink_arr'] = array();
+        $_SESSION['globallink_webform_globalLink_arr'] = array();
 
-        unset($_SESSION['transperfect_webform_globalLink_arr_last_refreshed']);
+        unset($_SESSION['globallink_webform_globalLink_arr_last_refreshed']);
       }
 
       break;
@@ -726,9 +726,9 @@ function transperfect_webform_receive_form_submit($form, &$form_state) {
 /**
  * Previews translated webform content in the form of JSON.
  */
-function transperfect_webform_preview_translated_content() {
+function globallink_webform_preview_translated_content() {
   $row_id = $_POST['rid'];
-  $arr = transperfect_webform_get_translations_for_row_id($row_id);
+  $arr = globallink_webform_get_translations_for_row_id($row_id);
 
   drupal_json_output($arr);
 }
@@ -742,8 +742,8 @@ function transperfect_webform_preview_translated_content() {
  * @return array
  *   Array of webform translations.
  */
-function transperfect_webform_get_translations_for_row_id($row_id) {
-  $row = transperfect_get_other_row($row_id, 'webform');
+function globallink_webform_get_translations_for_row_id($row_id) {
+  $row = globallink_get_other_row($row_id, 'webform');
 
   $globallink = new GlobalLink();
   $globallink->tptRowId = $row_id;
@@ -763,9 +763,9 @@ function transperfect_webform_get_translations_for_row_id($row_id) {
   $error = FALSE;
 
   try {
-    $pd4 = transperfect_get_project_director_details();
+    $pd4 = globallink_get_project_director_details();
 
-    $targets = transperfect_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
+    $targets = globallink_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
 
     if (is_array($targets)) {
       foreach ($targets as $target) {
@@ -778,26 +778,26 @@ function transperfect_webform_get_translations_for_row_id($row_id) {
         }
 
         $globallink->targetTicket = $target->ticket;
-        $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
+        $globallink->targetXML = globallink_download_target_resource($pd4, $globallink->targetTicket);
 
         if (is_null($globallink->targetXML) || $globallink->targetXML == '') {
           continue;
         }
 
-        $translation = transperfect_webform_get_translated_items($globallink->targetXML);
+        $translation = globallink_webform_get_translated_items($globallink->targetXML);
         $lid = $translation['lid'];
-        $webform = transperfect_load_source_data($lid);
+        $webform = globallink_load_source_data($lid);
 
         if ($webform && is_array($webform) && !is_null($webform)) {
-          $source = transperfect_load_source_data($lid);
+          $source = globallink_load_source_data($lid);
           $source_arr_temp['source'] = $source[0]->source;
           $source_arr_temp['location'] = $source[0]->location;
-          $source_xml = transperfect_webform_get_xml($lid, $source_arr_temp);
+          $source_xml = globallink_webform_get_xml($lid, $source_arr_temp);
 
           $source_arr = array();
 
           if ($source_xml) {
-            $source_arr = transperfect_webform_get_translated_items($source_xml);
+            $source_arr = globallink_webform_get_translated_items($source_xml);
           }
         }
         else {
@@ -813,24 +813,24 @@ function transperfect_webform_get_translations_for_row_id($row_id) {
         if (str_replace('-', '_', $target->targetLanguage->locale) == $globallink->targetLocale) {
           if (!is_null($target->ticket) && $target->ticket != '') {
             $globallink->targetTicket = $target->ticket;
-            $globallink->targetXML = transperfect_download_target_resource($pd4, $globallink->targetTicket);
+            $globallink->targetXML = globallink_download_target_resource($pd4, $globallink->targetTicket);
 
             if (!is_null($globallink->targetXML) && $globallink->targetXML != '') {
-              $translation = transperfect_webform_get_translated_items($globallink->targetXML);
+              $translation = globallink_webform_get_translated_items($globallink->targetXML);
               $lid = $translation['lid'];
-              $webform = transperfect_load_source_data($lid);
+              $webform = globallink_load_source_data($lid);
 
               if ($webform && is_array($webform) && !is_null($webform)) {
-                $source = transperfect_load_source_data($lid);
+                $source = globallink_load_source_data($lid);
                 $source_arr_temp['source'] = $source[0]->source;
                 $source_arr_temp['location'] = $source[0]->location;
 
-                $source_xml = transperfect_webform_get_xml($lid, $source_arr_temp);
+                $source_xml = globallink_webform_get_xml($lid, $source_arr_temp);
 
                 $source_arr = array();
 
                 if ($source_xml) {
-                  $source_arr = transperfect_webform_get_translated_items($source_xml);
+                  $source_arr = globallink_webform_get_translated_items($source_xml);
                 }
               }
               else {

@@ -8,10 +8,10 @@
 /**
  * Implements hook_schema().
  */
-function transperfect_entity_schema() {
+function globallink_entity_schema() {
   $schema = array();
 
-  $schema ['transperfect_core_entity'] = array(
+  $schema ['globallink_core_entity'] = array(
     'description' => 'GlobalLink Core Entity Table',
     'fields' => array(
       'rid' => array(
@@ -130,7 +130,7 @@ function transperfect_entity_schema() {
 /**
  * Implements hook_install().
  */
-function transperfect_entity_install() {
+function globallink_entity_install() {
   /**
    * Insert Entity enabled fields
    */
@@ -146,7 +146,7 @@ function transperfect_entity_install() {
 
     // If the field exists in the table, ignore the insert.
 
-    $results = db_select('transperfect_field_config', 'tfc')
+    $results = db_select('globallink_field_config', 'tfc')
     ->fields('tfc')
     ->condition('content_type', $node_type->type)
     ->condition('bundle', $node_type->type)
@@ -154,7 +154,7 @@ function transperfect_entity_install() {
     ->execute();
 
     if ($results->rowCount() == 0) {
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $node_type->type,
         'entity_type' => 'node',
@@ -167,7 +167,7 @@ function transperfect_entity_install() {
     }
 
     if (module_exists('metatag')) {
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $node_type->type,
         'entity_type' => 'node',
@@ -191,7 +191,7 @@ function transperfect_entity_install() {
           continue 2;
       }
 
-      $results = db_select('transperfect_field_config', 'tfc')
+      $results = db_select('globallink_field_config', 'tfc')
       ->fields('tfc')
       ->condition('content_type', $node_type->type)
       ->condition('bundle', $node_type->type)
@@ -199,7 +199,7 @@ function transperfect_entity_install() {
       ->execute();
 
       if ($results->rowCount() == 0) {
-        db_insert('transperfect_field_config')
+        db_insert('globallink_field_config')
         ->fields(array(
           'content_type' => $node_type->type,
           'entity_type' => 'node',

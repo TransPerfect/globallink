@@ -14,7 +14,7 @@
  * @return string
  *   String that represents menu item path.
  */
-function transperfect_get_root_menu($menu_item) {
+function globallink_get_root_menu($menu_item) {
   return 'admin/' . $menu_item;
 }
 
@@ -27,7 +27,7 @@ function transperfect_get_root_menu($menu_item) {
  *   Array of filter parameters.
  */
 function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
-  $filters = transperfect_build_filters(TRUE);
+  $filters = globallink_build_filters(TRUE);
 
   $count = 0;
 
@@ -86,7 +86,7 @@ function transpefect_build_filter_query(SelectQuery $query, $filter_array) {
  * @param array $attributes
  *   Array of desired attributes for the element.  Defaults to NULL.
  */
-function transperfect_insert_child_element($dom, $root, $elem_name, $elem_value, $attributes = NULL) {
+function globallink_insert_child_element($dom, $root, $elem_name, $elem_value, $attributes = NULL) {
   if ($elem_name && $elem_value) {
     $item = $dom->createElement($elem_name);
 
@@ -111,7 +111,7 @@ function transperfect_insert_child_element($dom, $root, $elem_name, $elem_value,
  * @return array
  *   Associative array of filters.
  */
-function transperfect_build_filters($content_translation) {
+function globallink_build_filters($content_translation) {
   $filters = array();
 
   $filters['modified'] = array(
@@ -154,7 +154,7 @@ function transperfect_build_filters($content_translation) {
     );
   }
 
-  $languages = transperfect_get_mapped_drupal_locales(FALSE);
+  $languages = globallink_get_mapped_drupal_locales(FALSE);
 
   foreach ($languages as $key => $lang) {
     $lang_filter[$key] = $lang;
@@ -181,7 +181,7 @@ function transperfect_build_filters($content_translation) {
   );
 
   $n_arr = array('[any]' => t('Any'));
-  $t_arr = transperfect_get_translatable_node_types_and_names($content_translation);
+  $t_arr = globallink_get_translatable_node_types_and_names($content_translation);
 
   $node_types_filter = $n_arr + $t_arr;
 
@@ -216,7 +216,7 @@ function transperfect_build_filters($content_translation) {
  * @return array
  *   Array of translatable node types and names.
  */
-function transperfect_get_translatable_node_types_and_names($content_translation = '') {
+function globallink_get_translatable_node_types_and_names($content_translation = '') {
   $arr = array();
 
   $node_types = node_type_get_types();
@@ -256,8 +256,8 @@ function transperfect_get_translatable_node_types_and_names($content_translation
  * @return string
  *   The locale name.
  */
-function transperfect_get_locale_name($locale_code) {
-  $result = db_select('transperfect_locale', 'tl')
+function globallink_get_locale_name($locale_code) {
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->condition('locale_code', $locale_code, '=')
   ->execute();
@@ -280,8 +280,8 @@ function transperfect_get_locale_name($locale_code) {
  * @return string
  *   The locale name.
  */
-function transperfect_get_drupal_locale_name($tpt_locale_code) {
-  $result = db_select('transperfect_locale', 'tl')
+function globallink_get_drupal_locale_name($tpt_locale_code) {
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->condition('locale_code', $tpt_locale_code, '=')
   ->execute();
@@ -304,8 +304,8 @@ function transperfect_get_drupal_locale_name($tpt_locale_code) {
  * @return array
  *   Array of TPT rows.
  */
-function transperfect_get_sent_rows_by_nid($nid) {
-  $result = db_select('transperfect_core', 'tc')
+function globallink_get_sent_rows_by_nid($nid) {
+  $result = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('status', array('Sent for Translations', 'Error'), 'IN')
@@ -329,8 +329,8 @@ function transperfect_get_sent_rows_by_nid($nid) {
  * @return object
  *   The row.
  */
-function transperfect_get_row($row_id) {
-  $result = db_select('transperfect_core', 'tc')
+function globallink_get_row($row_id) {
+  $result = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('rid', $row_id, '=')
   ->execute();
@@ -353,8 +353,8 @@ function transperfect_get_row($row_id) {
  * @return object
  *   The row.
  */
-function transperfect_get_row_by_nid_and_locale($nid, $source, $target) {
-  $result = db_select('transperfect_core', 'tc')
+function globallink_get_row_by_nid_and_locale($nid, $source, $target) {
+  $result = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('source', $source, '=')
@@ -377,7 +377,7 @@ function transperfect_get_row_by_nid_and_locale($nid, $source, $target) {
  * @return string
  *   The source language.
  */
-function transperfect_get_node_source_languages($nid) {
+function globallink_get_node_source_languages($nid) {
   $d_query = db_select('node', 'n');
   $d_query->condition('nid', $nid, '=');
   $d_query->join('languages', 'l', 'l.language = n.language');
@@ -401,8 +401,8 @@ function transperfect_get_node_source_languages($nid) {
  * @return string
  *   The Transperfect locale code.
  */
-function transperfect_get_locale_code($drupal_locale) {
-  $result = db_select('transperfect_locale', 'tl')
+function globallink_get_locale_code($drupal_locale) {
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->condition('drupal_locale_code', $drupal_locale, '=')
   ->execute();
@@ -425,8 +425,8 @@ function transperfect_get_locale_code($drupal_locale) {
  * @return string
  *   The Drupal locale code.
  */
-function transperfect_get_drupal_locale_code($locale_code) {
-  $result = db_select('transperfect_locale', 'tl')
+function globallink_get_drupal_locale_code($locale_code) {
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->condition('locale_code', $locale_code, '=')
   ->execute();
@@ -448,7 +448,7 @@ function transperfect_get_drupal_locale_code($locale_code) {
  * @param int $tnid
  *   The node tid.
  */
-function transperfect_update_node_tnid($nid, $tnid) {
+function globallink_update_node_tnid($nid, $tnid) {
   db_update('node')
   ->fields(array('tnid' => $tnid))
   ->condition('nid', $nid, '=')
@@ -464,7 +464,7 @@ function transperfect_update_node_tnid($nid, $tnid) {
  * @return int
  *   The date in milliseconds.
  */
-function transperfect_convert_date_to_timestamp($date) {
+function globallink_convert_date_to_timestamp($date) {
   list($month, $day, $year) = explode('/', $date);
 
   $seconds = mktime(0, 0, 0, $month, $day, $year);
@@ -482,8 +482,8 @@ function transperfect_convert_date_to_timestamp($date) {
  * @return
  *   True if the node exists.
  */
-function transperfect_get_nid(&$globallink) {
-  $translated_arr = transperfect_get_content_attributes_from_xml($globallink->targetXML);
+function globallink_get_nid(&$globallink) {
+  $translated_arr = globallink_get_content_attributes_from_xml($globallink->targetXML);
 
   if (count($translated_arr) > 0) {
     $globallink->nid = isset($translated_arr['nid']) ? $translated_arr['nid'] : 0;
@@ -504,7 +504,7 @@ function transperfect_get_nid(&$globallink) {
  * @return array
  *   Array of content attributes.
  */
-function transperfect_get_content_attributes_from_xml($xml) {
+function globallink_get_content_attributes_from_xml($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -556,7 +556,7 @@ function transperfect_get_content_attributes_from_xml($xml) {
  * @return array
  *   The sliced pager array.
  */
-function transperfect_pager_array_splice($data, $limit = 9, $element = 0) {
+function globallink_pager_array_splice($data, $limit = 9, $element = 0) {
   global $pager_page_array, $pager_total, $pager_total_items;
 
   $page = isset($_GET['page']) ? $_GET['page'] : '';
@@ -581,7 +581,7 @@ function transperfect_pager_array_splice($data, $limit = 9, $element = 0) {
  * @return string
  *   The formatted string.
  */
-function transperfect_format_display_string($string) {
+function globallink_format_display_string($string) {
   if (mb_strlen($string) > 25) {
     return mb_substr($string, 0, 25) . '...';
   }
@@ -598,7 +598,7 @@ function transperfect_format_display_string($string) {
  * @return string
  *   The formatted file name.
  */
-function transperfect_format_file_name($string) {
+function globallink_format_file_name($string) {
   $bad = array_merge(array_map('chr', range(0, 31)), array('<', '>', ':', '"', '/', '\\', '|', '?', '*', ';', '&', ' ', '.'));
   $name = str_replace($bad, '_', utf8_decode(preg_replace('/[^(\x20-\x7F)]*/', '', $string)));
 
@@ -618,7 +618,7 @@ function transperfect_format_file_name($string) {
  * @return string
  *   The escaped JSON string.
  */
-function transperfect_escape_json_string($value) { // list from www.json.org: (\b backspace, \f formfeed)
+function globallink_escape_json_string($value) { // list from www.json.org: (\b backspace, \f formfeed)
   $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
   $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
   $result = str_replace($escapers, $replacements, $value);
@@ -632,8 +632,8 @@ function transperfect_escape_json_string($value) { // list from www.json.org: (\
  * @return
  *   True if the submission exists.
  */
-function transperfect_pending_submission_exists() {
-  $result = db_select('transperfect_core', 'tc')
+function globallink_pending_submission_exists() {
+  $result = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->execute();
@@ -656,8 +656,8 @@ function transperfect_pending_submission_exists() {
  * @return
  *   True if the submission exists.
  */
-function transperfect_pending_submission_exists_for_content_type($type) {
-  $result = db_select('transperfect_core', 'tc')
+function globallink_pending_submission_exists_for_content_type($type) {
+  $result = db_select('globallink_core', 'tc')
   ->fields('tc')
   ->condition('status', array('Sent for Translations', 'Error'), 'IN')
   ->condition('type', $type, '=')
@@ -679,10 +679,10 @@ function transperfect_pending_submission_exists_for_content_type($type) {
  * @return array
  *   Array of locales.
  */
-function transperfect_get_mapped_drupal_locales($remove_default = TRUE) {
+function globallink_get_mapped_drupal_locales($remove_default = TRUE) {
   $languages = array();
 
-  $result = db_select('transperfect_locale', 'tl')
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->isNotNull('drupal_locale_code')
   ->orderBy('locale_desc', 'ASC')
@@ -710,10 +710,10 @@ function transperfect_get_mapped_drupal_locales($remove_default = TRUE) {
  * @return array
  *   Array of config fields.
  */
-function transperfect_get_config_fields($content_type) {
+function globallink_get_config_fields($content_type) {
   $arr = array();
 
-  $result = db_select('transperfect_field_config', 'tf')
+  $result = db_select('globallink_field_config', 'tf')
   ->fields('tf')
   ->condition('content_type', $content_type, '=')
   ->execute();
@@ -734,10 +734,10 @@ function transperfect_get_config_fields($content_type) {
  * @return array
  *   Array of non-translatable config fields.
  */
-function transperfect_get_non_translatable_config_fields($content_type) {
+function globallink_get_non_translatable_config_fields($content_type) {
   $arr = array();
 
-  $result = db_select('transperfect_field_config', 'tf')
+  $result = db_select('globallink_field_config', 'tf')
   ->fields('tf')
   ->condition('content_type', $content_type, '=')
   ->condition('translatable', 0, '=')
@@ -759,8 +759,8 @@ function transperfect_get_non_translatable_config_fields($content_type) {
  * @return array
  *   Array of pending fields.
  */
-function transperfect_get_pending_fields($content_type) {
-  $config_fields = transperfect_get_config_fields($content_type);
+function globallink_get_pending_fields($content_type) {
+  $config_fields = globallink_get_config_fields($content_type);
 
   $field_info_arr = field_info_instances('node', $content_type);
   $field_info_arr[] = array('field_name' => 'title', 'label' => 'Title');
@@ -804,7 +804,7 @@ function transperfect_get_pending_fields($content_type) {
  * @return array
  *   Array of translatable node types.
  */
-function transperfect_get_translatable_node_types($content_translation) {
+function globallink_get_translatable_node_types($content_translation) {
   $arr = array();
 
   $node_types = node_type_get_types();
@@ -833,10 +833,10 @@ function transperfect_get_translatable_node_types($content_translation) {
  * @return string
  *   The parent bundle name.
  */
-function transperfect_get_parent_bundle_name($entity_type, $content_type, $field_name) {
+function globallink_get_parent_bundle_name($entity_type, $content_type, $field_name) {
   $bundle = '';
 
-  $result = db_select('transperfect_field_config', 'tf')
+  $result = db_select('globallink_field_config', 'tf')
   ->fields('tf')
   ->condition('content_type', $content_type, '=')
   ->condition('entity_type', $entity_type, '=')
@@ -865,8 +865,8 @@ function transperfect_get_parent_bundle_name($entity_type, $content_type, $field
  * @return
  *   True if the field is configured for translation.
  */
-function transperfect_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $content_type) {
-  $result = db_select('transperfect_field_config', 'tf')
+function globallink_is_field_configured_for_translation($entity_type, $bundle_name, $field_name, $content_type) {
+  $result = db_select('globallink_field_config', 'tf')
   ->fields('tf')
   ->condition('content_type', $content_type, '=')
   ->condition('entity_type', $entity_type, '=')
@@ -894,7 +894,7 @@ function transperfect_is_field_configured_for_translation($entity_type, $bundle_
  * @return int
  *   @see strncmp()
  */
-function transperfect_starts_with($haystack, $needle) {
+function globallink_starts_with($haystack, $needle) {
   return !strncmp($haystack, $needle, strlen($needle));
 }
 
@@ -904,7 +904,7 @@ function transperfect_starts_with($haystack, $needle) {
  * @return array
  *   Array of enabled Drupal locales.
  */
-function transperfect_get_drupal_locales() {
+function globallink_get_drupal_locales() {
   $languages = array();
 
   $result = db_select('languages', 'l')
@@ -922,10 +922,10 @@ function transperfect_get_drupal_locales() {
 /**
  * @todo Document this function.
  */
-function transperfect_get_mapped_locales_with_drupal_desc($remove_default = TRUE) {
+function globallink_get_mapped_locales_with_drupal_desc($remove_default = TRUE) {
   $languages = array();
 
-  $result = db_select('transperfect_locale', 'tl')
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->isNotNull('drupal_locale_code')
   ->orderBy('locale_desc', 'ASC')
@@ -950,7 +950,7 @@ function transperfect_get_mapped_locales_with_drupal_desc($remove_default = TRUE
  * @return array
  *   Array of filters.
  */
-function transperfect_drupal_search_query() {
+function globallink_drupal_search_query() {
   $filters = array();
 
   drupal_static_reset('language_list');
@@ -986,7 +986,7 @@ function transperfect_drupal_search_query() {
 /**
  * @todo Document this function.
  */
-function transperfect_get_source($group) {
+function globallink_get_source($group) {
   $result = db_query('SELECT lid, source, context, location FROM {locales_source} WHERE textgroup = :textgroup', array(
     ':textgroup' => $group,
   ));
@@ -1016,7 +1016,7 @@ function transperfect_get_source($group) {
  * @return array
  *   Array of source data.
  */
-function transperfect_load_source_data($lid) {
+function globallink_load_source_data($lid) {
   $results = db_select('locales_source', 'ls')
   ->fields('ls')
   ->condition('lid', $lid, '=')
@@ -1042,8 +1042,8 @@ function transperfect_load_source_data($lid) {
  * @return object
  *   Other row.
  */
-function transperfect_get_other_row($row_id, $type) {
-  $result = db_select('transperfect_core_' . $type, 'tc')
+function globallink_get_other_row($row_id, $type) {
+  $result = db_select('globallink_core_' . $type, 'tc')
   ->fields('tc')
   ->condition('rid', $row_id, '=')
   ->execute();
@@ -1059,14 +1059,14 @@ function transperfect_get_other_row($row_id, $type) {
  * @return array
  *   Array of project director projects.
  */
-function transperfect_get_pd_projects() {
-  $proj_arr = variable_get('transperfect_pd_projects', array());
+function globallink_get_pd_projects() {
+  $proj_arr = variable_get('globallink_pd_projects', array());
 
   if (count($proj_arr) == 0) {
     return;
   }
 
-  $projects = variable_get('transperfect_pd_projectid');
+  $projects = variable_get('globallink_pd_projectid');
 
   if (empty($projects)) {
     return;
@@ -1095,7 +1095,7 @@ function transperfect_get_pd_projects() {
  * @return
  *   True if the workbench is enabled for that content type.
  */
-function transperfect_content_type_workbench_enabled($type) {
+function globallink_content_type_workbench_enabled($type) {
   if (!module_exists('workbench_moderation')) {
     return FALSE;
   }

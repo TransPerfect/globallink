@@ -6,4 +6,4 @@ dependencies[] = fieldable_panels_panes
 package = GlobalLink
 version = 7.X-5.0.0
 php = 5.2.5
-scripts[] = js/transperfect_fieldable_panels_active_submissions.js
+scripts[] = js/globallink_fieldable_panels_active_submissions.js

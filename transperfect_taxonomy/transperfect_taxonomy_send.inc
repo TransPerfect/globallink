@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the taxonomy send dashboard.
  */
-function transperfect_taxonomy_dashboard($type) {
-  $_SESSION['transperfect_selected_type'] = $type;
+function globallink_taxonomy_dashboard($type) {
+  $_SESSION['globallink_selected_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_filter_form');
-  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_pager_form');
-  $array[] = drupal_get_form('transperfect_taxonomy_dashboard_form');
+  $array[] = drupal_get_form('globallink_taxonomy_dashboard_filter_form');
+  $array[] = drupal_get_form('globallink_taxonomy_dashboard_pager_form');
+  $array[] = drupal_get_form('globallink_taxonomy_dashboard_form');
 
   return $array;
 }
@@ -24,32 +24,32 @@ function transperfect_taxonomy_dashboard($type) {
 /**
  * Builds form to filter taxonomies to send for translation on dashboard.
  */
-function transperfect_taxonomy_dashboard_filter_form() {
+function globallink_taxonomy_dashboard_filter_form() {
   module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect_taxonomy', 'transperfect_taxonomy');
+  module_load_include('inc', 'globallink_taxonomy', 'globallink_taxonomy');
 
   $form = array();
 
-  $locales = transperfect_get_mapped_drupal_locales(FALSE);
+  $locales = globallink_get_mapped_drupal_locales(FALSE);
 
   if (isset($locales) && count($locales) > 1) {
     $filter = FALSE;
 
     $default_info = '';
 
-    if (!empty($_SESSION['transperfect_selected_taxonomy_info'])) {
-      $default_info = $_SESSION['transperfect_selected_taxonomy_info'];
+    if (!empty($_SESSION['globallink_selected_taxonomy_info'])) {
+      $default_info = $_SESSION['globallink_selected_taxonomy_info'];
       $filter = TRUE;
     }
 
     $default_vocab = '[any]';
 
-    if (!empty($_SESSION['transperfect_selected_taxonomy_vocab'])) {
-      $default_vocab = $_SESSION['transperfect_selected_taxonomy_vocab'];
+    if (!empty($_SESSION['globallink_selected_taxonomy_vocab'])) {
+      $default_vocab = $_SESSION['globallink_selected_taxonomy_vocab'];
       $filter = TRUE;
     }
 
-    $vocab_arr = transperfect_taxonomy_get_vocabulary_list();
+    $vocab_arr = globallink_taxonomy_get_vocabulary_list();
 
     $form['taxonomy_info_filter'] = array(
       '#type' => 'fieldset',
@@ -135,18 +135,18 @@ function transperfect_taxonomy_dashboard_filter_form() {
 /**
  * Handles submission of filter form.
  */
-function transperfect_taxonomy_dashboard_filter_form_submit($form, &$form_state) {
+function globallink_taxonomy_dashboard_filter_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
     case t('Filter'):
-      $_SESSION['transperfect_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
-      $_SESSION['transperfect_selected_taxonomy_info'] = $form_state['values']['info'];
+      $_SESSION['globallink_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
+      $_SESSION['globallink_selected_taxonomy_info'] = $form_state['values']['info'];
 
       break;
     case t('Reset'):
-      $_SESSION['transperfect_selected_taxonomy_info'] = '';
-      $_SESSION['transperfect_selected_taxonomy_vocab'] = '';
+      $_SESSION['globallink_selected_taxonomy_info'] = '';
+      $_SESSION['globallink_selected_taxonomy_vocab'] = '';
 
       break;
   }
@@ -155,10 +155,10 @@ function transperfect_taxonomy_dashboard_filter_form_submit($form, &$form_state)
 /**
  * Builds form to add pagination to taxonomy send dashboard.
  */
-function transperfect_taxonomy_dashboard_pager_form() {
+function globallink_taxonomy_dashboard_pager_form() {
   $form = array();
 
-  $locales = transperfect_get_mapped_drupal_locales(FALSE);
+  $locales = globallink_get_mapped_drupal_locales(FALSE);
 
   if (isset($locales) && count($locales) > 1) {
     $form['page_counter']['markup'] = array(
@@ -169,7 +169,7 @@ function transperfect_taxonomy_dashboard_pager_form() {
     $form['page_counter']['markup']['p_count'] = array(
       '#type' => 'textfield',
       '#size' => 5,
-      '#default_value' => isset($_SESSION['transperfect_taxonomy_page_count']) ? $_SESSION['transperfect_taxonomy_page_count'][0] : TPT_PAGER_LIMIT,
+      '#default_value' => isset($_SESSION['globallink_taxonomy_page_count']) ? $_SESSION['globallink_taxonomy_page_count'][0] : TPT_PAGER_LIMIT,
       '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
       '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
       '#prefix' => '<div class="container-inline">',
@@ -180,7 +180,7 @@ function transperfect_taxonomy_dashboard_pager_form() {
       '#value' => t('Go'),
       '#suffix' => '</div>',
       '#limit_validation_errors' => array(),
-      '#submit' => array('transperfect_taxonomy_pager_form_submit'),
+      '#submit' => array('globallink_taxonomy_pager_form_submit'),
       '#access' => TRUE,
     );
   }
@@ -191,7 +191,7 @@ function transperfect_taxonomy_dashboard_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function transperfect_taxonomy_pager_form_submit($form, &$form_state) {
+function globallink_taxonomy_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -204,7 +204,7 @@ function transperfect_taxonomy_pager_form_submit($form, &$form_state) {
     form_set_error('', t('Invalid Page Count.'));
   }
   else {
-    $_SESSION['transperfect_taxonomy_page_count'] = array($page_count);
+    $_SESSION['globallink_taxonomy_page_count'] = array($page_count);
 
     return;
   }
@@ -213,36 +213,36 @@ function transperfect_taxonomy_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to create a taxonomy submission.
  */
-function transperfect_taxonomy_dashboard_form() {
+function globallink_taxonomy_dashboard_form() {
   $form = array();
 
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
 
-  $locales = transperfect_get_mapped_drupal_locales(FALSE);
+  $locales = globallink_get_mapped_drupal_locales(FALSE);
 
   if (isset($locales) && count($locales) > 1) {
-    $target_lang_arr = transperfect_get_mapped_locales_with_drupal_desc(FALSE);
+    $target_lang_arr = globallink_get_mapped_locales_with_drupal_desc(FALSE);
     $source_lang_arr = $target_lang_arr;
 
     $count = 0;
 
     $default_info = '';
 
-    if (!empty($_SESSION['transperfect_selected_taxonomy_info'])) {
-      $default_info = $_SESSION['transperfect_selected_taxonomy_info'];
+    if (!empty($_SESSION['globallink_selected_taxonomy_info'])) {
+      $default_info = $_SESSION['globallink_selected_taxonomy_info'];
     }
 
     $default_vocab = '[any]';
 
-    if (!empty($_SESSION['transperfect_selected_taxonomy_vocab'])) {
-      $default_vocab = $_SESSION['transperfect_selected_taxonomy_vocab'];
+    if (!empty($_SESSION['globallink_selected_taxonomy_vocab'])) {
+      $default_vocab = $_SESSION['globallink_selected_taxonomy_vocab'];
     }
 
     $default_language = language_default();
     $default = $default_language->language;
 
-    unset($target_lang_arr[transperfect_get_locale_code($default)]);
+    unset($target_lang_arr[globallink_get_locale_code($default)]);
 
     $t_count = 0;
 
@@ -272,8 +272,8 @@ function transperfect_taxonomy_dashboard_form() {
 
     $page_count = TPT_PAGER_LIMIT;
 
-    if (isset($_SESSION['transperfect_taxonomy_page_count'])) {
-      $page_count = $_SESSION['transperfect_taxonomy_page_count'][0];
+    if (isset($_SESSION['globallink_taxonomy_page_count'])) {
+      $page_count = $_SESSION['globallink_taxonomy_page_count'][0];
     }
 
     $header = array(
@@ -314,7 +314,7 @@ function transperfect_taxonomy_dashboard_form() {
         $query->condition('t.vid', array($default_vocab), 'IN');
       }
 
-      $drupal_langs = transperfect_get_mapped_drupal_locales(FALSE);
+      $drupal_langs = globallink_get_mapped_drupal_locales(FALSE);
 
       if (!empty($drupal_langs)) {
         $query->condition('t.language', array_keys($drupal_langs), 'IN');
@@ -326,7 +326,7 @@ function transperfect_taxonomy_dashboard_form() {
 
       foreach ($result as $item) {
         $active = '';
-        $active_subs = transperfect_taxonomy_get_active_submission_rows($item->tid);
+        $active_subs = globallink_taxonomy_get_active_submission_rows($item->tid);
 
         if ($active_subs && array_key_exists($item->tid, $active_subs)) {
           $sub_arr = $active_subs[$item->tid];
@@ -335,7 +335,7 @@ function transperfect_taxonomy_dashboard_form() {
           $tgt_arr = array();
 
           foreach ($sub_arr as $sub_name => $tgt_arr) {
-            $l_title = transperfect_format_display_string($sub_name);
+            $l_title = globallink_format_display_string($sub_name);
             $l_href = 'admin/transperfect-translations/activeSubmissions/taxonomy';
             $l_options = array('query' => array('submission' => urlencode($sub_name)));
             $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
@@ -381,10 +381,10 @@ function transperfect_taxonomy_dashboard_form() {
 
     if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
-        $proj_arr = variable_get('transperfect_pd_projects', array());
+        $proj_arr = variable_get('globallink_pd_projects', array());
 
         if (count($proj_arr) > 0) {
-          $projects = variable_get('transperfect_pd_projectid');
+          $projects = variable_get('globallink_pd_projectid');
 
           if (!empty($projects)) {
             $arr = explode(',', $projects);
@@ -422,7 +422,7 @@ function transperfect_taxonomy_dashboard_form() {
           '#title' => 'Submission Name',
           '#size' => 40,
           '#required' => TRUE,
-          '#default_value' => variable_get('transperfect_pd_submissionprefix', 'DRU_') . REQUEST_TIME,
+          '#default_value' => variable_get('globallink_pd_submissionprefix', 'DRU_') . REQUEST_TIME,
           '#prefix' => '<div class="container-inline"><table><tr><td style="text-align: left;width: 20%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
           '#field_suffix' => '</td>',
@@ -476,7 +476,7 @@ function transperfect_taxonomy_dashboard_form() {
           '#title' => t('Source Language'),
           '#required' => TRUE,
           '#options' => $source_lang_arr,
-          '#default_value' => transperfect_get_locale_code($default),
+          '#default_value' => globallink_get_locale_code($default),
           '#disabled' => TRUE,
           '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
@@ -533,11 +533,11 @@ function transperfect_taxonomy_dashboard_form() {
 /**
  * Validates taxonomy form input.
  */
-function transperfect_taxonomy_dashboard_form_validate($form, &$form_state) {
+function globallink_taxonomy_dashboard_form_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
-  transperfect_validate_project_director_details($pd4);
+  globallink_validate_project_director_details($pd4);
 
   $source_locale = $form_state['values']['submission_source_locale'];
   $target_locale_arr = $form_state['values']['submission_target_locale'];
@@ -554,7 +554,7 @@ function transperfect_taxonomy_dashboard_form_validate($form, &$form_state) {
   }
 
   if (!empty($form_state['values']['submission_due_date'])) {
-    $due_date = (transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date'])) / 1000;
+    $due_date = (globallink_convert_date_to_timestamp($form_state['values']['submission_due_date'])) / 1000;
 
     if ($due_date < REQUEST_TIME) {
       form_set_error('', t('The specified date is in past.'));
@@ -582,7 +582,7 @@ function transperfect_taxonomy_dashboard_form_validate($form, &$form_state) {
   }
 
   foreach ($bids as $bid) {
-    $rows = transperfect_taxonomy_get_sent_rows_by_bid($bid);
+    $rows = globallink_taxonomy_get_sent_rows_by_bid($bid);
 
     foreach ($rows as $row) {
       if ($row->source == $source_locale && array_search($row->target, $target_locale_arr)) {
@@ -599,7 +599,7 @@ function transperfect_taxonomy_dashboard_form_validate($form, &$form_state) {
 /**
  * Handles taxonomy form submission.
  */
-function transperfect_taxonomy_dashboard_form_submit($form, &$form_state) {
+function globallink_taxonomy_dashboard_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   $submission_details = array();
@@ -609,7 +609,7 @@ function transperfect_taxonomy_dashboard_form_submit($form, &$form_state) {
   }
 
   try {
-    $pd4 = transperfect_get_project_director_details();
+    $pd4 = globallink_get_project_director_details();
 
     $lids = array_filter($form_state['values']['table']);
     $submission_name = $form_state['values']['submission_name'];
@@ -624,14 +624,14 @@ function transperfect_taxonomy_dashboard_form_submit($form, &$form_state) {
       }
     }
 
-    $due_date = transperfect_convert_date_to_timestamp($form_state['values']['submission_due_date']);
+    $due_date = globallink_convert_date_to_timestamp($form_state['values']['submission_due_date']);
 
     $project_code = $form_state['values']['submission_pd_project'];
 
-    $updated_globalLink_arr = transperfect_taxonomy_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
+    $updated_globalLink_arr = globallink_taxonomy_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details);
 
     if (count($updated_globalLink_arr) > 0) {
-      transperfect_taxonomy_update_ticket_id($updated_globalLink_arr, $project_code);
+      globallink_taxonomy_update_ticket_id($updated_globalLink_arr, $project_code);
       drupal_set_message(t('Content has been successfully sent for translations.'));
     }
   }

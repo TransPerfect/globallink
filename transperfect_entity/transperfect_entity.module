@@ -10,17 +10,17 @@
 /*
  * Adds a validation handler to check for change in multilingual options.
  */
-function transperfect_entity_form_node_type_form_alter(&$form, $form_state) {
-  array_unshift($form['#validate'], 'transperfect_entity_form_node_type_form_validate');
+function globallink_entity_form_node_type_form_alter(&$form, $form_state) {
+  array_unshift($form['#validate'], 'globallink_entity_form_node_type_form_validate');
 }
 
 /*
  * Validation to check if any active submission exists for this content type
  * only if there is a change in multilingual options.
  */
-function transperfect_entity_form_node_type_form_validate($form, &$form_state) {
+function globallink_entity_form_node_type_form_validate($form, &$form_state) {
   $language_content_type = $form_state['values']['language_content_type'];
-  if ($language_content_type != 2 && transperfect_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
+  if ($language_content_type != 2 && globallink_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
     form_set_error('language_content_type', 'Active submission exists for this content type in GlobalLink.');
   }
 }
@@ -28,7 +28,7 @@ function transperfect_entity_form_node_type_form_validate($form, &$form_state) {
 /**
  * Implements hook_node_presave().
  */
-function transperfect_entity_node_presave($node) {
+function globallink_entity_node_presave($node) {
   if (isset($node->tpt_skip) && $node->tpt_skip == TRUE || !isset($node->type)) {
     return;
   }
@@ -42,7 +42,7 @@ function transperfect_entity_node_presave($node) {
   }
 
   $handler = entity_translation_get_handler('node', $node);
-  $config_fields = transperfect_get_translatable_fields($node->type, $node->type);
+  $config_fields = globallink_get_translatable_fields($node->type, $node->type);
   $orig = $node->original;
   $lang = $handler->getFormLanguage();
 
@@ -56,7 +56,7 @@ function transperfect_entity_node_presave($node) {
     switch ($field_name) {
       case 'title':
         if ($orig->title != $node->title) {
-          transperfect_update_change_detection_entity($node, $lang);
+          globallink_update_change_detection_entity($node, $lang);
 
           break 2;
         }
@@ -81,7 +81,7 @@ function transperfect_entity_node_presave($node) {
     }
 
     if (!isset($node->$field_name) || !isset($orig->$field_name)) {
-      transperfect_update_change_detection_entity($node, $lang);
+      globallink_update_change_detection_entity($node, $lang);
 
       break;
     }
@@ -90,14 +90,14 @@ function transperfect_entity_node_presave($node) {
     $n_arr = isset($node->$field_name) ? $node->$field_name : array();
 
     if (empty($o_arr) || empty($n_arr) || count($o_arr) != count($n_arr)) {
-      transperfect_update_change_detection_entity($node, $lang);
+      globallink_update_change_detection_entity($node, $lang);
 
       continue;
     }
 
     if (!is_array($o_arr) || !is_array($n_arr)) {
       if ($o_arr != $n_arr) {
-        transperfect_update_change_detection_entity($node, $lang);
+        globallink_update_change_detection_entity($node, $lang);
 
         break;
       }
@@ -110,19 +110,19 @@ function transperfect_entity_node_presave($node) {
     }
 
     if (isset($o_arr[$lang]) && isset($n_arr[$lang]) && count($o_arr[$lang]) != count($n_arr[$lang])) {
-      transperfect_update_change_detection_entity($node, $lang);
+      globallink_update_change_detection_entity($node, $lang);
 
       break;
     }
 
     if ((isset($o_arr[$lang]) && empty($n_arr[$lang])) || (empty($o_arr[$lang]) && isset($n_arr[$lang]))) {
-      transperfect_update_change_detection_entity($node, $lang);
+      globallink_update_change_detection_entity($node, $lang);
 
       break;
     }
 
     if (count($o_arr[$lang]) != count($n_arr[$lang])) {
-      transperfect_update_change_detection_entity($node, $lang);
+      globallink_update_change_detection_entity($node, $lang);
 
       break;
     }
@@ -130,13 +130,13 @@ function transperfect_entity_node_presave($node) {
     foreach ($o_arr[$lang] as $delta => $n_field) {
       if (isset($n_arr[$lang][$delta]) && isset($n_arr[$lang][$delta]['value'])) {
         if ($n_field['value'] != $n_arr[$lang][$delta]['value']) {
-          transperfect_update_change_detection_entity($node, $lang);
+          globallink_update_change_detection_entity($node, $lang);
 
           break 2;
         }
       }
       else {
-        transperfect_update_change_detection_entity($node, $lang);
+        globallink_update_change_detection_entity($node, $lang);
 
         break 2;
       }
@@ -152,10 +152,10 @@ function transperfect_entity_node_presave($node) {
  * @param string $lang
  *   The target language.
  */
-function transperfect_update_change_detection_entity($node, $lang) {
-  $tpt_locale_code = transperfect_get_locale_code($lang);
+function globallink_update_change_detection_entity($node, $lang) {
+  $tpt_locale_code = globallink_get_locale_code($lang);
 
-  db_update('transperfect_core_entity')
+  db_update('globallink_core_entity')
   ->fields(array(
     'last_modified' => REQUEST_TIME,
     'changed' => 1,
@@ -179,16 +179,16 @@ function transperfect_update_change_detection_entity($node, $lang) {
 function get_tpt_entity_sent_rows($nid, $source) {
   $arr = array();
 
-  $query = db_select('transperfect_core_entity', 'tc')
+  $query = db_select('globallink_core_entity', 'tc')
   ->fields('tc')
   ->condition('nid', $nid, '=')
   ->condition('status', array('Sent for Translations', 'Error', 'Cancelled'), 'IN')
-  ->condition('source', transperfect_get_locale_code($source), '=');
+  ->condition('source', globallink_get_locale_code($source), '=');
 
   $result = $query->execute();
 
   foreach ($result as $row) {
-    $arr[] = transperfect_get_drupal_locale_code($row->target);
+    $arr[] = globallink_get_drupal_locale_code($row->target);
   }
 
   return $arr;
@@ -197,41 +197,41 @@ function get_tpt_entity_sent_rows($nid, $source) {
 /**
  * Implements hook_menu().
  */
-function transperfect_entity_menu() {
+function globallink_entity_menu() {
   $items = array();
 
   $items ['admin/transperfect-translations/dashboard/entity'] = array(
     'title' => ' Entity ',
-    'page callback' => 'transperfect_entity_dashboard',
-    'access callback' => 'transperfect_access_callback_any',
+    'page callback' => 'globallink_entity_dashboard',
+    'access callback' => 'globallink_access_callback_any',
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_entity_send.inc',
+    'file' => 'globallink_entity_send.inc',
     'page arguments' => array('entity'),
   );
 
   $items ['admin/transperfect-translations/activeSubmissions/entity'] = array(
     'title' => ' Entity ',
-    'page callback' => 'transperfect_entity_active_submissions',
-    'access callback' => 'transperfect_access_callback_any',
-    'file' => 'transperfect_entity_active_submissions.inc',
+    'page callback' => 'globallink_entity_active_submissions',
+    'access callback' => 'globallink_access_callback_any',
+    'file' => 'globallink_entity_active_submissions.inc',
     'type' => MENU_LOCAL_TASK,
     'page arguments' => array('entity'),
   );
 
   $items ['admin/transperfect-translations/receiveTranslation/entity'] = array(
     'title' => ' Entity ',
-    'page callback' => 'transperfect_entity_receive_submissions',
-    'access callback' => 'transperfect_access_callback_any',
+    'page callback' => 'globallink_entity_receive_submissions',
+    'access callback' => 'globallink_access_callback_any',
     'type' => MENU_LOCAL_TASK,
-    'file' => 'transperfect_entity_receive.inc',
+    'file' => 'globallink_entity_receive.inc',
     'page arguments' => array('entity'),
   );
 
   $items['admin/transperfect-translations/receiveTranslation/entity/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'transperfect_entity_preview_translated_entity',
-    'file' => 'transperfect_entity_receive.inc',
-    'access callback' => 'transperfect_access_callback_admin',
+    'page callback' => 'globallink_entity_preview_translated_entity',
+    'file' => 'globallink_entity_receive.inc',
+    'access callback' => 'globallink_access_callback_admin',
     'type' => MENU_CALLBACK,
   );
 

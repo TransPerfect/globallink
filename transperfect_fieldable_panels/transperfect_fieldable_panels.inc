@@ -23,14 +23,14 @@
  * @return object
  *   GlobalLink object that represents active translation.
  */
-function transperfect_fieldable_panels_pane_send_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
+function globallink_fieldable_panels_pane_send_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
 
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
 
   foreach ($fpids as $fpid) {
-    $rows = transperfect_fieldable_panels_get_sent_rows_by_fpid($fpid);
+    $rows = globallink_fieldable_panels_get_sent_rows_by_fpid($fpid);
     $target_arr = $target_locale_arr;
 
     foreach ($rows as $row) {
@@ -43,7 +43,7 @@ function transperfect_fieldable_panels_pane_send_for_translations($fpids, $pd4, 
       continue;
     }
 
-    $xml = transperfect_fieldable_panels_pane_get_xml($fpid);
+    $xml = globallink_fieldable_panels_pane_get_xml($fpid);
     $name = 'Fieldable_Panels_Panes_' . $fpid . '.xml';
     watchdog('GlobalLink', 'XML - %xml', array('%xml' => $xml), WATCHDOG_DEBUG);
 
@@ -62,7 +62,7 @@ function transperfect_fieldable_panels_pane_send_for_translations($fpids, $pd4, 
   }
 
   if (!empty($globallink_arr)) {
-    transperfect_send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
+    globallink_send_documents_for_translation_to_pd($globallink_arr, $pd4, $project_code, $submitter);
   }
 
   return $globallink_arr;
@@ -77,7 +77,7 @@ function transperfect_fieldable_panels_pane_send_for_translations($fpids, $pd4, 
  * @return array
  *   Associative array of fieldable panel XML data.
  */
-function transperfect_fieldable_panels_pane_get_xml($fpid) {
+function globallink_fieldable_panels_pane_get_xml($fpid) {
   $dom = new DOMDocument('1.0', 'UTF-8');
   $dom->formatOutput = TRUE;
 
@@ -91,7 +91,7 @@ function transperfect_fieldable_panels_pane_get_xml($fpid) {
   $fieldable_panels_pane = fieldable_panels_panes_load($fpid);
   $language = $fieldable_panels_pane->language;
 
-  $fields = transperfect_fieldable_panels_pane_get_fields($fieldable_panels_pane->bundle);
+  $fields = globallink_fieldable_panels_pane_get_fields($fieldable_panels_pane->bundle);
 
   foreach ($fields as $field) {
     if (empty($fieldable_panels_pane->$field)) {
@@ -102,11 +102,11 @@ function transperfect_fieldable_panels_pane_get_xml($fpid) {
 
     if (is_array($field_values) && !empty($field_values[$language])) {
       foreach ($field_values[$language] as $delta => $values) {
-        transperfect_insert_child_element($dom, $root, 'field', $values['value'], array('field' => $field, 'delta' => $delta, 'langcode' => $language));
+        globallink_insert_child_element($dom, $root, 'field', $values['value'], array('field' => $field, 'delta' => $delta, 'langcode' => $language));
       }
     }
     elseif (!empty($field_values) && is_string($field_values)) { // Test this without field translation
-      transperfect_insert_child_element($dom, $root, 'field', $field_values, array('field' => $field));
+      globallink_insert_child_element($dom, $root, 'field', $field_values, array('field' => $field));
     }
   }
 
@@ -123,11 +123,11 @@ function transperfect_fieldable_panels_pane_get_xml($fpid) {
  * @param string $pd4
  *   The project director details.
  */
-function transperfect_fieldable_panels_cancel_records($rowids, $pd4) {
+function globallink_fieldable_panels_cancel_records($rowids, $pd4) {
   $globallink_arr = array();
 
   foreach ($rowids as $rid) {
-    $row = transperfect_fieldable_panels_get_row_by_id($rid);
+    $row = globallink_fieldable_panels_get_row_by_id($rid);
     $globallink = new GlobalLink();
     $globallink->tptRowId = $row->id;
     $globallink->targetLocale = $row->target;
@@ -136,8 +136,8 @@ function transperfect_fieldable_panels_cancel_records($rowids, $pd4) {
     $globallink_arr[$rid] = $globallink;
   }
 
-  transperfect_cancel_select_documents($pd4, $globallink_arr);
-  transperfect_fieldable_panels_update_row_document($globallink_arr);
+  globallink_cancel_select_documents($pd4, $globallink_arr);
+  globallink_fieldable_panels_update_row_document($globallink_arr);
 }
 
 /**
@@ -146,10 +146,10 @@ function transperfect_fieldable_panels_cancel_records($rowids, $pd4) {
  * @param array $globallink_arr
  *   Array of GlobalLink objects.
  */
-function transperfect_fieldable_panels_update_row_document(&$globallink_arr) {
+function globallink_fieldable_panels_update_row_document(&$globallink_arr) {
   foreach ($globallink_arr as $globallink) {
     if ($globallink->cancelled) {
-      db_update('transperfect_core_fieldable_panels')
+      db_update('globallink_core_fieldable_panels')
       ->fields(array(
         'status' => 'Pending Translations',
         'timestamp' => REQUEST_TIME,
@@ -166,15 +166,15 @@ function transperfect_fieldable_panels_update_row_document(&$globallink_arr) {
  * @param string $selected_submission
  *   The name of the submission.
  */
-function transperfect_fieldable_panels_cancel_submission($selected_submission) {
-  $pd4 = transperfect_get_project_director_details();
+function globallink_fieldable_panels_cancel_submission($selected_submission) {
+  $pd4 = globallink_get_project_director_details();
   $globallink = new GlobalLink();
-  $submission_name = transperfect_fieldable_panels_get_submission_name($selected_submission);
+  $submission_name = globallink_fieldable_panels_get_submission_name($selected_submission);
   $globallink->submissionName = $submission_name;
   $globallink->submissionTicket = $selected_submission;
 
-  transperfect_cancel_pd_submission($pd4, $globallink);
-  transperfect_fieldable_panels_update_submission($globallink);
+  globallink_cancel_pd_submission($pd4, $globallink);
+  globallink_fieldable_panels_update_submission($globallink);
 }
 
 /**
@@ -186,10 +186,10 @@ function transperfect_fieldable_panels_cancel_submission($selected_submission) {
  * @return array
  *   Array of row IDs that have been sent for translation or threw an error.
  */
-function transperfect_fieldable_panels_check_status($ids_arr) {
+function globallink_fieldable_panels_check_status($ids_arr) {
   $status = TRUE;
 
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp')
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp')
   ->fields('tcfp', array('id'))
   ->condition('status', array('Sent for Translations', 'Error'), 'IN');
 
@@ -220,10 +220,10 @@ function transperfect_fieldable_panels_check_status($ids_arr) {
  * @return int
  *   Number of cancelled fieldable panels documents.
  */
-function transperfect_fieldable_panels_clear_cancelled_documents() {
+function globallink_fieldable_panels_clear_cancelled_documents() {
   $count = 0;
 
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp')
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp')
   ->fields('tcfp', array('submission_ticket'))
   ->distinct()
   ->condition('status', 'Cancelled', '=');
@@ -231,7 +231,7 @@ function transperfect_fieldable_panels_clear_cancelled_documents() {
   $results = $query->execute();
 
   foreach ($results as $item) {
-    transperfect_fieldable_panels_update_submission_status($item->submission_ticket, 'Pending Translations');
+    globallink_fieldable_panels_update_submission_status($item->submission_ticket, 'Pending Translations');
 
     $count++;
   }
@@ -248,8 +248,8 @@ function transperfect_fieldable_panels_clear_cancelled_documents() {
  * @return string
  *   The fieldable panels submission name.
  */
-function transperfect_fieldable_panels_get_submission_name($submission_ticket) {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_submission_name($submission_ticket) {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->fields('tcfp');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $results = $query->execute();
@@ -267,8 +267,8 @@ function transperfect_fieldable_panels_get_submission_name($submission_ticket) {
  * @param object $globallink
  *   GlobalLink object.
  */
-function transperfect_fieldable_panels_update_submission(&$globallink) {
-  db_update('transperfect_core_fieldable_panels')
+function globallink_fieldable_panels_update_submission(&$globallink) {
+  db_update('globallink_core_fieldable_panels')
   ->fields(array(
     'status' => 'Pending Translations',
     'timestamp' => REQUEST_TIME,
@@ -287,7 +287,7 @@ function transperfect_fieldable_panels_update_submission(&$globallink) {
  * @return array
  *   Array of fields.
  */
-function transperfect_fieldable_panels_pane_get_fields($bundle) {
+function globallink_fieldable_panels_pane_get_fields($bundle) {
   $fields = array();
 
   foreach (field_info_instances('fieldable_panels_pane', $bundle) as $field) {
@@ -303,8 +303,8 @@ function transperfect_fieldable_panels_pane_get_fields($bundle) {
  * @return array
  *   Array of active fieldable panels submission names.
  */
-function transperfect_fieldable_panels_get_active_submission_names() {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_active_submission_names() {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tcfp');
@@ -328,8 +328,8 @@ function transperfect_fieldable_panels_get_active_submission_names() {
  * @return
  *   Associative array of fieldable panels active submission rows.  FALSE if the array is empty.
  */
-function transperfect_fieldable_panels_get_active_submission_rows($fpid) {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_active_submission_rows($fpid) {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('status', 'Sent for Translations', '=');
   $query->condition('fpid', $fpid, '=');
   $query->fields('tcfp');
@@ -378,8 +378,8 @@ function transperfect_fieldable_panels_get_active_submission_rows($fpid) {
  * @return array
  *   Array of distinct active fieldable panels submission names.
  */
-function transperfect_fieldable_panels_get_distinct_active_submission_names() {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_distinct_active_submission_names() {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('status', array('Sent for Translations', 'Error'), 'IN');
   $query->distinct();
   $query->fields('tcfp');
@@ -397,11 +397,11 @@ function transperfect_fieldable_panels_get_distinct_active_submission_names() {
 /**
  * Gets fieldable panels submission status.
  */
-function transperfect_fieldable_panels_get_submission_status() {
-  module_load_include('inc', 'transperfect', 'transperfect_settings');
+function globallink_fieldable_panels_get_submission_status() {
+  module_load_include('inc', 'transperfect', 'globallink_settings');
   module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
 
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->fields('tcfp', array('submission_ticket'));
   $query->distinct();
   $query->condition('status', 'Sent for Translations', '=');
@@ -411,19 +411,19 @@ function transperfect_fieldable_panels_get_submission_status() {
   foreach ($results as $row) {
     if ($row->submission_ticket) {
       try {
-        $pd4 = transperfect_get_project_director_details();
+        $pd4 = globallink_get_project_director_details();
 
-        $status = transperfect_get_status($pd4, $row->submission_ticket);
+        $status = globallink_get_status($pd4, $row->submission_ticket);
 
         if (!$status || $status == 'CANCELLED') {
-          transperfect_fieldable_panels_update_submission_status($row->submission_ticket);
+          globallink_fieldable_panels_update_submission_status($row->submission_ticket);
         }
       }
       catch (SoapFault $se) {
-        transperfect_fieldable_panels_update_submission_status($row->submission_ticket);
+        globallink_fieldable_panels_update_submission_status($row->submission_ticket);
       }
       catch (Exception $ex) {
-        transperfect_fieldable_panels_update_submission_status($row->submission_ticket);
+        globallink_fieldable_panels_update_submission_status($row->submission_ticket);
       }
     }
   }
@@ -442,8 +442,8 @@ function transperfect_fieldable_panels_get_submission_status() {
  * @return
  *   Fieldable panels object that matches criteria.  FALSE if none exists.
  */
-function transperfect_fieldable_panels_get_sent_tpt_rows($submission_ticket, $document_ticket, $target_locale) {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_sent_tpt_rows($submission_ticket, $document_ticket, $target_locale) {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
   $query->condition('target', $target_locale, '=');
@@ -471,8 +471,8 @@ function transperfect_fieldable_panels_get_sent_tpt_rows($submission_ticket, $do
  * @return string
  *   Status message.
  */
-function transperfect_fieldable_panels_get_translation_status($fpid, $tgt_locale, &$title) {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_translation_status($fpid, $tgt_locale, &$title) {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('fpid', $fpid, '=');
   $query->condition('target', $tgt_locale, '=');
   $query->distinct();
@@ -511,8 +511,8 @@ function transperfect_fieldable_panels_get_translation_status($fpid, $tgt_locale
  * @return
  *   The fieldable panels row ID.  FALSE if the row doesn't exist.
  */
-function transperfect_fieldable_panels_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
-  $query = db_select('transperfect_core_fieldable_panels', 'tcfp');
+function globallink_fieldable_panels_get_row_id_from_submission($submission_ticket, $document_ticket, $target_locale) {
+  $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->condition('submission_ticket', $submission_ticket, '=');
   $query->condition('document_ticket', $document_ticket, '=');
   $query->condition('target', $target_locale, '=');
@@ -536,8 +536,8 @@ function transperfect_fieldable_panels_get_row_id_from_submission($submission_ti
  * @return array
  *   Array of fieldable panels rows.
  */
-function transperfect_fieldable_panels_get_sent_rows_by_fpid($fpid) {
-  $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
+function globallink_fieldable_panels_get_sent_rows_by_fpid($fpid) {
+  $result = db_select('globallink_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
   ->condition('fpid', $fpid, '=')
   ->condition('status', array('Sent for Translations', 'Error'), 'IN')
@@ -565,8 +565,8 @@ function transperfect_fieldable_panels_get_sent_rows_by_fpid($fpid) {
  * @return
  *   The row if fieldable panel exists.  FALSE if not.
  */
-function transperfect_fieldable_panels_get_row($fpid, $source, $target) {
-  $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
+function globallink_fieldable_panels_get_row($fpid, $source, $target) {
+  $result = db_select('globallink_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
   ->condition('fpid', $fpid, '=')
   ->condition('source', $source, '=')
@@ -589,8 +589,8 @@ function transperfect_fieldable_panels_get_row($fpid, $source, $target) {
  * @return
  *   The fieldable panel row.  FALSE if row doesn't exist.
  */
-function transperfect_fieldable_panels_get_row_by_id($id) {
-  $result = db_select('transperfect_core_fieldable_panels', 'tcfp')
+function globallink_fieldable_panels_get_row_by_id($id) {
+  $result = db_select('globallink_core_fieldable_panels', 'tcfp')
   ->fields('tcfp')
   ->condition('id', $id, '=')
   ->execute();
@@ -611,7 +611,7 @@ function transperfect_fieldable_panels_get_row_by_id($id) {
  * @return array
  *   Associative array of translated fieldable panels.
  */
-function transperfect_fieldable_panels_get_translated_array($xml) {
+function globallink_fieldable_panels_get_translated_array($xml) {
   if (is_null($xml) || !is_string($xml) || $xml == '') {
     return array();
   }
@@ -695,8 +695,8 @@ function transperfect_fieldable_panels_get_translated_array($xml) {
  * @param string $status
  *   The submission status.  Defaults to 'Cancelled.'
  */
-function transperfect_fieldable_panels_update_submission_status($submission_ticket, $status = 'Cancelled') {
-  db_update('transperfect_core_fieldable_panels')
+function globallink_fieldable_panels_update_submission_status($submission_ticket, $status = 'Cancelled') {
+  db_update('globallink_core_fieldable_panels')
   ->fields(array(
     'status' => $status,
     'timestamp' => REQUEST_TIME,
@@ -716,21 +716,21 @@ function transperfect_fieldable_panels_update_submission_status($submission_tick
  * @return int
  *   The number of translated fieldable panels.
  */
-function transperfect_fieldable_panels_get_translated($pd4, &$globallink_arr) {
+function globallink_fieldable_panels_get_translated($pd4, &$globallink_arr) {
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {
-    $target_xml = transperfect_download_target_resource($pd4, $globallink->targetTicket);
+    $target_xml = globallink_download_target_resource($pd4, $globallink->targetTicket);
 
     if ($globallink->sourceDeleted || empty($target_xml)) {
       continue;
     }
 
     $count++;
-    $target_locale = transperfect_get_drupal_locale_code($globallink->targetLocale);
-    $source_locale = transperfect_get_drupal_locale_code($globallink->sourceLocale);
+    $target_locale = globallink_get_drupal_locale_code($globallink->targetLocale);
+    $source_locale = globallink_get_drupal_locale_code($globallink->sourceLocale);
 
-    $translated_arr = transperfect_fieldable_panels_get_translated_array($target_xml);
+    $translated_arr = globallink_fieldable_panels_get_translated_array($target_xml);
 
     try {
       $fpid = $translated_arr['fpid'];
@@ -738,12 +738,12 @@ function transperfect_fieldable_panels_get_translated($pd4, &$globallink_arr) {
       $entity = fieldable_panels_panes_load($fpid);
 
       if (empty($entity)) {
-        transperfect_fieldable_panels_update_status($globallink, 'Source Deleted');
+        globallink_fieldable_panels_update_status($globallink, 'Source Deleted');
 
         continue;
       }
 
-      $fields = transperfect_fieldable_panels_pane_get_fields();
+      $fields = globallink_fieldable_panels_pane_get_fields();
 
       foreach ($fields as $field) {
         $t_field_lang = LANGUAGE_NONE;
@@ -777,7 +777,7 @@ function transperfect_fieldable_panels_get_translated($pd4, &$globallink_arr) {
         'language' => $target_locale, // Target language
         'source' => $source_locale, // Source language
         'uid' => $entity->uid,
-        'status' => variable_get('transperfect_publish_node', 0), // publish translation
+        'status' => variable_get('globallink_publish_node', 0), // publish translation
         'translate' => 0, // Translation out of date
         'created' => $entity->created,
       );
@@ -788,20 +788,20 @@ function transperfect_fieldable_panels_get_translated($pd4, &$globallink_arr) {
       );
 
       fieldable_panels_panes_save($entity);
-      transperfect_fieldable_panels_update_status($globallink);
-      transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
+      globallink_fieldable_panels_update_status($globallink);
+      globallink_send_download_confirmation($globallink->targetTicket, $pd4);
     }
     catch (SoapFault $se) {
       $count--;
 
-      transperfect_fieldable_panels_update_status($globallink, 'Error');
+      globallink_fieldable_panels_update_status($globallink, 'Error');
       watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
       form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
     }
     catch (Exception $e) {
       $count--;
 
-      transperfect_fieldable_panels_update_status($globallink, 'Error');
+      globallink_fieldable_panels_update_status($globallink, 'Error');
       watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
       form_set_error('', check_plain('Error: ' . $e->getMessage()));
     }
@@ -818,8 +818,8 @@ function transperfect_fieldable_panels_get_translated($pd4, &$globallink_arr) {
  * @param string $status
  *   The new status.  Defaults to 'Pending Translations.'
  */
-function transperfect_fieldable_panels_update_status(&$globallink, $status = 'Pending Translations') {
-  db_update('transperfect_core_fieldable_panels')
+function globallink_fieldable_panels_update_status(&$globallink, $status = 'Pending Translations') {
+  db_update('globallink_core_fieldable_panels')
   ->fields(array(
     'status' => $status,
     'timestamp' => REQUEST_TIME,
@@ -842,12 +842,12 @@ function transperfect_fieldable_panels_update_status(&$globallink, $status = 'Pe
  * @return bool
  *   TRUE if update was successful, FALSE on error.
  */
-function transperfect_fieldable_panels_update_deleted_records($pd4, $globallink) {
+function globallink_fieldable_panels_update_deleted_records($pd4, $globallink) {
   try {
     $globallink->status = 'Source Deleted';
 
-    transperfect_send_download_confirmation($globallink->targetTicket, $pd4);
-    transperfect_fieldable_panels_update_status($globallink, 'Source Deleted');
+    globallink_send_download_confirmation($globallink->targetTicket, $pd4);
+    globallink_fieldable_panels_update_status($globallink, 'Source Deleted');
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -873,7 +873,7 @@ function transperfect_fieldable_panels_update_deleted_records($pd4, $globallink)
  * @param string $project_code
  *   The fieldable panel's project code.
  */
-function transperfect_fieldable_panels_update_ticket_id($arr, $project_code) {
+function globallink_fieldable_panels_update_ticket_id($arr, $project_code) {
   foreach ($arr as $globallink) {
     $target_locale_arr = $globallink->targetLocale;
     $type = $globallink->type;
@@ -886,7 +886,7 @@ function transperfect_fieldable_panels_update_ticket_id($arr, $project_code) {
     $fieldable_panels = fieldable_panels_panes_load($fpid);
 
     foreach ($target_locale_arr as $target_locale) {
-      $row = transperfect_fieldable_panels_get_row($fpid, $globallink->sourceLocale, $target_locale);
+      $row = globallink_fieldable_panels_get_row($fpid, $globallink->sourceLocale, $target_locale);
       $title = 'Title Not Found';
 
       if (!empty($fieldable_panels->title)) {
@@ -899,7 +899,7 @@ function transperfect_fieldable_panels_update_ticket_id($arr, $project_code) {
       }
 
       if ($row) {
-        db_update('transperfect_core_fieldable_panels')
+        db_update('globallink_core_fieldable_panels')
         ->fields(array(
           'title' => $title,
           'document_ticket' => $globallink->documentTicket,
@@ -914,7 +914,7 @@ function transperfect_fieldable_panels_update_ticket_id($arr, $project_code) {
         ->execute();
       }
       else {
-        db_insert('transperfect_core_fieldable_panels')
+        db_insert('globallink_core_fieldable_panels')
         ->fields(array(
           'fpid' => $fpid,
           'title' => $title,

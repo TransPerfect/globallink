@@ -6,5 +6,5 @@ dependencies[] = transperfect
 package = GlobalLink
 version = 7.X-5.0.0
 php = 5.2.5
-scripts[] = js/transperfect_entity_active_submissions.js
-scripts[] = js/transperfect_entity_send.js
+scripts[] = js/globallink_entity_active_submissions.js
+scripts[] = js/globallink_entity_send.js

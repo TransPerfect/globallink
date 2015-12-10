@@ -2,33 +2,33 @@
 
 /**
  * @file
- * Transperfect_field_configuration.inc is a file that contains most functions
+ * globallink_field_configuration.inc is a file that contains most functions
  * needed on the Field Configuration UI.
  */
 
 /**
- * Returns form for transperfect_field page.
+ * Returns form for globallink_field page.
  */
-function transperfect_field_page() {
-  return drupal_get_form('transperfect_field');
+function globallink_field_page() {
+  return drupal_get_form('globallink_field');
 }
 
 /**
- * Renders form for transperfect_field.
+ * Renders form for globallink_field.
  */
-function transperfect_field() {
+function globallink_field() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $selected_value = '';
 
-  if (!empty($_SESSION['transperfect_selected_content_type'])) {
-    $selected_value = $_SESSION['transperfect_selected_content_type'];
+  if (!empty($_SESSION['globallink_selected_content_type'])) {
+    $selected_value = $_SESSION['globallink_selected_content_type'];
   }
 
   $form = array();
 
   $n_arr = array('' => t('--Select Content Type--'));
-  $t_arr = transperfect_get_translatable_node_types_and_names();
+  $t_arr = globallink_get_translatable_node_types_and_names();
 
   $node_types = $n_arr + $t_arr;
 
@@ -60,7 +60,7 @@ function transperfect_field() {
     $disabled = FALSE;
 
     $f_arr = array('[all]' => t('All'));
-    $p_arr = transperfect_get_pending_fields($selected_value);
+    $p_arr = globallink_get_pending_fields($selected_value);
 
     $pending_fields = $f_arr + $p_arr;
 
@@ -102,7 +102,7 @@ function transperfect_field() {
       ),
     );
 
-    $query = db_select('transperfect_field_config', 'tf')
+    $query = db_select('globallink_field_config', 'tf')
     ->fields('tf')
     ->condition('content_type', $selected_value, '=')
     ->extend('TableSort') // Sorting Extender
@@ -156,10 +156,10 @@ function transperfect_field() {
       '#default_value' => $default_values,
     );
 
-    if (transperfect_content_type_workbench_enabled($selected_value)) {
+    if (globallink_content_type_workbench_enabled($selected_value)) {
       if ($states = workbench_moderation_state_labels()) {
         $mod_key = '';
-        $current_value = variable_get('transperfect_moderation_' . $selected_value, FALSE);
+        $current_value = variable_get('globallink_moderation_' . $selected_value, FALSE);
 
         if ($current_value) {
           $states_value = $states[$current_value];
@@ -195,14 +195,14 @@ function transperfect_field() {
 }
 
 /**
- * Handles submission of transperfect_field form.
+ * Handles submission of globallink_field form.
  */
-function transperfect_field_submit($form, &$form_state) {
+function globallink_field_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   switch ($op) {
     case t('Go'):
-      $_SESSION['transperfect_selected_content_type'] = $form_state['values']['select_type'];
+      $_SESSION['globallink_selected_content_type'] = $form_state['values']['select_type'];
 
       break;
     case t('Update'):
@@ -210,12 +210,12 @@ function transperfect_field_submit($form, &$form_state) {
 
       $fids = array_filter($form_state['values']['table']);
 
-      transperfect_update_gl_field_config($type, $fids);
+      globallink_update_gl_field_config($type, $fids);
 
       $state = isset($form_state['input']['state']) ? $form_state['input']['state'] : FALSE;
 
       if ($state) {
-        variable_set('transperfect_moderation_' . $type, $state);
+        variable_set('globallink_moderation_' . $type, $state);
       }
 
       drupal_set_message(t('Field configurations have been saved successfully.'));
@@ -224,7 +224,7 @@ function transperfect_field_submit($form, &$form_state) {
     case t('Add'):
       $field = $form_state['values']['pending_fields'];
 
-      transperfect_insert_gl_field_config($field, $_SESSION['transperfect_selected_content_type']);
+      globallink_insert_gl_field_config($field, $_SESSION['globallink_selected_content_type']);
       drupal_set_message(t('Field configurations have been added successfully.'));
 
       break;
@@ -239,15 +239,15 @@ function transperfect_field_submit($form, &$form_state) {
  * @param array $fids
  *   The array of field IDs.
  */
-function transperfect_update_gl_field_config($type, $fids) {
+function globallink_update_gl_field_config($type, $fids) {
   // First update everything to 0 for this type
-  db_update('transperfect_field_config')
+  db_update('globallink_field_config')
   ->fields(array('translatable' => 0))
   ->condition('content_type', $type, '=')
   ->execute();
 
   foreach ($fids as $fid) {
-    db_update('transperfect_field_config')
+    db_update('globallink_field_config')
     ->fields(array('translatable' => 1))
     ->condition('fid', $fid, '=')
     ->execute();
@@ -262,8 +262,8 @@ function transperfect_update_gl_field_config($type, $fids) {
  * @param string $content_type
  *   The content type.
  */
-function transperfect_insert_gl_field_config($field_name, $content_type) {
-  $p_arr = transperfect_get_pending_fields($content_type);
+function globallink_insert_gl_field_config($field_name, $content_type) {
+  $p_arr = globallink_get_pending_fields($content_type);
 
   if ($field_name == '[all]') {
     $f_keys = array_keys($p_arr);
@@ -283,7 +283,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
           case 'field_collection':
             break;
           default:
-            db_insert('transperfect_field_config')
+            db_insert('globallink_field_config')
             ->fields(array(
               'content_type' => $content_type,
               'entity_type' => 'node',
@@ -296,7 +296,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
         }
       }
       else {
-        db_insert('transperfect_field_config')
+        db_insert('globallink_field_config')
         ->fields(array(
           'content_type' => $content_type,
           'entity_type' => 'node',
@@ -310,7 +310,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
     }
 
     if (module_exists('field_collection')) {
-      transperfect_insert_fc_fields($content_type);
+      globallink_insert_fc_fields($content_type);
     }
   }
   else {
@@ -323,11 +323,11 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
         case 'taxonomy_term_reference':
           break;
         case 'field_collection':
-          transperfect_insert_fc('node', $field_name, $content_type, $content_type);
+          globallink_insert_fc('node', $field_name, $content_type, $content_type);
 
           break;
         default:
-          db_insert('transperfect_field_config')
+          db_insert('globallink_field_config')
           ->fields(array(
             'content_type' => $content_type,
             'entity_type' => 'node',
@@ -340,7 +340,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
       }
     }
     else {
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array('content_type' => $content_type,
         'entity_type' => 'node',
         'bundle' => $content_type,
@@ -359,7 +359,7 @@ function transperfect_insert_gl_field_config($field_name, $content_type) {
  * @param string $node_type
  *   The node type.
  */
-function transperfect_insert_fc_fields($node_type) {
+function globallink_insert_fc_fields($node_type) {
   $field_arr = field_info_instances('node', $node_type);
 
   $keys = array_keys($field_arr);
@@ -371,7 +371,7 @@ function transperfect_insert_fc_fields($node_type) {
       continue;
     }
 
-    db_insert('transperfect_field_config')
+    db_insert('globallink_field_config')
     ->fields(array(
       'content_type' => $node_type,
       'entity_type' => 'node',
@@ -388,7 +388,7 @@ function transperfect_insert_fc_fields($node_type) {
       $fc_items = array_keys($fc_field_infos[$field_name]);
 
       foreach ($fc_items as $fc_item) {
-        transperfect_insert_fc_item_fields($node_type, $field_name, $fc_item);
+        globallink_insert_fc_item_fields($node_type, $field_name, $fc_item);
       }
     }
   }
@@ -404,7 +404,7 @@ function transperfect_insert_fc_fields($node_type) {
  * @param string $field_name
  *   The field name.
  */
-function transperfect_insert_fc_item_fields($content_type, $parent_field_name, $field_name) {
+function globallink_insert_fc_item_fields($content_type, $parent_field_name, $field_name) {
   $fc_field_info = field_info_field($field_name);
   $fc_field_instance = field_info_instance('field_collection_item', $field_name, $parent_field_name);
 
@@ -414,7 +414,7 @@ function transperfect_insert_fc_item_fields($content_type, $parent_field_name, $
     case 'taxonomy_term_reference':
       break;
     case 'field_collection':
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $content_type,
         'entity_type' => 'field_collection_item',
@@ -431,7 +431,7 @@ function transperfect_insert_fc_item_fields($content_type, $parent_field_name, $
         $fc_items = array_keys($fc_field_infos[$field_name]);
 
         foreach ($fc_items as $fc_item) {
-          transperfect_insert_fc_item_fields($content_type, $field_name, $fc_item);
+          globallink_insert_fc_item_fields($content_type, $field_name, $fc_item);
         }
       }
 
@@ -439,7 +439,7 @@ function transperfect_insert_fc_item_fields($content_type, $parent_field_name, $
     default:
       $translatable = 1;
 
-      db_insert('transperfect_field_config')
+      db_insert('globallink_field_config')
       ->fields(array(
         'content_type' => $content_type,
         'entity_type' => 'field_collection_item',

@@ -2,25 +2,25 @@
 
 /**
  * @file
- * Transperfect_locale_mapping.inc is a file that contains most functions
+ * globallink_locale_mapping.inc is a file that contains most functions
  * needed on the Locale Mapping UI.
  */
 
 /**
- * Returns form for transperfect_locale page.
+ * Returns form for globallink_locale page.
  */
-function transperfect_locale_page() {
-  return drupal_get_form('transperfect_locale');
+function globallink_locale_page() {
+  return drupal_get_form('globallink_locale');
 }
 
 /**
- * Renders form for transperfect_locale.
+ * Renders form for globallink_locale.
  */
-function transperfect_locale() {
+function globallink_locale() {
   $form = array();
 
   $languages = language_list('language', TRUE);
-  $mapped_languages = transperfect_get_mapped_locale_codes();
+  $mapped_languages = globallink_get_mapped_locale_codes();
 
   if (sizeof($mapped_languages) > 0) {
     foreach ($mapped_languages as $mlang) {
@@ -42,7 +42,7 @@ function transperfect_locale() {
     }
   }
 
-  $tpt_list = transperfect_get_tpt_list();
+  $tpt_list = globallink_get_tpt_list();
 
   $header = array(
     'drupal_locale_code' => array(
@@ -55,7 +55,7 @@ function transperfect_locale() {
     ),
   );
 
-  $query = db_select('transperfect_locale', 'tl')
+  $query = db_select('globallink_locale', 'tl')
   ->isNotNull('drupal_locale_code')
   ->fields('tl')
   ->extend('PagerDefault')
@@ -134,12 +134,12 @@ function transperfect_locale() {
 }
 
 /**
- * Handles validation of transperfect_locale form.
+ * Handles validation of globallink_locale form.
  */
-function transperfect_locale_validate($form, &$form_state) {
+function globallink_locale_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
-  if ($form_state['triggering_element'] != 'transperfect_locale_mapping_submit') {
+  if ($form_state['triggering_element'] != 'globallink_locale_mapping_submit') {
     return;
   }
 
@@ -151,9 +151,9 @@ function transperfect_locale_validate($form, &$form_state) {
 }
 
 /**
- * Handles submission of transperfect_locale form.
+ * Handles submission of globallink_locale form.
  */
-function transperfect_locale_submit($form, &$form_state) {
+function globallink_locale_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op == t('Add')) {
@@ -161,17 +161,17 @@ function transperfect_locale_submit($form, &$form_state) {
     $drupal_locale = explode('|', $drupal_seleced_locale);
     $locale_code = $form_state['values']['tpt_locale_list'];
 
-    transperfect_add_locale_mapping($drupal_locale[0], $drupal_locale[1], $locale_code);
+    globallink_add_locale_mapping($drupal_locale[0], $drupal_locale[1], $locale_code);
     drupal_set_message(t('Mapping added successfully.'));
   }
   else {
     $locales_arr = array_filter($form_state['values']['table']);
 
     foreach ($locales_arr as $locale) {
-      $locale_name = transperfect_get_drupal_locale_name($locale);
+      $locale_name = globallink_get_drupal_locale_name($locale);
 
-      if (transperfect_check_pending_submission($locale)) {
-        transperfect_delete_locale_mapping($locale);
+      if (globallink_check_pending_submission($locale)) {
+        globallink_delete_locale_mapping($locale);
         drupal_set_message(t('@locale mapping deleted successfully.', array('@locale' => check_plain($locale_name))));
       }
       else {
@@ -190,8 +190,8 @@ function transperfect_locale_submit($form, &$form_state) {
  * @return bool
  *   TRUE if the submission has not yet been sent.  FALSE otherwise.
  */
-function transperfect_check_pending_submission($locale) {
-  $query1 = db_select('transperfect_core', 'tc')
+function globallink_check_pending_submission($locale) {
+  $query1 = db_select('globallink_core', 'tc')
 
   ->fields('tc', array('rid'))
   ->condition('tc.status', array('Sent for Translations', 'Error'), 'IN')
@@ -202,12 +202,12 @@ function transperfect_check_pending_submission($locale) {
   );
 
   $table_arr = array(
-    'tce' => 'transperfect_core_entity',
-    'tcb' => 'transperfect_core_block',
-    'tci' => 'transperfect_core_interface',
-    'tcm' => 'transperfect_core_menu',
-    'tct' => 'transperfect_core_taxonomy',
-    'tcw' => 'transperfect_core_webform',
+    'tce' => 'globallink_core_entity',
+    'tcb' => 'globallink_core_block',
+    'tci' => 'globallink_core_interface',
+    'tcm' => 'globallink_core_menu',
+    'tct' => 'globallink_core_taxonomy',
+    'tcw' => 'globallink_core_webform',
   );
 
   foreach ($table_arr as $key => $table) {
@@ -246,8 +246,8 @@ function transperfect_check_pending_submission($locale) {
  * @param string $locale_code
  *   The locale code.
  */
-function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $locale_code) {
-  db_update('transperfect_locale')
+function globallink_add_locale_mapping($drupal_locale, $drupal_locale_desc, $locale_code) {
+  db_update('globallink_locale')
   ->fields(array(
     'drupal_locale_code' => $drupal_locale,
     'drupal_locale_desc' => $drupal_locale_desc,
@@ -262,8 +262,8 @@ function transperfect_add_locale_mapping($drupal_locale, $drupal_locale_desc, $l
  * @param string $locale_code
  *   The code for the locale to delete.
  */
-function transperfect_delete_locale_mapping($locale_code) {
-  db_update('transperfect_locale')
+function globallink_delete_locale_mapping($locale_code) {
+  db_update('globallink_locale')
   ->fields(array(
     'drupal_locale_code' => NULL,
   ))
@@ -277,10 +277,10 @@ function transperfect_delete_locale_mapping($locale_code) {
  * @return array
  *   Associative array of locales.
  */
-function transperfect_get_tpt_list() {
+function globallink_get_tpt_list() {
   $languages = array();
 
-  $result = db_select('transperfect_locale', 'tl')
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->isNull('drupal_locale_code')
   ->orderBy('locale_desc', 'ASC')
@@ -299,10 +299,10 @@ function transperfect_get_tpt_list() {
  * @return array
  *   Associative array of mapped locale codes.
  */
-function transperfect_get_mapped_locale_codes() {
+function globallink_get_mapped_locale_codes() {
   $languages = array();
 
-  $result = db_select('transperfect_locale', 'tl')
+  $result = db_select('globallink_locale', 'tl')
   ->fields('tl')
   ->isNotNull('drupal_locale_code')
   ->orderBy('locale_desc', 'ASC')

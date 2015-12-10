@@ -9,14 +9,14 @@
  * @return array
  *   Array of forms for the Transperfect active submissions dashboard.
  */
-function transperfect_dashboard_active_submissions_page($type) {
+function globallink_dashboard_active_submissions_page($type) {
   $_SESSION['transpefect_dashboard_active_type'] = $type;
 
   $array = array();
 
-  $array[] = drupal_get_form('transperfect_node_active_select_form');
-  $array[] = drupal_get_form('transperfect_node_active_pager_form');
-  $array[] = drupal_get_form('transperfect_dashboard_active');
+  $array[] = drupal_get_form('globallink_node_active_select_form');
+  $array[] = drupal_get_form('globallink_node_active_pager_form');
+  $array[] = drupal_get_form('globallink_dashboard_active');
 
   return $array;
 }
@@ -24,21 +24,21 @@ function transperfect_dashboard_active_submissions_page($type) {
 /**
  * Builds form to allow selection of specific Transperfect submission by ID.
  */
-function transperfect_node_active_select_form() {
-  module_load_include('inc', 'transperfect', 'transperfect_node');
+function globallink_node_active_select_form() {
+  module_load_include('inc', 'transperfect', 'globallink_node');
 
   $form = array();
 
-  transperfect_get_submission_status();
+  globallink_get_submission_status();
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
 
   $selected_value = '';
 
-  $options = transperfect_get_distinct_active_submission_names();
+  $options = globallink_get_distinct_active_submission_names();
 
-  if (empty($redirect_submission) && !empty($_SESSION['transperfect_selected_submission'])) {
-    $selected_value = $_SESSION['transperfect_selected_submission'];
+  if (empty($redirect_submission) && !empty($_SESSION['globallink_selected_submission'])) {
+    $selected_value = $_SESSION['globallink_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
     $selected_value = array_search($redirect_submission, $options);
@@ -96,13 +96,13 @@ function transperfect_node_active_select_form() {
 /**
  * Handles submission of active select form.
  */
-function transperfect_node_active_select_form_submit($form, &$form_state) {
+function globallink_node_active_select_form_submit($form, &$form_state) {
   if (isset($_GET['submission'])) {
     unset($_GET['submission']);
   }
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
   switch ($op) {
     case t('Cancel Submission'):
@@ -111,11 +111,11 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
 
         $selected_submission = $form_state['values']['submission'];
 
-        $_SESSION['transperfect_selected_submission'] = '';
+        $_SESSION['globallink_selected_submission'] = '';
 
-        transperfect_cancel_submission($selected_submission, $pd4);
+        globallink_cancel_submission($selected_submission, $pd4);
 
-        $_SESSION['transperfect_globalLink_arr'] = array();
+        $_SESSION['globallink_globalLink_arr'] = array();
 
         drupal_set_message(t('Submission has been cancelled successfully.'));
       }
@@ -130,7 +130,7 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
 
       break;
     case t('Go'):
-      $_SESSION['transperfect_selected_submission'] = $form_state['values']['submission'];
+      $_SESSION['globallink_selected_submission'] = $form_state['values']['submission'];
 
       break;
   }
@@ -139,7 +139,7 @@ function transperfect_node_active_select_form_submit($form, &$form_state) {
 /**
  * Builds form to add pagination to Transperfect send dashboard.
  */
-function transperfect_node_active_pager_form() {
+function globallink_node_active_pager_form() {
   $module_path = drupal_get_path('module', 'transperfect');
   drupal_add_css($module_path . '/css/transperfect.css');
 
@@ -153,7 +153,7 @@ function transperfect_node_active_pager_form() {
   $form['page_counter']['markup']['p_count'] = array(
     '#type' => 'textfield',
     '#size' => 5,
-    '#default_value' => isset($_SESSION['transperfect_node_active_page_count']) ? $_SESSION['transperfect_node_active_page_count'][0] : TPT_PAGER_LIMIT,
+    '#default_value' => isset($_SESSION['globallink_node_active_page_count']) ? $_SESSION['globallink_node_active_page_count'][0] : TPT_PAGER_LIMIT,
     '#field_prefix' => t('Show') . '&nbsp;&nbsp;',
     '#field_suffix' => '&nbsp;&nbsp;' . t('records') . '&nbsp;&nbsp;&nbsp;&nbsp;',
     '#prefix' => '<div class="container-inline">',
@@ -164,7 +164,7 @@ function transperfect_node_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('transperfect_node_active_pager_form_submit'),
+    '#submit' => array('globallink_node_active_pager_form_submit'),
     '#access' => TRUE,
   );
 
@@ -174,7 +174,7 @@ function transperfect_node_active_pager_form() {
 /**
  * Handles submission of pager form.
  */
-function transperfect_node_active_pager_form_submit($form, &$form_state) {
+function globallink_node_active_pager_form_submit($form, &$form_state) {
   $op = $form_state['values']['op'];
 
   if ($op != t('Go')) {
@@ -187,7 +187,7 @@ function transperfect_node_active_pager_form_submit($form, &$form_state) {
     form_set_error('', t('Invalid Page Count.'));
   }
   else {
-    $_SESSION['transperfect_node_active_page_count'] = array($page_count);
+    $_SESSION['globallink_node_active_page_count'] = array($page_count);
 
     return;
   }
@@ -196,7 +196,7 @@ function transperfect_node_active_pager_form_submit($form, &$form_state) {
 /**
  * Builds form to show all active Transperfect submissions.
  */
-function transperfect_dashboard_active() {
+function globallink_dashboard_active() {
   module_load_include('inc', 'transperfect', 'transperfect');
 
   $form = array();
@@ -205,22 +205,22 @@ function transperfect_dashboard_active() {
 
   $selected_value = '';
 
-  if (empty($redirect_submission) && !empty($_SESSION['transperfect_selected_submission'])) {
-    $selected_value = $_SESSION['transperfect_selected_submission'];
+  if (empty($redirect_submission) && !empty($_SESSION['globallink_selected_submission'])) {
+    $selected_value = $_SESSION['globallink_selected_submission'];
   }
   elseif (!empty($redirect_submission)) {
-    $options = transperfect_get_distinct_active_submission_names();
+    $options = globallink_get_distinct_active_submission_names();
     $selected_value = array_search($redirect_submission, $options);
   }
 
   if (!empty($_SESSION['transpefect_dashboard_active_type'])) {
     $content_types = node_type_get_names();
-    $projects = transperfect_get_pd_projects();
+    $projects = globallink_get_pd_projects();
 
     $page_count = TPT_PAGER_LIMIT;
 
-    if (isset($_SESSION['transperfect_node_active_page_count'])) {
-      $page_count = $_SESSION['transperfect_node_active_page_count'][0];
+    if (isset($_SESSION['globallink_node_active_page_count'])) {
+      $page_count = $_SESSION['globallink_node_active_page_count'][0];
     }
 
     $header = array(
@@ -258,7 +258,7 @@ function transperfect_dashboard_active() {
       ),
     );
 
-    $query = db_select('transperfect_core', 'tc')->extend('PagerDefault') // Pager Extender
+    $query = db_select('globallink_core', 'tc')->extend('PagerDefault') // Pager Extender
     ->limit($page_count) // 10 results per page
     ->extend('TableSort') // Sorting Extender
     ->orderByHeader($header); // Field to sort on is picked from $header
@@ -269,8 +269,8 @@ function transperfect_dashboard_active() {
       $query->condition('submission_ticket', $selected_value, '=');
     }
 
-    $query->join('transperfect_locale', 'tl1', 'tc.source = tl1.locale_code');
-    $query->join('transperfect_locale', 'tl2', 'tc.target = tl2.locale_code');
+    $query->join('globallink_locale', 'tl1', 'tc.source = tl1.locale_code');
+    $query->join('globallink_locale', 'tl2', 'tc.target = tl2.locale_code');
     $query->fields('tc');
     $query->addField('tl1', 'drupal_locale_desc', 'source_name');
     $query->addField('tl2', 'drupal_locale_desc', 'target_name');
@@ -289,7 +289,7 @@ function transperfect_dashboard_active() {
         'nid' => $item->nid,
         'vid' => $item->vid,
         'submission' => $item->submission,
-        'title' => l(transperfect_format_display_string($item->title), 'node/' . $item->nid),
+        'title' => l(globallink_format_display_string($item->title), 'node/' . $item->nid),
         'project_code' => isset($projects[$item->project_code]) ? $projects[$item->project_code] : '',
         'type' => isset($content_types[$item->type]) ? $content_types[$item->type] : '',
         'status' => $item->status,
@@ -329,9 +329,9 @@ function transperfect_dashboard_active() {
 /**
  * Validates form actions for active Transperfect submissions.
  */
-function transperfect_dashboard_active_validate($form, &$form_state) {
-  $pd4 = transperfect_get_project_director_details();
-  transperfect_validate_project_director_details($pd4);
+function globallink_dashboard_active_validate($form, &$form_state) {
+  $pd4 = globallink_get_project_director_details();
+  globallink_validate_project_director_details($pd4);
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
@@ -347,9 +347,9 @@ function transperfect_dashboard_active_validate($form, &$form_state) {
 /**
  * Handles submission of active Transperfect form.
  */
-function transperfect_dashboard_active_submit($form, &$form_state) {
+function globallink_dashboard_active_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
-  $pd4 = transperfect_get_project_director_details();
+  $pd4 = globallink_get_project_director_details();
 
   switch ($op) {
     case t('Cancel Selected Documents'):
@@ -357,7 +357,7 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
         sleep(5);
 
         $rids_arr = array_filter($form_state['values']['table']);
-        $rids = transperfect_check_status($rids_arr);
+        $rids = globallink_check_status($rids_arr);
 
         if (count($rids) == 0) {
           drupal_set_message(t('No document(s) cancelled.'), 'warning', NULL);
@@ -365,21 +365,21 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
           return;
         }
 
-        $_SESSION['transperfect_selected_submission'] = '';
+        $_SESSION['globallink_selected_submission'] = '';
 
-        transperfect_cancel_select_records($rids, $pd4);
+        globallink_cancel_select_records($rids, $pd4);
 
-        $_SESSION['transperfect_globalLink_arr'] = array();
+        $_SESSION['globallink_globalLink_arr'] = array();
 
         drupal_set_message(t('Selected document(s) has been cancelled successfully.'));
       }
       catch (SoapFault $se) {
-        $_SESSION['transperfect_selected_submission'] = '';
+        $_SESSION['globallink_selected_submission'] = '';
         watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
         form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
       }
       catch (Exception $e) {
-        $_SESSION['transperfect_selected_submission'] = '';
+        $_SESSION['globallink_selected_submission'] = '';
         watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
         form_set_error('', check_plain('Error: ' . $e->getMessage()));
       }
@@ -387,10 +387,10 @@ function transperfect_dashboard_active_submit($form, &$form_state) {
       break;
     case t('Clear Cancelled Documents'):
       try {
-        $count = transperfect_clear_cancelled_documents();
+        $count = globallink_clear_cancelled_documents();
 
-        $_SESSION['transperfect_selected_submission'] = '';
-        $_SESSION['transperfect_globalLink_arr'] = array();
+        $_SESSION['globallink_selected_submission'] = '';
+        $_SESSION['globallink_globalLink_arr'] = array();
 
         if ($count > 0) {
           drupal_set_message(t('Cancelled document(s) has been cleared successfully.'));
