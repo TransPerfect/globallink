@@ -5,12 +5,12 @@ GlobalLink.
 Provides translation features.
 
 ********************************************************************
-  This is the 7.x version of transperfect module, and works with Drupal 7.x
+  This is the 7.x version of GlobalLink module, and works with Drupal 7.x
 ********************************************************************
 
 INSTALLATION:
 ============
-1. Create folder 'sites/all/modules/transperfect' and copy all the modules files, keeping directory structure, to this folder.
+1. Create folder 'sites/all/modules/globallink' and copy all the modules files, keeping directory structure, to this folder.
 2. If updating, run the update.php script following the standard procedure for Drupal updates.
 
 POST-INSTALLATION/CONFIGURATION:

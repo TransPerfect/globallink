@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Transperfect fieldable panels panes translation module.
+ * GlobalLink fieldable panels panes translation module.
  *
  * This module adds fieldable panels panes translation support with configuration options.
  */
@@ -13,7 +13,7 @@
 function globallink_fieldable_panels_menu() {
   $items = array();
 
-  $items ['admin/transperfect-translations/dashboard/fieldable_panels'] = array(
+  $items ['admin/globallink-translations/dashboard/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes  ',
     'page callback' => 'globallink_fieldable_panels_dashboard',
     'access callback' => 'globallink_access_callback_any',
@@ -23,7 +23,7 @@ function globallink_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions/fieldable_panels'] = array(
+  $items ['admin/globallink-translations/activeSubmissions/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
     'page callback' => 'globallink_fieldable_panels_active_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -33,7 +33,7 @@ function globallink_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation/fieldable_panels'] = array(
+  $items ['admin/globallink-translations/receiveTranslation/fieldable_panels'] = array(
     'title' => ' Fieldable Panels Panes ',
     'page callback' => 'globallink_fieldable_panels_receive_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -43,7 +43,7 @@ function globallink_fieldable_panels_menu() {
     'page arguments' => array('fieldable_panels'),
   );
 
-  $items['admin/transperfect-translations/receiveTranslation/fieldable_panels/preview'] = array(
+  $items['admin/globallink-translations/receiveTranslation/fieldable_panels/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'globallink_fieldable_panels_preview_translated_content',
     'file' => 'globallink_fieldable_panels_receive.inc',

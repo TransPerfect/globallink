@@ -25,7 +25,7 @@ function globallink_webform_dashboard_page($type) {
  * Builds form to filter webforms to send for translation on dashboard.
  */
 function globallink_webform_dashboard_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -147,7 +147,7 @@ function globallink_webform_dashboard_filter_form() {
         '#value' => t('Reset'),
       );
 
-      drupal_add_css(drupal_get_path('module', 'transperfect') . '/globallink_webform/css/webform.css');
+      drupal_add_css(drupal_get_path('module', 'globallink') . '/globallink_webform/css/webform.css');
     }
   }
   else {
@@ -243,7 +243,7 @@ function globallink_webform_dashboard_form() {
 
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
+  $module_path = drupal_get_path('module', 'globallink');
   $locales = globallink_get_mapped_drupal_locales(FALSE);
 
   if (isset($locales) && count($locales) > 1) {
@@ -380,7 +380,7 @@ function globallink_webform_dashboard_form() {
 
         foreach ($sub_arr as $sub_name => $tgt_arr) {
           $l_title = globallink_format_display_string($sub_name);
-          $l_href = 'admin/transperfect-translations/activeSubmissions/webform';
+          $l_href = 'admin/globallink-translations/activeSubmissions/webform';
 
           $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
@@ -426,7 +426,7 @@ function globallink_webform_dashboard_form() {
 
     if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
-        drupal_add_css($module_path . '/css/transperfect.css');
+        drupal_add_css($module_path . '/css/globallink.css');
 
         $proj_arr = variable_get('globallink_pd_projects', array());
 

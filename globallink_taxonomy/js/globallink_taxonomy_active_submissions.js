@@ -1,12 +1,12 @@
 (function($) {
-  Drupal.behaviors.transperfectTaxonomyActiveSubmissions = {
+  Drupal.behaviors.globallinkTaxonomyActiveSubmissions = {
     attach: function(context, settings) {
-      if ($('.transperfect-taxonomy-active-select-form', context).length == 0) {
+      if ($('.globallink-taxonomy-active-select-form', context).length == 0) {
         return;
       }
 
-      $('.transperfect-taxonomy-select-active-submission', context).change(function() {
-        $('.transperfect-taxonomy-active-select-form').submit();
+      $('.globallink-taxonomy-select-active-submission', context).change(function() {
+        $('.globallink-taxonomy-active-select-form').submit();
       });
     }
   };

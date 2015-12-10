@@ -24,7 +24,7 @@ function globallink_entity_receive_submissions($type) {
  * Builds form to filter entities to receive on dashboard.
  */
 function globallink_entity_receive_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
   module_load_include('inc', 'globallink_entity', 'globallink_entity');
 
   $form = array();
@@ -265,8 +265,8 @@ function globallink_entity_receive_pager_form_submit($form, &$form_state) {
  * Builds form to receive an entity submission.
  */
 function globallink_entity_receive_form() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
 
   $form = array();
 
@@ -447,9 +447,9 @@ function globallink_entity_receive_form() {
       }
 
       drupal_add_js(array(
-        'transperfect' => array(
+        'globallink' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/entity/preview',
+          'previewpath' => base_path() . 'admin/globallink-translations/receiveTranslation/entity/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
@@ -512,8 +512,8 @@ function globallink_entity_receive_form() {
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-clear-deleted").click(function(){jQuery("#edit-submit-clear-deleted").hide();jQuery("#edit-submit-clear-deleted-hidden").css("display","inline");});});', 'inline');
   drupal_add_library('system', 'ui.dialog');
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
   drupal_add_js($module_path . '/globallink_entity/js/globallink_receive.js');
 
   return $form;

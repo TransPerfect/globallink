@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Transperfect translation module.
+ * GlobalLink translation module.
  *
- * This module adds node translation using the Internationalization module (i18n). Also, includes Transperfect core settings UI and configuration.
+ * This module adds node translation using the Internationalization module (i18n). Also, includes GlobalLink core settings UI and configuration.
  */
 
 define('TPT_ROOT', dirname(__FILE__));
@@ -955,12 +955,12 @@ function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     }
 
     if (translation_supported_type($node->type)) {
-      $send_link = 'admin/transperfect-translations/dashboard';
-      $active_link = 'admin/transperfect-translations/activeSubmissions';
+      $send_link = 'admin/globallink-translations/dashboard';
+      $active_link = 'admin/globallink-translations/activeSubmissions';
     }
     elseif (entity_translation_node_supported_type($node->type)) {
-      $send_link = 'admin/transperfect-translations/dashboard/entity';
-      $active_link = 'admin/transperfect-translations/activeSubmissions/entity';
+      $send_link = 'admin/globallink-translations/dashboard/entity';
+      $active_link = 'admin/globallink-translations/activeSubmissions/entity';
     }
     else {
       return;
@@ -993,16 +993,16 @@ function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       }
     }
 
-    $data['actions']['output']['transperfect'] = array(
+    $data['actions']['output']['globallink'] = array(
       '#theme' => 'menu_local_action',
       '#link' => array(),
     );
 
     if ($pending) {
       if (user_access(TPT_ROLE_MANAGE_TRANSLATIONS) || user_access(TPT_ROLE_DO_TRANSLATIONS)) {
-        $data['actions']['output']['transperfect']['#link']['title'] = t('Send for translation');
-        $data['actions']['output']['transperfect']['#link']['href'] = $send_link;
-        $data['actions']['output']['transperfect']['#link']['localized_options'] = array(
+        $data['actions']['output']['globallink']['#link']['title'] = t('Send for translation');
+        $data['actions']['output']['globallink']['#link']['href'] = $send_link;
+        $data['actions']['output']['globallink']['#link']['localized_options'] = array(
           'query' => array(
             'rnid' => $nid,
           ),
@@ -1010,9 +1010,9 @@ function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       }
     }
     else {
-      $data['actions']['output']['transperfect']['#link']['title'] = t('This content has been sent out for translation.');
-      $data['actions']['output']['transperfect']['#link']['href'] = $active_link;
-      $data['actions']['output']['transperfect']['#link']['localized_options'] = array(
+      $data['actions']['output']['globallink']['#link']['title'] = t('This content has been sent out for translation.');
+      $data['actions']['output']['globallink']['#link']['href'] = $active_link;
+      $data['actions']['output']['globallink']['#link']['localized_options'] = array(
         'query' => array(
           'rnid' => $nid,
         ),
@@ -1140,7 +1140,7 @@ function globallink_check_field_configured($content_type, $entity_type, $bundle,
 function globallink_menu() {
   $items = array();
 
-  $items ['admin/transperfect-translations'] = array(
+  $items ['admin/globallink-translations'] = array(
     'title' => 'GlobalLink',
     'description' => 'Allows users to manage and translate content using Translations.com translation services',
     'page callback' => 'globallink_dashboard_page',
@@ -1149,21 +1149,21 @@ function globallink_menu() {
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/dashboard'] = array(
+  $items ['admin/globallink-translations/dashboard'] = array(
     'title' => 'Send For Translation',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/dashboard/node'] = array(
+  $items ['admin/globallink-translations/dashboard/node'] = array(
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -5,
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions'] = array(
+  $items ['admin/globallink-translations/activeSubmissions'] = array(
     'title' => 'Active Submissions',
     'description' => 'Presents a Dashboard interface to view active submissions',
     'page callback' => 'globallink_dashboard_active_submissions_page',
@@ -1174,14 +1174,14 @@ function globallink_menu() {
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions/node'] = array(
+  $items ['admin/globallink-translations/activeSubmissions/node'] = array(
     'title' => ' Content ',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
     'access callback' => 'globallink_access_callback_any',
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation'] = array(
+  $items ['admin/globallink-translations/receiveTranslation'] = array(
     'title' => 'Receive Translation',
     'description' => 'Presents a Dashboard interface to receive and publish translations',
     'page callback' => 'globallink_dashboard_receive_page',
@@ -1192,14 +1192,14 @@ function globallink_menu() {
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation/node'] = array(
+  $items ['admin/globallink-translations/receiveTranslation/node'] = array(
     'title' => ' Content ',
     'access callback' => 'globallink_access_callback_any',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'page arguments' => array('node'),
   );
 
-  $items ['admin/transperfect-translations/settings'] = array(
+  $items ['admin/globallink-translations/settings'] = array(
     'title' => 'Settings',
     'description' => 'Manage settings for GlobalLink',
     'page callback' => 'globallink_settings_page',
@@ -1208,7 +1208,7 @@ function globallink_menu() {
     'file' => 'globallink_settings.inc',
   );
 
-  $items ['admin/transperfect-translations/locale'] = array(
+  $items ['admin/globallink-translations/locale'] = array(
     'title' => 'Locale Mapping',
     'description' => 'Manage locale mappings for GlobalLink',
     'page callback' => 'globallink_locale_page',
@@ -1217,7 +1217,7 @@ function globallink_menu() {
     'file' => 'globallink_locale_mapping.inc',
   );
 
-  $items ['admin/transperfect-translations/fieldConfig'] = array(
+  $items ['admin/globallink-translations/fieldConfig'] = array(
     'title' => 'Field Configuration',
     'description' => 'Manage translatable fields for content types',
     'page callback' => 'globallink_field_page',
@@ -1226,7 +1226,7 @@ function globallink_menu() {
     'file' => 'globallink_field_configuration.inc',
   );
 
-  $items['admin/transperfect-translations/cron'] = array(
+  $items['admin/globallink-translations/cron'] = array(
     'title' => 'Receive Translations Cron',
     'page callback' => 'globallink_receive_translated_contents_automatically',
     'file' => 'globallink_receive_translations.inc',
@@ -1234,7 +1234,7 @@ function globallink_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['admin/transperfect-translations/preview'] = array(
+  $items['admin/globallink-translations/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'globallink_preview_translated_content',
     'file' => 'globallink_receive_translations.inc',
@@ -1242,7 +1242,7 @@ function globallink_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['admin/transperfect-translations/view_log'] = array(
+  $items['admin/globallink-translations/view_log'] = array(
     'title' => 'View Log',
     'page callback' => 'globallink_view_log',
     'file' => 'globallink_settings.inc',

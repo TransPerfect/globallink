@@ -5,13 +5,13 @@ $default_language = language_default();
 $GLOBALS['globallink_source_locale'] = $default_language->language;
 
 /**
- * Builds forms on Transperfect send dashboard.
+ * Builds forms on GlobalLink send dashboard.
  *
  * @param string $type
  *   The type of task we are working on.
  *
  * @return array
- *   Array of forms for the Transperfect send dashboard.
+ *   Array of forms for the GlobalLink send dashboard.
  */
 function globallink_dashboard_page($type) {
   $_SESSION['globallink_selected_type'] = $type;
@@ -26,10 +26,10 @@ function globallink_dashboard_page($type) {
 }
 
 /**
- * Builds form to filter Transperfect nodes to send for translation on dashboard.
+ * Builds form to filter GlobalLink nodes to send for translation on dashboard.
  */
 function globallink_dashboard_node_filter_form($form, &$form_state) {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -72,8 +72,8 @@ function globallink_dashboard_node_filter_form($form, &$form_state) {
         '#attributes' => array('style' => 'padding: 0px;'),
       );
 
-      $module_path = drupal_get_path('module', 'transperfect');
-      drupal_add_css($module_path . '/css/transperfect.css');
+      $module_path = drupal_get_path('module', 'globallink');
+      drupal_add_css($module_path . '/css/globallink.css');
 
       foreach ($filters as $key => $filter) {
         $disabled = FALSE;
@@ -315,10 +315,10 @@ function globallink_dashboard_node_filter_form($form, &$form_state) {
 }
 
 /**
- * Gets target options for Transperfect node.
+ * Gets target options for GlobalLink node.
  *
  * @param string $selected
- *   The selected Transperfect node.
+ *   The selected GlobalLink node.
  *
  * @return string
  *   The target options.
@@ -429,13 +429,13 @@ function globallink_dashboard_node_filter_form_submit($form, &$form_state) {
       return;
   }
 
-  $form_state['redirect'] = 'admin/transperfect-translations/dashboard';
+  $form_state['redirect'] = 'admin/globallink-translations/dashboard';
 
   return;
 }
 
 /**
- * Builds form to add pagination to Transperfect send dashboard.
+ * Builds form to add pagination to GlobalLink send dashboard.
  */
 function globallink_dashboard_pager_form() {
   $form = array();
@@ -496,14 +496,14 @@ function globallink_node_form_pager_submit($form, &$form_state) {
 }
 
 /**
- * Builds form to create a Transperfect submission.
+ * Builds form to create a GlobalLink submission.
  */
 function globallink_dashboard_node_form() {
-  module_load_include('inc', 'transperfect', 'globallink_node');
+  module_load_include('inc', 'globallink', 'globallink_node');
 
   $default_checked_ids = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
+  $module_path = drupal_get_path('module', 'globallink');
 
   $form = array();
 
@@ -745,7 +745,7 @@ function globallink_dashboard_node_form() {
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = globallink_format_display_string($sub_name);
 
-                  $l_href = 'admin/transperfect-translations/activeSubmissions/node';
+                  $l_href = 'admin/globallink-translations/activeSubmissions/node';
 
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
@@ -832,7 +832,7 @@ function globallink_dashboard_node_form() {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = globallink_format_display_string($sub_name);
 
-                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
+                $l_href = 'admin/globallink-translations/activeSubmissions/node';
 
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
@@ -936,7 +936,7 @@ function globallink_dashboard_node_form() {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = globallink_format_display_string($sub_name);
 
-                $l_href = 'admin/transperfect-translations/activeSubmissions/node';
+                $l_href = 'admin/globallink-translations/activeSubmissions/node';
 
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
@@ -1005,7 +1005,7 @@ function globallink_dashboard_node_form() {
         '#default_value' => $default_checked_ids,
       );
 
-      $form['#attributes']['class'][] = 'transperfect-node-form-clear';
+      $form['#attributes']['class'][] = 'globallink-node-form-clear';
 
       if ($count > 0) {
         $form['pager'] = array('#markup' => theme('pager'));
@@ -1021,12 +1021,12 @@ function globallink_dashboard_node_form() {
               '#submit' => array('globallink_node_form_clear_submit'),
               '#access' => TRUE,
               '#attributes' => array(
-                'class' => array('transperfect-node-form-clear-submit'),
+                'class' => array('globallink-node-form-clear-submit'),
               ),
             );
           }
 
-          drupal_add_css($module_path . '/css/transperfect.css');
+          drupal_add_css($module_path . '/css/globallink.css');
           $proj_arr = variable_get('globallink_pd_projects', array());
 
           if (count($proj_arr) > 0) {
@@ -1172,7 +1172,7 @@ function globallink_dashboard_node_form() {
         }
       }
 
-      drupal_add_css($module_path . '/css/transperfect.css');
+      drupal_add_css($module_path . '/css/globallink.css');
     }
   }
 
@@ -1180,7 +1180,7 @@ function globallink_dashboard_node_form() {
 }
 
 /**
- * Handles clearing the "Changed" status on Transperfect nodes that have been sent.
+ * Handles clearing the "Changed" status on GlobalLink nodes that have been sent.
  */
 function globallink_node_form_clear_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -1210,10 +1210,10 @@ function globallink_node_form_clear_submit($form, &$form_state) {
 }
 
 /**
- * Validates form actions for Transperfect submissions.
+ * Validates form actions for GlobalLink submissions.
  */
 function globallink_dashboard_node_form_validate($form, &$form_state) {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'globallink_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
@@ -1283,7 +1283,7 @@ function globallink_dashboard_node_form_validate($form, &$form_state) {
 }
 
 /**
- * Handles Transperfect form submission.
+ * Handles GlobalLink form submission.
  */
 function globallink_dashboard_node_form_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';

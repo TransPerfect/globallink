@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Miscellaneous Transperfect functions for node translations (non-entity).
+ * Miscellaneous GlobalLink functions for node translations (non-entity).
  */
 
 /**
@@ -321,7 +321,7 @@ function globallink_get_sent_rows_by_nid($nid) {
 }
 
 /**
- * Gets Transperfect row by id.
+ * Gets GlobalLink row by id.
  *
  * @param int $row_id
  *   The id of the row.
@@ -341,7 +341,7 @@ function globallink_get_row($row_id) {
 }
 
 /**
- * Gets Transperfect row by node id and locale.
+ * Gets GlobalLink row by node id and locale.
  *
  * @param int $nid
  *   The node id.
@@ -393,13 +393,13 @@ function globallink_get_node_source_languages($nid) {
 }
 
 /**
- * Gets Transperfect locale code.
+ * Gets GlobalLink locale code.
  *
  * @param string $drupal_locale
  *   The Drupal locale code.
  *
  * @return string
- *   The Transperfect locale code.
+ *   The GlobalLink locale code.
  */
 function globallink_get_locale_code($drupal_locale) {
   $result = db_select('globallink_locale', 'tl')
@@ -1037,7 +1037,7 @@ function globallink_load_source_data($lid) {
  * @param int $row_id
  *   The id of the row.
  * @param string $type
- *   The type of Transperfect core.
+ *   The type of GlobalLink core.
  *
  * @return object
  *   Other row.

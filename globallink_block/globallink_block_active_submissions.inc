@@ -42,7 +42,7 @@ function globallink_block_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes']['class'][] = 'transperfect-block-active-select-form';
+  $form['#attributes']['class'][] = 'globallink-block-active-select-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
@@ -55,7 +55,7 @@ function globallink_block_active_select_form() {
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
-      'class' => array('transperfect-block-select-active-submission'),
+      'class' => array('globallink-block-select-active-submission'),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
@@ -181,12 +181,12 @@ function globallink_block_active_pager_form_submit($form, &$form_state) {
  * Builds form to show all active block submissions.
  */
 function globallink_block_active_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';

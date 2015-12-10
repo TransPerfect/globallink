@@ -1,12 +1,12 @@
 (function($) {
-  Drupal.behaviors.transperfectFieldConfiguration = {
+  Drupal.behaviors.globallinkFieldConfiguration = {
     attach: function(context, settings) {
-      if ($('.transperfect-field', context).length == 0) {
+      if ($('.globallink-field', context).length == 0) {
         return;
       }
 
-      $('.transperfect-field-select-type', context).change(function() {
-        $('.transperfect-field').submit();
+      $('.globallink-field-select-type', context).change(function() {
+        $('.globallink-field').submit();
       });
     }
   };

@@ -24,7 +24,7 @@
  *   GlobalLink object that represents active translation.
  */
 function globallink_interface_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
 
   $source_arr = globallink_get_source('default');
   $submitter = $submission_details['submitter'];
@@ -767,8 +767,8 @@ function globallink_interface_update_submission_status($submission_ticket, $stat
  * Gets interface project director submission status.
  */
 function globallink_interface_get_pd_submission_status() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
 
   $query = db_select('globallink_core_interface', 'tc');
   $query->fields('tc', array('submission_ticket'));

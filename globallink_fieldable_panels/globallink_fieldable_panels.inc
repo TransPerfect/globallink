@@ -24,7 +24,7 @@
  *   GlobalLink object that represents active translation.
  */
 function globallink_fieldable_panels_pane_send_for_translations($fpids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
 
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
@@ -398,8 +398,8 @@ function globallink_fieldable_panels_get_distinct_active_submission_names() {
  * Gets fieldable panels submission status.
  */
 function globallink_fieldable_panels_get_submission_status() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
 
   $query = db_select('globallink_core_fieldable_panels', 'tcfp');
   $query->fields('tcfp', array('submission_ticket'));

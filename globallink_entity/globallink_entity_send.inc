@@ -28,7 +28,7 @@ function globallink_entity_dashboard($type) {
  * Builds form to filter entities to send for translation on dashboard.
  */
 function globallink_entity_dashboard_filter_form($form, &$form_state) {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -68,8 +68,8 @@ function globallink_entity_dashboard_filter_form($form, &$form_state) {
         '#attributes' => array('style' => 'padding: 0px;'),
       );
 
-      $module_path = drupal_get_path('module', 'transperfect');
-      drupal_add_css($module_path . '/css/transperfect.css');
+      $module_path = drupal_get_path('module', 'globallink');
+      drupal_add_css($module_path . '/css/globallink.css');
 
       foreach ($filters as $key => $filter) {
         $disabled = FALSE;
@@ -414,7 +414,7 @@ function globallink_entity_dashboard_filter_form_submit($form, &$form_state) {
       return;
   }
 
-  $form_state['redirect'] = 'admin/transperfect-translations/dashboard/entity';
+  $form_state['redirect'] = 'admin/globallink-translations/dashboard/entity';
 
   return;
 }
@@ -481,7 +481,7 @@ function globallink_entity_dashboard_pager_form_submit($form, &$form_state) {
  */
 function globallink_entity_dashboard_form() {
   $default_checked_ids = array();
-  $module_path = drupal_get_path('module', 'transperfect');
+  $module_path = drupal_get_path('module', 'globallink');
 
   $form = array();
   $locales = globallink_get_mapped_drupal_locales(FALSE);
@@ -715,7 +715,7 @@ function globallink_entity_dashboard_form() {
 
                 foreach ($sub_arr as $sub_name => $tgt_arr) {
                   $l_title = globallink_format_display_string($sub_name);
-                  $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
+                  $l_href = 'admin/globallink-translations/activeSubmissions/entity';
                   $l_options = array('query' => array('submission' => urlencode($sub_name)));
                   $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
                   $t_count = 0;
@@ -799,7 +799,7 @@ function globallink_entity_dashboard_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = globallink_format_display_string($sub_name);
-                $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
+                $l_href = 'admin/globallink-translations/activeSubmissions/entity';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 
@@ -906,7 +906,7 @@ function globallink_entity_dashboard_form() {
             if ($active_arr) {
               foreach ($active_arr as $sub_name => $tgt_arr) {
                 $l_title = globallink_format_display_string($sub_name);
-                $l_href = 'admin/transperfect-translations/activeSubmissions/entity';
+                $l_href = 'admin/globallink-translations/activeSubmissions/entity';
                 $l_options = array('query' => array('submission' => urlencode($sub_name)));
                 $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 
@@ -972,7 +972,7 @@ function globallink_entity_dashboard_form() {
         }
       }
 
-      $form['#attributes']['class'][] = 'transperfect-entity-form-clear';
+      $form['#attributes']['class'][] = 'globallink-entity-form-clear';
 
       $form['table'] = array(
         '#type' => 'tableselect',
@@ -994,14 +994,14 @@ function globallink_entity_dashboard_form() {
               '#value' => t('Clear "Changed" Status'),
               '#limit_validation_errors' => array(),
               '#attributes' => array(
-                'class' => array('transperfect-entity-form-clear-submit'),
+                'class' => array('globallink-entity-form-clear-submit'),
               ),
               '#submit' => array('globallink_entity_form_clear_submit'),
               '#access' => TRUE,
             );
           }
 
-          drupal_add_css($module_path . '/css/transperfect.css');
+          drupal_add_css($module_path . '/css/globallink.css');
           $proj_arr = variable_get('globallink_pd_projects', array());
 
           if (count($proj_arr) > 0) {
@@ -1146,7 +1146,7 @@ function globallink_entity_dashboard_form() {
         }
       }
 
-      drupal_add_css($module_path . '/css/transperfect.css');
+      drupal_add_css($module_path . '/css/globallink.css');
     }
   }
 

@@ -1,12 +1,12 @@
 (function($) {
-  Drupal.behaviors.transperfectActiveSubmissions = {
+  Drupal.behaviors.globallinkActiveSubmissions = {
     attach: function(context, settings) {
-      if ($('.transperfect-node-select-submission-form', context).length == 0) {
+      if ($('.globallink-node-select-submission-form', context).length == 0) {
         return;
       }
 
-      $('.transperfect-node-select-submission-edit', context).change(function() {
-        $('.transperfect-node-select-submission-form').submit();
+      $('.globallink-node-select-submission-edit', context).change(function() {
+        $('.globallink-node-select-submission-form').submit();
       });
     }
   };

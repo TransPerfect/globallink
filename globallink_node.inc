@@ -172,9 +172,9 @@ function globallink_update_node_ticket_id($arr, $project_code) {
  * @param array $nids
  *   Array of node nids.
  * @param string $source
- *   Transperfect locale code.
+ *   GlobalLink locale code.
  * @param array $tgts
- *   Array of transperfect locale codes.
+ *   Array of GlobalLink locale codes.
  */
 function globallink_update_node_change_flag($nids, $source, $tgts) {
   watchdog('GlobalLink', 'CHANGED Status Cleared for Node Ids - [%nids]', array('%nids' => implode(',', $nids)), WATCHDOG_INFO);
@@ -1279,7 +1279,7 @@ function globallink_get_active_submission_rows_by_nid($nids) {
 }
 
 /**
- * Saves Transperfect node.
+ * Saves GlobalLink node.
  *
  * @param object $node
  *   The node to save.
@@ -2063,8 +2063,8 @@ function globallink_update_submission_status($submission_ticket, $status = 'Canc
  * Gets submission status for a translation.
  */
 function globallink_get_submission_status() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
 
   $query = db_select('globallink_core', 'tc');
   $query->fields('tc', array('submission_ticket'));

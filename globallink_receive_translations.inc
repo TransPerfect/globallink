@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Builds forms on Transperfect receive dashboard.
+ * Builds forms on GlobalLink receive dashboard.
  *
  * @param string $type
  *   The type of task we are working on.
  *
  * @return array
- *   Array of forms for the Transperfect receive dashboard.
+ *   Array of forms for the GlobalLink receive dashboard.
  */
 function globallink_dashboard_receive_page($type) {
   $_SESSION['transpefect_dashboard_receive_type'] = $type;
@@ -22,11 +22,11 @@ function globallink_dashboard_receive_page($type) {
 }
 
 /**
- * Builds form to filter Transperfect nodes to receive on dashboard.
+ * Builds form to filter GlobalLink nodes to receive on dashboard.
  */
 function globallink_node_receive_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect', 'globallink_node');
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_node');
 
   $form = array();
 
@@ -209,7 +209,7 @@ function globallink_node_receive_filter_form_submit($form, &$form_state) {
 }
 
 /**
- * Builds form to add pagination to Transperfect receive dashboard.
+ * Builds form to add pagination to GlobalLink receive dashboard.
  */
 function globallink_node_receive_pager_form() {
   $form = array();
@@ -263,11 +263,11 @@ function globallink_node_receive_pager_form_submit($form, &$form_state) {
 }
 
 /**
- * Builds form to receive a Transperfect submission.
+ * Builds form to receive a GlobalLink submission.
  */
 function globallink_dashboard_receive() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
 
   $form = array();
 
@@ -451,9 +451,9 @@ function globallink_dashboard_receive() {
       }
 
       drupal_add_js(array(
-        'transperfect' => array(
+        'globallink' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . 'admin/transperfect-translations/preview',
+          'previewpath' => base_path() . 'admin/globallink-translations/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
@@ -516,15 +516,15 @@ function globallink_dashboard_receive() {
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-clear-deleted").click(function(){jQuery("#edit-submit-clear-deleted").hide();jQuery("#edit-submit-clear-deleted-hidden").css("display","inline");});});', 'inline');
   drupal_add_library('system', 'ui.dialog');
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
   drupal_add_js($module_path . '/js/globallink_receive.js');
 
   return $form;
 }
 
 /**
- * Validates Transperfect form input.
+ * Validates GlobalLink form input.
  */
 function globallink_dashboard_receive_validate($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
@@ -542,7 +542,7 @@ function globallink_dashboard_receive_validate($form, &$form_state) {
 }
 
 /**
- * Handles Transperfect form submission.
+ * Handles GlobalLink form submission.
  */
 function globallink_dashboard_receive_submit($form, &$form_state) {
   $type = $_SESSION['transpefect_dashboard_receive_type'];
@@ -828,7 +828,7 @@ function globallink_auto_receive($cron_type) {
 }
 
 /**
- * Previews translated Transperfect content in the form of JSON.
+ * Previews translated GlobalLink content in the form of JSON.
  */
 function globallink_preview_translated_content() {
   $row_id = $_POST['rid'];
@@ -838,13 +838,13 @@ function globallink_preview_translated_content() {
 }
 
 /**
- * Gets Transperfect translations by row ID.
+ * Gets GlobalLink translations by row ID.
  *
  * @param string $row_id
  *   The row ID.
  *
  * @return array
- *   Array of Transperfect translations.
+ *   Array of GlobalLink translations.
  */
 function globallink_get_translations_for_row_id($row_id) {
   $row = globallink_get_row($row_id);

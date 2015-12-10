@@ -25,7 +25,7 @@ function globallink_webform_receive_submissions($type) {
  * Builds form to filter webforms to receive on dashboard.
  */
 function globallink_webform_receive_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
   module_load_include('inc', 'globallink_webform', 'globallink_webform');
 
   $form = array();
@@ -213,8 +213,8 @@ function globallink_webform_receive_filter_form_submit($form, &$form_state) {
  * Builds form to add pagination to webform receive dashboard.
  */
 function globallink_webform_receive_pager_form() {
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $form = array();
 
@@ -270,8 +270,8 @@ function globallink_webform_receive_pager_form_submit($form, &$form_state) {
  * Builds form to receive a webform submission.
  */
 function globallink_webform_receive_form() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
 
   $form = array();
 
@@ -458,9 +458,9 @@ function globallink_webform_receive_form() {
       }
 
       drupal_add_js(array(
-        'transperfect' => array(
+        'globallink' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/webform/preview',
+          'previewpath' => base_path() . 'admin/globallink-translations/receiveTranslation/webform/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
@@ -526,9 +526,9 @@ function globallink_webform_receive_form() {
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-clear-deleted").click(function(){jQuery("#edit-submit-clear-deleted").hide();jQuery("#edit-submit-clear-deleted-hidden").css("display","inline");});});', 'inline');
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-refresh").click(function(){jQuery("#edit-submit-refresh").hide();jQuery("#edit-submit-refresh-hidden").css("display","inline");});});', 'inline');
 
-  $module_path = drupal_get_path('module', 'transperfect');
+  $module_path = drupal_get_path('module', 'globallink');
   drupal_add_library('system', 'ui.dialog');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  drupal_add_css($module_path . '/css/globallink.css');
   drupal_add_js($module_path . '/globallink_webform/js/globallink_webform.js');
 
   return $form;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Miscellaneous Web Service functions for Transperfect.
+ * Miscellaneous Web Service functions for GlobalLink.
  */
 
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
@@ -15,10 +15,10 @@ global $base_url;
 $proxy_server = variable_get('globallink_proxy_url');
 
 if (!empty($proxy_server)) {
-  define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
+  define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'globallink') . '/gl_ws/wsdl/');
 }
 else {
-  define('GL_WSDL_PATH', $base_url . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
+  define('GL_WSDL_PATH', $base_url . '/' . drupal_get_path('module', 'globallink') . '/gl_ws/wsdl/');
 }
 
 function globallink_get_user_pd_projects($pd_obj) {

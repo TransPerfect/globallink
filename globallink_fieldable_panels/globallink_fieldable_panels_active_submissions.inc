@@ -40,7 +40,7 @@ function globallink_fieldable_panels_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes']['class'][] = 'transperfect-fieldable-panels-active-select-form';
+  $form['#attributes']['class'][] = 'globallink-fieldable-panels-active-select-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
@@ -53,7 +53,7 @@ function globallink_fieldable_panels_active_select_form() {
     '#options' => $options,
     '#default_value' => $selected_value,
     '#attributes' => array(
-      'class' => array('transperfect-fieldable-panels-select-active-submission'),
+      'class' => array('globallink-fieldable-panels-select-active-submission'),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );
@@ -125,8 +125,8 @@ function globallink_fieldable_panels_active_select_form_submit($form, &$form_sta
  * Builds form to add pagination to fieldable panels send dashboard.
  */
 function globallink_fieldable_panels_active_pager_form() {
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $form = array();
 
@@ -182,7 +182,7 @@ function globallink_fieldable_panels_active_pager_form_submit($form, &$form_stat
  * Builds form to show all active fieldable panels submissions.
  */
 function globallink_fieldable_panels_active_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 

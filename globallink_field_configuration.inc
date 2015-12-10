@@ -17,7 +17,7 @@ function globallink_field_page() {
  * Renders form for globallink_field.
  */
 function globallink_field() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $selected_value = '';
 
@@ -32,7 +32,7 @@ function globallink_field() {
 
   $node_types = $n_arr + $t_arr;
 
-  $form['#attributes']['class'][] = 'transperfect-field';
+  $form['#attributes']['class'][] = 'globallink-field';
 
   $form['select_field'] = array(
     '#type' => 'container',
@@ -45,7 +45,7 @@ function globallink_field() {
     '#options' => $node_types,
     '#default_value' => $selected_value,
     '#attributes' => array(
-      'class' => array('transperfect-field-select-type'),
+      'class' => array('globallink-field-select-type'),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
   );

@@ -42,7 +42,7 @@ function globallink_interface_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes']['class'][] = 'transperfect-interface-active-select-form';
+  $form['#attributes']['class'][] = 'globallink-interface-active-select-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
@@ -56,7 +56,7 @@ function globallink_interface_active_select_form() {
     '#default_value' => $selected_value,
     '#attributes' => array(
       'class' => array(
-        'transperfect-interface-select-active-submission',
+        'globallink-interface-select-active-submission',
       ),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -184,12 +184,12 @@ function globallink_interface_active_pager_form_submit($form, &$form_state) {
  * Builds form to show all active interface submissions.
  */
 function globallink_interface_active_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $redirect_submission = isset($_GET['submission']) ? urldecode($_GET['submission']) : '';
   $selected_value = '';

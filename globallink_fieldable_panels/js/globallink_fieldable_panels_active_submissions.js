@@ -1,12 +1,12 @@
 (function($) {
-  Drupal.behaviors.transperfectFieldablePanelsActiveSubmissions = {
+  Drupal.behaviors.globallinkFieldablePanelsActiveSubmissions = {
     attach: function(context, settings) {
-      if ($('.transperfect-fieldable-panels-active-select-form', context).length == 0) {
+      if ($('.globallink-fieldable-panels-active-select-form', context).length == 0) {
         return;
       }
 
-      $('.transperfect-fieldable-panels-select-active-submission', context).change(function() {
-        $('.transperfect-fieldable-panels-active-select-form').submit();
+      $('.globallink-fieldable-panels-select-active-submission', context).change(function() {
+        $('.globallink-fieldable-panels-active-select-form').submit();
       });
     }
   };

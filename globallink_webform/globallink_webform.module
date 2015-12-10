@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Transperfect webform translation module.
+ * GlobalLink webform translation module.
  *
  * This module adds webform translation support with configuration options.
  */
@@ -13,7 +13,7 @@
 function globallink_webform_menu() {
   $items = array();
 
-  $items ['admin/transperfect-translations/dashboard/webform'] = array(
+  $items ['admin/globallink-translations/dashboard/webform'] = array(
     'title' => ' Webforms ',
     'page callback' => 'globallink_webform_dashboard_page',
     'access callback' => 'globallink_access_callback_any',
@@ -23,7 +23,7 @@ function globallink_webform_menu() {
     'page arguments' => array('webform'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions/webform'] = array(
+  $items ['admin/globallink-translations/activeSubmissions/webform'] = array(
     'title' => ' Webforms ',
     'page callback' => 'globallink_webform_active_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -33,7 +33,7 @@ function globallink_webform_menu() {
     'page arguments' => array('webform'),
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation/webform'] = array(
+  $items ['admin/globallink-translations/receiveTranslation/webform'] = array(
     'title' => ' Webforms ',
     'page callback' => 'globallink_webform_receive_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -43,7 +43,7 @@ function globallink_webform_menu() {
     'page arguments' => array('webform'),
   );
 
-  $items['admin/transperfect-translations/receiveTranslation/webform/preview'] = array(
+  $items['admin/globallink-translations/receiveTranslation/webform/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'globallink_webform_preview_translated_content',
     'file' => 'globallink_webform_receive.inc',

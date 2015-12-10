@@ -1,12 +1,12 @@
 (function($) {
-  Drupal.behaviors.transperfectInterfaceActiveSubmissions = {
+  Drupal.behaviors.globallinkInterfaceActiveSubmissions = {
     attach: function(context, settings) {
-      if ($('.transperfect-interface-active-select-form', context).length == 0) {
+      if ($('.globallink-interface-active-select-form', context).length == 0) {
         return;
       }
 
-      $('.transperfect-interface-select-active-submission', context).change(function() {
-        $('.transperfect-interface-active-select-form').submit();
+      $('.globallink-interface-select-active-submission', context).change(function() {
+        $('.globallink-interface-active-select-form').submit();
       });
     }
   };

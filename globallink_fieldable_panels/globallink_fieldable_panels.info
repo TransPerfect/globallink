@@ -1,7 +1,7 @@
 name = GlobalLink Fieldable Panels Panes Translation
 description = Allows users to manage and translate built-in interface strings using Translations.com translation services.
 core = 7.x
-dependencies[] = transperfect
+dependencies[] = globallink
 dependencies[] = fieldable_panels_panes
 package = GlobalLink
 version = 7.X-5.0.0

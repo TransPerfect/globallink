@@ -822,8 +822,8 @@ function globallink_webform_update_submission_status($submission_ticket, $status
  * Gets webform project director submission status.
  */
 function globallink_webform_get_pd_submission_status() {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
 
   $query = db_select('globallink_core_webform', 'tc');
   $query->fields('tc', array('submission_ticket'));

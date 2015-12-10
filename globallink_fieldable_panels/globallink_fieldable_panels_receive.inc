@@ -25,10 +25,10 @@ function globallink_fieldable_panels_receive_submissions($type) {
  * Builds form to filter fieldable panels to receive on dashboard.
  */
 function globallink_fieldable_panels_receive_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
   module_load_include('inc', 'globallink_fieldable_panels', 'globallink_fieldable_panels');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
 
   $form = array();
 
@@ -214,8 +214,8 @@ function globallink_fieldable_panels_receive_filter_form_submit($form, &$form_st
  * Builds form to add pagination to fieldable panels receive dashboard.
  */
 function globallink_fieldable_panels_receive_pager_form() {
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $form = array();
 
@@ -450,9 +450,9 @@ function globallink_fieldable_panels_receive_form() {
       }
 
       drupal_add_js(array(
-        'transperfect' => array(
+        'globallink' => array(
           'popup' => $div_arr,
-          'previewpath' => base_path() . 'admin/transperfect-translations/receiveTranslation/fieldable_panels/preview',
+          'previewpath' => base_path() . 'admin/globallink-translations/receiveTranslation/fieldable_panels/preview',
           'rids' => $rid_arr,
         ),
       ), 'setting');
@@ -519,8 +519,8 @@ function globallink_fieldable_panels_receive_form() {
   drupal_add_js('jQuery(document).ready(function(){jQuery("#edit-submit-refresh").click(function(){jQuery("#edit-submit-refresh").hide();jQuery("#edit-submit-refresh-hidden").css("display","inline");});});', 'inline');
   drupal_add_library('system', 'ui.dialog');
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
   drupal_add_js($module_path . '/globallink_fieldable_panels/js/globallink_fieldable_panels.js');
 
   return $form;

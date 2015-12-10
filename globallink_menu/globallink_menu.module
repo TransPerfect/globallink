@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Transperfect menu translation module.
+ * GlobalLink menu translation module.
  *
  * This module adds menu translation support with configuration options.
  */
@@ -13,7 +13,7 @@
 function globallink_menu_menu() {
   $items = array();
 
-  $items ['admin/transperfect-translations/dashboard/menu'] = array(
+  $items ['admin/globallink-translations/dashboard/menu'] = array(
     'title' => ' Menus ',
     'page callback' => 'globallink_menu_dashboard',
     'access callback' => 'globallink_access_callback_any',
@@ -23,7 +23,7 @@ function globallink_menu_menu() {
     'page arguments' => array('menu'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions/menu'] = array(
+  $items ['admin/globallink-translations/activeSubmissions/menu'] = array(
     'title' => ' Menus ',
     'page callback' => 'globallink_menu_active_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -33,7 +33,7 @@ function globallink_menu_menu() {
     'page arguments' => array('menu'),
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation/menu'] = array(
+  $items ['admin/globallink-translations/receiveTranslation/menu'] = array(
     'title' => ' Menus ',
     'page callback' => 'globallink_menu_receive_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -43,7 +43,7 @@ function globallink_menu_menu() {
     'page arguments' => array('menu'),
   );
 
-  $items['admin/transperfect-translations/receiveTranslation/menu/preview'] = array(
+  $items['admin/globallink-translations/receiveTranslation/menu/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'globallink_menu_preview_translated_content',
     'file' => 'globallink_menu_receive.inc',

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Installation file for Transperfect module.
+ * Installation file for GlobalLink module.
  */
 
 /**
@@ -2020,7 +2020,7 @@ function globallink_uninstall() {
   $keys = array_keys($_SESSION);
 
   foreach ($keys as $key) {
-    if (stristr($key, 'transperfect') !== FALSE) {
+    if (stristr($key, 'globallink') !== FALSE) {
       unset($_SESSION[$key]);
     }
   }
@@ -2037,7 +2037,7 @@ function globallink_update_7200() {
   $keys = array_keys($_SESSION);
 
   foreach ($keys as $key) {
-    if (stristr($key, 'transperfect') !== FALSE) {
+    if (stristr($key, 'globallink') !== FALSE) {
       unset($_SESSION[$key]);
     }
   }
@@ -2255,7 +2255,7 @@ function globallink_update_7201() {
   $keys = array_keys($_SESSION);
 
   foreach ($keys as $key) {
-    if (stristr($key, 'transperfect') !== FALSE) {
+    if (stristr($key, 'globallink') !== FALSE) {
       unset($_SESSION[$key]);
     }
   }
@@ -2444,7 +2444,7 @@ function globallink_update_7210() {
   $keys = array_keys($_SESSION);
 
   foreach ($keys as $key) {
-    if (stristr($key, 'transperfect') !== FALSE) {
+    if (stristr($key, 'globallink') !== FALSE) {
       unset($_SESSION[$key]);
     }
   }

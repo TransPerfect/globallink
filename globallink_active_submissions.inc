@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Builds forms on Transperfect active submissions dashboard.
+ * Builds forms on GlobalLink active submissions dashboard.
  *
  * @param string $type
  *   The type of task we are working on.
  *
  * @return array
- *   Array of forms for the Transperfect active submissions dashboard.
+ *   Array of forms for the GlobalLink active submissions dashboard.
  */
 function globallink_dashboard_active_submissions_page($type) {
   $_SESSION['transpefect_dashboard_active_type'] = $type;
@@ -22,10 +22,10 @@ function globallink_dashboard_active_submissions_page($type) {
 }
 
 /**
- * Builds form to allow selection of specific Transperfect submission by ID.
+ * Builds form to allow selection of specific GlobalLink submission by ID.
  */
 function globallink_node_active_select_form() {
-  module_load_include('inc', 'transperfect', 'globallink_node');
+  module_load_include('inc', 'globallink', 'globallink_node');
 
   $form = array();
 
@@ -44,7 +44,7 @@ function globallink_node_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes']['class'][] = 'transperfect-node-select-submission-form';
+  $form['#attributes']['class'][] = 'globallink-node-select-submission-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
@@ -58,7 +58,7 @@ function globallink_node_active_select_form() {
     '#default_value' => $selected_value,
     '#attributes' => array(
       'class' => array(
-        'transperfect-node-select-submission-edit',
+        'globallink-node-select-submission-edit',
       ),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -68,7 +68,7 @@ function globallink_node_active_select_form() {
     '#type' => 'submit',
     '#value' => t('Go'),
     '#attributes' => array(
-      'class' => array('transperfect-edit-submit-go'),
+      'class' => array('globallink-edit-submit-go'),
     ),
   );
 
@@ -78,7 +78,7 @@ function globallink_node_active_select_form() {
       '#value' => t('Cancel Submission'),
       '#attributes' => array(
         'class' => array(
-          'transperfect-edit-submit-cancel-submission',
+          'globallink-edit-submit-cancel-submission',
         ),
       ),
     );
@@ -137,11 +137,11 @@ function globallink_node_active_select_form_submit($form, &$form_state) {
 }
 
 /**
- * Builds form to add pagination to Transperfect send dashboard.
+ * Builds form to add pagination to GlobalLink send dashboard.
  */
 function globallink_node_active_pager_form() {
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $form = array();
 
@@ -194,10 +194,10 @@ function globallink_node_active_pager_form_submit($form, &$form_state) {
 }
 
 /**
- * Builds form to show all active Transperfect submissions.
+ * Builds form to show all active GlobalLink submissions.
  */
 function globallink_dashboard_active() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -327,7 +327,7 @@ function globallink_dashboard_active() {
 }
 
 /**
- * Validates form actions for active Transperfect submissions.
+ * Validates form actions for active GlobalLink submissions.
  */
 function globallink_dashboard_active_validate($form, &$form_state) {
   $pd4 = globallink_get_project_director_details();
@@ -345,7 +345,7 @@ function globallink_dashboard_active_validate($form, &$form_state) {
 }
 
 /**
- * Handles submission of active Transperfect form.
+ * Handles submission of active GlobalLink form.
  */
 function globallink_dashboard_active_submit($form, &$form_state) {
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';

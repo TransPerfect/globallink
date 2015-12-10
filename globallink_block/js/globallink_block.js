@@ -2,17 +2,17 @@ var _div;
 var _img;
 
 (function($) {
-  Drupal.behaviors.transperfect = {
+  Drupal.behaviors.globallink = {
     attach: function() {
-      if (Drupal.settings.transperfect == undefined) {
+      if (Drupal.settings.globallink == undefined) {
         return;
       }
 
-      var popup = Drupal.settings.transperfect.popup;
-      var previewpath = Drupal.settings.transperfect.previewpath;
-      var rids = Drupal.settings.transperfect.rids;
+      var popup = Drupal.settings.globallink.popup;
+      var previewpath = Drupal.settings.globallink.previewpath;
+      var rids = Drupal.settings.globallink.rids;
 
-      _img = Drupal.settings.transperfect.ajax_image;
+      _img = Drupal.settings.globallink.ajax_image;
 
       $.each(popup, function(link, div) {
         $('#' + link).click(function() {

@@ -25,8 +25,8 @@ function globallink_menu_dashboard($type) {
  * Builds form to filter menus to send for translation on dashboard.
  */
 function globallink_menu_dashboard_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
 
   $form = array();
 
@@ -274,7 +274,7 @@ function globallink_menu_dashboard_form() {
 
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
+  $module_path = drupal_get_path('module', 'globallink');
   $languages = globallink_get_mapped_drupal_locales(FALSE);
 
   if (isset($languages) && count($languages) > 1) {
@@ -395,7 +395,7 @@ function globallink_menu_dashboard_form() {
 
         foreach ($sub_arr as $sub_name => $tgt_arr) {
           $l_title = globallink_format_display_string($sub_name);
-          $l_href = 'admin/transperfect-translations/activeSubmissions/menu';
+          $l_href = 'admin/globallink-translations/activeSubmissions/menu';
           $l_options = array('query' => array('submission' => urlencode($sub_name)));
 
           $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
@@ -438,7 +438,7 @@ function globallink_menu_dashboard_form() {
 
     if (user_access(TPT_ROLE_DO_TRANSLATIONS) || user_access(TPT_ROLE_MANAGE_TRANSLATIONS)) {
       if ($count > 0) {
-        drupal_add_css($module_path . '/css/transperfect.css');
+        drupal_add_css($module_path . '/css/globallink.css');
 
         $proj_arr = variable_get('globallink_pd_projects', array());
 
@@ -594,7 +594,7 @@ function globallink_menu_dashboard_form() {
  * Validates menu form input.
  */
 function globallink_menu_dashboard_form_validate($form, &$form_state) {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'globallink_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();

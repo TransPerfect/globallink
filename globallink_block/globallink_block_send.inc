@@ -25,7 +25,7 @@ function globallink_block_dashboard($type) {
  * Builds form to filter blocks to send for translation on dashboard.
  */
 function globallink_block_dashboard_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -191,8 +191,8 @@ function globallink_block_dashboard_form() {
 
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $locales = globallink_get_mapped_drupal_locales(FALSE);
 
@@ -281,7 +281,7 @@ function globallink_block_dashboard_form() {
 
           foreach ($sub_arr as $sub_name => $tgt_arr) {
             $l_title = globallink_format_display_string($sub_name);
-            $l_href = 'admin/transperfect-translations/activeSubmissions/block';
+            $l_href = 'admin/globallink-translations/activeSubmissions/block';
             $l_options = array('query' => array('submission' => urlencode($sub_name)));
             $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 
@@ -476,7 +476,7 @@ function globallink_block_dashboard_form() {
  * Validates block form input.
  */
 function globallink_block_dashboard_form_validate($form, &$form_state) {
-  module_load_include('inc', 'transperfect', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'globallink_settings');
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();

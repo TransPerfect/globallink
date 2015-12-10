@@ -1,12 +1,12 @@
-.transperfect-node-select-submission-form .transperfect-node-select-submission-edit {
+.globallink-node-select-submission-form .globallink-node-select-submission-edit {
   margin-left: 9px;
 }
 
-.transperfect-node-select-submission-form .transperfect-edit-submit-go,
-.transperfect-node-select-submission-form .transperfect-edit-submit-cancel-submission {
+.globallink-node-select-submission-form .globallink-edit-submit-go,
+.globallink-node-select-submission-form .globallink-edit-submit-cancel-submission {
   padding: 4px 21px;
 }
 
-.transperfect-node-select-submission-form .transperfect-edit-submit-go {
+.globallink-node-select-submission-form .globallink-edit-submit-go {
   display: none;
 }

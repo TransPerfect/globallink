@@ -1675,9 +1675,9 @@ function globallink_entity_update_submission_status($submission_ticket, $status 
  * Gets entity submission status.
  */
 function globallink_entity_get_submission_status() {
-  module_load_include('inc', 'transperfect', 'transperfect');
-  module_load_include('inc', 'transperfect', 'globallink_settings');
-  module_load_include('inc', 'transperfect', 'gl_ws/gl_ws_common');
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_common');
 
   $query = db_select('globallink_core_entity', 'tc');
   $query->fields('tc', array('submission_ticket'));

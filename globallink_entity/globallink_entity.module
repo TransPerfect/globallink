@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Transperfect entity translation module.
+ * GlobalLink entity translation module.
  *
  * This module adds entity translation support with configuration options.
  */
@@ -200,7 +200,7 @@ function get_tpt_entity_sent_rows($nid, $source) {
 function globallink_entity_menu() {
   $items = array();
 
-  $items ['admin/transperfect-translations/dashboard/entity'] = array(
+  $items ['admin/globallink-translations/dashboard/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'globallink_entity_dashboard',
     'access callback' => 'globallink_access_callback_any',
@@ -209,7 +209,7 @@ function globallink_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items ['admin/transperfect-translations/activeSubmissions/entity'] = array(
+  $items ['admin/globallink-translations/activeSubmissions/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'globallink_entity_active_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -218,7 +218,7 @@ function globallink_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items ['admin/transperfect-translations/receiveTranslation/entity'] = array(
+  $items ['admin/globallink-translations/receiveTranslation/entity'] = array(
     'title' => ' Entity ',
     'page callback' => 'globallink_entity_receive_submissions',
     'access callback' => 'globallink_access_callback_any',
@@ -227,7 +227,7 @@ function globallink_entity_menu() {
     'page arguments' => array('entity'),
   );
 
-  $items['admin/transperfect-translations/receiveTranslation/entity/preview'] = array(
+  $items['admin/globallink-translations/receiveTranslation/entity/preview'] = array(
     'title' => 'Preview Translation',
     'page callback' => 'globallink_entity_preview_translated_entity',
     'file' => 'globallink_entity_receive.inc',

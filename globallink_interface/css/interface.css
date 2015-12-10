@@ -1,17 +1,17 @@
 
-#transperfect-dashboard-interface-filter-form .form-item-language,
-#transperfect-dashboard-interface-filter-form .form-item-translation {
+#globallink-dashboard-interface-filter-form .form-item-language,
+#globallink-dashboard-interface-filter-form .form-item-translation {
   float: left;
   padding-right: .8em;
   margin: 0;
   width: 15em;
 }
 
-#transperfect-dashboard-interface-filter-form .form-type-select select {
+#globallink-dashboard-interface-filter-form .form-type-select select {
   width: 100%;
 }
 
-#transperfect-dashboard-interface-filter-form .form-actions {
+#globallink-dashboard-interface-filter-form .form-actions {
   clear: left;
   padding: 1ex 0 0 0;
 }

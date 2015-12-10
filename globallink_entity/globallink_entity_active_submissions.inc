@@ -25,7 +25,7 @@ function globallink_entity_active_submissions($type) {
  */
 function globallink_entity_active_select_form() {
   module_load_include('inc', 'globallink_entity', 'globallink_entity');
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 
@@ -42,7 +42,7 @@ function globallink_entity_active_select_form() {
     $selected_value = array_search($redirect_submission, $options);
   }
 
-  $form['#attributes']['class'][] = 'transperfect-entity-active-select-form';
+  $form['#attributes']['class'][] = 'globallink-entity-active-select-form';
 
   $form['select_submission'] = array(
     '#type' => 'container',
@@ -56,7 +56,7 @@ function globallink_entity_active_select_form() {
     '#default_value' => $selected_value,
     '#attributes' => array(
       'class' => array(
-        'transperfect-entity-select-active-submission',
+        'globallink-entity-select-active-submission',
       ),
     ),
     '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
@@ -129,8 +129,8 @@ function globallink_entity_active_select_form_submit($form, &$form_state) {
  * Builds form to add pagination to entity send dashboard.
  */
 function globallink_entity_active_pager_form() {
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $form = array();
 

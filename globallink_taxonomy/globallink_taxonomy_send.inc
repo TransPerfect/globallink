@@ -25,7 +25,7 @@ function globallink_taxonomy_dashboard($type) {
  * Builds form to filter taxonomies to send for translation on dashboard.
  */
 function globallink_taxonomy_dashboard_filter_form() {
-  module_load_include('inc', 'transperfect', 'transperfect');
+  module_load_include('inc', 'globallink', 'globallink');
   module_load_include('inc', 'globallink_taxonomy', 'globallink_taxonomy');
 
   $form = array();
@@ -216,8 +216,8 @@ function globallink_taxonomy_pager_form_submit($form, &$form_state) {
 function globallink_taxonomy_dashboard_form() {
   $form = array();
 
-  $module_path = drupal_get_path('module', 'transperfect');
-  drupal_add_css($module_path . '/css/transperfect.css');
+  $module_path = drupal_get_path('module', 'globallink');
+  drupal_add_css($module_path . '/css/globallink.css');
 
   $locales = globallink_get_mapped_drupal_locales(FALSE);
 
@@ -336,7 +336,7 @@ function globallink_taxonomy_dashboard_form() {
 
           foreach ($sub_arr as $sub_name => $tgt_arr) {
             $l_title = globallink_format_display_string($sub_name);
-            $l_href = 'admin/transperfect-translations/activeSubmissions/taxonomy';
+            $l_href = 'admin/globallink-translations/activeSubmissions/taxonomy';
             $l_options = array('query' => array('submission' => urlencode($sub_name)));
             $active .= l($l_title, $l_href, $l_options) . '&nbsp;&nbsp;- &nbsp;&nbsp;';
 
