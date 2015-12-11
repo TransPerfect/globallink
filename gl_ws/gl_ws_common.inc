@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Miscellaneous Web Service functions for Transperfect.
+ * Miscellaneous Web Service functions for GlobalLink.
  */
 
 require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
@@ -12,16 +12,16 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/SubmissionService2.php');
 
 global $base_url;
 
-$proxy_server = variable_get('transperfect_proxy_url');
+$proxy_server = variable_get('globallink_proxy_url');
 
 if (!empty($proxy_server)) {
-  define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
+  define('GL_WSDL_PATH', $proxy_server . '/' . drupal_get_path('module', 'globallink') . '/gl_ws/wsdl/');
 }
 else {
-  define('GL_WSDL_PATH', $base_url . '/' . drupal_get_path('module', 'transperfect') . '/gl_ws/wsdl/');
+  define('GL_WSDL_PATH', $base_url . '/' . drupal_get_path('module', 'globallink') . '/gl_ws/wsdl/');
 }
 
-function transperfect_get_user_pd_projects($pd_obj) {
+function globallink_get_user_pd_projects($pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -34,8 +34,8 @@ function transperfect_get_user_pd_projects($pd_obj) {
     'location' => $url . '/services/ProjectService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
-  $projects = transperfect_get_user_projects($project_service, $token);
+  $token = globallink_login($session_service, $username, $password);
+  $projects = globallink_get_user_projects($project_service, $token);
 
   $proj_arr = array();
 
@@ -47,7 +47,7 @@ function transperfect_get_user_pd_projects($pd_obj) {
   return $proj_arr;
 }
 
-function transperfect_test_pd_connectivity($pd_obj) {
+function globallink_test_pd_connectivity($pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -73,11 +73,11 @@ function transperfect_test_pd_connectivity($pd_obj) {
 
   $success = FALSE;
 
-  $token = transperfect_login($session_service, $username, $password);
+  $token = globallink_login($session_service, $username, $password);
 
   foreach ($proj_arr as $proj_code) {
     try {
-      $project = transperfect_find_project_by_short_code($project_service, $proj_code, $token);
+      $project = globallink_find_project_by_short_code($project_service, $proj_code, $token);
     }
     catch (SoapFault $se) {
       watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
@@ -118,7 +118,7 @@ function transperfect_test_pd_connectivity($pd_obj) {
   return TRUE;
 }
 
-function transperfect_cancel_pd_submission($pd_obj, &$globallink) {
+function globallink_cancel_pd_submission($pd_obj, &$globallink) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -131,7 +131,7 @@ function transperfect_cancel_pd_submission($pd_obj, &$globallink) {
     'location' => $url . '/services/SubmissionService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
+  $token = globallink_login($session_service, $username, $password);
 
   $cancel_submission_request = new cancelSubmission();
 
@@ -144,7 +144,7 @@ function transperfect_cancel_pd_submission($pd_obj, &$globallink) {
   return $cancel_submission_response->return;
 }
 
-function transperfect_cancel_select_documents($pd_obj, &$globallink_arr) {
+function globallink_cancel_select_documents($pd_obj, &$globallink_arr) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -157,7 +157,7 @@ function transperfect_cancel_select_documents($pd_obj, &$globallink_arr) {
     'location' => $url . '/services/TargetService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
+  $token = globallink_login($session_service, $username, $password);
 
   foreach ($globallink_arr as $globallink) {
     $cancel_target_submission = new cancelTargetByDocumentId();
@@ -174,7 +174,7 @@ function transperfect_cancel_select_documents($pd_obj, &$globallink_arr) {
   }
 }
 
-function transperfect_get_user_projects($project_service, $token) {
+function globallink_get_user_projects($project_service, $token) {
   $get_user_projects = new getUserProjects();
 
   $get_user_projects->isSubProjectIncluded = FALSE;
@@ -192,7 +192,7 @@ function transperfect_get_user_projects($project_service, $token) {
   return $projects;
 }
 
-function transperfect_find_project_by_short_code($project_service, $project_short_code, $token) {
+function globallink_find_project_by_short_code($project_service, $project_short_code, $token) {
   $find_project_by_short_code = new findProjectByShortCode();
 
   $find_project_by_short_code->projectShortCode = $project_short_code;
@@ -205,7 +205,7 @@ function transperfect_find_project_by_short_code($project_service, $project_shor
   return $project;
 }
 
-function transperfect_login($session_service, $username, $password) {
+function globallink_login($session_service, $username, $password) {
   $login = new login();
 
   $login->username = $username;
@@ -218,7 +218,7 @@ function transperfect_login($session_service, $username, $password) {
   return $token;
 }
 
-function transperfect_get_status($pd_obj, $submission_ticket) {
+function globallink_get_status($pd_obj, $submission_ticket) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -231,7 +231,7 @@ function transperfect_get_status($pd_obj, $submission_ticket) {
     'location' => $url . '/services/SubmissionService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
+  $token = globallink_login($session_service, $username, $password);
 
   $ticket_request = new findByTicket();
   $ticket_request->userId = $token;

@@ -1,9 +1,0 @@
-name = GlobalLink Menu Translation
-description = Allows users to manage and translate menus using Translations.com translation services.
-core = 7.x
-dependencies[] = i18n_menu
-dependencies[] = transperfect
-package = GlobalLink
-version = 7.X-5.0.0
-php = 5.2.5
-scripts[] = js/transperfect_menu_active_submissions.js

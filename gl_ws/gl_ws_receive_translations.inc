@@ -10,7 +10,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/SessionService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/TargetService2.php');
 
-function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
+function globallink_get_ready_translations_details_from_pd($pd_obj, $type = 'node') {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -40,8 +40,8 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
 
   $globallink_arr = array();
 
-  $token = transperfect_login($session_service, $username, $password);
-  $projects = transperfect_get_user_projects($project_service, $token);
+  $token = globallink_login($session_service, $username, $password);
+  $projects = globallink_get_user_projects($project_service, $token);
 
   $proj_ticket_arr = array();
 
@@ -56,7 +56,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
+    $targets = globallink_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
 
     $count = 1;
 
@@ -253,7 +253,7 @@ function transperfect_get_ready_translations_details_from_pd($pd_obj, $type = 'n
   return $globallink_arr;
 }
 
-function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
+function globallink_get_all_ready_translations_details_from_pd($pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -283,8 +283,8 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
 
   $globallink_arr = array();
 
-  $token = transperfect_login($session_service, $username, $password);
-  $projects = transperfect_get_user_projects($project_service, $token);
+  $token = globallink_login($session_service, $username, $password);
+  $projects = globallink_get_user_projects($project_service, $token);
 
   $proj_ticket_arr = array();
 
@@ -299,7 +299,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
   }
 
   if (count($proj_ticket_arr) > 0) {
-    $targets = transperfect_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
+    $targets = globallink_get_completed_targets_by_projects($target_service, $proj_ticket_arr, $token, $pd_obj);
 
     $count = 1;
 
@@ -398,7 +398,7 @@ function transperfect_get_all_ready_translations_details_from_pd($pd_obj) {
   return $globallink_arr;
 }
 
-function transperfect_get_completed_targets_by_projects($target_service, $project_tickets, $token, $pd_obj) {
+function globallink_get_completed_targets_by_projects($target_service, $project_tickets, $token, $pd_obj) {
   $get_completed_targets_by_projects_request = new getCompletedTargetsByProjects();
 
   $get_completed_targets_by_projects_request->projectTickets = $project_tickets;
@@ -410,7 +410,7 @@ function transperfect_get_completed_targets_by_projects($target_service, $projec
   return $get_completed_targets_by_projects_response->return;
 }
 
-function transperfect_get_completed_targets_by_doc($pd_obj, $ticket) {
+function globallink_get_completed_targets_by_doc($pd_obj, $ticket) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -423,7 +423,7 @@ function transperfect_get_completed_targets_by_doc($pd_obj, $ticket) {
     'location' => $url . '/services/TargetService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
+  $token = globallink_login($session_service, $username, $password);
 
   $get_completed_targets_by_documents_request = new getCompletedTargetsByDocuments();
 
@@ -436,7 +436,7 @@ function transperfect_get_completed_targets_by_doc($pd_obj, $ticket) {
   return $get_completed_targets_by_documents_response->return;
 }
 
-function transperfect_download_target_resource($pd_obj, $target_ticket) {
+function globallink_download_target_resource($pd_obj, $target_ticket) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -449,20 +449,20 @@ function transperfect_download_target_resource($pd_obj, $target_ticket) {
     'location' => $url . '/services/TargetService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
-  $transperfect_download_target_resource_request = new downloadTargetResource();
+  $token = globallink_login($session_service, $username, $password);
+  $globallink_download_target_resource_request = new downloadTargetResource();
 
-  $transperfect_download_target_resource_request->targetId = $target_ticket;
-  $transperfect_download_target_resource_request->userId = $token;
+  $globallink_download_target_resource_request->targetId = $target_ticket;
+  $globallink_download_target_resource_request->userId = $token;
 
-  $transperfect_download_target_resource_response = $target_service->downloadTargetResource($transperfect_download_target_resource_request);
-  $repository_item = $transperfect_download_target_resource_response->return;
+  $globallink_download_target_resource_response = $target_service->downloadTargetResource($globallink_download_target_resource_request);
+  $repository_item = $globallink_download_target_resource_response->return;
   $target_content = $repository_item->data->_;
 
   return $target_content;
 }
 
-function transperfect_send_download_confirmation($target_ticket, $pd_obj) {
+function globallink_send_download_confirmation($target_ticket, $pd_obj) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -475,13 +475,13 @@ function transperfect_send_download_confirmation($target_ticket, $pd_obj) {
     'location' => $url . '/services/TargetService2',
   ));
 
-  $token = transperfect_login($session_service, $username, $password);
-  $transperfect_send_download_confirmation_request = new sendDownloadConfirmation();
+  $token = globallink_login($session_service, $username, $password);
+  $globallink_send_download_confirmation_request = new sendDownloadConfirmation();
 
-  $transperfect_send_download_confirmation_request->targetId = $target_ticket;
-  $transperfect_send_download_confirmation_request->userId = $token;
+  $globallink_send_download_confirmation_request->targetId = $target_ticket;
+  $globallink_send_download_confirmation_request->userId = $token;
 
-  $transperfect_send_download_confirmation_response = $target_service->sendDownloadConfirmation($transperfect_send_download_confirmation_request);
+  $globallink_send_download_confirmation_response = $target_service->sendDownloadConfirmation($globallink_send_download_confirmation_request);
 
-  return $transperfect_send_download_confirmation_response->return;
+  return $globallink_send_download_confirmation_response->return;
 }

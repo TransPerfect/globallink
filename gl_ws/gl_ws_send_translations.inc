@@ -11,7 +11,7 @@ require_once TPT_ROOT . '/' . ('gl_ws/client/ProjectService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/DocumentService2.php');
 require_once TPT_ROOT . '/' . ('gl_ws/client/SubmissionService2.php');
 
-function transperfect_send_documents_for_translation_to_pd(&$globallink_arr, $pd_obj, $project_code, $submitter) {
+function globallink_send_documents_for_translation_to_pd(&$globallink_arr, $pd_obj, $project_code, $submitter) {
   $username = $pd_obj->username;
   $password = $pd_obj->password;
   $url = $pd_obj->url;
@@ -38,9 +38,9 @@ function transperfect_send_documents_for_translation_to_pd(&$globallink_arr, $pd
 
   $client_identifier = $project_short_code . REQUEST_TIME;
 
-  $token = transperfect_login($session_service, $username, $password);
-  $project = transperfect_find_project_by_short_code($project_service, $project_short_code, $token);
-  $submission_info = transperfect_create_submission_info($project->ticket, $client_identifier, $submitter);
+  $token = globallink_login($session_service, $username, $password);
+  $project = globallink_find_project_by_short_code($project_service, $project_short_code, $token);
+  $submission_info = globallink_create_submission_info($project->ticket, $client_identifier, $submitter);
 
   $count = 0;
 
@@ -54,23 +54,23 @@ function transperfect_send_documents_for_translation_to_pd(&$globallink_arr, $pd
     $date_requested->critical = FALSE;
 
     $submission_info->dateRequested = $date_requested;
-    $resource_info = transperfect_create_resource_info($client_identifier, $pd_obj, $globallink);
-    $document_info = transperfect_create_document_info($project->ticket, $globallink, $client_identifier);
+    $resource_info = globallink_create_resource_info($client_identifier, $pd_obj, $globallink);
+    $document_info = globallink_create_document_info($project->ticket, $globallink, $client_identifier);
 
     if (!is_null($GLOBALS['g_submissionTicket']) && $GLOBALS['g_submissionTicket'] != '') {
       $document_info->submissionTicket = $GLOBALS['g_submissionTicket'];
     }
 
-    transperfect_submit_document_with_binary_resource($document_service, $resource_info, $document_info, $globallink, $token);
+    globallink_submit_document_with_binary_resource($document_service, $resource_info, $document_info, $globallink, $token);
 
     $GLOBALS['g_submissionTicket'] = $globallink->submissionTicket;
     $GLOBALS['g_document_count'] = $count;
   }
 
-  transperfect_start_submission($submission_service, $submission_info, $token);
+  globallink_start_submission($submission_service, $submission_info, $token);
 }
 
-function transperfect_submit_document_with_binary_resource($document_service, $resource_info, $document_info, &$globallink, $token) {
+function globallink_submit_document_with_binary_resource($document_service, $resource_info, $document_info, &$globallink, $token) {
   $submit_document_with_binary_resource_request = new submitDocumentWithBinaryResource;
 
   $submit_document_with_binary_resource_request->documentInfo = $document_info;
@@ -84,7 +84,7 @@ function transperfect_submit_document_with_binary_resource($document_service, $r
   $globallink->documentTicket = $submit_document_with_binary_resource_response->return->ticketId;
 }
 
-function transperfect_start_submission($submission_service, $submission_info, $token) {
+function globallink_start_submission($submission_service, $submission_info, $token) {
   $start_submission_request = new startSubmission;
 
   $start_submission_request->submissionId = $GLOBALS['g_submissionTicket'];
@@ -96,7 +96,7 @@ function transperfect_start_submission($submission_service, $submission_info, $t
   return $start_submission_response->return;
 }
 
-function transperfect_create_submission_info($project_ticket, $client_identifier, $submitter) {
+function globallink_create_submission_info($project_ticket, $client_identifier, $submitter) {
   $metadata = new Metadata();
   $metadata->key = 'drupalUser';
   $metadata->value = $submitter;
@@ -109,7 +109,7 @@ function transperfect_create_submission_info($project_ticket, $client_identifier
   return $submission_info;
 }
 
-function transperfect_create_document_info($project_ticket, &$globallink, $client_identifier) {
+function globallink_create_document_info($project_ticket, &$globallink, $client_identifier) {
   $md_arr = array();
 
   $metadata = new Metadata();
@@ -146,7 +146,7 @@ function transperfect_create_document_info($project_ticket, &$globallink, $clien
   $count = 0;
 
   foreach ($globallink->targetLocale as $value) {
-    $target_infos[$count] = transperfect_create_target_info($value, $globallink);
+    $target_infos[$count] = globallink_create_target_info($value, $globallink);
 
     $count++;
   }
@@ -156,7 +156,7 @@ function transperfect_create_document_info($project_ticket, &$globallink, $clien
   return $document_info;
 }
 
-function transperfect_create_target_info($locale, &$globallink) {
+function globallink_create_target_info($locale, &$globallink) {
   $target_info = new TargetInfo();
   $target_info->targetLocale = $locale;
 
@@ -175,7 +175,7 @@ function transperfect_create_target_info($locale, &$globallink) {
   return $target_info;
 }
 
-function transperfect_create_resource_info($client_identifier, &$pd_obj, $globallink) {
+function globallink_create_resource_info($client_identifier, &$pd_obj, $globallink) {
   $resource_type = new ResourceType();
   $resource_type->value = 0;
 
