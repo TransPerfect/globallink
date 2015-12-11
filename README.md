@@ -6,7 +6,7 @@
 - [Enabling Multilingual Support](#enabling-multilingual-support)
 - [GlobalLink Settings](#globallink-settings)
 - [Adaptor Settings](#adaptor-settings)
-- [Implementing the Node/Field Translation Filter](#implementing-the-node-field-translation-filter)
+- [Implementing the Node/Field Translation Filter](#implementing-the-nodefield-translation-filter)
 - [Setting up the External (GlobalLink) Cron](#setting-up-the-external-globallink-cron)
 - [Locale Mapping](#locale-mapping)
 - [Field Configuration](#field-configuration)
@@ -76,7 +76,7 @@ To configure **Adaptor Settings**:
 | -----                                        | ----------- |
 | Dashboard Pager Limit                        | The number of records to be displayed per page on the dashboard.  Default value is 10. |
 | Enable Preview For Receive Translations      | If set to **Yes**, translated content can be previewed in the **Receive Translations** tab.  If set to **No**, the Preview Translation feature will not be available. |
-| Node/Field Translation Filter Implementation | If set to **Standard**, any language node of your Drupal’s default language will be eligible for translation and will therefore appear on the GlobalLink dashboard. <br /><br /> If set to **Using Hook (hook_globallink_is_translatable)**, you can filter out nodes from being displayed on the GlobalLink Dashboard (see [Implementing the Node/Field Translation Filter](#implementing-the-node-field-translation-filter)). This will also allow you to run your code by implementing the **module_globallink_import_translation** function. |
+| Node/Field Translation Filter Implementation | If set to **Standard**, any language node of your Drupal’s default language will be eligible for translation and will therefore appear on the GlobalLink dashboard. <br /><br /> If set to **Using Hook (hook_globallink_is_translatable)**, you can filter out nodes from being displayed on the GlobalLink Dashboard (see [Implementing the Node/Field Translation Filter](#implementing-the-nodefield-translation-filter)). This will also allow you to run your code by implementing the **module_globallink_import_translation** function. |
 | Publish Translated Content                   | If set to **No**, translated content imported by the adaptor will be available as a new unpublished version. If set to **Yes**, the newly imported translated content version will be published automatically. If set to **Use Source Content Setting**, the imported content will inherit the “Published” property of the source file. |
 | Automatic Update Status                      | The adaptor can periodically query GlobalLink for translated content. This sets the frequency in which the polling is performed. If set to **Drupal Cron**, it will use the Drupal Cron’s time interval setting. If a different interval is required, **External Cron** must be chosen and a `globallink_cron.php` file must exist (provided by Translations.com). If set to **No**, translated content must be manually retrieved. |
 | Logging                                      | Adaptor actions can be logged for eventual troubleshooting. If set to **Disabled** no actions are logged, if set to **Info** relevant actions are logged, and if set to **Debug** most actions are logged. |
