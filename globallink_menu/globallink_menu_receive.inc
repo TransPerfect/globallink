@@ -298,11 +298,11 @@ function globallink_menu_receive_form() {
     }
     catch (SoapFault $se) {
       watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+      form_set_error('', t('Web Services Error: @faultcode - @faultstring', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)));
     }
     catch (Exception $e) {
       watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
     }
   }
   else {
@@ -591,7 +591,7 @@ function globallink_menu_receive_form_submit($form, &$form_state) {
       }
       catch (Exception $e) {
         watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+        form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
       }
 
       $_SESSION['globallink_menu_globalLink_arr'] = array();
@@ -630,7 +630,7 @@ function globallink_menu_receive_form_submit($form, &$form_state) {
       }
       catch (Exception $e) {
         watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+        form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
       }
 
       break;
@@ -674,7 +674,7 @@ function globallink_menu_receive_form_submit($form, &$form_state) {
       }
       catch (Exception $e) {
         watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+        form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
       }
 
       $_SESSION['globallink_menu_globalLink_arr'] = array();
@@ -693,11 +693,11 @@ function globallink_menu_receive_form_submit($form, &$form_state) {
       }
       catch (SoapFault $se) {
         watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
-        form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+        form_set_error('', t('Web Services Error: @faultcode - @faultstring', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)));
       }
       catch (Exception $e) {
         watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-        form_set_error('', check_plain('Error: ' . $e->getMessage()));
+        form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
       }
 
       if (sizeof($globallink_arr) > 0) {
