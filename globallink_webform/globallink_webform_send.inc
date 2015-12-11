@@ -687,6 +687,6 @@ function globallink_webform_dashboard_form_submit($form, &$form_state) {
     }
   }
   catch (Exception $ex) {
-    form_set_error('', check_plain('Error: ' . $ex->getMessage()));
+    form_set_error('', t('Error: @message', array('@message' => $ex->getMessage())));
   }
 }

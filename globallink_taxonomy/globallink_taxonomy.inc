@@ -290,13 +290,13 @@ function globallink_taxonomy_update_deleted_records($pd4, $globallink) {
   }
   catch (SoapFault $se) {
     watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
-    form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+    form_set_error('', t('Web Services Error: @faultcode - @faultstring', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)));
 
     return FALSE;
   }
   catch (Exception $e) {
     watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-    form_set_error('', check_plain('Error: ' . $e->getMessage()));
+    form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
 
     return FALSE;
   }
@@ -515,7 +515,7 @@ function globallink_taxonomy_get_translated($pd4, &$globallink_arr) {
       $new_term = taxonomy_term_save($term);
 
       if ($new_term != 1) {
-        form_set_error('', check_plain('Unable to save new term for ' . $bid . ' where language is ' . $language));
+        form_set_error('', t('Unable to save new term for @bid where language is @language', array('@bid' => $bid, '@language' => $language)));
 
         continue;
       }
@@ -551,14 +551,14 @@ function globallink_taxonomy_get_translated($pd4, &$globallink_arr) {
 
       globallink_taxonomy_update_status($globallink, 'Error');
       watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
-      form_set_error('', check_plain('Web Services Error: ' . $se->faultcode . ' - ' . $se->faultstring));
+      form_set_error('', t('Web Services Error: @faultcode - @faultstring', array('@faultcode' => $se->faultcode, '@faultstring' => $se->faultstring)));
     }
     catch (Exception $e) {
       $count--;
 
       globallink_taxonomy_update_status($globallink, 'Error');
       watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
-      form_set_error('', check_plain('Error: ' . $e->getMessage()));
+      form_set_error('', t('Error: @message', array('@message' => $e->getMessage())));
     }
   }
 
