@@ -743,7 +743,7 @@ function globallink_fieldable_panels_get_translated($pd4, &$globallink_arr) {
         continue;
       }
 
-      $fields = globallink_fieldable_panels_pane_get_fields();
+      $fields = globallink_fieldable_panels_pane_get_fields($entity->bundle);
 
       foreach ($fields as $field) {
         $t_field_lang = LANGUAGE_NONE;
