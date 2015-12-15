@@ -60,6 +60,7 @@ function globallink_form_node_type_form_alter(&$form, $form_state) {
  * Only if there is a change in multilingual options.
  */
 function globallink_form_node_type_form_validate($form, &$form_state) {
+  module_load_include('inc', 'globallink', 'globallink');
   $language_content_type = $form_state['values']['language_content_type'];
 
   if ($language_content_type != 2 && globallink_pending_submission_exists_for_content_type($form_state['values']['old_type'])) {
