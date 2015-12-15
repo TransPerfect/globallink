@@ -231,7 +231,7 @@ function globallink_entity_menu() {
     'title' => 'Preview Translation',
     'page callback' => 'globallink_entity_preview_translated_content',
     'file' => 'globallink_entity_receive.inc',
-    'access callback' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
+    'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
 
