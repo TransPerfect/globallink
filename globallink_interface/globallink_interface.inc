@@ -573,7 +573,7 @@ function globallink_interface_get_submission_name($submission_ticket) {
 function globallink_interface_update_submission(&$globallink) {
   db_update('globallink_core_interface')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')

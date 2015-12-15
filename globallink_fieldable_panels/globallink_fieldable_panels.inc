@@ -270,7 +270,7 @@ function globallink_fieldable_panels_get_submission_name($submission_ticket) {
 function globallink_fieldable_panels_update_submission(&$globallink) {
   db_update('globallink_core_fieldable_panels')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
@@ -743,7 +743,7 @@ function globallink_fieldable_panels_get_translated($pd4, &$globallink_arr) {
         continue;
       }
 
-      $fields = globallink_fieldable_panels_pane_get_fields();
+      $fields = globallink_fieldable_panels_pane_get_fields($entity->bundle);
 
       foreach ($fields as $field) {
         $t_field_lang = LANGUAGE_NONE;

@@ -461,7 +461,7 @@ function globallink_taxonomy_get_submission_name($submission_ticket) {
 function globallink_taxonomy_update_submission(&$globallink) {
   db_update('globallink_core_taxonomy')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')

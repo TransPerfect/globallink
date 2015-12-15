@@ -847,6 +847,11 @@ function globallink_preview_translated_content() {
  *   Array of GlobalLink translations.
  */
 function globallink_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_node');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+
   $row = globallink_get_row($row_id);
 
   $globallink = new GlobalLink();
@@ -877,7 +882,7 @@ function globallink_get_translations_for_row_id($row_id) {
 
     foreach ($targets as $target) {
       if (str_replace('-', '_', $target->targetLanguage->locale) != $globallink->targetLocale) {
-        $source_xml = TPT_STATUS_SOURCE_DELETED;
+        $source_xml = 'Source Deleted';
         $globallink->sourceDeleted = TRUE;
 
         continue;
@@ -930,7 +935,7 @@ function globallink_get_translations_for_row_id($row_id) {
 
       $source_arr = array();
 
-      if ($source_xml != TPT_STATUS_SOURCE_DELETED) {
+      if ($source_xml != 'Source Deleted') {
         $source_arr = globallink_get_translated_array($source_xml);
       }
     }

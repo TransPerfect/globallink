@@ -393,7 +393,7 @@ function globallink_entity_update_row_document(&$globallink_arr) {
 function globallink_entity_update_row_submission(&$globallink) {
   db_update('globallink_core_entity')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
     'changed' => 1,
   ))
@@ -641,7 +641,7 @@ function globallink_entity_update(&$globallink, $t_arr = NULL) {
       $node->title = $translated_arr['title'];
     }
 
-    if ($node->title != $node->title_original) {
+    if (isset($node->title_original) && $node->title != $node->title_original) {
       $node->title = $node->title_original;
     }
 
@@ -1073,7 +1073,9 @@ function globallink_entity_save_translated_entity_with_fields(&$node, $translati
   foreach ($config_fields as $field_name => $field_info) {
     if ($field_info->field_type == 'image' && $field_info->translatable == 1) {
       $source_lang = $node->language;
-      $node->{$field_name}[$target_lang] = $node->{$field_name}[$source_lang];
+      if (isset($node->{$field_name}[$source_lang])) {
+        $node->{$field_name}[$target_lang] = $node->{$field_name}[$source_lang];
+      }
     }
   }
 

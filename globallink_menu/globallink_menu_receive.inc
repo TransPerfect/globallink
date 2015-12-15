@@ -524,7 +524,7 @@ function globallink_menu_receive_form() {
 
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_menu/js/globallink_menu.js');
+  drupal_add_js($module_path . '/globallink_menu/js/globallink_menu_receive.js');
 
   return $form;
 }
@@ -734,6 +734,11 @@ function globallink_menu_preview_translated_content() {
  *   Array of menu translations.
  */
 function globallink_menu_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink_menu', 'globallink_menu');
+
   $row = globallink_get_other_row($row_id, 'menu');
 
   $globallink = new GlobalLink();
@@ -777,7 +782,7 @@ function globallink_menu_get_translations_for_row_id($row_id) {
 
         $translation = globallink_menu_get_translated_items($globallink->targetXML);
         $mlid = $translation['mlid'];
-        $menu = load_menu_data($mlid);
+        $menu = globallink_menu_load_data($mlid);
 
         if ($menu && is_array($menu) && !is_null($menu)) {
           $source_xml = globallink_menu_get_xml($mlid);

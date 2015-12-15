@@ -549,7 +549,7 @@ function globallink_webform_get_other_row($row_id) {
 function globallink_webform_update_submission(&$globallink) {
   db_update('globallink_core_webform')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
