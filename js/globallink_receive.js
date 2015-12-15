@@ -163,8 +163,6 @@ function ajax_completed(data) {
 
         break;
       case 'path':
-        console.info(source_obj);
-
         var source_text = '';
         var target_text = '';
 
@@ -227,7 +225,7 @@ function ajax_completed(data) {
               }
 
               if (obj['title'] == null || obj['title'] == undefined) {
-                break;
+                return;
               }
 
               var source_text = '';

@@ -229,9 +229,9 @@ function globallink_entity_menu() {
 
   $items['admin/globallink-translations/receiveTranslation/entity/preview'] = array(
     'title' => 'Preview Translation',
-    'page callback' => 'globallink_entity_preview_translated_entity',
+    'page callback' => 'globallink_entity_preview_translated_content',
     'file' => 'globallink_entity_receive.inc',
-    'access callback' => 'globallink_access_callback_admin',
+    'access callback' => array(TPT_ROLE_MANAGE_TRANSLATIONS),
     'type' => MENU_CALLBACK,
   );
 

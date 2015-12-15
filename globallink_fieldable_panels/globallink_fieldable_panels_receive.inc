@@ -521,7 +521,7 @@ function globallink_fieldable_panels_receive_form() {
 
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_fieldable_panels/js/globallink_fieldable_panels.js');
+  drupal_add_js($module_path . '/globallink_fieldable_panels/js/globallink_fieldable_panels_receive.js');
 
   return $form;
 }
@@ -726,6 +726,11 @@ function globallink_fieldable_panels_preview_translated_content() {
  *   Array of fieldable panels translations.
  */
 function globallink_fieldable_panels_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink_fieldable_panels', 'globallink_fieldable_panels');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+
   $row = globallink_fieldable_panels_get_row_by_id($row_id, 'fieldable_panels');
 
   $globallink = new GlobalLink();

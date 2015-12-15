@@ -528,7 +528,7 @@ function globallink_interface_receive_form() {
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_library('system', 'ui.dialog');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_interface/js/globallink_interface.js');
+  drupal_add_js($module_path . '/globallink_interface/js/globallink_interface_receive.js');
 
   return $form;
 }
@@ -736,6 +736,11 @@ function globallink_interface_preview_translated_content() {
  *   Array of interface translations.
  */
 function globallink_interface_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink_interface', 'globallink_interface');
+
   $row = globallink_get_other_row($row_id, 'interface');
 
   $globallink = new GlobalLink();
@@ -785,7 +790,7 @@ function globallink_interface_get_translations_for_row_id($row_id) {
           $source = globallink_load_source_data($lid);
           $source_arr_temp['source'] = $source[0]->source;
           $source_arr_temp['location'] = $source[0]->location;
-          $source_xml = get_interface_xml($lid, $source_arr_temp);
+          $source_xml = globallink_interface_get_xml($lid, $source_arr_temp);
           $source_arr = array();
 
           if ($source_xml) {

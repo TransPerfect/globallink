@@ -389,7 +389,7 @@ function globallink_menu_get_submission_name($submission_ticket) {
 function globallink_menu_update_submission(&$globallink) {
   db_update('globallink_core_menu')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')

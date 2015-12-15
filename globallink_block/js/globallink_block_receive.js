@@ -53,11 +53,12 @@ function escape_html(string) {
   return jQuery('<pre>').text(string).html();
 }
 
-function ajax_completed (data) {
+function ajax_completed(data) {
   var content = '<table class="tpt_popup_table"><tr><th>&nbsp;</th><th>Source Content</th><th>Translated Content</th></tr>';
 
   error = data['error'];
   target = data['target'];
+  source_obj = data['source'];
 
   if (error != null && error != undefined) {
     content += '<tr><td colspan="3"><span style="color: red;text-align: center;">' + error + '</span></td></tr>';
@@ -69,20 +70,18 @@ function ajax_completed (data) {
     return true;
   }
 
+  if (source_obj == null || source_obj == undefined || source_obj == '') {
+    return true;
+  }
+
   jQuery.each(target, function(field, f_object) {
     switch (field) {
-      case '#title':
-        source_obj = data['source'];
-
-        if (source_obj == null || source_obj == undefined || source_obj == '') {
-          return true;
-        }
-
+      case 'title':
         var source_text = '';
         var target_text = '';
 
         if (source_obj[field] != null && source_obj[field] != undefined) {
-          source_text = escape_html(source_obj[field]["translation"]);
+          source_text = escape_html(source_obj[field]);
         }
 
         if (source_text == '') {
@@ -90,10 +89,10 @@ function ajax_completed (data) {
         }
 
         if (f_object != null && f_object != undefined) {
-          target_text = escape_html(f_object["translation"]);
+          target_text = escape_html(f_object);
 
           if (target_text != '') {
-            if (field == '#title') {
+            if (field == 'title') {
               label = 'Title';
             }
 
@@ -102,18 +101,12 @@ function ajax_completed (data) {
         }
 
         break;
-      case '#description':
-        source_obj = data['source'];
-
-        if (source_obj == null || source_obj == undefined || source_obj == '') {
-          return true;
-        }
-
+      case 'body':
         var source_text = '';
         var target_text = '';
 
         if (source_obj[field] != null && source_obj[field] != undefined) {
-          source_text = escape_html(source_obj[field]["translation"]);
+          source_text = escape_html(source_obj[field]);
         }
 
         if (source_text == '') {
@@ -121,11 +114,11 @@ function ajax_completed (data) {
         }
 
         if (f_object != null && f_object != undefined) {
-          target_text = escape_html(f_object["translation"]);
+          target_text = escape_html(f_object);
 
           if (target_text != '') {
-            if (field == '#description') {
-              label = 'Description';
+            if (field == 'body') {
+              label = 'Body';
             }
 
             content += '<tr><td><b>' + label + '</b></td><td>' + source_text + '</td><td>' + target_text + '</td></tr>';
@@ -137,7 +130,7 @@ function ajax_completed (data) {
   });
 
   content += '</table>';
-  
+
   jQuery('#' + _div).empty();
   jQuery('#' + _div).append(content);
 

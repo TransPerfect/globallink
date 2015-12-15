@@ -523,7 +523,7 @@ function globallink_block_receive_form() {
   drupal_add_library('system', 'ui.dialog');
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_block/js/globallink_block.js');
+  drupal_add_js($module_path . '/globallink_block/js/globallink_block_receive.js');
 
   return $form;
 }

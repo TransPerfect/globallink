@@ -525,7 +525,7 @@ function globallink_taxonomy_receive_form() {
 
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_taxonomy/js/globallink_taxonomy.js');
+  drupal_add_js($module_path . '/globallink_taxonomy/js/globallink_taxonomy_receive.js');
 
   return $form;
 }
@@ -736,6 +736,11 @@ function globallink_taxonomy_preview_translated_content() {
  *   Array of taxonomy translations.
  */
 function globallink_taxonomy_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink_taxonomy', 'globallink_taxonomy');
+
   $row = globallink_get_other_row($row_id, 'taxonomy');
 
   $globallink = new GlobalLink();

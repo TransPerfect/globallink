@@ -393,7 +393,7 @@ function globallink_entity_update_row_document(&$globallink_arr) {
 function globallink_entity_update_row_submission(&$globallink) {
   db_update('globallink_core_entity')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
     'changed' => 1,
   ))

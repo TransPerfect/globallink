@@ -514,7 +514,7 @@ function globallink_entity_receive_form() {
 
   $module_path = drupal_get_path('module', 'globallink');
   drupal_add_css($module_path . '/css/globallink.css');
-  drupal_add_js($module_path . '/globallink_entity/js/globallink_receive.js');
+  drupal_add_js($module_path . '/globallink_entity/js/globallink_entity_receive.js');
 
   return $form;
 }
@@ -703,7 +703,7 @@ function globallink_entity_receive_form_submit($form, &$form_state) {
 /**
  * Previews translated entity content in the form of JSON.
  */
-function globallink_entity_preview_translated_entity() {
+function globallink_entity_preview_translated_content() {
   $row_id = $_POST['rid'];
   $arr = globallink_entity_get_translations_for_row_id($row_id);
   drupal_json_output($arr);
@@ -719,6 +719,11 @@ function globallink_entity_preview_translated_entity() {
  *   Array of entity translations.
  */
 function globallink_entity_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+  module_load_include('inc', 'globallink_entity', 'globallink_entity');
+
   $row = globallink_entity_get_row($row_id);
 
   $globallink = new GlobalLink();

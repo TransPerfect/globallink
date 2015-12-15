@@ -270,7 +270,7 @@ function globallink_fieldable_panels_get_submission_name($submission_ticket) {
 function globallink_fieldable_panels_update_submission(&$globallink) {
   db_update('globallink_core_fieldable_panels')
   ->fields(array(
-    'status' => 'Pending Translations',
+    'status' => 'Cancelled',
     'timestamp' => REQUEST_TIME,
   ))
   ->condition('submission_ticket', $globallink->submissionTicket, '=')
