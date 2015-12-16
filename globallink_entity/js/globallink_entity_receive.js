@@ -227,7 +227,7 @@ function ajax_completed(data) {
               }
 
               if (obj['title'] == null || obj['title'] == undefined) {
-                break;
+                return;
               }
 
               var source_text = '';
@@ -255,7 +255,7 @@ function ajax_completed(data) {
   });
 
   content += '</table>';
-  
+
   jQuery('#' + _div).empty();
   jQuery('#' + _div).append(content);
 

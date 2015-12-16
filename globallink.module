@@ -1034,6 +1034,8 @@ function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
  *   An array containing all drupal locale codes with in progress translations.
  */
 function globallink_get_tpt_sent_rows($nid, $source) {
+  module_load_include("inc", "globallink", "globallink");
+  
   $arr = array();
 
   $query = db_select('globallink_core', 'tc')
