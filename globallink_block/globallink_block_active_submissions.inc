@@ -99,8 +99,6 @@ function globallink_block_active_select_form_submit($form, &$form_state) {
       break;
     case t('Cancel Submission'):
       try {
-        sleep(5);
-
         $selected_submission = $form_state['values']['submission'];
         $_SESSION['globallink_block_selected_submission'] = '';
 
@@ -329,8 +327,6 @@ function globallink_block_active_form_validate($form, &$form_state) {
  * Handles submission of active block form.
  */
 function globallink_block_active_form_submit($form, &$form_state) {
-  sleep(5);
-
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
 

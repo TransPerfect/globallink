@@ -595,8 +595,6 @@ function globallink_dashboard_receive_submit($form, &$form_state) {
       break;
     case t('Clear Deleted Records'):
       try {
-        sleep(2);
-
         $globallink_arr = unserialize($_SESSION['globallink_globalLink_arr']);
 
         $success = FALSE;
