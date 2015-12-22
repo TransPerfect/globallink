@@ -107,8 +107,6 @@ function globallink_node_active_select_form_submit($form, &$form_state) {
   switch ($op) {
     case t('Cancel Submission'):
       try {
-        sleep(5);
-
         $selected_submission = $form_state['values']['submission'];
 
         $_SESSION['globallink_selected_submission'] = '';
@@ -354,8 +352,6 @@ function globallink_dashboard_active_submit($form, &$form_state) {
   switch ($op) {
     case t('Cancel Selected Documents'):
       try {
-        sleep(5);
-
         $rids_arr = array_filter($form_state['values']['table']);
         $rids = globallink_check_status($rids_arr);
 

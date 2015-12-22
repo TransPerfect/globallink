@@ -589,8 +589,6 @@ function globallink_entity_receive_form_submit($form, &$form_state) {
       break;
     case t('Clear Deleted Records'):
       try {
-        sleep(2);
-
         $globallink_arr = unserialize($_SESSION['globallink_globalLink_entity_arr']);
         $success = FALSE;
         $count = 0;
@@ -791,7 +789,7 @@ function globallink_entity_get_translations_for_row_id($row_id) {
         }
 
         $name = '';
-        $source_xml = get_entity_xml($node, $globallink->targetLocale, NULL, NULL, $name, TRUE, $drupal_locale_code);
+        $source_xml = globallink_entity_get_xml($node, $globallink->targetLocale, NULL, NULL, $name, TRUE, $drupal_locale_code);
         $source_arr = array();
 
         if ($source_xml != 'Source Deleted') {
