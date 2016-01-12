@@ -357,7 +357,14 @@ function globallink_taxonomy_receive_form() {
 
       $pd4 = globallink_get_project_director_details();
 
-      $target_xml = globallink_download_target_resource($pd4, $globallink->targetTicket);
+      $target_xml = '';
+      try {
+        $target_xml = globallink_download_target_resource($pd4, $globallink->targetTicket);
+      }
+      catch (Exception $e) {
+        form_set_error('', t('Error: @message', array('@message' => $e)));
+      }
+
       $taxonomy_arr = globallink_taxonomy_get_translated_items($target_xml);
 
       if (count($taxonomy_arr) == 0) {
@@ -556,7 +563,6 @@ function globallink_taxonomy_receive_form_submit($form, &$form_state) {
 
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
-
   switch ($op) {
     case t('Update All'):
       try {
@@ -708,7 +714,6 @@ function globallink_taxonomy_receive_form_submit($form, &$form_state) {
       }
       else {
         $_SESSION['globallink_taxonomy_globalLink_arr'] = array();
-
         unset($_SESSION['globallink_taxonomy_globalLink_arr_last_refreshed']);
       }
 
