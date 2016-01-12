@@ -120,7 +120,7 @@ function globallink_taxonomy_get_xml($term, $path) {
 
     if (is_array($field_value) && !empty($field_value[$term->language])) {
       foreach ($field_value[$term->language] as $delta => $values) {
-        insert_child_element($dom, $root, 'field', $values['value'], array(
+        globallink_insert_child_element($dom, $root, 'field', $values['value'], array(
           'field' => $field,
           'delta' => $delta,
           'langcode' => $term->language,
@@ -128,7 +128,7 @@ function globallink_taxonomy_get_xml($term, $path) {
       }
     }
     elseif (!empty($field_value) && is_string($field_value)) {
-      insert_child_element($dom, $root, 'field', $field_value, array(
+      globallink_insert_child_element($dom, $root, 'field', $field_value, array(
         'field' => $field,
       ));
     }
@@ -503,37 +503,54 @@ function globallink_taxonomy_get_translated($pd4, &$globallink_arr) {
       $bid = $translated_arr['bid'];
       unset($translated_arr['bid']);
 
-      $term = taxonomy_term_load($bid);
+      $source_term = taxonomy_term_load($bid);
 
-      if (empty($term)) {
+      if (empty($source_term)) {
         continue;
       }
 
-      unset($term->tid);
-      $term->language = $language;
+      $translation_arr = array();
+      $translation_arr[$source_term->language] = $source_term;
 
-      $new_term = taxonomy_term_save($term);
+      $translation_set = ($source_term->i18n_tsid) ?
+      i18n_translation_set_load($source_term->i18n_tsid) :
+      i18n_translation_set_create('taxonomy_term', $source_term->vocabulary_machine_name);
 
-      if ($new_term != 1) {
-        form_set_error('', t('Unable to save new term for @bid where language is @language', array('@bid' => $bid, '@language' => $language)));
+      $translations = $translation_set->get_translations();
 
-        continue;
+      if (isset($translations[$language])) {
+        if (isset($translations[$language]->tid)) {
+          $tid = $translations[$language]->tid;
+          $translated_term = taxonomy_term_load($tid);
+        }
+      }
+      else {
+        $translated_term = unserialize(serialize($source_term));
+        unset($translated_term->tid);
+        $translated_term->language = $language;
+        $term_saved = taxonomy_term_save($translated_term);
+
+        if ($term_saved != 1) {
+          form_set_error('', t('Unable to save new term where id:@bid title:@title language:@language', array('@bid' => $bid, '@title' => $source_term->name, '@language' => $language)));
+
+          continue;
+        }
       }
 
       foreach ($translated_arr as $attribute => $translations) {
         switch ($attribute) {
           case 'name':
-            $term->name = $translations['translation'];
+            $translated_term->name = $translations['translation'];
 
             break;
           case 'description':
-            $term->description = $translations['translation'];
+            $translated_term->description = $translations['translation'];
 
             break;
           case 'path':
-            $term->path['pathauto'] = FALSE;
+            $translated_term->path['pathauto'] = FALSE;
 
-            $uri = taxonomy_term_uri($term);
+            $uri = taxonomy_term_uri($translated_term);
             $new_path = path_load($uri['path']);
             $new_path['alias'] = $translations['translation'];
             path_save($new_path);
@@ -542,7 +559,13 @@ function globallink_taxonomy_get_translated($pd4, &$globallink_arr) {
         }
       }
 
-      taxonomy_term_save($term);
+      taxonomy_term_save($translated_term);
+
+      $translation_arr[$translated_term->language] = $translated_term;
+      $translation_set
+           ->reset_translations($translation_arr)
+           ->save(TRUE);
+
       globallink_taxonomy_update_status($globallink);
       globallink_send_download_confirmation($globallink->targetTicket, $pd4);
     }
@@ -811,7 +834,7 @@ function globallink_taxonomy_get_vocabulary_list() {
   $vocabs = taxonomy_vocabulary_load_multiple(FALSE);
 
   foreach ($vocabs as $vocab) {
-    if ($vocab->i18n_mode == 1) {
+    if ($vocab->i18n_mode == 1 || $vocab->i18n_mode == 4) {
       $arr[$vocab->vid] = $vocab->name;
     }
   }

@@ -49,6 +49,11 @@ function globallink_taxonomy_dashboard_filter_form() {
       $filter = TRUE;
     }
 
+    if (!empty($_SESSION['globallink_selected_taxonomy_language'])) {
+      $default_language = $_SESSION['globallink_selected_taxonomy_language'];
+      $filter = TRUE;
+    }
+
     $vocab_arr = globallink_taxonomy_get_vocabulary_list();
 
     $form['taxonomy_info_filter'] = array(
@@ -59,8 +64,7 @@ function globallink_taxonomy_dashboard_filter_form() {
     );
 
     $form['taxonomy_info_filter']['filters'] = array(
-      '#type' => 'container',
-      '#attributes' => array('class' => array('container-inline')),
+      '#type' => 'container'
     );
 
     $form['taxonomy_info_filter']['filters']['vocab'] = array(
@@ -78,6 +82,27 @@ function globallink_taxonomy_dashboard_filter_form() {
       '#default_value' => $default_info,
       '#field_suffix' => '&nbsp;&nbsp;&nbsp;&nbsp;',
     );
+
+    if (isset($locales['en'])) {
+      $form['taxonomy_info_filter']['filters']['language'] = array(
+        '#attributes' => array('class' => array('container-inline')),
+        '#title' => t('Language'),
+        '#type' => 'select',
+        '#empty_value' => 'en',
+        '#empty_option' => $locales['en'],
+        '#options' => $locales,
+      );
+    }
+    else {
+      $form['taxonomy_info_filter']['filters']['language'] = array(
+        '#attributes' => array('class' => array('container-inline')),
+        '#title' => t('Language'),
+        '#type' => 'select',
+        '#empty_value' => 'all',
+        '#empty_option' => t('All languages'),
+        '#options' => $locales,
+      );
+    }
 
     $disable_submit = $filter ? TRUE : FALSE;
 
@@ -99,13 +124,21 @@ function globallink_taxonomy_dashboard_filter_form() {
 
       $form['filter-search']['filter-markup'][] = array('#markup' => '<table>');
 
-      $form['filter-search']['filter-markup'][] = array(
-        '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Vocabulary') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $vocab_arr[$default_vocab] . '</td></tr>',
-      );
+      if (!empty($default_vocab)) {
+        $form['filter-search']['filter-markup'][] = array(
+          '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Vocabulary') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $vocab_arr[$default_vocab] . '</td></tr>',
+        );
+      }
 
-      if ($default_info != '') {
+      if (!empty($default_info)) {
         $form['filter-search']['filter-markup'][] = array(
           '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Term Name') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $default_info . '</td></tr>',
+        );
+      }
+
+      if (!empty($default_language)) {
+        $form['filter-search']['filter-markup'][] = array(
+          '#markup' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;"><b>' . t('Language') . '</b>:&nbsp;</td><td style="text-align: left;width: 85%;vertical-align: middle;border: none;">' . $locales[$default_language] . '</td></tr>',
         );
       }
 
@@ -142,11 +175,13 @@ function globallink_taxonomy_dashboard_filter_form_submit($form, &$form_state) {
     case t('Filter'):
       $_SESSION['globallink_selected_taxonomy_vocab'] = $form_state['values']['vocab'];
       $_SESSION['globallink_selected_taxonomy_info'] = $form_state['values']['info'];
+      $_SESSION['globallink_selected_taxonomy_language'] = $form_state['values']['language'];
 
       break;
     case t('Reset'):
       $_SESSION['globallink_selected_taxonomy_info'] = '';
       $_SESSION['globallink_selected_taxonomy_vocab'] = '';
+      $_SESSION['globallink_selected_taxonomy_language'] = '';
 
       break;
   }
@@ -239,10 +274,15 @@ function globallink_taxonomy_dashboard_form() {
       $default_vocab = $_SESSION['globallink_selected_taxonomy_vocab'];
     }
 
-    $default_language = language_default();
-    $default = $default_language->language;
+    if (!empty($_SESSION['globallink_selected_taxonomy_language'])) {
+      $default_language = $_SESSION['globallink_selected_taxonomy_language'];
+    }
+    else {
+      $language = language_default();
+      $default_language = $language->language;
+    }
 
-    unset($target_lang_arr[globallink_get_locale_code($default)]);
+    unset($target_lang_arr[globallink_get_locale_code($default_language)]);
 
     $t_count = 0;
 
@@ -314,10 +354,8 @@ function globallink_taxonomy_dashboard_form() {
         $query->condition('t.vid', array($default_vocab), 'IN');
       }
 
-      $drupal_langs = globallink_get_mapped_drupal_locales(FALSE);
-
-      if (!empty($drupal_langs)) {
-        $query->condition('t.language', array_keys($drupal_langs), 'IN');
+      if (!empty($default_language)) {
+        $query->condition('t.language', $default_language, '=');
       }
 
       $result = $query->execute();
@@ -360,7 +398,7 @@ function globallink_taxonomy_dashboard_form() {
         $rows[$item->tid] = array(
           'vocab' => $item->v_name,
           'name' => $item->name,
-          'language' => $drupal_langs[$item->language],
+          'language' => $locales[$item->language],
           'active' => $active,
         );
 
@@ -476,7 +514,7 @@ function globallink_taxonomy_dashboard_form() {
           '#title' => t('Source Language'),
           '#required' => TRUE,
           '#options' => $source_lang_arr,
-          '#default_value' => globallink_get_locale_code($default),
+          '#default_value' => globallink_get_locale_code($default_language),
           '#disabled' => TRUE,
           '#prefix' => '<tr><td style="text-align: left;width: 15%;vertical-align: middle;border: none;">',
           '#suffix' => '</tr>',
@@ -535,7 +573,7 @@ function globallink_taxonomy_dashboard_form() {
  */
 function globallink_taxonomy_dashboard_form_validate($form, &$form_state) {
   module_load_include('inc', 'globallink', 'globallink_settings');
-  
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
   $pd4 = globallink_get_project_director_details();
 

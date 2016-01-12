@@ -356,6 +356,7 @@ function globallink_webform_receive_form() {
 
       $pd4 = globallink_get_project_director_details();
 
+      $target_xml = '';
       try {
         $target_xml = globallink_download_target_resource($pd4, $globallink->targetTicket);
       }
