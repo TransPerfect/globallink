@@ -25,6 +25,8 @@
  */
 function globallink_block_send_blocks_for_translations($bids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'globallink');
+
   $strings = globallink_block_get_strings(globallink_get_drupal_locale_code($source_locale), 'blocks');
   $submitter = $submission_details['submitter'];
 
@@ -469,6 +471,8 @@ function globallink_block_update_submission(&$globallink) {
  *   The number of translated blocks.
  */
 function globallink_block_get_translated_blocks($pd4, &$globallink_arr) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $count = 0;
 
   $source_link = array('link_title' => 'No Title');

@@ -227,6 +227,8 @@ function globallink_webform_update_deleted_records($pd4, $globallink) {
  *   The number of translated webforms.
  */
 function globallink_webform_get_translated($pd4, &$globallink_arr) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {

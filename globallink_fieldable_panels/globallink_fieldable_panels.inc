@@ -717,6 +717,8 @@ function globallink_fieldable_panels_update_submission_status($submission_ticket
  *   The number of translated fieldable panels.
  */
 function globallink_fieldable_panels_get_translated($pd4, &$globallink_arr) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {

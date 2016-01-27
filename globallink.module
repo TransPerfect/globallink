@@ -749,6 +749,7 @@ function globallink_node_type_delete($info) {
  * Implements hook_form_FORM_ID_alter().
  */
 function globallink_form_field_ui_field_edit_form_alter(&$form, $form_state) {
+  module_load_include('inc', 'globallink', 'globallink');
   $field_type = $form['#field']['type'];
 
   switch ($field_type) {
@@ -1035,7 +1036,7 @@ function globallink_menu_local_tasks_alter(&$data, $router_item, $root_path) {
  */
 function globallink_get_tpt_sent_rows($nid, $source) {
   module_load_include("inc", "globallink", "globallink");
-  
+
   $arr = array();
 
   $query = db_select('globallink_core', 'tc')
@@ -1282,10 +1283,134 @@ function globallink_cron() {
  */
 function globallink_cron_queue_info() {
   $queues['auto_receive'] = array(
-    'worker callback' => 'globallink_auto_receive',
+    'worker callback' => 'globallink_auto_receive'
   );
 
   return $queues;
+}
+
+/**
+ * Automatically receives translated contents.
+ *
+ * @param string $cron_type
+ *   The type of cron job.
+ */
+function globallink_auto_receive($cron_type) {
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+
+  watchdog('GlobalLink', 'Cron Started by %cron_type', array('%cron_type' => $cron_type), WATCHDOG_INFO);
+
+  try {
+    $pd4 = globallink_get_project_director_details();
+    $all_target_arr = globallink_get_all_ready_translations_details_from_pd($pd4);
+
+    $count = 0;
+
+    foreach ($all_target_arr as $globallink) {
+      $type = $globallink->type;
+      $globallink_arr = array($globallink);
+
+      switch ($type) {
+        case 'node':
+          module_load_include('inc', 'globallink', 'globallink_node');
+          $count = globallink_get_translated_content($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Node', array(), WATCHDOG_INFO);
+
+          if ($globallink->status == 'Error') {
+            globallink_update_status($globallink);
+          }
+
+          $_SESSION['globallink_globalLink_arr'] = array();
+          $_SESSION['globallink_selected_submission'] = array();
+
+          break;
+        case 'entity':
+          module_load_include('inc', 'globallink_entity', 'globallink_entity');
+          $count = globallink_entity_get_translated_enties($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Entity', array(), WATCHDOG_INFO);
+
+          if ($globallink->status == 'Error') {
+            globallink_entity_update_status($globallink);
+          }
+
+          $_SESSION['globallink_entity_globalLink_arr'] = array();
+          $_SESSION['globallink_entity_selected_submission'] = array();
+
+          break;
+        case 'block':
+          module_load_include('inc', 'globallink_block', 'globallink_block');
+          $count += globallink_block_get_translated_blocks($pd4, $globallink_arr);
+
+          watchdog('Block', t('Imported Block'), array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_block_globalLink_arr'] = array();
+          $_SESSION['globallink_block_selected_submission'] = array();
+
+          break;
+        case 'interface':
+          module_load_include('inc', 'globallink_interface', 'globallink_interface');
+          $count += globallink_interface_get_translated($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Interface', array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_interface_globalLink_arr'] = array();
+          $_SESSION['globallink_interface_selected_submission'] = array();
+
+          break;
+        case 'menu':
+          module_load_include('inc', 'globallink_menu', 'globallink_menu');
+          $count += globallink_menu_get_translated($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Menu', array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_menu_globalLink_arr'] = array();
+          $_SESSION['globallink_menu_selected_submission'] = array();
+
+          break;
+        case 'taxonomy':
+          module_load_include('inc', 'globallink_taxonomy', 'globallink_taxonomy');
+          $count += globallink_taxonomy_get_translated($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Taxonomy', array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_taxonomy_globalLink_arr'] = array();
+          $_SESSION['globallink_taxonomy_selected_submission'] = array();
+
+          break;
+        case 'webform':
+          module_load_include('inc', 'globallink_webform', 'globallink_webform');
+          $count += globallink_webform_get_translated($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Webform', array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_webform_globalLink_arr'] = array();
+          $_SESSION['globallink_webform_selected_submission'] = array();
+
+          break;
+        case 'fieldable_panels_panes':
+          module_load_include('inc', 'globallink_fieldable_panels', 'globallink_fieldable_panels');
+          $count += globallink_fieldable_panels_get_translated($pd4, $globallink_arr);
+
+          watchdog('GlobalLink', 'Imported Fieldable Panels Panes', array(), WATCHDOG_INFO);
+
+          $_SESSION['globallink_fieldable_panels_panes_globalLink_arr'] = array();
+          $_SESSION['globallink_fieldable_panels_panes_selected_submission'] = array();
+
+          break;
+      }
+    }
+  }
+  catch (SoapFault $se) {
+    watchdog('GlobalLink', 'SOAP Exception - %function - Code[%faultcode], Message[%faultstring]', array('%function' => __FUNCTION__, '%faultcode' => $se->faultcode, '%faultstring' => $se->faultstring), WATCHDOG_ERROR);
+  }
+  catch (Exception $e) {
+    watchdog('GlobalLink', 'Exception - %function - File[%file], Line[%line], Code[%code], Message[%message]', array('%function' => __FUNCTION__, '%file' => $e->getFile(), '%line' => $e->getLine(), '%code' => $e->getCode(), '%message' => $e->getMessage()), WATCHDOG_ERROR);
+  }
+
+  watchdog('GlobalLink', 'Cron Completed - %count Records Updated.', array('%count' => $count), WATCHDOG_INFO);
 }
 
 /**

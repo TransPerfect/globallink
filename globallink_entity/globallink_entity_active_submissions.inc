@@ -152,7 +152,7 @@ function globallink_entity_active_pager_form() {
     '#value' => t('Go'),
     '#suffix' => '</div>',
     '#limit_validation_errors' => array(),
-    '#submit' => array('node_active_pager_form_submit'),
+    '#submit' => array('globallink_entity_active_pager_form_submit'),
     '#access' => TRUE,
   );
 

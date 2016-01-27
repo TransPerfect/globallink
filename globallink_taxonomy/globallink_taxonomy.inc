@@ -25,6 +25,7 @@
  */
 function globallink_taxonomy_send_for_translations($lids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $submitter = $submission_details['submitter'];
   $globallink_arr = array();
@@ -481,6 +482,7 @@ function globallink_taxonomy_update_submission(&$globallink) {
  *   The number of translated taxonomies.
  */
 function globallink_taxonomy_get_translated($pd4, &$globallink_arr) {
+  module_load_include('inc', 'globallink', 'globallink');
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {

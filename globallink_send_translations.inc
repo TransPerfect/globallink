@@ -500,6 +500,7 @@ function globallink_node_form_pager_submit($form, &$form_state) {
  */
 function globallink_dashboard_node_form() {
   module_load_include('inc', 'globallink', 'globallink_node');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $default_checked_ids = array();
 
