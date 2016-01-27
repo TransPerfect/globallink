@@ -240,6 +240,7 @@ function globallink_webform_pager_form_submit($form, &$form_state) {
  */
 function globallink_webform_dashboard_form() {
   module_load_include('inc', 'globallink_webform', 'globallink_webform');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 

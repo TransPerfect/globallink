@@ -25,6 +25,7 @@
  */
 function globallink_entity_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $node_check = variable_get('globallink_implementation_type', 0);
   $submitter = $submission_details['submitter'];
@@ -119,6 +120,8 @@ function globallink_entity_send_for_translations($nids, $pd4, $submission_name, 
  *   The entity's project code.
  */
 function globallink_entity_update_ticket_id($arr, $project_code) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   foreach ($arr as $globallink) {
     $nid = $globallink->nid;
     $node = node_load($nid);
@@ -620,6 +623,8 @@ function globallink_entity_update_status(&$globallink) {
  *   The translated array.  Defaults to NULL.
  */
 function globallink_entity_update(&$globallink, $t_arr = NULL) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   try {
     $target_lang = globallink_get_drupal_locale_code($globallink->targetLocale);
 

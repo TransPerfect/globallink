@@ -330,6 +330,8 @@ function globallink_interface_update_deleted_records($pd4, $globallink) {
  *   The number of translated interfaces.
  */
 function globallink_interface_get_translated($pd4, &$globallink_arr) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $count = 0;
 
   foreach ($globallink_arr as $globallink) {

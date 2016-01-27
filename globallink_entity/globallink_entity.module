@@ -179,6 +179,8 @@ function globallink_update_change_detection_entity($node, $lang) {
  *   Array of entity rows that have been sent for translation.
  */
 function get_tpt_entity_sent_rows($nid, $source) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $arr = array();
 
   $query = db_select('globallink_core_entity', 'tc')

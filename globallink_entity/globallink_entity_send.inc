@@ -481,6 +481,7 @@ function globallink_entity_dashboard_pager_form_submit($form, &$form_state) {
  */
 function globallink_entity_dashboard_form() {
   module_load_include('inc', 'globallink_entity', 'globallink_entity');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $default_checked_ids = array();
   $module_path = drupal_get_path('module', 'globallink');

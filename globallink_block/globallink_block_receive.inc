@@ -736,6 +736,11 @@ function globallink_block_preview_translated_block_content() {
  *   Array of block translations.
  */
 function globallink_block_get_translations_for_row_id($row_id) {
+  module_load_include('inc', 'globallink', 'globallink');
+  module_load_include('inc', 'globallink_block', 'globallink_block');
+  module_load_include('inc', 'globallink', 'globallink_settings');
+  module_load_include('inc', 'globallink', 'gl_ws/gl_ws_receive_translations');
+
   $row = globallink_get_other_row($row_id, 'block');
 
   $globallink = new GlobalLink();
@@ -759,48 +764,11 @@ function globallink_block_get_translations_for_row_id($row_id) {
     $pd4 = globallink_get_project_director_details();
     $targets = globallink_get_completed_targets_by_doc($pd4, $globallink->documentTicket);
 
-    if (is_array($targets)) {
-      foreach ($targets as $target) {
-        if (str_replace('-', '_', $target->targetLanguage->locale) != $globallink->targetLocale) {
-          continue;
+    if (!is_array($targets)) {
+      $targets = array($targets);
         }
 
-        if (is_null($target->ticket) || $target->ticket == '') {
-          continue;
-        }
-
-        $globallink->targetTicket = $target->ticket;
-        $globallink->targetXML = globallink_download_target_resource($pd4, $globallink->targetTicket);
-
-        if (is_null($globallink->targetXML) || $globallink->targetXML == '') {
-          continue;
-        }
-
-        $translation = globallink_block_get_arr_items($globallink->targetXML);
-        $bid = $translation['bid'];
-        $block = globallink_block_load_data($bid);
-
-        if ($block && is_array($block) && !is_null($block)) {
-          $strings = globallink_block_get_strings(globallink_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
-          $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
-          $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
-
-          $source_xml = globallink_block_get_xml($bid, $title, $body);
-          $source_arr = array();
-
-          if ($source_xml) {
-            $source_arr = globallink_block_get_arr_items($source_xml);
-          }
-        }
-        else {
-          $source_xml = 'Source Deleted';
-          $globallink->sourceDeleted = TRUE;
-        }
-      }
-    }
-    elseif (!is_null($targets)) {
-      $target = $targets;
-
+    foreach ($targets as $target) {
       if (str_replace('-', '_', $target->targetLanguage->locale) != $globallink->targetLocale) {
         continue;
       }
@@ -821,9 +789,9 @@ function globallink_block_get_translations_for_row_id($row_id) {
       $block = globallink_block_load_data($bid);
 
       if ($block && is_array($block) && !is_null($block)) {
-        $strings = globallink_block_get_strings(globallink_get_drupal_locale_code($globallink->sourceLocale), 'blocks');
-        $title = isset($strings['blocks:block:$bid:title']) ? $strings['blocks:block:$bid:title'] : FALSE;
-        $body = isset($strings['blocks:block:$bid:body']) ? $strings['blocks:block:$bid:body'] : FALSE;
+        $strings = globallink_block_get_strings(NULL, 'blocks');
+        $title = isset($strings['blocks:block:' . $bid . ':title']) ? $strings['blocks:block:' . $bid . ':title'] : FALSE;
+        $body = isset($strings['blocks:block:' . $bid . ':body']) ? $strings['blocks:block:' . $bid . ':body'] : FALSE;
 
         $source_xml = globallink_block_get_xml($bid, $title, $body);
         $source_arr = array();

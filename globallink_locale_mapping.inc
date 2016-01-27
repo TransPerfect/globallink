@@ -154,6 +154,8 @@ function globallink_locale_validate($form, &$form_state) {
  * Handles submission of globallink_locale form.
  */
 function globallink_locale_submit($form, &$form_state) {
+  module_load_include('inc', 'globallink', 'globallink');
+
   $op = isset($form_state['values']['op']) ? $form_state['values']['op'] : '';
 
   if ($op == t('Add')) {

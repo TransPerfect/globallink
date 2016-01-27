@@ -273,7 +273,7 @@ function globallink_adaptor_settings() {
     '#type' => 'radios',
     '#title' => t('Automatic Update Status'),
     '#default_value' => variable_get('globallink_cron_type', 0),
-    '#options' => array(t('Disabled'), t('Drupal Cron'), t('External Cron (globallink_cron.php)')),
+    '#options' => array(t('Disabled'), t('Drupal Cron')),
   );
 
   $form['globallink_adaptor_settings']['globallink_proxy_url'] = array(

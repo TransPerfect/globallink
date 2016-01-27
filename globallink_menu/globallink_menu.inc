@@ -506,6 +506,7 @@ function globallink_menu_count_parents($menu_link) {
  */
 function globallink_menu_get_translated($pd4, &$globallink_arr) {
   module_load_include('inc', 'i18n_menu', 'i18n_menu.admin');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $count = 0;
   $source_link = array('link_title' => 'No Title');

@@ -230,6 +230,7 @@ function globallink_interface_pager_form_submit($form, &$form_state) {
  */
 function globallink_interface_dashboard_form() {
   module_load_include('inc', 'globallink_interface', 'globallink_interface');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $form = array();
 

@@ -25,6 +25,7 @@
  */
 function globallink_send_for_translations($nids, $pd4, $submission_name, $due_date, $project_code, $source_locale, $target_locale_arr, $submission_details) {
   module_load_include('inc', 'globallink', 'gl_ws/gl_ws_send_translations');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $node_check = variable_get('globallink_implementation_type', 0);
   $submitter = $submission_details['submitter'];
@@ -568,6 +569,7 @@ function globallink_update_status(&$globallink) {
  */
 function globallink_update_node(&$globallink, $t_arr = NULL) {
   module_load_include('inc', 'node', 'node.pages');
+  module_load_include('inc', 'globallink', 'globallink');
 
   $success = FALSE;
 
