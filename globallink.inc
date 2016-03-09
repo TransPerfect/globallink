@@ -809,10 +809,11 @@ function globallink_get_translatable_node_types($content_translation) {
 
   $node_types = node_type_get_types();
 
-  $entity_translation_enabled = module_exists('entity_translation');
-
   foreach ($node_types as $node_type) {
-    if (($entity_translation_enabled && entity_translation_node_supported_type($node_type->type)) || translation_supported_type($node_type->type)) {
+    if ($content_translation && translation_supported_type($node_type->type)) {
+      $arr[] = $node_type->type;
+    }
+    elseif (module_exists('entity_translation') && entity_translation_node_supported_type($node_type->type)) {
       $arr[] = $node_type->type;
     }
   }

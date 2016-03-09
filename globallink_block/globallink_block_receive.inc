@@ -766,7 +766,7 @@ function globallink_block_get_translations_for_row_id($row_id) {
 
     if (!is_array($targets)) {
       $targets = array($targets);
-        }
+    }
 
     foreach ($targets as $target) {
       if (str_replace('-', '_', $target->targetLanguage->locale) != $globallink->targetLocale) {
